@@ -1,6 +1,5 @@
 Introduction
 ============
 
-
-
-This product may contain traces of nuts.
+Dexterity-based default content types for Plone. This package is a drop-in
+replacement for Products.ATContenttypes. 
