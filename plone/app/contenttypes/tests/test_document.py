@@ -10,8 +10,6 @@ from plone.app.contenttypes.testing import \
 
 from plone.app.testing import TEST_USER_ID, setRoles
 
-from plone.app.contenttypes.interfaces import IPage
-
 
 class PloneAppContenttypesTest(unittest.TestCase):
 
@@ -23,31 +21,34 @@ class PloneAppContenttypesTest(unittest.TestCase):
 
     def test_schema(self):
         fti = queryUtility(IDexterityFTI,
-                           name='page')
+                           name='Document')
         schema = fti.lookupSchema()
+        from plone.app.contenttypes.interfaces import IPage
         self.assertEquals(IPage, schema)
 
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
-                           name='page')
+                           name='Document')
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
         fti = queryUtility(IDexterityFTI,
-                           name='page')
+                           name='Document')
         factory = fti.factory
         new_object = createObject(factory)
+        from plone.app.contenttypes.interfaces import IPage
         self.failUnless(IPage.providedBy(new_object))
 
     def test_adding(self):
-        self.invokeFactory('page',
+        self.portal.invokeFactory('Document',
                                   'page1')
-        p1 = self['page1']
+        p1 = self.portal['page1']
+        from plone.app.contenttypes.interfaces import IPage
         self.failUnless(IPage.providedBy(p1))
 
     def test_view(self):
-        self.invokeFactory('page', 'page1')
-        p1 = self['page']
+        self.portal.invokeFactory('Document', 'page1')
+        p1 = self.portal['page1']
         view = p1.restrictedTraverse('@@view')
         self.failUnless(view)
         self.assertEquals(view.request.response.status, 200)
