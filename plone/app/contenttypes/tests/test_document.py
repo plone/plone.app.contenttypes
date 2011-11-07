@@ -33,7 +33,7 @@ class PloneAppContenttypesTest(unittest.TestCase):
 
     def test_factory(self):
         fti = queryUtility(IDexterityFTI,
-                           name='Page')
+                           name='Document')
         factory = fti.factory
         new_object = createObject(factory)
         from plone.app.contenttypes.interfaces import IPage
