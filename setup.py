@@ -26,6 +26,7 @@ setup(name='plone.app.contenttypes',
       install_requires=[
           'setuptools',
           'Products.CMFPlone',
+          'plone.app.collection',
           'plone.app.dexterity',
           'plone.app.referenceablebehavior',
           'plone.app.relationfield',
