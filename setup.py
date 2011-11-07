@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0'
+version = '1.0a1'
 
 setup(name='plone.app.contenttypes',
       version=version,
@@ -25,6 +25,11 @@ setup(name='plone.app.contenttypes',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'Products.CMFPlone',
+          'plone.app.dexterity',
+          'plone.app.referenceablebehavior',
+          'plone.app.relationfield',
+          'plone.namedfile [blobs]',
           # -*- Extra requirements: -*-
       ],
       extras_require={

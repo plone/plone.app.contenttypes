@@ -1,3 +1,13 @@
 <?xml version="1.0"?>
-<object name="portal_types" meta_type="CMF Types Tool">
+<object meta_type="Plone Types Tool" name="portal_types">
+ <property name="title">Controls the available content types in your portal</property>
+
+ <object name="Document" remove="True"/>
+ <object name="Folder" remove="True"/>
+ <object name="Link" remove="True"/>
+
+ <object meta_type="Dexterity FTI" name="Document" />
+ <object meta_type="Dexterity FTI" name="Folder" />
+ <object meta_type="Dexterity FTI" name="Link" />
+
 </object>
