@@ -1,0 +1,6 @@
+<metadata>
+ <version>1.0</version>
+ <dependencies>
+  <dependency>profile-plone.app.collection:default</dependency>
+ </dependencies>
+</metadata>
