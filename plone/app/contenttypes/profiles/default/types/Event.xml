@@ -33,7 +33,7 @@
       &lt;field name="text" type="plone.app.textfield.RichText"&gt;
         &lt;description /&gt;
         &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;text&lt;/title&gt;
+        &lt;title&gt;Text&lt;/title&gt;
       &lt;/field&gt;
     &lt;/schema&gt;
   &lt;/model&gt;</property>
