@@ -9,7 +9,8 @@
 
 <metal:content-core fill-slot="content-core">
     <metal:content-core define-macro="content-core">
-        <div tal:content="structure context/text/output" />
+        <div tal:condition="context/text"
+             tal:content="structure context/text/output" />
     </metal:content-core>
 </metal:content-core>
 
