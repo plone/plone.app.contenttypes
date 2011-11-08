@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<object name="Link" meta_type="Dexterity FTI"
+<object name="Link" meta_type="Dexterity FTI" i18n:domain="plone" 
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="title">Link</property>
- <property name="description">None</property>
- <property name="icon_expr">string:${portal_url}/document_icon.png</property>
+ <property name="title" i18n:translate="">Link</property>
+ <property name="description" i18n:translate=""></property>
+ <property name="icon_expr">string:${portal_url}/link_icon.png</property>
  <property name="factory">Link</property>
  <property name="add_view_expr">string:${folder_url}/++add++Link</property>
  <property name="link_target"></property>
@@ -12,9 +12,9 @@
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
- <property name="default_view">view</property>
+ <property name="default_view">link_view</property>
  <property name="view_methods">
-  <element value="view"/>
+  <element value="link_view"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>

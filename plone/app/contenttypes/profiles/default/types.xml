@@ -2,12 +2,21 @@
 <object meta_type="Plone Types Tool" name="portal_types">
  <property name="title">Controls the available content types in your portal</property>
 
+ <!-- remove old ATContentTypes if they still exist -->
  <object name="Document" remove="True"/>
  <object name="Folder" remove="True"/>
  <object name="Link" remove="True"/>
+ <object name="File" remove="True"/>
+ <object name="Image" remove="True"/>
+ <object name="News Item" remove="True"/>
+ <object name="Event" remove="True"/>
 
  <object meta_type="Dexterity FTI" name="Document" />
  <object meta_type="Dexterity FTI" name="Folder" />
  <object meta_type="Dexterity FTI" name="Link" />
+ <object meta_type="Dexterity FTI" name="File" />
+ <object meta_type="Dexterity FTI" name="Image" />
+ <object meta_type="Dexterity FTI" name="News Item" />
+ <object meta_type="Dexterity FTI" name="Event" />
 
 </object>

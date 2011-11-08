@@ -1,21 +1,20 @@
 <?xml version="1.0"?>
-<object name="Document" meta_type="Dexterity FTI" i18n:domain="plone" 
+<object name="Event" meta_type="Dexterity FTI" i18n:domain="plone" 
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="title" i18n:translate="">Page</property>
- <property name="description" i18n:translate=""></property>
- <property name="icon_expr">string:${portal_url}/document_icon.png</property>
- <property name="factory">Document</property>
- <property
-    name="add_view_expr">string:${folder_url}/++add++Document</property>
+ <property name="title" i18n:translate="">Event</property>
+ <property name="description" i18n:translate="">Events can be shown in calendars.</property>
+ <property name="icon_expr">string:${portal_url}/event_icon.png</property>
+ <property name="factory">Event</property>
+ <property name="add_view_expr">string:${folder_url}/++add++Event</property>
  <property name="link_target"></property>
  <property name="immediate_view">view</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
- <property name="default_view">document_view</property>
+ <property name="default_view">view</property>
  <property name="view_methods">
-  <element value="document_view"/>
+  <element value="view"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
@@ -34,7 +33,7 @@
       &lt;field name="text" type="plone.app.textfield.RichText"&gt;
         &lt;description /&gt;
         &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Text&lt;/title&gt;
+        &lt;title&gt;text&lt;/title&gt;
       &lt;/field&gt;
     &lt;/schema&gt;
   &lt;/model&gt;</property>
@@ -45,7 +44,7 @@
  <alias from="view" to="(selected layout)"/>
  <action title="View" action_id="view" category="object" condition_expr=""
     icon_expr="" link_target="" url_expr="string:${object_url}"
-    visible="True" i18n:attributes="title">
+    visible="True">
   <permission value="View"/>
  </action>
  <action title="Edit" action_id="edit" category="object" condition_expr=""
