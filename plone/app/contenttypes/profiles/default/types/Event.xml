@@ -3,7 +3,7 @@
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Event</property>
  <property name="description" i18n:translate="">Events can be shown in calendars.</property>
- <property name="icon_expr">string:${portal_url}/event_icon.png</property>
+ <property name="icon_expr"></property>
  <property name="factory">Event</property>
  <property name="add_view_expr">string:${folder_url}/++add++Event</property>
  <property name="link_target"></property>
