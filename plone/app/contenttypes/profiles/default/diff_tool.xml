@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<object>
+  <difftypes>
+    <type portal_type="Document">
+      <field name="any" difftype="Compound Diff for Dexterity types"/>
+    </type>
+    <type portal_type="Event">
+      <field name="any" difftype="Compound Diff for Dexterity types"/>
+    </type>
+    <type portal_type="Link">
+      <field name="any" difftype="Compound Diff for Dexterity types"/>
+    </type>
+    <type portal_type="News Item">
+      <field name="any" difftype="Compound Diff for Dexterity types"/>
+    </type>
+  </difftypes>
+</object>

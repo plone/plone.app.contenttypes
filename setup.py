@@ -30,6 +30,9 @@ setup(name='plone.app.contenttypes',
           'plone.app.relationfield',
           'plone.formwidget.querystring',
           'plone.namedfile [blobs]',
+          'plone.app.versioningbehavior',
+          'collective.dexteritydiff',
+          # -*- Extra requirements: -*-
       ],
       extras_require={
           'test': [
