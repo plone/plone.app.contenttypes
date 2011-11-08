@@ -9,6 +9,9 @@
 
 <metal:content-core fill-slot="content-core">
     <metal:content-core define-macro="content-core">
+        <div tal:replace="python:''">This is fixed in dexterity trunk 
+          http://code.google.com/p/dexterity/issues/detail?id=200 and the 
+          condition should be remove with the next release of dexterity</div>
         <div tal:condition="context/text"
              tal:content="structure context/text/output" />
     </metal:content-core>
