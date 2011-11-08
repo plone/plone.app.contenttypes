@@ -44,12 +44,12 @@
  <alias from="view" to="(selected layout)"/>
  <action title="View" action_id="view" category="object" condition_expr=""
     icon_expr="" link_target="" url_expr="string:${object_url}"
-    visible="True">
+    visible="True" i18n:attributes="title">
   <permission value="View"/>
  </action>
  <action title="Edit" action_id="edit" category="object" condition_expr=""
     icon_expr="" link_target="" url_expr="string:${object_url}/edit"
-    visible="True">
+    visible="True" i18n:attributes="title">
   <permission value="Modify portal content"/>
  </action>
 </object>

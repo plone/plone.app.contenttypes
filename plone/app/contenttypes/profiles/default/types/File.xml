@@ -12,9 +12,9 @@
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
- <property name="default_view">view</property>
+ <property name="default_view">file_view</property>
  <property name="view_methods">
-  <element value="view"/>
+  <element value="file_view"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
