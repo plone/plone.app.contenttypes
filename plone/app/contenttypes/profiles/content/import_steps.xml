@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<import-steps>
+ <import-step id="plone.app.contenttypes--plone-content" version="20111108-01"
+              handler="plone.app.contenttypes.setuphandlers.importContent"
+              title="plone.app.contenttypes base content-types">
+    plone.app.contenttypes plone-content installation step.
+ </import-step>
+</import-steps>

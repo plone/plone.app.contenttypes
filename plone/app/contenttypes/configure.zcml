@@ -12,7 +12,16 @@
       name="default"
       title="plone.app.contenttypes"
       directory="profiles/default"
-      description="replace archetypes default-content-types with dexterity-types"
+      description="Base Dexterity content-types used as an alternative to Archetypes default-content-types"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+  <!-- plone.app.contenttypes alternatives to profile-Products.CMFPlone:plone-content -->
+  <gs:registerProfile
+      name="plone-content"
+      title="plone.app.contenttypes"
+      directory="profiles/content"
+      description="Same as Products.CMFPlone:plone-content except for plone.app.contenttypes content-types"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
