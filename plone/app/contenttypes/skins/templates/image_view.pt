@@ -14,9 +14,7 @@
             <a class="discreet"
                tal:attributes="href string:${context/@@plone_context_state/object_url}/image_view_fullscreen">
                 <img tal:define="scale context/@@images"
-                     tal:replace="structure python: scale.scale('image',
-                                  scale='large').tag(css_class='newsImage')" />
-
+                     tal:replace="structure python: scale.scale('image', scale='preview').tag()" />
                 <br />
                 <span class="visualNoPrint">
                     <img src="" alt="" tal:replace="structure context/search_icon.png" />
