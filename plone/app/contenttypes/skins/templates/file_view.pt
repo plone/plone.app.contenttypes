@@ -10,16 +10,21 @@
 
     <metal:content-core fill-slot="content-core">
         <metal:block define-macro="content-core"
-                     tal:define="content_type context/get_content_type|context/Format">
+                     tal:define="content_type context/file/contentType|nothing">
             <p>
-                <metal:field use-macro="python:context.widget('file', mode='view')">
-                File
-                </metal:field>
+                <a tal:content="context/file/filename"
+                   tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}">
+                    File
+                </a>
+                <span class="discreet"
+                      tal:define="size context/file/size;
+                                  kb python:size/1024">
+                      &mdash; <span tal:replace="kb" /> KB</span>
             </p>
+
             <div tal:condition="python: content_type.startswith('text')">
                 <h2 i18n:translate="heading_file_contents">File contents</h2>
-                <pre tal:content="context/get_data|context/data|nothing">
-                </pre>
+                <pre tal:content="context/file/data|nothing" />
             </div>
         </metal:block>
     </metal:content-core>
