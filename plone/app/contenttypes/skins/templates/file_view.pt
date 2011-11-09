@@ -14,10 +14,10 @@
             <p>
                 <a tal:content="context/file/filename"
                    tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}">
-                    File
+                    Filename
                 </a>
                 <span class="discreet"
-                      tal:define="size context/file/size;
+                      tal:define="size context/file/getSize;
                                   kb python:size/1024">
                       &mdash; <span tal:replace="kb" /> KB</span>
             </p>

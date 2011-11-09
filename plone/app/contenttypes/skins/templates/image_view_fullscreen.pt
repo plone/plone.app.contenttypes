@@ -49,12 +49,12 @@
     <a href=""
        tal:attributes="href request/HTTP_REFERER"
        tal:condition="request/HTTP_REFERER"
-       ><span i18n:translate="label_back_to_site">Back to site</span><br /><tal:block replace="structure context/tag" /></a>
+       ><span i18n:translate="label_back_to_site">Back to site</span><br /><tal:block replace="structure context/@@images/image" /></a>
 
     <a href=""
        tal:attributes="href context/portal_url"
        tal:condition="not: request/HTTP_REFERER"
-       ><span i18n:translate="label_home">Home</span><br /><tal:block replace="structure context/tag" /></a>
+       ><span i18n:translate="label_home">Home</span><br /><tal:block replace="structure context/@@images/image" /></a>
 </div>
 
 </body>

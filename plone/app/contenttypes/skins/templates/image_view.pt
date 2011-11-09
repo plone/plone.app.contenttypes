@@ -9,13 +9,12 @@
 <body>
     <metal:content-core fill-slot="content-core">
         <metal:block define-macro="content-core"
-                     tal:define="kssClassesView context/@@kss_field_decorator_view;
-                                 getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
-                                 size context/size">
-            <a href=""
-               class="discreet"
+                     tal:define="size context/image/getSize">
+
+            <a class="discreet"
                tal:attributes="href string:${context/@@plone_context_state/object_url}/image_view_fullscreen">
-                <tal:block condition="size" replace="structure python:context.tag(scale='preview')" />
+                <img tal:define="scale context/@@images"
+                     tal:replace="structure python: scale.scale('image', scale='preview').tag()" />
                 <br />
                 <span class="visualNoPrint">
                     <img src="" alt="" tal:replace="structure context/search_icon.png" />
@@ -26,16 +25,9 @@
             <span class="discreet visualNoPrint">
             &mdash;
                 <span i18n:translate="label_size">Size</span>:
-
-                <span tal:define="size python:context.getObjSize(here)"
-                      tal:content="size">
+                <span tal:replace="python:size/1024">
                     File size
-                </span>
-
-                <span tal:condition="python:test(size, 0, 1)"
-                      i18n:translate="no_image_uploaded">
-                    (No image has been uploaded yet)
-                </span>
+                </span>KB
             </span>
         </metal:block>
     </metal:content-core>
