@@ -2,8 +2,10 @@
 from zope.component import getUtility, queryUtility, getMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
+from zope.i18n.locales import locales
 from Acquisition import aq_base, aq_inner
 from AccessControl import Unauthorized
+from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.dexterity.utils import createContent
 from plone.dexterity.fti import IDexterityFTI
 from plone.portlets.interfaces import (
@@ -50,12 +52,69 @@ def addContentToContainer(container, object, checkConstraints=True):
     newName = container._setObject(name, object)
     return container._getOb(newName)
 
+def _get_locales_info(portal):
+    language = portal.Language()
+    parts = (language.split('-') + [None, None])[:3]
+    locale = locales.getLocale(*parts)
+    # If we get a territory, we enable the combined language codes
+    use_combined = False
+    if locale.id.territory:
+        use_combined = True
+        target_language += '_' + locale.id.territory
+    return locale.id.language, use_combined, locale
+
+def _set_language_settings(portal, uses_combined_lanagage):
+    language = portal.Language()
+    portal_languages = getToolByName(portal, 'portal_languages')
+    portal_languages.manage_setLanguageSettings(
+        language,
+        [language],
+        setUseCombinedLanguageCodes=uses_combined_lanagage,
+        startNeutral=False)
+
+# ??? Why do we only do this calendar setup when content is created?
+def _setup_calendar(locale):
+    gregorian_calendar = locale.dates.calendars.get(u'gregorian', None)
+    portal_calendar = getToolByName(getSite(), "portal_calendar", None)
+    if portal_calendar is not None:
+        first = 6
+        if gregorian_calendar is not None:
+            first = gregorian_calendar.week.get('firstDay', None)
+            # on the locale object we have: mon : 1 ... sun : 7
+            # on the calendar tool we have: mon : 0 ... sun : 6
+            if first is not None:
+                first = first - 1
+        portal_calendar.firstweekday = first
+
+def _setup_visible_ids(target_language, locale):
+    portal_properties = getToolByName(getSite(), 'portal_properties')
+    site_properties = portal_properties.site_properties
+
+    # See if we have an url normalizer
+    normalizer = queryUtility(IURLNormalizer, name=target_language)
+    if normalizer is None:
+        normalizer = queryUtility(IURLNormalizer, name=target_language)
+
+    # If we get a script other than Latn we enable visible_ids
+    if locale.id.script is not None:
+        if locale.id.script.lower() != 'latn':
+            site_properties.visible_ids = True
+
+    # If we have a normalizer it is safe to disable the visible ids
+    if normalizer is not None:
+        site_properties.visible_ids = False
+
 def importContent(context):
     """Import base content into the Plone site."""
     portal = context.getSite()
     # Because the portal doesn't implement __contains__?
     existing_content = portal.keys()
+    target_language, is_combined_language, locale = _get_locales_info(portal)
     request = getattr(portal, 'REQUEST', None)
+
+    _set_language_settings(portal, is_combined_language)
+    _setup_calendar(locale)
+    _setup_visible_ids(target_language, locale)
 
     # TODO Content translations
 
