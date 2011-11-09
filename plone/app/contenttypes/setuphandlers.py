@@ -2,6 +2,7 @@
 from zope.component import getUtility, queryUtility, getMultiAdapter
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
+from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from Acquisition import aq_base, aq_inner
 from AccessControl import Unauthorized
@@ -23,6 +24,16 @@ def _publish(content):
         portal_workflow.doActionFor(content, 'publish')
         return True
     return False
+
+def _translate(name, target_language, default=u''):
+    """Simple function to tranlate a string."""
+    result = None
+    if target_language != 'en':
+        util = queryUtility(ITranslationDomain, 'plonefrontpage')
+        if util is not None:
+            result = util.translate(name, target_language=target_language,
+                                    default=default)
+    return result and result or default
 
 def addContentToContainer(container, object, checkConstraints=True):
     """Copy of plone.dexterity.util.addContentToContainer.
@@ -121,8 +132,9 @@ def importContent(context):
     # The front-page
     frontpage_id = 'front-page'
     if frontpage_id not in existing_content:
-        title = u"Welcome to Plone"
-        description = u"Congratulations! You have successfully installed Plone."
+        title = _translate(u'front-title', target_language, u"Welcome to Plone")
+        description = _translate(u'front-description', target_language,
+                                 u"Congratulations! You have successfully installed Plone.")
         content = createContent('Document', id=frontpage_id,
                                 title=title,
                                 description=description)
@@ -138,8 +150,9 @@ def importContent(context):
     # News topic
     news_id = 'news'
     if news_id not in existing_content:
-        title = 'News'
-        description = 'Site News'
+        title = _translate(u'news-title', target_language, u'News')
+        description = _translate(u'news-description', target_language,
+                                 u'Site News')
         allowed_types = ['News Item']
         container = createContent('Folder', id=news_id,
                                   title=title,
@@ -171,10 +184,11 @@ def importContent(context):
     # Events topic
     events_id = 'events'
     if events_id not in existing_content:
-        title = 'Events'
-        description = 'Site Events'
+        title = _translate(u'events-title', target_language, u'Events')
+        description = _translate(u'events-description', target_language,
+                                 u'Site Events')
         allowed_types = ['Event']
-        container = createContent('Folder', id=news_id,
+        container = createContent('Folder', id=events_id,
                                   title=title,
                                   description=description)
         container = addContentToContainer(portal, container)
@@ -206,8 +220,9 @@ def importContent(context):
     # configure Members folder
     members_id = 'Members'
     if members_id not in existing_content:
-        title = 'Users'
-        description = "Site Users"
+        title = _translate(u'members-title', target_language, u'Users')
+        description = _translate(u'members-description', target_language,
+                                 u"Site Users")
         container = createContent('Folder', id=members_id,
                                   title=title,
                                   description=description)
