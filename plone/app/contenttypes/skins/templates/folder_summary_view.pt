@@ -18,10 +18,11 @@
                      tal:define="item_object item/getObject;">
 
                     <a href="#"
-                       tal:condition="exists:item_object/image_thumb"
+                       tal:condition="exists:item_object/image"
                        tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url)">
-                        <img src="" alt=""
-                             tal:replace="structure python: path('nocall:item_object/tag')(scale='thumb', css_class='tileImage')" />
+                        <img tal:define="scale item_object/@@images"
+                             src="" alt=""
+                             tal:replace="structure python: scale.scale('image', scale='thumb').tag(css_class='tileImage')" />
                     </a>
 
                     <h2 class="tileHeadline"
