@@ -12,9 +12,9 @@
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
- <property name="default_view">view</property>
+ <property name="default_view">event_view</property>
  <property name="view_methods">
-  <element value="view"/>
+  <element value="event_view"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
@@ -33,7 +33,7 @@
       &lt;field name="text" type="plone.app.textfield.RichText"&gt;
         &lt;description /&gt;
         &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;text&lt;/title&gt;
+        &lt;title&gt;Text&lt;/title&gt;
       &lt;/field&gt;
     &lt;/schema&gt;
   &lt;/model&gt;</property>
