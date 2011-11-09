@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-from zope.component import queryUtility, getMultiAdapter
+from zope.component import getUtility, queryUtility, getMultiAdapter
 from zope.component.hooks import getSite
-from plone.dexterity.utils import (
-    addContentToContainer, createContentInContainer,)
+from zope.container.interfaces import INameChooser
+from Acquisition import aq_base, aq_inner
+from AccessControl import Unauthorized
+from plone.dexterity.utils import createContent
+from plone.dexterity.fti import IDexterityFTI
 from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
 
@@ -19,6 +22,34 @@ def _publish(content):
         return True
     return False
 
+def addContentToContainer(container, object, checkConstraints=True):
+    """Copy of plone.dexterity.util.addContentToContainer.
+    Modified to check the existing Id on the object before paving over it.
+    """
+    if not hasattr(aq_base(object), "portal_type"):
+        raise ValueError("object must have its portal_type set")
+
+    container = aq_inner(container)
+    if checkConstraints:
+        container_fti = container.getTypeInfo()
+
+        fti = getUtility(IDexterityFTI, name=object.portal_type)
+        if not fti.isConstructionAllowed(container):
+            raise Unauthorized("Cannot create %s" % object.portal_type)
+        
+        if container_fti is not None and not container_fti.allowType(object.portal_type):
+            raise ValueError("Disallowed subobject type: %s" % object.portal_type)
+
+    chooser = INameChooser(container)
+    if hasattr(object, 'id') and chooser.checkName(object.id, object):
+        name = object.id
+    else:
+        name = INameChooser(container).chooseName(None, object)
+        object.id = name
+
+    newName = container._setObject(name, object)
+    return container._getOb(newName)
+
 def importContent(context):
     """Import base content into the Plone site."""
     portal = context.getSite()
@@ -33,9 +64,10 @@ def importContent(context):
     if frontpage_id not in existing_content:
         title = u"Welcome to Plone"
         description = u"Congratulations! You have successfully installed Plone."
-        content = createContentInContainer(portal, 'Document', id=frontpage_id,
-                                           title=title,
-                                           description=description)
+        content = createContent('Document', id=frontpage_id,
+                                title=title,
+                                description=description)
+        content = addContentToContainer(portal, content)
         # TODO front-page text
         # TODO Show off presentation mode
         ##fp.setPresentation(True)
@@ -50,9 +82,10 @@ def importContent(context):
         title = 'News'
         description = 'Site News'
         allowed_types = ['News Item']
-        container = createContentInContainer(portal, 'Folder', id=news_id,
-                                             title=title,
-                                             description=description)
+        container = createContent('Folder', id=news_id,
+                                  title=title,
+                                  description=description)
+        container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
                             description=description)
@@ -82,9 +115,10 @@ def importContent(context):
         title = 'Events'
         description = 'Site Events'
         allowed_types = ['Event']
-        container = createContentInContainer(portal, 'Folder', id=news_id,
-                                             title=title,
-                                             description=description)
+        container = createContent('Folder', id=news_id,
+                                  title=title,
+                                  description=description)
+        container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
                             description=description)
@@ -115,9 +149,10 @@ def importContent(context):
     if members_id not in existing_content:
         title = 'Users'
         description = "Site Users"
-        container = createContentInContainer(portal, 'Folder', id=members_id,
-                                             title=title,
-                                             description=description)
+        container = createContent('Folder', id=members_id,
+                                  title=title,
+                                  description=description)
+        container = addContentToContainer(portal, container)
         container.setOrdering('unordered')
         container.reindexObject()
         _publish(container)
@@ -137,4 +172,3 @@ def importContent(context):
             assignable.setBlacklistStatus('context', True)
             assignable.setBlacklistStatus('group', True)
             assignable.setBlacklistStatus('content_type', True)
-
