@@ -1,0 +1,101 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US"
+      lang="en-US"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<metal:content-core fill-slot="content-core">
+<metal:main_macro define-macro="content-core"
+     tal:define="result python:here.atctListAlbum(images=1, folders=1, subimages=0, others=1);
+                 images result/images;
+                 albums result/folders;
+                 otherContents result/others;
+                 Batch python:modules['Products.CMFPlone'].Batch;
+                 b_start python:request.get('b_start', 0);
+                 kssClassesView context/@@kss_field_decorator_view;
+                 getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
+                 templateId template/getId;
+                 batch python:Batch(images, 12, int(b_start), orphan=1)">
+    
+    <div metal:define-macro="text-field-view"
+         id="parent-fieldname-text" class="stx"
+         tal:define="kss_class python:getKssClasses('text',
+                     templateId=templateId, macro='text-field-view');
+                     has_text exists:context/aq_explicit/getText;
+                     text python:has_text and here.getText() or ''"
+         tal:condition="text"
+         tal:attributes="class python:test(here.Format() in ('text/structured',
+                                               'text/x-rst', ), 'stx' + kss_class, 'plain' + kss_class)">
+        <div metal:define-slot="inside" tal:replace="structure text">The body</div>
+    </div>
+
+    <tal:albumsimages tal:condition="python:albums or images">
+        <tal:images tal:condition="batch" tal:repeat="image batch">
+            <div class="photoAlbumEntry">
+                        <a tal:define="id python:int(b_start)+int(repeat['image'].number()-1)"
+                           tal:attributes="href string:${image/absolute_url}/view;
+                                           title image/Description">
+                            <span class="photoAlbumEntryWrapper">
+                            <img src="" alt="" tal:replace="structure python:image.tag(scale='thumb', title=image.Description())" />
+                            </span>
+                    <span class="photoAlbumEntryTitle" tal:content="image/pretty_title_or_id">
+                       Title
+                    </span>
+                        </a>
+            </div>
+        </tal:images>
+
+        <div class="photoAlbum" tal:condition="albums">
+        <tal:albums tal:repeat="album albums">
+            <div class="photoAlbumEntry photoAlbumFolder"
+                 tal:define="image_brains_in_album python:album.atctListAlbum(subimages=1)['subimages'];
+                             number_of_images python:len(image_brains_in_album);
+                             random python:modules['random'];
+                             random_image python:number_of_images and random.choice(image_brains_in_album).getObject() or None">
+                        <a tal:attributes="href album/getURL;
+                                           title album/Description">
+                            <span class="photoAlbumEntryWrapper">
+                                <img src="" alt=""
+                                     tal:condition="number_of_images"
+                                     tal:replace="structure python:random_image.tag(scale='thumb', title=album.Description)" />
+                            </span>
+                            <span class="photoAlbumEntryTitle">
+                               <tal:title content="album/pretty_title_or_id">Title</tal:title>
+                            (<tal:number content="number_of_images" />)
+                            </span>
+                        </a>
+            </div>
+        </tal:albums>
+        </div>
+
+        <div class="visualClear"><!-- --></div>
+
+    </tal:albumsimages>
+
+    <p class="discreet"
+       i18n:domain="atcontenttypes"
+       i18n:translate="text_no_albums_uploaded"
+       tal:condition="python:not (albums or images)">
+        No albums or photos uploaded yet.
+    </p>
+
+    <div tal:condition="python:albums or images"
+         metal:use-macro="here/batch_macros/macros/navigation" />
+
+    <tal:listing condition="otherContents"
+                 define="folderContents otherContents">
+        <metal:listing metal:use-macro="here/folder_listing/macros/listing">
+            <metal:empty metal:fill-slot="no_items_in_listing"></metal:empty>
+        </metal:listing>
+
+    </tal:listing>
+
+    <metal:subtopics use-macro="here/atct_topic_view/macros/folderlisting_macro" />
+
+</metal:main_macro>
+</metal:content-core>
+
+</body>
+
+</html>
