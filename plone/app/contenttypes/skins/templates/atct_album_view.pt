@@ -33,21 +33,22 @@
     <tal:albumsimages tal:condition="python:albums or images">
         <tal:images tal:condition="batch" tal:repeat="image batch">
             <div class="photoAlbumEntry">
-                        <a tal:define="id python:int(b_start)+int(repeat['image'].number()-1)"
-                           tal:attributes="href string:${image/absolute_url}/view;
-                                           title image/Description">
-                            <span class="photoAlbumEntryWrapper">
-                            <img src="" alt="" tal:replace="structure python:image.tag(scale='thumb', title=image.Description())" />
-                            </span>
+                <a tal:define="id python:int(b_start)+int(repeat['image'].number()-1)"
+                   tal:attributes="href string:${image/absolute_url}/view;
+                                   title image/Description">
+                    <span class="photoAlbumEntryWrapper">
+                    <img src="" alt="" tal:replace="structure image/@@images/image/thumb" />
+                    </span>
                     <span class="photoAlbumEntryTitle" tal:content="image/pretty_title_or_id">
                        Title
                     </span>
-                        </a>
+                </a>
             </div>
         </tal:images>
 
         <div class="photoAlbum" tal:condition="albums">
         <tal:albums tal:repeat="album albums">
+
             <div class="photoAlbumEntry photoAlbumFolder"
                  tal:define="image_brains_in_album python:album.atctListAlbum(subimages=1)['subimages'];
                              number_of_images python:len(image_brains_in_album);
@@ -58,7 +59,7 @@
                             <span class="photoAlbumEntryWrapper">
                                 <img src="" alt=""
                                      tal:condition="number_of_images"
-                                     tal:replace="structure python:random_image.tag(scale='thumb', title=album.Description)" />
+                                     tal:replace="structure random_image/@@images/image/thumb" />
                             </span>
                             <span class="photoAlbumEntryTitle">
                                <tal:title content="album/pretty_title_or_id">Title</tal:title>
@@ -66,6 +67,8 @@
                             </span>
                         </a>
             </div>
+
+
         </tal:albums>
         </div>
 
