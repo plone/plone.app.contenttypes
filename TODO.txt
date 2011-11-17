@@ -1,0 +1,32 @@
+Todo
+====
+
+ [ ] Search indexes. Search for content in any of the custom fields does not work now.
+
+ [ ] Fix AddPloneSite form which selects which content-type framework to use.
+
+     1. Determine which framework is available within the form (radio selection) [Done]
+
+       * do not provide the option to select a framework unless both are available
+
+       * only allow selection of a content-type framwork from within the advanced form view
+
+       * By default use the Archetypes content-types framework
+
+     2. Fix the default content generation setupstep to work with both Archetypes and Dexterity.
+
+ [ ] Migration steps for base content-types
+
+
+Postponed
+=========
+
+ [ ] Migration steps for customized content-types? Is this possible?
+
+ [ ] Use the new plone.app.event type (PLIP 10886: https://dev.plone.org/ticket/10886)
+
+ [ ] Documentation. What kind of documentation do we need?
+
+ [ ] Write PLIP to factor out ATContentTypes dependency from 
+     Products.CMFPlone: https://dev.plone.org/ticket/12344
+  
