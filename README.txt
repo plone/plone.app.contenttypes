@@ -19,6 +19,11 @@ It provides neither marker-interfaces nor python-classes for the content-types
 because this ensures that they are editable through-the-web. The views are 
 equally boring and only use skin-templates based on the original templates.  
 
+.. note::
+
+  For background information see the `initial discussion on the Plone developer 
+  mailinglist <http://plone.293351.n2.nabble.com/atcontenttypes-replacement-with-dexterity-td6751909.html>`_
+  and the `Plone-Conference 2011 sprint documentation <http://piratepad.net/OkuEys2lgS>`_.
   
 Credits::
 
@@ -29,7 +34,5 @@ Credits::
 
 Thanks to::
 
-  * The organizers of the Plone-Conference 2011 in San Francisco for a great conference!  
-
-For more documentation see http://piratepad.net/OkuEys2lgS for now.
- 
+  * The organizers of the Plone-Conference 2011 in San Francisco for a great 
+    conference!  
