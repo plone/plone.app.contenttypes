@@ -11,13 +11,13 @@ replacement for Products.ATContenttypes.
   the future. Deco is the new page composition tool that will probably become
   part of Plone 5. 
 
-plone.app.contenttypes provides some default content-types that are extendable 
-through-the-web. They aim to mimick the old default-types - the only change is that 
-they are based on dexterity. 
+plone.app.contenttypes provides some default content-types that are extendable
+through-the-web. They aim to mimick the old default-types - the only change is 
+that they are based on dexterity. 
 
-It provides neither marker-interfaces nor python-classes for the content-types because 
-this ensures that they are editable through-the-web. The views are equally boring and 
-only use skin-templates based on the original templates.  
+It provides neither marker-interfaces nor python-classes for the content-types 
+because this ensures that they are editable through-the-web. The views are 
+equally boring and only use skin-templates based on the original templates.  
 
   
 Credits::
@@ -31,4 +31,5 @@ Thanks to::
 
   * The organizers of the Plone-Conference 2011 in San Francisco for a great conference!  
 
-For more documentation see http://piratepad.net/OkuEys2lgS for now. 
+For more documentation see http://piratepad.net/OkuEys2lgS for now.
+ 
