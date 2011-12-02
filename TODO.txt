@@ -17,6 +17,8 @@ Todo
 
  [ ] Migration steps for base content-types
 
+ [ ] (Issue) The Discussion Item (Comment) is installed even when "No base content-types" is selected in the Plone addform.
+
 
 Postponed
 =========
