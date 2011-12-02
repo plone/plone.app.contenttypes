@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from zope.component import getUtility, queryUtility, getMultiAdapter
+from zope.component import (
+    getUtility, queryUtility,
+    getMultiAdapter, queryMultiAdapter,
+    )
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
@@ -13,6 +16,7 @@ from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import bodyfinder
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.Portal import member_indexhtml
 
@@ -75,6 +79,7 @@ def _get_locales_info(portal):
     return locale.id.language, use_combined, locale
 
 def _set_language_settings(portal, uses_combined_lanagage):
+    """Set the portals language settings from the given lanage codes."""
     language = portal.Language()
     portal_languages = getToolByName(portal, 'portal_languages')
     portal_languages.manage_setLanguageSettings(
@@ -85,6 +90,7 @@ def _set_language_settings(portal, uses_combined_lanagage):
 
 # ??? Why do we only do this calendar setup when content is created?
 def _setup_calendar(locale):
+    """Set the calendar's date system to reflect the default locale"""
     gregorian_calendar = locale.dates.calendars.get(u'gregorian', None)
     portal_calendar = getToolByName(getSite(), "portal_calendar", None)
     if portal_calendar is not None:
@@ -101,7 +107,7 @@ def _setup_visible_ids(target_language, locale):
     portal_properties = getToolByName(getSite(), 'portal_properties')
     site_properties = portal_properties.site_properties
 
-    # See if we have an url normalizer
+    # See if we have a URL normalizer
     normalizer = queryUtility(IURLNormalizer, name=target_language)
     if normalizer is None:
         normalizer = queryUtility(IURLNormalizer, name=target_language)
@@ -123,6 +129,7 @@ def importContent(context):
     target_language, is_combined_language, locale = _get_locales_info(portal)
     request = getattr(portal, 'REQUEST', None)
 
+    # Set up Language specific information
     _set_language_settings(portal, is_combined_language)
     _setup_calendar(locale)
     _setup_visible_ids(target_language, locale)
@@ -137,10 +144,12 @@ def importContent(context):
                                  u"Congratulations! You have successfully installed Plone.")
         content = createContent('Document', id=frontpage_id,
                                 title=title,
-                                description=description)
+                                description=description,
+                                )
         content = addContentToContainer(portal, content)
+
         # TODO front-page text
-        # TODO Show off presentation mode
+        # TODO Enable presentation mode
         ##fp.setPresentation(True)
 
         portal.setDefaultPage('front-page')
