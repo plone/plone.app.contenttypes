@@ -144,3 +144,18 @@ class ContentProfileTestCase(unittest.TestCase):
         #      to a container is currently not implemented anywhere.
         self.fail("The implementation for local allowed types on containers "
                   "is missing.")
+
+    def test_news_aggregator_settings(self):
+        # Has the news aggregator (Collection) been set up?
+        query = [dict(i=u'portal_type',
+                      o=u'plone.app.querystring.operation.selection.is',
+                      v=[u'News Item']),
+                 dict(i=u'review_state',
+                      o=u'plone.app.querystring.operation.selection.is',
+                      v=[u'published']),
+                 ]
+        collection = self.portal['news']['aggregator']
+        self.assertEqual(collection.sort_on, u'effective')
+        self.assertEqual(collection.reverse_sort, True)
+        self.assertItemsEqual(collection.query, query)
+        self.assertEqual(collection.getLayout(), 'summary_view')

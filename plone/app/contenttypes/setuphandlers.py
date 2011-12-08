@@ -172,22 +172,33 @@ def importContent(context):
                             id='aggregator', title=title,
                             description=description)
         aggregator = container['aggregator']
-        container.setOrdering('unordered')
+
+        # Set the content-types that can be added to this container.
         # FIXME The following 3 lines
         ##container.setConstrainTypesMode(constraintypes.ENABLED)
         ##container.setLocallyAllowedTypes(allowed_types)
         ##container.setImmediatelyAddableTypes(allowed_types)
+
+        container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
         _publish(container)
 
-        # TODO Set the Collection criteria.
-        # type_crit = topic.addCriterion('Type', 'ATPortalTypeCriterion')
-        # type_crit.setValue('News Item')
-        # topic.addCriterion('created', 'ATSortCriterion')
-        # state_crit = topic.addCriterion('review_state', 'ATSimpleStringCriterion')
-        # state_crit.setValue('published')
-        # topic.setSortCriterion('effective', True)
-        # topic.setLayout('folder_summary_view')
+        # Set the Collection criteria.
+        #: Sort on the Effective date
+        aggregator.sort_on = u'effective'
+        aggregator.reverse_sort = True
+        #: Query by Type and Review State
+        aggregator.query = [
+            {'i': u'portal_type',
+             'o': u'plone.app.querystring.operation.selection.is',
+             'v': [u'News Item'],
+             },
+            {'i': u'review_state',
+             'o': u'plone.app.querystring.operation.selection.is',
+             'v': [u'published'],
+             },
+            ]
+        aggregator.setLayout('summary_view')
 
         _publish(aggregator)
 
@@ -206,14 +217,18 @@ def importContent(context):
                             id='aggregator', title=title,
                             description=description)
         aggregator = container['aggregator']
-        container.setOrdering('unordered')
+
+        # Set the content-types that can be added to this container.
         # FIXME The following 3 lines
         ##container.setConstrainTypesMode(constraintypes.ENABLED)
         ##container.setLocallyAllowedTypes(allowed_types)
         ##container.setImmediatelyAddableTypes(allowed_types)
+
+        container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
         _publish(container)
 
+        # Set up the collection
         # type_crit = topic.addCriterion('Type', 'ATPortalTypeCriterion')
         # type_crit.setValue('Event')
         # topic.addCriterion('start', 'ATSortCriterion')
