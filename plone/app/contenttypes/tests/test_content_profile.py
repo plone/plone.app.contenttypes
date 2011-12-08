@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
+from zope.component import getUtility, getMultiAdapter
 from Products.CMFCore.utils import getToolByName
 from Products.PythonScripts.PythonScript import PythonScript
+from plone.portlets.interfaces import (
+    ILocalPortletAssignmentManager, IPortletManager,)
 
 from plone.app.testing import PloneSandboxLayer, IntegrationTesting
 from plone.app.contenttypes.testing import \
@@ -73,3 +76,13 @@ class ContentProfileTestCase(unittest.TestCase):
         # It's outside the scope of this test to verify the contents of
         # the script are correct. Simply checking for existence should
         # be enough.
+
+    def test_Members_portlets(self):
+        # Have the right column portlet manager setting been added?
+        members = self.portal['Members']
+        manager = getUtility(IPortletManager, name='plone.rightcolumn')
+        assignable_manager = getMultiAdapter((members, manager),
+                                             ILocalPortletAssignmentManager)
+        self.assertTrue(assignable_manager.getBlacklistStatus('context'))
+        self.assertTrue(assignable_manager.getBlacklistStatus('group'))
+        self.assertTrue(assignable_manager.getBlacklistStatus('content_type'))
