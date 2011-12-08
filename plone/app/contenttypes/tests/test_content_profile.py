@@ -136,3 +136,11 @@ class ContentProfileTestCase(unittest.TestCase):
         news = self.portal['news']
         current_state = self.portal_workflow.getInfoFor(news, 'review_state')
         self.assertEqual(current_state, 'published')
+
+    def test_news_allowable_types(self):
+        # Have we set the locally allowable types on the container object?
+
+        # NOTE Setting constrains locally on what content types can be added
+        #      to a container is currently not implemented anywhere.
+        self.fail("The implementation for local allowed types on containers "
+                  "is missing.")

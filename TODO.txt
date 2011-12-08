@@ -21,6 +21,8 @@ Todo
 
  [ ] (Issue) The Document (Page) content type is missing presentation mode.
 
+ [ ] (Issue) The Folder content type is missing functionality to set locally addable types.
+
 Postponed
 =========
 
