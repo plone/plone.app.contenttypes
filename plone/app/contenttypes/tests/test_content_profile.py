@@ -115,3 +115,24 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(events, 'review_state')
         self.assertEqual(current_state, 'published')
 
+    # ############## #
+    #   news tests   #
+    # ############## #
+
+    def test_news_was_created(self):
+        # Was the object created?
+        news = self.portal['news']
+        self.assertEqual(news.portal_type, 'Folder')
+        # Was the contained collection created?
+        collection = news['aggregator']
+        self.assertEqual(collection.portal_type, 'Collection')
+
+    def test_news_default_page(self):
+        # Has the object been set on the container as the default page?
+        self.assertEqual(self.portal['news'].default_page, 'aggregator')
+
+    def test_news_is_published(self):
+        # Has the content object been published?
+        news = self.portal['news']
+        current_state = self.portal_workflow.getInfoFor(news, 'review_state')
+        self.assertEqual(current_state, 'published')
