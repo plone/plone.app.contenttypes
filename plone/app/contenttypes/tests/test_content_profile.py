@@ -32,6 +32,7 @@ class ContentProfileTestCase(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer['portal']
+        self.portal_workflow = getToolByName(self.portal, 'portal_workflow')
 
     # #################### #
     #   front-page tests   #
@@ -56,8 +57,7 @@ class ContentProfileTestCase(unittest.TestCase):
     def test_frontpage_is_published(self):
         # Has the content object been published?
         front_page = self.portal['front-page']
-        portal_workflow = getToolByName(self.portal, 'portal_workflow')
-        current_state = portal_workflow.getInfoFor(front_page, 'review_state')
+        current_state = self.portal_workflow.getInfoFor(front_page, 'review_state')
         self.assertEqual(current_state, 'published')
 
     # ################# #
@@ -86,3 +86,9 @@ class ContentProfileTestCase(unittest.TestCase):
         self.assertTrue(assignable_manager.getBlacklistStatus('context'))
         self.assertTrue(assignable_manager.getBlacklistStatus('group'))
         self.assertTrue(assignable_manager.getBlacklistStatus('content_type'))
+
+    def test_Members_is_published(self):
+        # Has the content object been published?
+        obj = self.portal['Members']
+        current_state = self.portal_workflow.getInfoFor(obj, 'review_state')
+        self.assertEqual(current_state, 'published')
