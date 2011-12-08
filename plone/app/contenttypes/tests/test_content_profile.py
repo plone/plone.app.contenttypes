@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
 from Products.CMFCore.utils import getToolByName
+from Products.PythonScripts.PythonScript import PythonScript
+
 from plone.app.testing import PloneSandboxLayer, IntegrationTesting
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_FIXTURE
@@ -54,3 +56,20 @@ class ContentProfileTestCase(unittest.TestCase):
         portal_workflow = getToolByName(self.portal, 'portal_workflow')
         current_state = portal_workflow.getInfoFor(front_page, 'review_state')
         self.assertEqual(current_state, 'published')
+
+    # ################# #
+    #   Members tests   #
+    # ################# #
+
+    def test_Members_was_created(self):
+        # Was the object created?
+        obj = self.portal['Members']
+        self.assertEqual(obj.portal_type, 'Folder')
+
+    def test_Members__index_html(self):
+        # Was the index_html script created?
+        obj = self.portal['Members']['index_html']
+        self.assertTrue(isinstance(obj, PythonScript))
+        # It's outside the scope of this test to verify the contents of
+        # the script are correct. Simply checking for existence should
+        # be enough.

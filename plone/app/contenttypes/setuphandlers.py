@@ -15,6 +15,7 @@ from plone.dexterity.fti import IDexterityFTI
 from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
 
+from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import bodyfinder
 from Products.CMFPlone.utils import _createObjectByType
@@ -242,8 +243,7 @@ def importContent(context):
 
         # add index_html to Members area
         if 'index_html' not in container:
-            addPy = container.manage_addProduct['PythonScripts'].manage_addPythonScript
-            addPy('index_html')
+            container._setObject('index_html', PythonScript('index_html'))
             index_html = getattr(container, 'index_html')
             index_html.write(member_indexhtml)
             index_html.ZPythonScript_setTitle('User Search')
