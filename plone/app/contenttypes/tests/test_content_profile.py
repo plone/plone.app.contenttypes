@@ -41,6 +41,13 @@ class ContentProfileTestCase(unittest.TestCase):
         # Has the object been set on the container as the default page?
         self.assertEqual(self.portal.default_page, 'front-page')
 
+    def test_frontpage_is_in_presentation_mode(self):
+        # Has presentation mode been set?
+        
+        # NOTE Presentation mode is built into ATDocument and things like
+        #      plone.app.layout simply take advantage of its capabilities.
+        self.fail("The implementation for presentation mode is missing.")
+
     def test_frontpage_is_published(self):
         # Has the content object been published?
         front_page = self.portal['front-page']

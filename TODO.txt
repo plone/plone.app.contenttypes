@@ -19,6 +19,7 @@ Todo
 
  [ ] (Issue) The Discussion Item (Comment) is installed even when "No base content-types" is selected in the Plone addform.
 
+ [ ] (Issue) The Document (Page) content type is missing presentation mode.
 
 Postponed
 =========
