@@ -18,7 +18,9 @@
                      tal:define="item_object item/getObject;">
 
                     <a href="#"
-                       tal:condition="exists:item_object/image"
+                       tal:define="aq_base nocall:modules/Acquisition/aq_base;
+                                   real_object python:aq_base(item_object)"
+                       tal:condition="python:getattr(real_object, 'image', None)"
                        tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url)">
                         <img tal:define="images item_object/@@images;
                                          scale python: images.scale('image', scale='thumb')"
