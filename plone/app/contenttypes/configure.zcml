@@ -10,7 +10,7 @@
   
   <gs:registerProfile
       name="default"
-      title="plone.app.contenttypes"
+      title="plone.app.contenttypes default types"
       directory="profiles/default"
       description="Base Dexterity content-types used as an alternative to Archetypes default-content-types"
       provides="Products.GenericSetup.interfaces.EXTENSION"
@@ -19,7 +19,7 @@
   <!-- plone.app.contenttypes alternatives to profile-Products.CMFPlone:plone-content -->
   <gs:registerProfile
       name="plone-content"
-      title="plone.app.contenttypes"
+      title="plone.app.contenttypes example content"
       directory="profiles/content"
       description="Same as Products.CMFPlone:plone-content except for plone.app.contenttypes content-types"
       provides="Products.GenericSetup.interfaces.EXTENSION"
