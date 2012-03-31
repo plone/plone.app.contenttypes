@@ -27,55 +27,8 @@
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
  </property>
  <property name="schema"></property>
- <property
-    name="model_source">&lt;model xmlns="http://namespaces.plone.org/supermodel/schema"&gt;
-    &lt;schema&gt;
-      &lt;field name="location" type="zope.schema.TextLine"&gt;
-        &lt;description /&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Event Location&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="start_date" type="zope.schema.Datetime"&gt;
-        &lt;description /&gt;
-        &lt;title&gt;Event Starts&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="end_date" type="zope.schema.Datetime"&gt;
-        &lt;description /&gt;
-        &lt;title&gt;Event Ends&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="text" type="plone.app.textfield.RichText"&gt;
-        &lt;description /&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Text&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="attendees" type="zope.schema.Text"&gt;
-        &lt;description /&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Attendees&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="event_url" type="zope.schema.TextLine"&gt;
-        &lt;description&gt;Web address with more info about the event. Add http:// for external links.&lt;/description&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Event URL&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="contact_name" type="zope.schema.TextLine"&gt;
-        &lt;description /&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Contact Name&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="contact_email" type="zope.schema.TextLine"&gt;
-        &lt;description /&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Contact E-mail&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name="contact_phone" type="zope.schema.TextLine"&gt;
-        &lt;description /&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Contact Phone&lt;/title&gt;
-      &lt;/field&gt;
-    &lt;/schema&gt;
-  &lt;/model&gt;</property>
- <property name="model_file"></property>
+ <property name="model_source"></property>
+ <property name="model_file">plone.app.contenttypes:event.xml</property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>

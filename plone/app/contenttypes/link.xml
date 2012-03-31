@@ -1,0 +1,9 @@
+<model xmlns="http://namespaces.plone.org/supermodel/schema">
+    <schema>
+      <field name="remoteUrl" type="zope.schema.TextLine">
+        <default>http://</default>
+        <description />
+        <title>URL</title>
+      </field>
+    </schema>
+</model>

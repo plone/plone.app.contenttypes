@@ -1,0 +1,47 @@
+<model xmlns="http://namespaces.plone.org/supermodel/schema">
+    <schema>
+      <field name="location" type="zope.schema.TextLine">
+        <description />
+        <required>False</required>
+        <title>Event Location</title>
+      </field>
+      <field name="start_date" type="zope.schema.Datetime">
+        <description />
+        <title>Event Starts</title>
+      </field>
+      <field name="end_date" type="zope.schema.Datetime">
+        <description />
+        <title>Event Ends</title>
+      </field>
+      <field name="text" type="plone.app.textfield.RichText">
+        <description />
+        <required>False</required>
+        <title>Text</title>
+      </field>
+      <field name="attendees" type="zope.schema.Text">
+        <description />
+        <required>False</required>
+        <title>Attendees</title>
+      </field>
+      <field name="event_url" type="zope.schema.TextLine">
+        <description>Web address with more info about the event. Add http:// for external links.</description>
+        <required>False</required>
+        <title>Event URL</title>
+      </field>
+      <field name="contact_name" type="zope.schema.TextLine">
+        <description />
+        <required>False</required>
+        <title>Contact Name</title>
+      </field>
+      <field name="contact_email" type="zope.schema.TextLine">
+        <description />
+        <required>False</required>
+        <title>Contact E-mail</title>
+      </field>
+      <field name="contact_phone" type="zope.schema.TextLine">
+        <description />
+        <required>False</required>
+        <title>Contact Phone</title>
+      </field>
+    </schema>
+</model>

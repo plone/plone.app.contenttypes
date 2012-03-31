@@ -1,0 +1,19 @@
+<model xmlns="http://namespaces.plone.org/supermodel/schema">
+  <schema>
+    <field name="text" type="plone.app.textfield.RichText">
+      <description />
+      <required>False</required>
+      <title>Text</title>
+    </field>
+    <field name="image" type="plone.namedfile.field.NamedBlobImage">
+      <description>Will be shown in the news listing, and in the news item itself. Image will be scaled to a sensible size.</description>
+      <required>False</required>
+      <title>Image</title>
+    </field>
+    <field name="image_caption" type="zope.schema.TextLine">
+      <description />
+      <required>False</required>
+      <title>Image Caption</title>
+    </field>
+  </schema>
+</model>

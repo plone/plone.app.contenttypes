@@ -1,0 +1,20 @@
+<model xmlns="http://namespaces.plone.org/supermodel/schema"
+       xmlns:marshal="http://namespaces.plone.org/supermodel/marshal">
+  <schema>
+    <field name="title" type="zope.schema.TextLine">
+      <description />
+      <required>False</required>
+      <title>Title</title>
+    </field>
+    <field name="description" type="zope.schema.Text">
+      <description />
+      <required>False</required>
+      <title>Description</title>
+    </field>
+    <field name="file" type="plone.namedfile.field.NamedBlobFile" 
+        marshal:primary="true">
+      <description />
+      <title>file</title>
+    </field>
+  </schema>
+</model>

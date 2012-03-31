@@ -24,17 +24,8 @@
   <element value="plone.app.content.interfaces.INameFromTitle"/>
  </property>
  <property name="schema"></property>
- <property
-    name="model_source">&lt;model xmlns="http://namespaces.plone.org/supermodel/schema"&gt;
-    &lt;schema&gt;
-      &lt;field name="remoteUrl" type="zope.schema.TextLine"&gt;
-        &lt;default&gt;http://&lt;/default&gt;
-        &lt;description /&gt;
-        &lt;title&gt;URL&lt;/title&gt;
-      &lt;/field&gt;
-    &lt;/schema&gt;
-  &lt;/model&gt;</property>
- <property name="model_file"></property>
+ <property name="model_source"></property>
+ <property name="model_file">plone.app.contenttypes:link.xml</property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>
