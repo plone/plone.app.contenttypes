@@ -4,6 +4,7 @@
            xmlns:i18n="http://namespaces.zope.org/i18n"
            xmlns:gs="http://namespaces.zope.org/genericsetup"
            xmlns:cmf="http://namespaces.zope.org/cmf"
+           xmlns:plone="http://namespaces.plone.org/plone"
            i18n_domain="plone.app.contenttypes">
 
   <includeDependencies package="." />
@@ -30,5 +31,14 @@
       directory="skins"
       recursive="True"
       />
+
+  <plone:behavior
+        title="Start and End indexing behavior"
+        description="Enables the start and end indexers for a content type"
+        provides="plone.app.contenttypes.interfaces.IEvent"
+        />
+
+
+  <include file="indexers.zcml" />      
 
 </configure>

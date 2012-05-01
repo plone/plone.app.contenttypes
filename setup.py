@@ -25,6 +25,7 @@ setup(name='plone.app.contenttypes',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'collective.dexteritytextindexer',
           'Products.CMFPlone',
           'plone.app.collection',
           'plone.app.dexterity',

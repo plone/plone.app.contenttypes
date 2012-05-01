@@ -1,6 +1,7 @@
-<model xmlns="http://namespaces.plone.org/supermodel/schema">
+<model xmlns="http://namespaces.plone.org/supermodel/schema"
+       xmlns:indexer="http://namespaces.plone.org/supermodel/indexer">
     <schema>
-      <field name="location" type="zope.schema.TextLine">
+      <field name="location" type="zope.schema.TextLine" indexer:searchable="true">
         <description />
         <required>False</required>
         <title>Event Location</title>
@@ -13,12 +14,12 @@
         <description />
         <title>Event Ends</title>
       </field>
-      <field name="text" type="plone.app.textfield.RichText">
+      <field name="text" type="plone.app.textfield.RichText" indexer:searchable="true">
         <description />
         <required>False</required>
         <title>Text</title>
       </field>
-      <field name="attendees" type="zope.schema.Text">
+      <field name="attendees" type="zope.schema.Text" indexer:searchable="true">
         <description />
         <required>False</required>
         <title>Attendees</title>
@@ -28,7 +29,7 @@
         <required>False</required>
         <title>Event URL</title>
       </field>
-      <field name="contact_name" type="zope.schema.TextLine">
+      <field name="contact_name" type="zope.schema.TextLine" indexer:searchable="true">
         <description />
         <required>False</required>
         <title>Contact Name</title>

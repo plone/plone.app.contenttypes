@@ -1,6 +1,7 @@
-<model xmlns="http://namespaces.plone.org/supermodel/schema">
+<model xmlns="http://namespaces.plone.org/supermodel/schema"
+       xmlns:indexer="http://namespaces.plone.org/supermodel/indexer">
   <schema>
-    <field name="text" type="plone.app.textfield.RichText">
+    <field name="text" type="plone.app.textfield.RichText" indexer:searchable="true">
       <description />
       <required>False</required>
       <title>Text</title>
@@ -10,7 +11,7 @@
       <required>False</required>
       <title>Image</title>
     </field>
-    <field name="image_caption" type="zope.schema.TextLine">
+    <field name="image_caption" type="zope.schema.TextLine" indexer:searchable="true">
       <description />
       <required>False</required>
       <title>Image Caption</title>
