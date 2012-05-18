@@ -29,7 +29,6 @@ setup(name='plone.app.contenttypes',
           'Products.CMFPlone',
           'plone.app.collection',
           'plone.app.dexterity',
-          'plone.app.referenceablebehavior',
           'plone.app.relationfield',
           'plone.namedfile [blobs]',
           # -*- Extra requirements: -*-

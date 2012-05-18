@@ -25,7 +25,6 @@
   <element value="plone.app.content.interfaces.INameFromTitle"/>
   <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
   <element value="collective.dexteritytextindexer.behavior.IDexterityTextIndexer" />
-  <element value="plone.app.referenceablebehavior.referenceable.IReferenceable"/>
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
  </property>
  <property name="schema"></property>
