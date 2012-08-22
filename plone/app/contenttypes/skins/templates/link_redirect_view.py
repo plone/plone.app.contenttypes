@@ -26,7 +26,19 @@ if redirect_links and not can_edit:
         context_state = context.restrictedTraverse('@@plone_context_state')
         return context.REQUEST.RESPONSE.redirect(context_state.canonical_object_url()  + '/' + context.remoteUrl)
     else:
-        return context.REQUEST.RESPONSE.redirect(context.remoteUrl)
+        if context.remoteUrl.contains("${navigation_root_url}"):
+            portal_state = getMultiAdapter((context, self.request), 
+                name=u'plone_portal_state')
+            navigation_root_url = portal_state.navigation_root_url()
+            url = context.remoteUrl.replace("${navigation_root_url}", portal_url)
+        elif context.remoteUrl.contains("${portal_url}"):
+            portal_state = getMultiAdapter((context, self.request), 
+                name=u'plone_portal_state')
+            portal_url = portal_state.portal_url()
+            url = context.remoteUrl.replace("${portal_url}", portal_url)
+        else:
+            url = context.remoteUrl
+        return context.REQUEST.RESPONSE.redirect(url)
 else:
     # link_view.pt is a template in the plone_content skin layer
     return context.link_view()
