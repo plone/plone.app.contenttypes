@@ -54,7 +54,7 @@ def addContentToContainer(container, object, checkConstraints=True):
         fti = getUtility(IDexterityFTI, name=object.portal_type)
         if not fti.isConstructionAllowed(container):
             raise Unauthorized("Cannot create %s" % object.portal_type)
-        
+
         if container_fti is not None and not container_fti.allowType(object.portal_type):
             raise ValueError("Disallowed subobject type: %s" % object.portal_type)
 
