@@ -72,12 +72,12 @@ def _get_locales_info(portal):
     language = portal.Language()
     parts = (language.split('-') + [None, None])[:3]
     locale = locales.getLocale(*parts)
+
     # If we get a territory, we enable the combined language codes
-    use_combined = False
     if locale.id.territory:
-        use_combined = True
-        target_language += '_' + locale.id.territory
-    return locale.id.language, use_combined, locale
+        return locale.id.language +'_'+ locale.id.territory, True, locale
+    
+    return locale.id.language, False, locale
 
 def _set_language_settings(portal, uses_combined_lanagage):
     """Set the portals language settings from the given lanage codes."""
