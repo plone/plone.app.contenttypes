@@ -1,48 +1,50 @@
 <model xmlns="http://namespaces.plone.org/supermodel/schema"
-       xmlns:indexer="http://namespaces.plone.org/supermodel/indexer">
+       xmlns:indexer="http://namespaces.plone.org/supermodel/indexer"
+       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+       i18n:domain="plone">
     <schema>
       <field name="location" type="zope.schema.TextLine" indexer:searchable="true">
         <description />
         <required>False</required>
-        <title>Event Location</title>
+        <title i18n:translate="label_event_location">Event Location</title>
       </field>
       <field name="start_date" type="zope.schema.Datetime">
         <description />
-        <title>Event Starts</title>
+        <title i18n:translate="label_event_start">Event Starts</title>
       </field>
       <field name="end_date" type="zope.schema.Datetime">
         <description />
-        <title>Event Ends</title>
+        <title i18n:translate="label_event_end">Event Ends</title>
       </field>
       <field name="text" type="plone.app.textfield.RichText" indexer:searchable="true">
         <description />
         <required>False</required>
-        <title>Text</title>
+        <title i18n:translate="">Text</title>
       </field>
       <field name="attendees" type="zope.schema.Text" indexer:searchable="true">
         <description />
         <required>False</required>
-        <title>Attendees</title>
+        <title i18n:translate="label_event_attendees">Attendees</title>
       </field>
       <field name="event_url" type="zope.schema.TextLine">
-        <description>Web address with more info about the event. Add http:// for external links.</description>
+        <description i18n:translate="help_url">Web address with more info about the event. Add http:// for external links.</description>
         <required>False</required>
-        <title>Event URL</title>
+        <title i18n:translate="event_more_information">Event URL</title>
       </field>
       <field name="contact_name" type="zope.schema.TextLine" indexer:searchable="true">
         <description />
         <required>False</required>
-        <title>Contact Name</title>
+        <title i18n:translate="label_contact_name">Contact Name</title>
       </field>
       <field name="contact_email" type="zope.schema.TextLine">
         <description />
         <required>False</required>
-        <title>Contact E-mail</title>
+        <title i18n:translate="label_contact_email">Contact E-mail</title>
       </field>
       <field name="contact_phone" type="zope.schema.TextLine">
         <description />
         <required>False</required>
-        <title>Contact Phone</title>
+        <title i18n:translate="label_contact_phone">Contact Phone</title>
       </field>
     </schema>
 </model>
