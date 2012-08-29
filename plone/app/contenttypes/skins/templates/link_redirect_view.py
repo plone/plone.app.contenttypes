@@ -13,6 +13,8 @@ Redirect to the Link target URL, if and only if:
 """
 
 from Products.CMFCore.utils import getToolByName
+from zope.component import getMultiAdapter
+
 ptool = getToolByName(context, 'portal_properties')
 mtool = getToolByName(context, 'portal_membership')
 
