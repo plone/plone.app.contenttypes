@@ -10,7 +10,7 @@
 
     <metal:header fill-slot="header">
         <dl class="portalMessage info"
-            tal:define="redirect_links context/portal_properties/site_properties/redirect_links|nothing"
+            tal:define="redirect_links context/portal_properties/site_properties/redirect_links|nothing;"
             tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
             <dt i18n:translate="">Info</dt>
             <dd i18n:translate="message_permissions_blocking_link_redirect">
@@ -22,9 +22,11 @@
 
     <metal:content-core fill-slot="content-core">
         <metal:block define-macro="content-core">
-        <p>
+        <p tal:define="portal_url context/@@plone_portal_state/portal_url;
+                       navigation_root_url context/@@plone_portal_state/navigation_root_url;
+                       url python:context.remoteUrl.replace('${navigation_root_url}', navigation_root_url).replace('${portal_url}', portal_url)">
             <span i18n:translate="link_address">The link address is:</span>
-            <a href="#" tal:attributes="href context/remoteUrl"
+            <a href="#" tal:attributes="href url"
                         tal:content="context/remoteUrl">remote url</a>
         </p>
         </metal:block>
