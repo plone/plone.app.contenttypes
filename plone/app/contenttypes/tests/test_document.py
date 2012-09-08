@@ -19,13 +19,12 @@ class DocumentTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])        
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
         fti = queryUtility(IDexterityFTI,
                            name='Document')
         schema = fti.lookupSchema()
-         
         self.assertEquals(schema.__module__,
                           'plone.dexterity.schema.generated')
         self.assertEquals(schema.__name__,
@@ -34,7 +33,7 @@ class DocumentTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='Document')
-        
+
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
@@ -42,7 +41,7 @@ class DocumentTest(unittest.TestCase):
                            name='Document')
         factory = fti.factory
         document = createObject(factory)
-        
+
         self.assertEquals(str(type(document)),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -50,7 +49,7 @@ class DocumentTest(unittest.TestCase):
         self.portal.invokeFactory('Document',
                                   'document')
         document = self.portal['document']
-        
+
         self.assertEquals(str(type(aq_base(document))),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -58,7 +57,7 @@ class DocumentTest(unittest.TestCase):
         self.portal.invokeFactory('Document', 'document')
         document = self.portal['document']
         self.request.set('URL', document.absolute_url())
-        self.request.set('ACTUAL_URL', document.absolute_url())        
+        self.request.set('ACTUAL_URL', document.absolute_url())
         view = document.restrictedTraverse('@@view')
 
         self.failUnless(view())
