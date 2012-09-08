@@ -13,6 +13,7 @@ Redirect to the Link target URL, if and only if:
 """
 
 from Products.CMFCore.utils import getToolByName
+
 ptool = getToolByName(context, 'portal_properties')
 mtool = getToolByName(context, 'portal_membership')
 
@@ -26,14 +27,11 @@ if redirect_links and not can_edit:
         context_state = context.restrictedTraverse('@@plone_context_state')
         return context.REQUEST.RESPONSE.redirect(context_state.canonical_object_url()  + '/' + context.remoteUrl)
     else:
+        portal_state = context.restrictedTraverse("@@plone_portal_state")
         if "${navigation_root_url}" in context.remoteUrl:
-            portal_state = getMultiAdapter((context, self.request), 
-                name=u'plone_portal_state')
             navigation_root_url = portal_state.navigation_root_url()
-            url = context.remoteUrl.replace("${navigation_root_url}", portal_url)
+            url = context.remoteUrl.replace("${navigation_root_url}", navigation_root_url)
         elif "${portal_url}" in context.remoteUrl:
-            portal_state = getMultiAdapter((context, self.request), 
-                name=u'plone_portal_state')
             portal_url = portal_state.portal_url()
             url = context.remoteUrl.replace("${portal_url}", portal_url)
         else:
