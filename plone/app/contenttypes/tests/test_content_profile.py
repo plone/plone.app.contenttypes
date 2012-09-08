@@ -49,7 +49,7 @@ class ContentProfileTestCase(unittest.TestCase):
 
     def test_frontpage_is_in_presentation_mode(self):
         # Has presentation mode been set?
-        
+
         # NOTE Presentation mode is built into ATDocument and things like
         #      plone.app.layout simply take advantage of its capabilities.
         self.fail("The implementation for presentation mode is missing.")
@@ -57,7 +57,9 @@ class ContentProfileTestCase(unittest.TestCase):
     def test_frontpage_is_published(self):
         # Has the content object been published?
         front_page = self.portal['front-page']
-        current_state = self.portal_workflow.getInfoFor(front_page, 'review_state')
+        current_state = self.portal_workflow.getInfoFor(
+            front_page,
+            'review_state')
         self.assertEqual(current_state, 'published')
 
     # ################# #
