@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+    <browser:page
+        name="contenttype_utils"
+        for="*"
+        permission="zope.Public"
+        class=".utils.Utils"
+        allowed_interface="plone.app.contenttypes.browser.utils.IUtils"
+        />  
+
+</configure>
