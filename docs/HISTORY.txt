@@ -5,3 +5,5 @@ Changelog
 -------------------
 
 - Initial release
+
+- Mime Type Icon added for File View [loechel] 

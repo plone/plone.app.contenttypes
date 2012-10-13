@@ -9,6 +9,8 @@
 
   <includeDependencies package="." />
   
+  <include package=".browser" />
+  
   <gs:registerProfile
       name="default"
       title="plone.app.contenttypes default types"
