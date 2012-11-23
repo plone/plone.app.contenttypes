@@ -80,7 +80,7 @@
     name="link_redirect_view"
     for="plone.app.contenttypes.interfaces.ILink"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="link.pt"
+    class=".link_redirect_view.LinkRedirectView"
     permission="zope2.View"
     />
 

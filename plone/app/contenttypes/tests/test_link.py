@@ -60,19 +60,34 @@ class LinkIntegrationTest(unittest.TestCase):
         )
         self.assertTrue(ILink.providedBy(self.portal['doc1']))
 
-    def test_view(self):
+
+class LinkViewIntegrationTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.portal.invokeFactory('Link', 'link')
         link = self.portal['link']
         link.title = "My Link"
         link.description = "This is my link."
+        self.link = link
         self.request.set('URL', link.absolute_url())
         self.request.set('ACTUAL_URL', link.absolute_url())
-        view = link.restrictedTraverse('@@view')
 
+    def test_link_redirect_view(self):
+        view = self.link.restrictedTraverse('@@view')
         self.assertTrue(view())
         self.assertEquals(view.request.response.status, 200)
         self.assertTrue('My Link' in view())
         self.assertTrue('This is my link.' in view())
+
+    # XXX: ToDo: We have to write tests to properly test the
+    # link_redirect_view. It seems such tests never existed in
+    # ATContentTypes.
 
 
 class LinkFunctionalText(unittest.TestCase):
