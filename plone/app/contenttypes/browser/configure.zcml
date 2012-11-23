@@ -1,0 +1,31 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:plone="http://namespaces.plone.org/plone"
+  i18n_domain="plone.app.contenttypes">
+
+  <browser:page
+    name="document_view"
+    for="plone.app.contenttypes.interfaces.IDocument"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="document.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="event_view"
+    for="plone.app.contenttypes.interfaces.IEvent"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="event.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="file_view"
+    for="plone.app.contenttypes.interfaces.IFile"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="file.pt"
+    permission="zope2.View"
+    />
+
+</configure>
