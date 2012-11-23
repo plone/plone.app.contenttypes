@@ -19,13 +19,13 @@ class News_itemTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])        
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
         fti = queryUtility(IDexterityFTI,
                            name='News Item')
         schema = fti.lookupSchema()
-         
+
         self.assertEquals(schema.__module__,
                           'plone.dexterity.schema.generated')
         self.assertEquals(schema.__name__,
@@ -34,7 +34,7 @@ class News_itemTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='News Item')
-        
+
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
@@ -42,7 +42,7 @@ class News_itemTest(unittest.TestCase):
                            name='News Item')
         factory = fti.factory
         news_item = createObject(factory)
-        
+
         self.assertEquals(str(type(news_item)),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -50,7 +50,7 @@ class News_itemTest(unittest.TestCase):
         self.portal.invokeFactory('News Item',
                                   'news_item')
         news_item = self.portal['news_item']
-        
+
         self.assertEquals(str(type(aq_base(news_item))),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -58,7 +58,7 @@ class News_itemTest(unittest.TestCase):
         self.portal.invokeFactory('News Item', 'news_item')
         news_item = self.portal['news_item']
         self.request.set('URL', news_item.absolute_url())
-        self.request.set('ACTUAL_URL', news_item.absolute_url())        
+        self.request.set('ACTUAL_URL', news_item.absolute_url())
         view = news_item.restrictedTraverse('@@view')
 
         self.failUnless(view())

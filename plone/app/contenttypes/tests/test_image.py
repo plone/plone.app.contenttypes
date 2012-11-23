@@ -19,13 +19,13 @@ class ImageTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])        
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
         fti = queryUtility(IDexterityFTI,
                            name='Image')
         schema = fti.lookupSchema()
-         
+
         self.assertEquals(schema.__module__,
                           'plone.dexterity.schema.generated')
         self.assertEquals(schema.__name__,
@@ -34,7 +34,7 @@ class ImageTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='Image')
-        
+
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
@@ -42,7 +42,7 @@ class ImageTest(unittest.TestCase):
                            name='Image')
         factory = fti.factory
         image = createObject(factory)
-        
+
         self.assertEquals(str(type(image)),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -50,7 +50,7 @@ class ImageTest(unittest.TestCase):
         self.portal.invokeFactory('Image',
                                   'image')
         image = self.portal['image']
-        
+
         self.assertEquals(str(type(aq_base(image))),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -58,7 +58,7 @@ class ImageTest(unittest.TestCase):
         self.portal.invokeFactory('Image', 'image')
         image = self.portal['image']
         self.request.set('URL', image.absolute_url())
-        self.request.set('ACTUAL_URL', image.absolute_url())        
+        self.request.set('ACTUAL_URL', image.absolute_url())
         view = image.restrictedTraverse('@@view')
 
         self.failUnless(view())

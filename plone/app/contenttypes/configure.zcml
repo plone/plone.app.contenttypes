@@ -8,7 +8,7 @@
            i18n_domain="plone.app.contenttypes">
 
   <includeDependencies package="." />
-  
+
   <gs:registerProfile
       name="default"
       title="plone.app.contenttypes default types"
@@ -38,7 +38,6 @@
         provides="plone.app.contenttypes.interfaces.IEvent"
         />
 
-
-  <include file="indexers.zcml" />      
+  <include file="indexers.zcml" />
 
 </configure>

@@ -19,13 +19,13 @@ class FileTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])        
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
         fti = queryUtility(IDexterityFTI,
                            name='File')
         schema = fti.lookupSchema()
-         
+
         self.assertEquals(schema.__module__,
                           'plone.dexterity.schema.generated')
         self.assertEquals(schema.__name__,
@@ -34,7 +34,7 @@ class FileTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='File')
-        
+
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
@@ -42,7 +42,7 @@ class FileTest(unittest.TestCase):
                            name='File')
         factory = fti.factory
         file = createObject(factory)
-        
+
         self.assertEquals(str(type(file)),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -50,7 +50,7 @@ class FileTest(unittest.TestCase):
         self.portal.invokeFactory('File',
                                   'file')
         file = self.portal['file']
-        
+
         self.assertEquals(str(type(aq_base(file))),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -58,7 +58,7 @@ class FileTest(unittest.TestCase):
         self.portal.invokeFactory('File', 'file')
         file = self.portal['file']
         self.request.set('URL', file.absolute_url())
-        self.request.set('ACTUAL_URL', file.absolute_url())        
+        self.request.set('ACTUAL_URL', file.absolute_url())
         view = file.restrictedTraverse('@@view')
 
         self.failUnless(view())

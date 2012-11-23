@@ -8,5 +8,5 @@
 
   <adapter name="start" factory=".indexers.start_date" />
   <adapter name="end" factory=".indexers.end_date" />
-  
+
 </configure>

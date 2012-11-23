@@ -19,13 +19,13 @@ class EventTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])        
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
         fti = queryUtility(IDexterityFTI,
                            name='Event')
         schema = fti.lookupSchema()
-         
+
         self.assertEquals(schema.__module__,
                           'plone.dexterity.schema.generated')
         self.assertEquals(schema.__name__,
@@ -34,7 +34,7 @@ class EventTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='Event')
-        
+
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
@@ -42,7 +42,7 @@ class EventTest(unittest.TestCase):
                            name='Event')
         factory = fti.factory
         event = createObject(factory)
-        
+
         self.assertEquals(str(type(event)),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -50,7 +50,7 @@ class EventTest(unittest.TestCase):
         self.portal.invokeFactory('Event',
                                   'event')
         event = self.portal['event']
-        
+
         self.assertEquals(str(type(aq_base(event))),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -58,7 +58,7 @@ class EventTest(unittest.TestCase):
         self.portal.invokeFactory('Event', 'event')
         event = self.portal['event']
         self.request.set('URL', event.absolute_url())
-        self.request.set('ACTUAL_URL', event.absolute_url())        
+        self.request.set('ACTUAL_URL', event.absolute_url())
         view = event.restrictedTraverse('@@view')
 
         self.failUnless(view())

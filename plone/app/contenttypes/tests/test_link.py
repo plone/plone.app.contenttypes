@@ -19,13 +19,13 @@ class LinkTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])        
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
         fti = queryUtility(IDexterityFTI,
                            name='Link')
         schema = fti.lookupSchema()
-         
+
         self.assertEquals(schema.__module__,
                           'plone.dexterity.schema.generated')
         self.assertEquals(schema.__name__,
@@ -34,7 +34,7 @@ class LinkTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='Link')
-        
+
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
@@ -42,7 +42,7 @@ class LinkTest(unittest.TestCase):
                            name='Link')
         factory = fti.factory
         link = createObject(factory)
-        
+
         self.assertEquals(str(type(link)),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -50,7 +50,7 @@ class LinkTest(unittest.TestCase):
         self.portal.invokeFactory('Link',
                                   'link')
         link = self.portal['link']
-        
+
         self.assertEquals(str(type(aq_base(link))),
                           "<class 'plone.dexterity.content.Item'>")
 
@@ -58,7 +58,7 @@ class LinkTest(unittest.TestCase):
         self.portal.invokeFactory('Link', 'link')
         link = self.portal['link']
         self.request.set('URL', link.absolute_url())
-        self.request.set('ACTUAL_URL', link.absolute_url())        
+        self.request.set('ACTUAL_URL', link.absolute_url())
         view = link.restrictedTraverse('@@view')
 
         self.failUnless(view())
