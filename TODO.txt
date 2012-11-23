@@ -1,3 +1,20 @@
+Plone Conference 2012 Arnhem Meeting - Open Space
+=================================================
+
+  [ ] Migrate skin templates to browser views
+  [ ] Move interfaces (INewsItem, IFolder, etc.) to Products.CMFPlone or
+      plone.app.content (no PLIP needed)
+  [ ] Use behaviors for lead image / event
+
+Future
+------
+
+  [ ] Write AT migration steps (gsoc?)
+  [ ] Integrate plone.app.event
+  [ ] Discuss PLIP to change the standard types (e.g. combine file and image)
+  [ ] PLIP lead image
+
+
 Todo
 ====
 
@@ -32,6 +49,6 @@ Postponed
 
  [ ] Documentation. What kind of documentation do we need?
 
- [ ] Write PLIP to factor out ATContentTypes dependency from 
+ [ ] Write PLIP to factor out ATContentTypes dependency from
      Products.CMFPlone: https://dev.plone.org/ticket/12344
-  
+
