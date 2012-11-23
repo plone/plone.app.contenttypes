@@ -11,9 +11,9 @@ setup(name='plone.app.contenttypes',
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
-        "Framework :: Plone",
-        "Programming Language :: Python",
-        ],
+          "Framework :: Plone",
+          "Programming Language :: Python",
+      ],
       keywords='plone content types dexterity',
       author='Plone Foundation',
       author_email='plone-developers@lists.sourceforge.net',
@@ -25,7 +25,6 @@ setup(name='plone.app.contenttypes',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'collective.dexteritytextindexer',
           'Products.CMFPlone',
           'plone.app.collection',
           'plone.app.dexterity',
@@ -34,10 +33,10 @@ setup(name='plone.app.contenttypes',
           # -*- Extra requirements: -*-
       ],
       extras_require={
-        'test': [
-            'plone.app.testing',
-            ],
-      },      
+          'test': [
+              'plone.app.testing',
+          ],
+      },
       entry_points="""
       # -*- Entry points: -*-
 

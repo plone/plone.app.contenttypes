@@ -1,6 +1,6 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 from DateTime import DateTime
+
 from plone.indexer.decorator import indexer
 
 from plone.app.contenttypes.interfaces import IEvent

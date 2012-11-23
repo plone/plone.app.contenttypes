@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<object name="Image" meta_type="Dexterity FTI" i18n:domain="plone" 
+<object name="Image" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Image</property>
- <property name="description" 
+ <property name="description"
      i18n:translate="">Images can be referenced in pages or displayed in an album.</property>
  <property name="icon_expr"></property>
  <property name="factory">Image</property>

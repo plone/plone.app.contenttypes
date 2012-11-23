@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<object name="Link" meta_type="Dexterity FTI" i18n:domain="plone" 
+<object name="Link" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Link</property>
  <property name="description" i18n:translate=""></property>
@@ -22,7 +22,7 @@
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
   <element value="plone.app.content.interfaces.INameFromTitle"/>
-  <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>  
+  <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
  </property>
  <property name="schema"></property>
  <property name="model_source"></property>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<object name="Document" meta_type="Dexterity FTI" i18n:domain="plone" 
+<object name="Document" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Page</property>
  <property name="description" i18n:translate=""></property>
@@ -23,7 +23,6 @@
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
   <element value="plone.app.content.interfaces.INameFromTitle"/>
   <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
-  <element value="collective.dexteritytextindexer.behavior.IDexterityTextIndexer" />
   <element value="plone.app.relationfield.behavior.IRelatedItems"/>
  </property>
  <property name="schema"></property>
