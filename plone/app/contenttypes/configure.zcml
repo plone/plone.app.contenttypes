@@ -10,33 +10,27 @@
   <includeDependencies package="." />
 
   <gs:registerProfile
-      name="default"
-      title="plone.app.contenttypes default types"
-      directory="profiles/default"
-      description="Base Dexterity content-types used as an alternative to Archetypes default-content-types"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
+    name="default"
+    title="plone.app.contenttypes default types"
+    directory="profiles/default"
+    description="Base Dexterity content-types used as an alternative to Archetypes default-content-types"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
 
   <!-- plone.app.contenttypes alternatives to profile-Products.CMFPlone:plone-content -->
   <gs:registerProfile
-      name="plone-content"
-      title="plone.app.contenttypes example content"
-      directory="profiles/content"
-      description="Same as Products.CMFPlone:plone-content except for plone.app.contenttypes content-types"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
-
-  <cmf:registerDirectory
-      name="skins"
-      directory="skins"
-      recursive="True"
-      />
+    name="plone-content"
+    title="plone.app.contenttypes example content"
+    directory="profiles/content"
+    description="Same as Products.CMFPlone:plone-content except for plone.app.contenttypes content-types"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
 
   <plone:behavior
-        title="Start and End indexing behavior"
-        description="Enables the start and end indexers for a content type"
-        provides="plone.app.contenttypes.interfaces.IEvent"
-        />
+    title="Start and End indexing behavior"
+    description="Enables the start and end indexers for a content type"
+    provides="plone.app.contenttypes.interfaces.IEvent"
+    />
 
   <include package=".browser" />
 

@@ -10,9 +10,7 @@ from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing.z2 import Browser
 
-from plone.app.textfield.value import RichTextValue
-
-from plone.app.contenttypes.interfaces import IDocument
+from plone.app.contenttypes.interfaces import IFolder
 
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
@@ -22,7 +20,7 @@ from plone.app.contenttypes.testing import (
 from plone.app.testing import TEST_USER_ID, setRoles
 
 
-class DocumentIntegrationTest(unittest.TestCase):
+class FolderIntegrationTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
@@ -35,55 +33,87 @@ class DocumentIntegrationTest(unittest.TestCase):
     def test_schema(self):
         fti = queryUtility(
             IDexterityFTI,
-            name='Document')
+            name='Folder')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_Document')
+        self.assertEqual(schema.getName(), 'plone_0_Folder')
 
     def test_fti(self):
         fti = queryUtility(
             IDexterityFTI,
-            name='Document'
+            name='Folder'
         )
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
         fti = queryUtility(
             IDexterityFTI,
-            name='Document'
+            name='Folder'
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IDocument.providedBy(new_object))
+        self.failUnless(IFolder.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(
-            'Document',
+            'Folder',
             'doc1'
         )
-        self.assertTrue(IDocument.providedBy(self.portal['doc1']))
+        self.assertTrue(IFolder.providedBy(self.portal['doc1']))
 
-    def test_view(self):
-        self.portal.invokeFactory('Document', 'folder')
+
+class FolderViewIntegrationTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        self.portal.invokeFactory('Folder', 'folder')
         folder = self.portal['folder']
-        folder.title = "My Document"
+        folder.title = "My Folder"
         folder.description = "This is my folder."
-        folder.text = RichTextValue(
-            u"Lorem ipsum",
-            'text/plain',
-            'text/html'
-        )
+        self.folder = folder
         self.request.set('URL', folder.absolute_url())
         self.request.set('ACTUAL_URL', folder.absolute_url())
-        view = folder.restrictedTraverse('@@view')
+
+    def test_folder_view(self):
+        view = self.folder.restrictedTraverse('@@view')
 
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
-        self.assertTrue('My Document' in view())
+        self.assertTrue('My Folder' in view())
         self.assertTrue('This is my folder.' in view())
-        self.assertTrue('Lorem ipsum' in view())
+
+    def test_folder_summary_view(self):
+        view = self.folder.restrictedTraverse('folder_summary_view')
+
+        self.assertTrue(view())
+        self.assertTrue('My Folder' in view())
+        self.assertTrue('This is my folder.' in view())
+
+    def test_folder_full_view(self):
+        view = self.folder.restrictedTraverse('folder_full_view')
+
+        self.assertTrue(view())
+        self.assertTrue('My Folder' in view())
+        self.assertTrue('This is my folder.' in view())
+
+    def test_folder_tabular_view(self):
+        view = self.folder.restrictedTraverse('folder_tabular_view')
+
+        self.assertTrue(view())
+        self.assertTrue('My Folder' in view())
+        self.assertTrue('This is my folder.' in view())
+
+    def test_atct_album_view(self):
+        view = self.folder.restrictedTraverse('atct_album_view')
+        self.assertTrue(view())
+        self.assertTrue('My Folder' in view())
+        self.assertTrue('This is my folder.' in view())
 
 
-class DocumentFunctionalText(unittest.TestCase):
+class FolderFunctionalText(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 

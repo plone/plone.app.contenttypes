@@ -1,1 +1,0 @@
-These templates override the default templates in Products/CMFPlone/skins/plone_content

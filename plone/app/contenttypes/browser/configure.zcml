@@ -29,10 +29,50 @@
     />
 
   <browser:page
+    name="folder_listing"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_listing.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="folder_full_view"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_full_view.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="folder_summary_view"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_summary_view.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="folder_tabular_view"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_tabular_view.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
     name="image_view"
     for="plone.app.contenttypes.interfaces.IImage"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="image.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="image_view_fullscreen"
+    for="plone.app.contenttypes.interfaces.IImage"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="image_view_fullscreen.pt"
     permission="zope2.View"
     />
 
