@@ -13,9 +13,11 @@ class PloneAppContenttypes(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         import plone.app.contenttypes
-        xmlconfig.file('configure.zcml',
-                       plone.app.contenttypes,
-                       context=configurationContext)
+        xmlconfig.file(
+            'configure.zcml',
+            plone.app.contenttypes,
+            context=configurationContext
+        )
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
