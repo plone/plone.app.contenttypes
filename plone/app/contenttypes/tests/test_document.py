@@ -10,6 +10,8 @@ from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing.z2 import Browser
 
+from plone.app.textfield.value import RichTextValue
+
 from plone.app.contenttypes.interfaces import IDocument
 
 from plone.app.contenttypes.testing import (
@@ -64,6 +66,12 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.portal.invokeFactory('Document', 'document')
         document = self.portal['document']
         document.title = "My Document"
+        document.description = "This is my document."
+        document.text = RichTextValue(
+            u"Lorem ipsum",
+            'text/plain',
+            'text/html'
+        )
         self.request.set('URL', document.absolute_url())
         self.request.set('ACTUAL_URL', document.absolute_url())
         view = document.restrictedTraverse('@@view')
@@ -71,6 +79,8 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self.assertEquals(view.request.response.status, 200)
         self.assertTrue('My Document' in view())
+        self.assertTrue('This is my document.' in view())
+        self.assertTrue('Lorem ipsum' in view())
 
 
 class DocumentFunctionalText(unittest.TestCase):
