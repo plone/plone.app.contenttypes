@@ -26,7 +26,6 @@ def dummy_image():
     filename = os.path.join(os.path.dirname(__file__), u'image.png')
     return NamedBlobImage(
         data=open(filename, 'r').read(),
-        contentType="image/png",
         filename=filename
     )
 
