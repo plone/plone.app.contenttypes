@@ -101,7 +101,7 @@ class DocumentFunctionalText(unittest.TestCase):
 
     def test_add_folder(self):
         self.browser.open(self.portal_url)
-        self.browser.getLink('Page').click()
+        self.browser.getLink('Folder').click()
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)
@@ -109,13 +109,10 @@ class DocumentFunctionalText(unittest.TestCase):
             .value = "My folder"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my folder."
-        self.browser.getControl(name='form.widgets.text')\
-            .value = "Lorem Ipsum"
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-folder/view'))
         self.assertTrue('My folder' in self.browser.contents)
         self.assertTrue('This is my folder' in self.browser.contents)
-        self.assertTrue('Lorem Ipsum' in self.browser.contents)
 
 
 def test_suite():

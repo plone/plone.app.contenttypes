@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
 
+import os.path
+
 from zope.component import createObject
 from zope.component import queryUtility
 
@@ -93,21 +95,20 @@ class FileFunctionalText(unittest.TestCase):
 
     def test_add_file(self):
         self.browser.open(self.portal_url)
-        self.browser.getLink('Page').click()
+        self.browser.getLink('File').click()
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
-        self.assertTrue('Text' in self.browser.contents)
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
+        self.browser.getControl(name='form.widgets.title')\
             .value = "My file"
-        self.browser.getControl(name='form.widgets.IDublinCore.description')\
+        self.browser.getControl(name='form.widgets.description')\
             .value = "This is my file."
-        self.browser.getControl(name='form.widgets.text')\
-            .value = "Lorem Ipsum"
+        file_path = os.path.join(os.path.dirname(__file__), "image.png")
+        file_ctl = self.browser.getControl(name='form.widgets.file')
+        file_ctl.add_file(open(file_path), 'image/png', 'image.png')
         self.browser.getControl('Save').click()
-        self.assertTrue(self.browser.url.endswith('my-file/view'))
+        self.assertTrue(self.browser.url.endswith('image.png/view'))
         self.assertTrue('My file' in self.browser.contents)
         self.assertTrue('This is my file' in self.browser.contents)
-        self.assertTrue('Lorem Ipsum' in self.browser.contents)
 
 
 def test_suite():

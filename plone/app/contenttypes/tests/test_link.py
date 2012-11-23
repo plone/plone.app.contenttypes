@@ -93,7 +93,7 @@ class LinkFunctionalText(unittest.TestCase):
 
     def test_add_link(self):
         self.browser.open(self.portal_url)
-        self.browser.getLink('Page').click()
+        self.browser.getLink('Link').click()
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)
@@ -101,13 +101,10 @@ class LinkFunctionalText(unittest.TestCase):
             .value = "My link"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my link."
-        self.browser.getControl(name='form.widgets.text')\
-            .value = "Lorem Ipsum"
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-link/view'))
         self.assertTrue('My link' in self.browser.contents)
         self.assertTrue('This is my link' in self.browser.contents)
-        self.assertTrue('Lorem Ipsum' in self.browser.contents)
 
 
 def test_suite():

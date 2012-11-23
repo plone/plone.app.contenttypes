@@ -101,7 +101,7 @@ class EventFunctionalText(unittest.TestCase):
 
     def test_add_event(self):
         self.browser.open(self.portal_url)
-        self.browser.getLink('Page').click()
+        self.browser.getLink('Event').click()
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)
@@ -111,11 +111,22 @@ class EventFunctionalText(unittest.TestCase):
             .value = "This is my event."
         self.browser.getControl(name='form.widgets.text')\
             .value = "Lorem Ipsum"
+        self.browser.getControl(name='form.widgets.start_date-day')\
+            .value = "1"
+        self.browser.getControl(name='form.widgets.start_date-year')\
+            .value = "2013"
+        self.browser.getControl(name='form.widgets.end_date-day')\
+            .value = "12"
+        self.browser.getControl(name='form.widgets.end_date-year')\
+            .value = "2013"
         self.browser.getControl('Save').click()
+
         self.assertTrue(self.browser.url.endswith('my-event/view'))
         self.assertTrue('My event' in self.browser.contents)
         self.assertTrue('This is my event' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
+        self.assertTrue('Jan 01, 2013 12:00 AM' in self.browser.contents)
+        self.assertTrue('Jan 12, 2013 12:00 AM' in self.browser.contents)
 
 
 def test_suite():

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os.path
 import unittest2 as unittest
 
 from zope.component import createObject
@@ -18,6 +19,16 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.testing import TEST_USER_ID, setRoles
+
+
+def dummy_image():
+    from plone.namedfile.file import NamedBlobImage
+    filename = os.path.join(os.path.dirname(__file__), u'image.png')
+    return NamedBlobImage(
+        data=open(filename, 'r').read(),
+        contentType="image/png",
+        filename=filename
+    )
 
 
 class ImageIntegrationTest(unittest.TestCase):
@@ -65,6 +76,7 @@ class ImageIntegrationTest(unittest.TestCase):
         image = self.portal['image']
         image.title = "My Image"
         image.description = "This is my image."
+        image.image = dummy_image()
         self.request.set('URL', image.absolute_url())
         self.request.set('ACTUAL_URL', image.absolute_url())
         view = image.restrictedTraverse('@@view')
@@ -93,21 +105,22 @@ class ImageFunctionalText(unittest.TestCase):
 
     def test_add_image(self):
         self.browser.open(self.portal_url)
-        self.browser.getLink('Page').click()
+        self.browser.getLink('Image').click()
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
+        self.browser.getControl(name='form.widgets.title')\
             .value = "My image"
-        self.browser.getControl(name='form.widgets.IDublinCore.description')\
+        self.browser.getControl(name='form.widgets.description')\
             .value = "This is my image."
-        self.browser.getControl(name='form.widgets.text')\
-            .value = "Lorem Ipsum"
+        image_path = os.path.join(os.path.dirname(__file__), "image.png")
+        image_ctl = self.browser.getControl(name='form.widgets.image')
+        image_ctl.add_file(open(image_path), 'image/png', 'image.png')
         self.browser.getControl('Save').click()
-        self.assertTrue(self.browser.url.endswith('my-image/view'))
+        self.assertTrue(self.browser.url.endswith('image.png/view'))
         self.assertTrue('My image' in self.browser.contents)
         self.assertTrue('This is my image' in self.browser.contents)
-        self.assertTrue('Lorem Ipsum' in self.browser.contents)
+        self.assertTrue('image.png' in self.browser.contents)
 
 
 def test_suite():
