@@ -30,13 +30,13 @@ class Folder(Container):
     implements(IFolder)
 
 
-class Image(Container):
+class Image(Item):
     implements(IImage)
 
 
-class Link(Container):
+class Link(Item):
     implements(ILink)
 
 
-class NewsItem(Container):
+class NewsItem(Item):
     implements(INewsItem)
