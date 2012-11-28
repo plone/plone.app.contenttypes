@@ -21,8 +21,8 @@
                      has_text exists:context/aq_explicit/getText;
                      text python:has_text and here.getText() or ''"
          tal:condition="text"
-         tal:attributes="class python:test(context.Format() in ('text/structured',
-                                               'text/x-rst', ), 'stx' + kss_class, 'plain' + kss_class)">
+         tal:attributes="class python: context.Format() in ('text/structured',
+                                               'text/x-rst', ) and  'stx' + kss_class or 'plain' + kss_class">
         <div metal:define-slot="inside" tal:replace="structure text">The body</div>
     </div>
 
@@ -71,12 +71,12 @@
                                    item_samedate python: (item_end - item_start &lt; 1) if item_type == 'Event' else False">
                 <metal:block define-slot="entry">
                 <dt metal:define-macro="listitem"
-                    tal:attributes="class python:test(item_type == 'Event', 'vevent', '')">
+                    tal:attributes="class python: item_type == 'Event' and 'vevent' or ''">
 
                     <span class="summary">
                         <img tal:replace="structure item_icon/html_tag" />
                         <a href="#"
-                           tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);
+                           tal:attributes="href python: item_type in use_view_action and item_url+'/view' or item_url;
                                            class string:$item_type_class $item_wf_state_class url"
                            tal:content="item_title_or_id">
                             Item Title

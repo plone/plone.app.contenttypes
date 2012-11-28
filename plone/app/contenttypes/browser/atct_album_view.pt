@@ -17,7 +17,7 @@
                  getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
                  templateId template/getId;
                  batch python:Batch(images, 12, int(b_start), orphan=1)">
-    
+
     <div metal:define-macro="text-field-view"
          id="parent-fieldname-text" class="stx"
          tal:define="kss_class python:getKssClasses('text',
@@ -25,8 +25,8 @@
                      has_text exists:context/aq_explicit/getText;
                      text python:has_text and here.getText() or ''"
          tal:condition="text"
-         tal:attributes="class python:test(here.Format() in ('text/structured',
-                                               'text/x-rst', ), 'stx' + kss_class, 'plain' + kss_class)">
+         tal:attributes="class python: here.Format() in ('text/structured',
+                                               'text/x-rst', ) and 'stx' + kss_class or 'plain' + kss_class">
         <div metal:define-slot="inside" tal:replace="structure text">The body</div>
     </div>
 

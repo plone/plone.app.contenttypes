@@ -61,58 +61,6 @@ class FolderIntegrationTest(unittest.TestCase):
         self.assertTrue(IFolder.providedBy(self.portal['doc1']))
 
 
-class FolderViewIntegrationTest(unittest.TestCase):
-
-    layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-
-    def setUp(self):
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
-        self.request['ACTUAL_URL'] = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        self.portal.invokeFactory('Folder', 'folder')
-        folder = self.portal['folder']
-        folder.title = "My Folder"
-        folder.description = "This is my folder."
-        self.folder = folder
-        self.request.set('URL', folder.absolute_url())
-        self.request.set('ACTUAL_URL', folder.absolute_url())
-
-    def test_folder_view(self):
-        view = self.folder.restrictedTraverse('@@view')
-
-        self.assertTrue(view())
-        self.assertTrue('My Folder' in view())
-        self.assertTrue('This is my folder.' in view())
-
-    def test_folder_summary_view(self):
-        view = self.folder.restrictedTraverse('folder_summary_view')
-
-        self.assertTrue(view())
-        self.assertTrue('My Folder' in view())
-        self.assertTrue('This is my folder.' in view())
-
-    def test_folder_full_view(self):
-        view = self.folder.restrictedTraverse('folder_full_view')
-
-        self.assertTrue(view())
-        self.assertTrue('My Folder' in view())
-        self.assertTrue('This is my folder.' in view())
-
-    def test_folder_tabular_view(self):
-        view = self.folder.restrictedTraverse('folder_tabular_view')
-
-        self.assertTrue(view())
-        self.assertTrue('My Folder' in view())
-        self.assertTrue('This is my folder.' in view())
-
-    def test_atct_album_view(self):
-        view = self.folder.restrictedTraverse('atct_album_view')
-        self.assertTrue(view())
-        self.assertTrue('My Folder' in view())
-        self.assertTrue('This is my folder.' in view())
-
-
 class FolderFunctionalText(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
@@ -120,7 +68,6 @@ class FolderFunctionalText(unittest.TestCase):
     def setUp(self):
         app = self.layer['app']
         self.portal = self.layer['portal']
-        self.request = self.layer['request']
         self.portal_url = self.portal.absolute_url()
         self.browser = Browser(app)
         self.browser.handleErrors = False
@@ -140,9 +87,59 @@ class FolderFunctionalText(unittest.TestCase):
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my folder."
         self.browser.getControl('Save').click()
+
         self.assertTrue(self.browser.url.endswith('my-folder/view'))
         self.assertTrue('My folder' in self.browser.contents)
         self.assertTrue('This is my folder' in self.browser.contents)
+
+
+class FolderViewFunctionalText(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        app = self.layer['app']
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        self.portal_url = self.portal.absolute_url()
+        self.portal.invokeFactory('Folder', id='folder', title='My Folder')
+        self.folder = self.portal.folder
+        self.folder_url = self.folder.absolute_url()
+        self.folder.invokeFactory('Document', id='doc1', title='Document 1')
+        import transaction
+        transaction.commit()
+        self.browser = Browser(app)
+        self.browser.handleErrors = False
+        self.browser.addHeader(
+            'Authorization',
+            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+        )
+
+    def test_folder_view(self):
+        self.browser.open(self.folder_url + '/view')
+        self.assertTrue('My Folder' in self.browser.contents)
+        self.assertTrue('Document 1' in self.browser.contents)
+
+    def test_folder_summary_view(self):
+        self.browser.open(self.folder_url + '/folder_summary_view')
+        self.assertTrue('My Folder' in self.browser.contents)
+        self.assertTrue('Document 1' in self.browser.contents)
+
+    def test_folder_full_view(self):
+        self.browser.open(self.folder_url + '/folder_full_view')
+        self.assertTrue('My Folder' in self.browser.contents)
+        self.assertTrue('Document 1' in self.browser.contents)
+
+    def test_folder_tabular_view(self):
+        self.browser.open(self.folder_url + '/folder_tabular_view')
+        self.assertTrue('My Folder' in self.browser.contents)
+        self.assertTrue('Document 1' in self.browser.contents)
+
+    def test_atct_album_view(self):
+        self.browser.open(self.folder_url + '/atct_album_view')
+        self.assertTrue('My Folder' in self.browser.contents)
+        self.assertTrue('Document 1' in self.browser.contents)
 
 
 def test_suite():
