@@ -11,7 +11,7 @@
 
   <gs:registerProfile
     name="default"
-    title="Dexterity-based Plone default types"
+    title="Dexterity-based Plone Default Types"
     directory="profiles/default"
     description="Base Dexterity content-types used as an alternative to Archetypes default-content-types"
     provides="Products.GenericSetup.interfaces.EXTENSION"
