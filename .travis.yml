@@ -7,5 +7,5 @@ install:
   - mkdir -p buildout-cache/downloads
   - python bootstrap.py -c travis.cfg
   - bin/buildout -N -t 3 -c travis.cfg
-script: bin/test
+script: bin/test -s plone.app.contenttypes
 
