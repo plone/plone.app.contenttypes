@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from zope.component import (
-    getUtility, queryUtility,
-    getMultiAdapter, queryMultiAdapter,
-    )
+    getUtility,
+    queryUtility,
+    getMultiAdapter,
+)
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
@@ -17,7 +18,6 @@ from plone.portlets.interfaces import (
 
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.utils import bodyfinder
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.Portal import member_indexhtml
 
@@ -30,6 +30,7 @@ def _publish(content):
         return True
     return False
 
+
 def _translate(name, target_language, default=u''):
     """Simple function to tranlate a string."""
     result = None
@@ -39,6 +40,7 @@ def _translate(name, target_language, default=u''):
             result = util.translate(name, target_language=target_language,
                                     default=default)
     return result and result or default
+
 
 def addContentToContainer(container, object, checkConstraints=True):
     """Copy of plone.dexterity.util.addContentToContainer.
@@ -55,8 +57,11 @@ def addContentToContainer(container, object, checkConstraints=True):
         if not fti.isConstructionAllowed(container):
             raise Unauthorized("Cannot create %s" % object.portal_type)
 
-        if container_fti is not None and not container_fti.allowType(object.portal_type):
-            raise ValueError("Disallowed subobject type: %s" % object.portal_type)
+        if container_fti is not None and \
+                not container_fti.allowType(object.portal_type):
+            raise ValueError(
+                "Disallowed subobject type: %s" % object.portal_type
+            )
 
     chooser = INameChooser(container)
     if hasattr(object, 'id') and chooser.checkName(object.id, object):
@@ -68,6 +73,7 @@ def addContentToContainer(container, object, checkConstraints=True):
     newName = container._setObject(name, object)
     return container._getOb(newName)
 
+
 def _get_locales_info(portal):
     language = portal.Language()
     parts = (language.split('-') + [None, None])[:3]
@@ -75,9 +81,10 @@ def _get_locales_info(portal):
 
     # If we get a territory, we enable the combined language codes
     if locale.id.territory:
-        return locale.id.language +'_'+ locale.id.territory, True, locale
-    
+        return locale.id.language + '_' + locale.id.territory, True, locale
+
     return locale.id.language, False, locale
+
 
 def _set_language_settings(portal, uses_combined_lanagage):
     """Set the portals language settings from the given lanage codes."""
@@ -88,6 +95,7 @@ def _set_language_settings(portal, uses_combined_lanagage):
         [language],
         setUseCombinedLanguageCodes=uses_combined_lanagage,
         startNeutral=False)
+
 
 # ??? Why do we only do this calendar setup when content is created?
 def _setup_calendar(locale):
@@ -103,6 +111,7 @@ def _setup_calendar(locale):
             if first is not None:
                 first = first - 1
         portal_calendar.firstweekday = first
+
 
 def _setup_visible_ids(target_language, locale):
     portal_properties = getToolByName(getSite(), 'portal_properties')
@@ -122,13 +131,13 @@ def _setup_visible_ids(target_language, locale):
     if normalizer is not None:
         site_properties.visible_ids = False
 
+
 def importContent(context):
     """Import base content into the Plone site."""
     portal = context.getSite()
     # Because the portal doesn't implement __contains__?
     existing_content = portal.keys()
     target_language, is_combined_language, locale = _get_locales_info(portal)
-    request = getattr(portal, 'REQUEST', None)
 
     # Set up Language specific information
     _set_language_settings(portal, is_combined_language)
@@ -140,9 +149,15 @@ def importContent(context):
     # The front-page
     frontpage_id = 'front-page'
     if frontpage_id not in existing_content:
-        title = _translate(u'front-title', target_language, u"Welcome to Plone")
-        description = _translate(u'front-description', target_language,
-                                 u"Congratulations! You have successfully installed Plone.")
+        title = _translate(
+            u'front-title',
+            target_language,
+            u"Welcome to Plone"
+        )
+        description = _translate(
+            u'front-description', target_language,
+            u"Congratulations! You have successfully installed Plone."
+        )
         content = createContent('Document', id=frontpage_id,
                                 title=title,
                                 description=description,
@@ -163,7 +178,6 @@ def importContent(context):
         title = _translate(u'news-title', target_language, u'News')
         description = _translate(u'news-description', target_language,
                                  u'Site News')
-        allowed_types = ['News Item']
         container = createContent('Folder', id=news_id,
                                   title=title,
                                   description=description)
@@ -197,7 +211,7 @@ def importContent(context):
              'o': u'plone.app.querystring.operation.selection.is',
              'v': [u'published'],
              },
-            ]
+        ]
         aggregator.setLayout('summary_view')
 
         _publish(aggregator)
@@ -208,7 +222,6 @@ def importContent(context):
         title = _translate(u'events-title', target_language, u'Events')
         description = _translate(u'events-description', target_language,
                                  u'Site Events')
-        allowed_types = ['Event']
         container = createContent('Folder', id=events_id,
                                   title=title,
                                   description=description)
@@ -232,7 +245,10 @@ def importContent(context):
         # type_crit = topic.addCriterion('Type', 'ATPortalTypeCriterion')
         # type_crit.setValue('Event')
         # topic.addCriterion('start', 'ATSortCriterion')
-        # state_crit = topic.addCriterion('review_state', 'ATSimpleStringCriterion')
+        # state_crit = topic.addCriterion(
+        #     'review_state',
+        #     'ATSimpleStringCriterion'
+        # )
         # state_crit.setValue('published')
         # date_crit = topic.addCriterion('start', 'ATFriendlyDateCriteria')
         # # Set date reference to now
@@ -266,7 +282,10 @@ def importContent(context):
         # Block all right column portlets by default
         manager = queryUtility(IPortletManager, name='plone.rightcolumn')
         if manager is not None:
-            assignable = getMultiAdapter((container, manager), ILocalPortletAssignmentManager)
+            assignable = getMultiAdapter(
+                (container, manager),
+                ILocalPortletAssignmentManager
+            )
             assignable.setBlacklistStatus('context', True)
             assignable.setBlacklistStatus('group', True)
             assignable.setBlacklistStatus('content_type', True)
