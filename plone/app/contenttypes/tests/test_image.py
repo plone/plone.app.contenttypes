@@ -159,9 +159,7 @@ class ImageFunctionalTest(unittest.TestCase):
         image_ctl = self.browser.getControl(name='form.widgets.image')
         image_ctl.add_file(open(image_path), 'image/png', 'image.png')
         self.browser.getControl('Save').click()
-        self.browser.getLink(
-            url=self.portal_url + '/image.png/image_view_fullscreen'
-        ).click()
+        self.browser.getLink('Click to view full-size image…').click()
         self.assertTrue(
             self.browser.url.endswith('image.png/image_view_fullscreen')
         )
