@@ -1,10 +1,4 @@
-from Acquisition import aq_base
 import unittest2 as unittest
-
-from zope.component import createObject
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
 
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
@@ -33,6 +27,15 @@ class PloneAppContenttypesSetupTest(unittest.TestCase):
         self.assertEquals(self.types['Image'].meta_type, 'Dexterity FTI')
         self.assertEquals(self.types['Link'].meta_type, 'Dexterity FTI')
         self.assertEquals(self.types['News Item'].meta_type, 'Dexterity FTI')
+
+    def test_browserlayer_available(self):
+        from plone.browserlayer import utils
+        from plone.app.contenttypes.interfaces import \
+            IPloneAppContenttypesLayer
+        self.assertTrue(
+            IPloneAppContenttypesLayer in utils.registered_layers()
+        )
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

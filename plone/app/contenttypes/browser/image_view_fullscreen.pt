@@ -45,7 +45,8 @@
 
 <body>
 
-<div id="content-core">
+<div id="content-core"
+     tal:condition="context/@@images">
     <a href=""
        tal:attributes="href request/HTTP_REFERER"
        tal:condition="request/HTTP_REFERER"

@@ -18,7 +18,7 @@
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
- <property name="klass">plone.dexterity.content.Item</property>
+ <property name="klass">plone.app.contenttypes.content.Event</property>
  <property name="behaviors">
   <element value="plone.app.contenttypes.interfaces.IEvent"/>
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
