@@ -1,0 +1,103 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:plone="http://namespaces.plone.org/plone"
+  i18n_domain="plone.app.contenttypes">
+
+  <browser:page
+    name="document_view"
+    for="plone.app.contenttypes.interfaces.IDocument"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="document.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="event_view"
+    for="plone.app.contenttypes.interfaces.IEvent"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="event.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="file_view"
+    for="plone.app.contenttypes.interfaces.IFile"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="file.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="folder_listing"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_listing.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="folder_full_view"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_full_view.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="folder_summary_view"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_summary_view.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="folder_tabular_view"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_tabular_view.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="image_view"
+    for="plone.app.contenttypes.interfaces.IImage"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="image.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="image_view_fullscreen"
+    for="plone.app.contenttypes.interfaces.IImage"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="image_view_fullscreen.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="link_redirect_view"
+    for="plone.app.contenttypes.interfaces.ILink"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".link_redirect_view.LinkRedirectView"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="newsitem_view"
+    for="plone.app.contenttypes.interfaces.INewsItem"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="newsitem.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="fix_interfaces"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".migration.FixInterfaces"
+    permission="zope2.View"
+    />
+
+</configure>

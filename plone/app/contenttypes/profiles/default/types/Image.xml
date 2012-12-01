@@ -16,10 +16,11 @@
  <property name="default_view">image_view</property>
  <property name="view_methods">
   <element value="image_view"/>
+  <element value="image_view_fullscreen"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
- <property name="klass">plone.dexterity.content.Item</property>
+ <property name="klass">plone.app.contenttypes.content.Image</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.ICategorization"/>
   <element value="plone.app.dexterity.behaviors.metadata.IPublication"/>

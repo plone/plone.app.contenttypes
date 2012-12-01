@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from Acquisition import aq_base
 import unittest2 as unittest
 
 from zope.component import createObject
@@ -10,6 +9,10 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing.z2 import Browser
+
+from plone.app.textfield.value import RichTextValue
+
+from plone.app.contenttypes.interfaces import IDocument
 
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
@@ -26,49 +29,58 @@ class DocumentIntegrationTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
+        self.request['ACTUAL_URL'] = self.portal.absolute_url()
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
-        fti = queryUtility(IDexterityFTI,
-                           name='Document')
+        fti = queryUtility(
+            IDexterityFTI,
+            name='Document')
         schema = fti.lookupSchema()
-        self.assertEquals(schema.__module__,
-                          'plone.dexterity.schema.generated')
-        self.assertEquals(schema.__name__,
-                          'plone_0_Document')
+        self.assertEqual(schema.getName(), 'plone_0_Document')
 
     def test_fti(self):
-        fti = queryUtility(IDexterityFTI,
-                           name='Document')
-
+        fti = queryUtility(
+            IDexterityFTI,
+            name='Document'
+        )
         self.assertNotEquals(None, fti)
 
     def test_factory(self):
-        fti = queryUtility(IDexterityFTI,
-                           name='Document')
+        fti = queryUtility(
+            IDexterityFTI,
+            name='Document'
+        )
         factory = fti.factory
-        document = createObject(factory)
-
-        self.assertEquals(str(type(document)),
-                          "<class 'plone.dexterity.content.Item'>")
+        new_object = createObject(factory)
+        self.failUnless(IDocument.providedBy(new_object))
 
     def test_adding(self):
-        self.portal.invokeFactory('Document',
-                                  'document')
-        document = self.portal['document']
-
-        self.assertEquals(str(type(aq_base(document))),
-                          "<class 'plone.dexterity.content.Item'>")
+        self.portal.invokeFactory(
+            'Document',
+            'doc1'
+        )
+        self.assertTrue(IDocument.providedBy(self.portal['doc1']))
 
     def test_view(self):
         self.portal.invokeFactory('Document', 'document')
         document = self.portal['document']
+        document.title = "My Document"
+        document.description = "This is my document."
+        document.text = RichTextValue(
+            u"Lorem ipsum",
+            'text/plain',
+            'text/html'
+        )
         self.request.set('URL', document.absolute_url())
         self.request.set('ACTUAL_URL', document.absolute_url())
         view = document.restrictedTraverse('@@view')
 
-        self.failUnless(view())
+        self.assertTrue(view())
         self.assertEquals(view.request.response.status, 200)
+        self.assertTrue('My Document' in view())
+        self.assertTrue('This is my document.' in view())
+        self.assertTrue('Lorem ipsum' in view())
 
 
 class DocumentFunctionalText(unittest.TestCase):
@@ -94,11 +106,11 @@ class DocumentFunctionalText(unittest.TestCase):
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
-        .value = "My document"
+            .value = "My document"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
-        .value = "This is my document."
+            .value = "This is my document."
         self.browser.getControl(name='form.widgets.text')\
-        .value = "Lorem Ipsum"
+            .value = "Lorem Ipsum"
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-document/view'))
         self.assertTrue('My document' in self.browser.contents)

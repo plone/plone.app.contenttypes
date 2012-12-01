@@ -1,7 +1,7 @@
 Plone Conference 2012 Arnhem Meeting - Open Space
 =================================================
 
-  [ ] Migrate skin templates to browser views
+  [X] Migrate skin templates to browser views
   [ ] Move interfaces (INewsItem, IFolder, etc.) to Products.CMFPlone or
       plone.app.content (no PLIP needed)
   [ ] Use behaviors for lead image / event

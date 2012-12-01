@@ -1,0 +1,6 @@
+<layers>
+  <layer
+    name="plone.app.contenttypes"
+    interface="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    />
+</layers>
