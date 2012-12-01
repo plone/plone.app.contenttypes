@@ -1,5 +1,5 @@
 from zope.interface import alsoProvides
-
+from plone.dexterity.interfaces import IDexterityContent
 from Products.Five.browser import BrowserView
 
 from Products.CMFCore.utils import getToolByName
@@ -34,10 +34,11 @@ class FixInterfaces(BrowserView):
             results = catalog.searchResults(portal_type=portal_type)
             for brain in results:
                 obj = brain.getObject()
-                if not portal_type_interface.providedBy(obj):
-                    alsoProvides(obj, portal_type_interface)
-                    out += "Make %s provide %s\n" % (
-                        obj.Title(),
-                        portal_type_interface.__name__,
-                    )
+                if IDexterityContent.providedBy(obj):
+                    if not portal_type_interface.providedBy(obj):
+                        alsoProvides(obj, portal_type_interface)
+                        out += "Make %s provide %s\n" % (
+                            obj.Title(),
+                            portal_type_interface.__name__,
+                        )
         return out
