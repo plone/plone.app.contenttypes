@@ -1,16 +1,15 @@
-from zope.interface import alsoProvides
 from plone.dexterity.interfaces import IDexterityContent
 from Products.Five.browser import BrowserView
 
 from Products.CMFCore.utils import getToolByName
-from plone.app.contenttypes.interfaces import (
-    IDocument,
-    IEvent,
-    IFile,
-    IFolder,
-    IImage,
-    ILink,
-    INewsItem,
+from plone.app.contenttypes.content import (
+    Document,
+    Event,
+    File,
+    Folder,
+    Image,
+    Link,
+    NewsItem,
 )
 
 
@@ -22,23 +21,25 @@ class FixInterfaces(BrowserView):
         out = ""
         catalog = getToolByName(self.context, "portal_catalog")
         portal_types = [
-            ('Document', IDocument),
-            ('Event', IEvent),
-            ('File', IFile),
-            ('Folder', IFolder),
-            ('Image', IImage),
-            ('Link', ILink),
-            ('News Item', INewsItem),
+            ('Document', Document),
+            ('Event', Event),
+            ('File', File),
+            ('Folder', Folder),
+            ('Image', Image),
+            ('Link', Link),
+            ('News Item', NewsItem),
         ]
-        for portal_type, portal_type_interface in portal_types:
+        for portal_type, portal_type_class in portal_types:
             results = catalog.searchResults(portal_type=portal_type)
             for brain in results:
                 obj = brain.getObject()
                 if IDexterityContent.providedBy(obj):
-                    if not portal_type_interface.providedBy(obj):
-                        alsoProvides(obj, portal_type_interface)
-                        out += "Make %s provide %s\n" % (
+                    object_class_name = obj.__class__.__name__
+                    target_class_name = portal_type_class.__name__
+                    if not object_class_name == target_class_name:
+                        obj.__class__ = portal_type_class
+                        out += "Make %s use %s\n as base class." % (
                             obj.Title(),
-                            portal_type_interface.__name__,
+                            portal_type_class.__name__,
                         )
         return out
