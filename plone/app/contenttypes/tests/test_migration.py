@@ -25,7 +25,7 @@ from plone.app.contenttypes.testing import \
 from plone.app.testing import TEST_USER_ID, setRoles
 
 
-class FixInterfacesTest(unittest.TestCase):
+class FixBaseclassesTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
@@ -44,14 +44,14 @@ class FixInterfacesTest(unittest.TestCase):
         self.obj = self.portal.obj1
 
     def test_view_is_registered(self):
-        view = self.portal.restrictedTraverse('fix_interfaces')
+        view = self.portal.restrictedTraverse('fix_base_classes')
         self.assertIsInstance(view(), str)
 
     def test_fix_interface_for_document(self):
         self.obj.portal_type = 'Document'
         self.catalog.reindexObject(self.obj)
 
-        self.portal.restrictedTraverse('fix_interfaces')()
+        self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(IDocument.providedBy(self.obj))
 
@@ -59,7 +59,7 @@ class FixInterfacesTest(unittest.TestCase):
         self.obj.portal_type = 'Event'
         self.catalog.reindexObject(self.obj)
 
-        self.portal.restrictedTraverse('fix_interfaces')()
+        self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(IEvent.providedBy(self.obj))
 
@@ -67,7 +67,7 @@ class FixInterfacesTest(unittest.TestCase):
         self.obj.portal_type = 'File'
         self.catalog.reindexObject(self.obj)
 
-        self.portal.restrictedTraverse('fix_interfaces')()
+        self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(IFile.providedBy(self.obj))
 
@@ -75,7 +75,7 @@ class FixInterfacesTest(unittest.TestCase):
         self.obj.portal_type = 'Folder'
         self.catalog.reindexObject(self.obj)
 
-        self.portal.restrictedTraverse('fix_interfaces')()
+        self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(IFolder.providedBy(self.obj))
 
@@ -83,7 +83,7 @@ class FixInterfacesTest(unittest.TestCase):
         self.obj.portal_type = 'Image'
         self.catalog.reindexObject(self.obj)
 
-        self.portal.restrictedTraverse('fix_interfaces')()
+        self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(IImage.providedBy(self.obj))
 
@@ -91,7 +91,7 @@ class FixInterfacesTest(unittest.TestCase):
         self.obj.portal_type = 'Link'
         self.catalog.reindexObject(self.obj)
 
-        self.portal.restrictedTraverse('fix_interfaces')()
+        self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(ILink.providedBy(self.obj))
 
@@ -99,6 +99,6 @@ class FixInterfacesTest(unittest.TestCase):
         self.obj.portal_type = 'News Item'
         self.catalog.reindexObject(self.obj)
 
-        self.portal.restrictedTraverse('fix_interfaces')()
+        self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(INewsItem.providedBy(self.obj))

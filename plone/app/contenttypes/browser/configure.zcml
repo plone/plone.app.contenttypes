@@ -93,10 +93,10 @@
     />
 
   <browser:page
-    name="fix_interfaces"
+    name="fix_base_classes"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    class=".migration.FixInterfaces"
+    class=".migration.FixBaseClasses"
     permission="zope2.View"
     />
 

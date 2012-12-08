@@ -13,10 +13,10 @@ from plone.app.contenttypes.content import (
 )
 
 
-class FixInterfaces(BrowserView):
+class FixBaseClasses(BrowserView):
 
     def __call__(self):
-        """Make sure all content objects implement the proper interfaces.
+        """Make sure all content objects use the proper base classes.
         """
         out = ""
         catalog = getToolByName(self.context, "portal_catalog")
