@@ -7,7 +7,7 @@ setup(name='plone.app.contenttypes',
       version=version,
       description="",
       long_description=open("README.txt").read() + "\n" +
-                       open("CHANGES.txt").read(),
+                       open("CHANGES.rst").read(),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
