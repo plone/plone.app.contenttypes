@@ -32,6 +32,7 @@
     provides="plone.app.contenttypes.interfaces.IEvent"
     />
 
+  <include package=".behaviors" />
   <include package=".browser" />
 
   <include file="indexers.zcml" />
