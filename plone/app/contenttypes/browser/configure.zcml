@@ -100,4 +100,12 @@
     permission="zope2.View"
     />
 
+  <browser:page
+    name="contenttype_utils"
+    for="*"
+    permission="zope.Public"
+    class=".utils.Utils"
+    allowed_interface="plone.app.contenttypes.browser.utils.IUtils"
+    />  
+
 </configure>

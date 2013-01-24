@@ -10,12 +10,13 @@
 
     <metal:content-core fill-slot="content-core">
         <metal:block define-macro="content-core"
-                     tal:define="content_type context/file/contentType|nothing">
+                     tal:define="content_type context/file/contentType|nothing;
+                                 v python:context.restrictedTraverse('contenttype_utils');">
             <p>
-                <a tal:content="context/file/filename"
-                   tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}">
-                    Filename
-                </a>
+                <a tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}">
+                    <img tal:attributes="src python: v.getMimeTypeIcon(context.file)" border="0" />
+                    <tal:name tal:content="context/file/filename" >Filename</tal:name>
+                </a> 
                 <span class="discreet"
                       tal:define="size context/file/getSize;
                                   kb python:size/1024">
