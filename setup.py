@@ -30,6 +30,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.dexterity',
           'plone.app.relationfield',
           'plone.namedfile [blobs]',
+          'Products.contentmigration',
           # -*- Extra requirements: -*-
       ],
       extras_require={

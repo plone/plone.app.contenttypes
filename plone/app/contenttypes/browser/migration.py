@@ -1,7 +1,11 @@
 from plone.dexterity.interfaces import IDexterityContent
 from Products.Five.browser import BrowserView
 
+from Products.ATContentTypes.interfaces import IATDocument
 from Products.CMFCore.utils import getToolByName
+from Products.contentmigration.basemigrator.migrator import BaseMigrator, CMFItemMigrator
+from Products.contentmigration.basemigrator.walker import CatalogWalker
+
 from plone.app.contenttypes.content import (
     Document,
     Event,
@@ -19,7 +23,6 @@ class FixBaseClasses(BrowserView):
         """Make sure all content objects use the proper base classes.
         """
         out = ""
-        catalog = getToolByName(self.context, "portal_catalog")
         portal_types = [
             ('Document', Document),
             ('Event', Event),
@@ -28,7 +31,8 @@ class FixBaseClasses(BrowserView):
             ('Image', Image),
             ('Link', Link),
             ('News Item', NewsItem),
-        ]
+            ]
+        catalog = getToolByName(self.context, "portal_catalog")
         for portal_type, portal_type_class in portal_types:
             results = catalog.searchResults(portal_type=portal_type)
             for brain in results:
@@ -43,3 +47,20 @@ class FixBaseClasses(BrowserView):
                             portal_type_class.__name__,
                         )
         return out
+
+
+class DocumentMigrator(CMFItemMigrator):
+
+    src_portal_type = 'Document'
+    src_meta_type = 'ATDocument'
+    dst_portal_type = 'Document'
+    dst_meta_type = None  # not used
+
+    
+class MigrateFromATContentTypes(BrowserView):
+
+    def __call__(self):
+        portal = self.context
+        walker = CatalogWalker(portal, DocumentMigrator)
+        output = walker.go()
+        return output
