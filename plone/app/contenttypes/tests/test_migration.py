@@ -119,11 +119,13 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def createATCTobject(self, klass, id):
         '''Borrowed from ATCTFieldTestCase'''
+        import transaction
         portal = self.portal
         obj = klass(oid=id)
         obj = obj.__of__(portal)
         portal[id] = obj
         obj.initializeArchetype()
+        transaction.savepoint()
         return obj
 
     def get_migrator(self, obj, migrator_class):
@@ -133,9 +135,33 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                                   dst_portal_type=dst_portal_type)
         return migrator
 
-    def test_document(self):
+    def test_new_content_is_indexed(self):
         from Products.ATContentTypes.content.document import ATDocument
         from plone.app.contenttypes.browser.migration import DocumentMigrator
-        document = self.createATCTobject(ATDocument, 'document')
-        migrator = self.get_migrator(document, DocumentMigrator)
+        from plone.app.contenttypes.interfaces import IDocument
+        at_document = self.createATCTobject(ATDocument, 'document')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
         migrator.migrate()
+        brains = self.catalog(object_provides=IDocument.__identifier__)
+        self.assertEqual(len(brains), 1)
+        self.assertEqual(brains[0].getObject(), self.portal['document'])
+
+    def test_old_content_is_removed(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from plone.app.contenttypes.browser.migration import DocumentMigrator
+        at_document = self.createATCTobject(ATDocument, 'document')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+        brains = self.catalog(portal_type='Document')
+        self.assertEqual(len(brains), 1)
+
+    def test_document_is_migrated(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from plone.app.contenttypes.browser.migration import DocumentMigrator
+        from plone.app.contenttypes.interfaces import IDocument
+        at_document = self.createATCTobject(ATDocument, 'document')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+        new_document = self.portal['document']
+        self.assertTrue(IDocument.providedBy(new_document))
+        self.assertTrue(at_document is not new_document)
