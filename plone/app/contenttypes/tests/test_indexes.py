@@ -82,3 +82,25 @@ class CatalogIntegrationTest(unittest.TestCase):
             brains[1].getPath(),
             '/plone/folder/document'
         )
+
+    def test_title_in_metadata(self):
+        self.document.title = "My title"
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/document",
+        ))
+        self.assertEquals(
+            brains[0].Title,
+            "My title"
+        )
+
+    def test_description_in_metadata(self):
+        self.document.description = "My description"
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/document",
+        ))
+        self.assertEquals(
+            brains[0].Description,
+            "My description"
+        )
