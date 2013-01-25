@@ -14,7 +14,8 @@
                                  v python:context.restrictedTraverse('contenttype_utils');">
             <p>
                 <a tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}">
-                    <img tal:attributes="src python: v.getMimeTypeIcon(context.file)" border="0" />
+                    <img tal:attributes="src python: v.getMimeTypeIcon(context.file); 
+                                         alt content_type;" border="0"  />
                     <tal:name tal:content="context/file/filename" >Filename</tal:name>
                 </a> 
                 <span class="discreet"

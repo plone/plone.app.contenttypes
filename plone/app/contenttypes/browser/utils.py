@@ -39,6 +39,10 @@ class Utils(BrowserView):
         mime.append(mtr.lookup("application/octet-stream")[0])
 
         return portal_url + "/" + guess_icon_path(mime[0])
+        
+        ## function works but is possibly not best implementation. following code 
+        ## might work for files where the mimetype is not directly recognized
+        
 #        if len(mime) > 0:
 #            icon = portal_url + "/" + guess_icon_path(mime[0])
 #        else: 
