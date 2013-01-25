@@ -26,7 +26,7 @@ setup(name='plone.app.contenttypes',
       install_requires=[
           'setuptools',
           'Products.CMFPlone',
-          'plone.app.collection',
+          'plone.app.collection>=2.0a1',
           'plone.app.dexterity',
           'plone.app.relationfield',
           'plone.namedfile [blobs]',

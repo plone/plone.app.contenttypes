@@ -1,16 +1,37 @@
 Introduction
 ============
 
-Dexterity-based default content types for Plone. This package is a drop-in
-replacement for Products.ATContenttypes.
+Dexterity-based default content types for Plone. This package is a drop-in replacement for Products.ATContenttypes.
 
-.. note::
+plone.app.contenttypes provides default content-types (document, news item, file, etc.) that are extendable through-the-web. They aim to mimick the old default-types - the only change is that they are based on dexterity.
 
-  It is not clear yet if this package will become part of Plone core. The archetypes content types might be replaced by a generic Deco content type in
-  the future.
+TOC
+- compatability-information (which Plone-versions work)
+- Install-intructions
+- how to use the CMFPlone-branch
+- link to PLIP
+- Describe types
+- Describe Behaviors
+- Dependencies
+- Design descisions (classes/interfaces/xml)
+- info for addon-developers:
+  - Differences to ATContentTypes Interfaces
 
-plone.app.contenttypes provides default content-types (document, news item, file, etc.) that are extendable through-the-web. They aim to mimick the old
-default-types - the only change is that they are based on dexterity.
+Migration
+- from AT to DX
+- from old p.a.c. to new p.a.c (add interfaces)
+- from ATEvent to DX-Event
+- from old p.a.c.-event to plone.app.event
+- collections
+
+- How to:
+  - extend the types ttw or with xml
+  - export a extended CT into a package to overwrite the default
+  - extend with behaviors
+  - make transateable
+
+- Addon-Products that work with p.a.c
+-
 
 .. note::
 

@@ -22,11 +22,6 @@
             </p>
         </div>
 
-        <tal:comment replace="nothing">
-          This is fixed in dexterity trunk
-          http://code.google.com/p/dexterity/issues/detail?id=200 and
-          tal:condition="context/text" should be removed after the next release of dexterity.
-        </tal:comment>
         <div id="parent-fieldname-text"
              tal:condition="context/text"
              tal:content="structure context/text/output" />
