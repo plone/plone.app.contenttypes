@@ -100,13 +100,13 @@
                     </tr>
                     <tr tal:condition="context/contact_phone">
                         <th i18n:translate="contact_phone">Contact Phone</th>
-                        <td class="tel" 
+                        <td class="tel"
                             tal:content="context/contact_phone">
                         </td>
                     </tr>
                     <tr tal:condition="context/attendees|nothing">
                         <th i18n:translate="contact_attendees">Attendees</th>
-                        <td class="attendees" 
+                        <td class="attendees"
                             tal:content="context/attendees">
                         </td>
                     </tr>
@@ -133,7 +133,6 @@
         </div>
 
         <div id="parent-fieldname-text"
-             tal:condition="context/text"
              tal:content="structure context/text/output" />
 
         <p tal:condition="context/event_url|nothing">
