@@ -23,7 +23,7 @@ from plone.app.testing import TEST_USER_ID, setRoles
 
 def dummy_image():
     from plone.namedfile.file import NamedBlobImage
-    filename = os.path.join(os.path.dirname(__file__), u'image.png')
+    filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
     return NamedBlobImage(
         data=open(filename, 'r').read(),
         filename=filename
@@ -107,7 +107,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
 #
 #        self.assertTrue(view())
 #        self.assertEquals(view.request.response.status, 200)
-#        self.assertTrue('image.png' in view())
+#        self.assertTrue('image.jpg' in view())
 
 
 class ImageFunctionalTest(unittest.TestCase):
@@ -136,14 +136,14 @@ class ImageFunctionalTest(unittest.TestCase):
             .value = "My image"
         self.browser.getControl(name='form.widgets.description')\
             .value = "This is my image."
-        image_path = os.path.join(os.path.dirname(__file__), "image.png")
+        image_path = os.path.join(os.path.dirname(__file__), "image.jpg")
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(open(image_path), 'image/png', 'image.png')
+        image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
-        self.assertTrue(self.browser.url.endswith('image.png/view'))
+        self.assertTrue(self.browser.url.endswith('image.jpg/view'))
         self.assertTrue('My image' in self.browser.contents)
         self.assertTrue('This is my image' in self.browser.contents)
-        self.assertTrue('image.png' in self.browser.contents)
+        self.assertTrue('image.jpg' in self.browser.contents)
 
     def test_image_view_fullscreen(self):
         self.browser.open(self.portal_url)
@@ -155,13 +155,13 @@ class ImageFunctionalTest(unittest.TestCase):
             .value = "My image"
         self.browser.getControl(name='form.widgets.description')\
             .value = "This is my image."
-        image_path = os.path.join(os.path.dirname(__file__), "image.png")
+        image_path = os.path.join(os.path.dirname(__file__), "image.jpg")
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(open(image_path), 'image/png', 'image.png')
+        image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.browser.getLink('Click to view full-size image…').click()
         self.assertTrue(
-            self.browser.url.endswith('image.png/image_view_fullscreen')
+            self.browser.url.endswith('image.jpg/image_view_fullscreen')
         )
         self.assertTrue('My image' in self.browser.contents)
         self.assertTrue('Back to site' in self.browser.contents)
