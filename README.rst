@@ -17,6 +17,12 @@ TOC
 - info for addon-developers:
   - Differences to ATContentTypes Interfaces
 
+Migration
+- from AT to DX
+- from old p.a.c. to new p.a.c (add interfaces)
+- from ATEvent to DX-Event
+- from old p.a.c.-event to plone.app.event
+- collections
 
 - How to:
   - extend the types ttw or with xml
