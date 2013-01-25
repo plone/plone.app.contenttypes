@@ -137,7 +137,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_new_content_is_indexed(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.browser.migration import DocumentMigrator
+        from plone.app.contenttypes.migration import DocumentMigrator
         from plone.app.contenttypes.interfaces import IDocument
         at_document = self.createATCTobject(ATDocument, 'document')
         migrator = self.get_migrator(at_document, DocumentMigrator)
@@ -148,7 +148,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_old_content_is_removed(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.browser.migration import DocumentMigrator
+        from plone.app.contenttypes.migration import DocumentMigrator
         at_document = self.createATCTobject(ATDocument, 'document')
         migrator = self.get_migrator(at_document, DocumentMigrator)
         migrator.migrate()
@@ -157,7 +157,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_document_is_migrated(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.browser.migration import DocumentMigrator
+        from plone.app.contenttypes.migration import DocumentMigrator
         from plone.app.contenttypes.interfaces import IDocument
         at_document = self.createATCTobject(ATDocument, 'document')
         migrator = self.get_migrator(at_document, DocumentMigrator)

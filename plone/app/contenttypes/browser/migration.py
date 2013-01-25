@@ -1,9 +1,8 @@
 from plone.dexterity.interfaces import IDexterityContent
-from Products.Five.browser import BrowserView
 
 from Products.CMFCore.utils import getToolByName
-from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
-from Products.contentmigration.basemigrator.walker import CatalogWalker
+from Products.Five.browser import BrowserView
+
 
 from plone.app.contenttypes.content import (
     Document,
@@ -14,6 +13,11 @@ from plone.app.contenttypes.content import (
     Link,
     NewsItem,
 )
+try:
+    from plone.app.contenttypes import migration
+    HAS_ATCT_MIGRATION = True
+except ImportError:
+    HAS_ATCT_MIGRATION = False
 
 
 class FixBaseClasses(BrowserView):
@@ -48,18 +52,17 @@ class FixBaseClasses(BrowserView):
         return out
 
 
-class DocumentMigrator(CMFItemMigrator):
-
-    src_portal_type = 'Document'
-    src_meta_type = 'ATDocument'
-    dst_portal_type = 'Document'
-    dst_meta_type = None  # not used
-
-
 class MigrateFromATContentTypes(BrowserView):
 
     def __call__(self):
+
+        if not HAS_ATCT_MIGRATION:
+            msg = ('You want to migrate ATContentType object to '
+                   'plone.app.contetntypes objects, but we can not '
+                   'find Products.contentmigration. '
+                   'You can fix that by installing plone.app.contenttypes '
+                   'with the extra_requires [migrate_atct]')
+            return msg
         portal = self.context
-        walker = CatalogWalker(portal, DocumentMigrator)
-        output = walker.go()
-        return output
+        migration.migrate_documents(portal)
+
