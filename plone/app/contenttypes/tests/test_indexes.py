@@ -25,7 +25,12 @@ class CatalogIntegrationTest(unittest.TestCase):
             'Document',
             'document'
         )
+        self.folder.invokeFactory(
+            'News Item',
+            'news_item'
+        )
         self.document = self.folder.document
+        self.news_item = self.folder.news_item
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
     def test_title_in_searchable_text_index(self):
@@ -52,19 +57,50 @@ class CatalogIntegrationTest(unittest.TestCase):
             '/plone/folder/document'
         )
 
-# XXX: This works in real life. Test fails though.
-#    def test_text_in_searchable_text_index(self):
-#        self.document.text = RichTextValue(
-#            u'Lorem ipsum',
-#            'text/plain',
-#            'text/html'
-#        )
-#        self.document.reindexObject()
-#        brains = self.catalog.searchResults(dict(
-#            SearchableText=u'Lorem ipsum',
-#        ))
-#        self.assertEqual(len(brains), 1)
-#        self.assertEquals(
-#            brains[0].getPath(),
-#            '/plone/folder/document'
-#        )
+    def test_text_in_searchable_text_index(self):
+        self.document.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
+        self.news_item.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
+        self.document.reindexObject()
+        self.news_item.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 2)
+        self.assertEquals(
+            brains[0].getPath(),
+            '/plone/folder/news_item'
+        )
+        self.assertEquals(
+            brains[1].getPath(),
+            '/plone/folder/document'
+        )
+
+    def test_title_in_metadata(self):
+        self.document.title = "My title"
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/document",
+        ))
+        self.assertEquals(
+            brains[0].Title,
+            "My title"
+        )
+
+    def test_description_in_metadata(self):
+        self.document.description = "My description"
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/document",
+        ))
+        self.assertEquals(
+            brains[0].Description,
+            "My description"
+        )
