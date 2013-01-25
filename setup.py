@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import os
 
 version = '1.0a2'
 
@@ -30,12 +29,14 @@ setup(name='plone.app.contenttypes',
           'plone.app.dexterity',
           'plone.app.relationfield',
           'plone.namedfile [blobs]',
-          'Products.contentmigration',
           # -*- Extra requirements: -*-
       ],
       extras_require={
           'test': [
               'plone.app.testing',
+          ],
+          'migrate_atct': [
+              'Products.contentmigration',
           ],
       },
       entry_points="""
