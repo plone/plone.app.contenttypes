@@ -3,7 +3,7 @@ from DateTime import DateTime
 
 from plone.indexer.decorator import indexer
 
-from plone.app.contenttypes.interfaces import IEvent, IDocument
+from plone.app.contenttypes.interfaces import IEvent, IDocument, INewsItem
 
 
 @indexer(IEvent)
@@ -15,6 +15,10 @@ def start_date(obj):
 def end_date(obj):
     return DateTime(IEvent(obj).end_date)
 
+@indexer(INewsItem)
+def SearchableText_news(obj):
+    return "%s %s %s" % (obj.Title(), obj.Description(), obj.text.output)
+
 @indexer(IDocument)
-def SearchableText(obj):
+def SearchableText_document(obj):
     return "%s %s %s" % (obj.Title(), obj.Description(), obj.text.output)

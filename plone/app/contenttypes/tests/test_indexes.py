@@ -25,7 +25,12 @@ class CatalogIntegrationTest(unittest.TestCase):
             'Document',
             'document'
         )
+        self.folder.invokeFactory(
+            'News Item',
+            'news_item'
+        )
         self.document = self.folder.document
+        self.news_item = self.folder.news_item
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
     def test_title_in_searchable_text_index(self):
@@ -58,12 +63,22 @@ class CatalogIntegrationTest(unittest.TestCase):
             'text/plain',
             'text/html'
         )
+        self.news_item.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
         self.document.reindexObject()
+        self.news_item.reindexObject()
         brains = self.catalog.searchResults(dict(
             SearchableText=u'Lorem ipsum',
         ))
-        self.assertEqual(len(brains), 1)
+        self.assertEqual(len(brains), 2)
         self.assertEquals(
             brains[0].getPath(),
+            '/plone/folder/news_item'
+        )
+        self.assertEquals(
+            brains[1].getPath(),
             '/plone/folder/document'
         )
