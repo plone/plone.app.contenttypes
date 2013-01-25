@@ -52,19 +52,18 @@ class CatalogIntegrationTest(unittest.TestCase):
             '/plone/folder/document'
         )
 
-# XXX: This works in real life. Test fails though.
-#    def test_text_in_searchable_text_index(self):
-#        self.document.text = RichTextValue(
-#            u'Lorem ipsum',
-#            'text/plain',
-#            'text/html'
-#        )
-#        self.document.reindexObject()
-#        brains = self.catalog.searchResults(dict(
-#            SearchableText=u'Lorem ipsum',
-#        ))
-#        self.assertEqual(len(brains), 1)
-#        self.assertEquals(
-#            brains[0].getPath(),
-#            '/plone/folder/document'
-#        )
+    def test_text_in_searchable_text_index(self):
+        self.document.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEquals(
+            brains[0].getPath(),
+            '/plone/folder/document'
+        )
