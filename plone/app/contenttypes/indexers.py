@@ -3,7 +3,9 @@ from DateTime import DateTime
 
 from plone.indexer.decorator import indexer
 
-from plone.app.contenttypes.interfaces import IEvent, IDocument, INewsItem
+from plone.app.contenttypes.interfaces import (
+    IEvent, IDocument, INewsItem, ILink
+        )
 
 
 @indexer(IEvent)
@@ -22,3 +24,7 @@ def SearchableText_news(obj):
 @indexer(IDocument)
 def SearchableText_document(obj):
     return "%s %s %s" % (obj.title, obj.description, getattr(obj.text, 'output', ''))
+
+@indexer(ILink)
+def getRemoteUrl(obj):
+    return obj.remoteUrl

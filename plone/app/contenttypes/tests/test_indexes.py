@@ -29,8 +29,13 @@ class CatalogIntegrationTest(unittest.TestCase):
             'News Item',
             'news_item'
         )
+        self.folder.invokeFactory(
+            'Link',
+            'link'
+        )
         self.document = self.folder.document
         self.news_item = self.folder.news_item
+        self.link = self.folder.link
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
     def test_title_in_searchable_text_index(self):
@@ -104,3 +109,15 @@ class CatalogIntegrationTest(unittest.TestCase):
             brains[0].Description,
             "My description"
         )
+
+    def test_get_remote_url_in_metadata(self):
+        self.link.remoteUrl = 'http://www.plone.org/'
+        self.link.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/link",
+        ))
+        self.assertEquals(
+            brains[0].getRemoteUrl,
+            "http://www.plone.org/"
+        )
+        

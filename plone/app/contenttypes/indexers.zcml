@@ -9,5 +9,6 @@
   <adapter name="end" factory=".indexers.end_date" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_news" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_document" />
+  <adapter name="getRemoteUrl" factory=".indexers.getRemoteUrl" />
 
 </configure>
