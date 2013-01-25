@@ -123,7 +123,7 @@ class FileFunctionalText(unittest.TestCase):
         file_ctl.add_file(open(file_path), 'application/pdf', 'file.pdf')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.pdf/view'))
-        self.assertTrue('<img alt="PDF document icon"' in self.browser.contents)
+        self.assertTrue('pdf.png' in self.browser.contents)
 
     def test_mime_icon_odt_for_file_(self):
         self.browser.open(self.portal_url)
@@ -138,7 +138,7 @@ class FileFunctionalText(unittest.TestCase):
         file_ctl.add_file(open(file_path), 'application/vnd.oasis.opendocument.text', 'file.odt')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.odt/view'))
-        self.assertTrue('<img alt="ODT document icon"' in self.browser.contents)        
+        self.assertTrue('application.png' in self.browser.contents)        
         
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
