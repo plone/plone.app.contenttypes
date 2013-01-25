@@ -39,6 +39,54 @@ Todo
  [ ] (Issue) The Document (Page) content type is missing presentation mode.
 
  [ ] (Issue) The Folder content type is missing functionality to set locally addable types.
+ 
+ [ ] Remove references to Archetypes and ATContentTypes from Plone Core products. The following packages 
+     currently contain at least one reference to Archetypes or ATContentTypes in py/pt/cpy/xml/zcml 
+     (Plone 4.3 core branch):
+         - archetypes.querywidget
+         - archetypes.referencebrowserwidget
+         - archetypes.schemaextender
+         - borg.localrole
+         - plone.app.blob
+         - plone.app.caching
+         - plone.app.collection
+         - plone.app.contentrules
+         - plone.app.dexterity
+         - plone.app.discussion
+         - plone.app.folder
+         - plone.app.imaging
+         - plone.app.iterate
+         - plone.app.layout
+         - plone.app.linkintegrity
+         - plone.app.locales
+         - plone.app.portlets
+         - plone.app.testing
+         - plone.app.upgrade
+         - plone.app.uuid
+         - plone.app.z3cform
+         - plone.locking
+         - Products.Archetypes
+         - Products.ATContentTypes
+         - Products.ATReferenceBrowserWidget
+         - Products.CMFDiffTool
+         - Products.CMFDynamicViewFTI
+         - Products.CMFEditions
+         - Products.CMFPlone
+         - Products.contentmigration
+         - Products.ExternalEditor
+         - Products.GenericSetup
+         - Products.LinguaPlone
+         - Products.Marshall
+         - Products.MimetypesRegistry
+         - Products.PlonePAS
+         - Products.PloneTestCase
+         - Products.PortalTransforms
+         - Products.TinyMCE
+         - Products.validation
+         - txtfilter
+         - wicked
+    There is a full breakdown of specific files that mention Archetypes or ATContentTypes, along with line numbers 
+    in the files archetypes-mentions.txt and atct-mentions.txt at the root of the plone.app.contenttypes product.
 
 Postponed
 =========
