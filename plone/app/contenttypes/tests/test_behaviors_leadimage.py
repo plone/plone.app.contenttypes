@@ -62,11 +62,11 @@ class DocumentFunctionalText(unittest.TestCase):
     def test_lead_image_viewlet_shows_up(self):
         self.browser.open(self.portal_url + '/leadimagedoc/edit')
         # Image upload
-        file_path = os.path.join(os.path.dirname(__file__), "image.png")
+        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
         file_ctl = self.browser.getControl(
             name='form.widgets.ILeadImage.image'
         )
-        file_ctl.add_file(open(file_path), 'image/png', 'image.png')
+        file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
         # Image caption
         self.browser.getControl(
             name='form.widgets.ILeadImage.image_caption'
@@ -75,7 +75,7 @@ class DocumentFunctionalText(unittest.TestCase):
         self.browser.getControl('Save').click()
 
         self.assertTrue('My image caption' in self.browser.contents)
-        self.assertTrue('image.png' in self.browser.contents)
+        self.assertTrue('image.jpg' in self.browser.contents)
 
         self.assertTrue('<div class="leadImage">' in self.browser.contents)
 
