@@ -1,9 +1,8 @@
 from plone.dexterity.interfaces import IDexterityContent
 from Products.Five.browser import BrowserView
 
-from Products.ATContentTypes.interfaces import IATDocument
 from Products.CMFCore.utils import getToolByName
-from Products.contentmigration.basemigrator.migrator import BaseMigrator, CMFItemMigrator
+from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 
 from plone.app.contenttypes.content import (
@@ -56,7 +55,7 @@ class DocumentMigrator(CMFItemMigrator):
     dst_portal_type = 'Document'
     dst_meta_type = None  # not used
 
-    
+
 class MigrateFromATContentTypes(BrowserView):
 
     def __call__(self):
