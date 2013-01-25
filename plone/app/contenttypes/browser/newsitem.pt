@@ -23,6 +23,7 @@
         </div>
 
         <div id="parent-fieldname-text"
+             tal:condition="context/text"
              tal:content="structure context/text/output" />
 
     </metal:block>

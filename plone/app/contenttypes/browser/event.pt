@@ -133,6 +133,7 @@
         </div>
 
         <div id="parent-fieldname-text"
+             tal:condition="context/text"
              tal:content="structure context/text/output" />
 
         <p tal:condition="context/event_url|nothing">
