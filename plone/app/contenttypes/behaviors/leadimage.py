@@ -1,7 +1,7 @@
 from zope.interface import alsoProvides, implements
 from zope.component import adapts
 from zope import schema
-from plone.directives import form
+from plone.supermodel import model
 from plone.dexterity.interfaces import IDexterityContent
 from plone.autoform.interfaces import IFormFieldProvider
 
@@ -10,7 +10,7 @@ from plone.namedfile import field as namedfile
 from plone.app.contenttypes import MessageFactory as _
 
 
-class ILeadImage(form.Schema):
+class ILeadImage(model.Schema):
 
     image = namedfile.NamedBlobImage(
         title=_(u"Lead Image"),
