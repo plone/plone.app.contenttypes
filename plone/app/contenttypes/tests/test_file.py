@@ -102,14 +102,43 @@ class FileFunctionalText(unittest.TestCase):
             .value = "My file"
         self.browser.getControl(name='form.widgets.description')\
             .value = "This is my file."
-        file_path = os.path.join(os.path.dirname(__file__), "image.png")
+        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(open(file_path), 'image/png', 'image.png')
+        file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
-        self.assertTrue(self.browser.url.endswith('image.png/view'))
+        self.assertTrue(self.browser.url.endswith('image.jpg/view'))
         self.assertTrue('My file' in self.browser.contents)
         self.assertTrue('This is my file' in self.browser.contents)
 
+    def test_mime_icon_pdf_for_file_(self):
+        self.browser.open(self.portal_url)
+        self.browser.getLink('File').click()
+        
+        self.browser.getControl(name='form.widgets.title')\
+            .value = "My file"
+        self.browser.getControl(name='form.widgets.description')\
+            .value = "This is my pdf file."
+        file_path = os.path.join(os.path.dirname(__file__), "file.pdf")
+        file_ctl = self.browser.getControl(name='form.widgets.file')
+        file_ctl.add_file(open(file_path), 'application/pdf', 'file.pdf')
+        self.browser.getControl('Save').click()
+        self.assertTrue(self.browser.url.endswith('file.pdf/view'))
+        self.assertTrue('pdf.png' in self.browser.contents)
 
+    def test_mime_icon_odt_for_file_(self):
+        self.browser.open(self.portal_url)
+        self.browser.getLink('File').click()
+        
+        self.browser.getControl(name='form.widgets.title')\
+            .value = "My file"
+        self.browser.getControl(name='form.widgets.description')\
+            .value = "This is my odt file."
+        file_path = os.path.join(os.path.dirname(__file__), "file.odt")
+        file_ctl = self.browser.getControl(name='form.widgets.file')
+        file_ctl.add_file(open(file_path), 'application/vnd.oasis.opendocument.text', 'file.odt')
+        self.browser.getControl('Save').click()
+        self.assertTrue(self.browser.url.endswith('file.odt/view'))
+        self.assertTrue('application.png' in self.browser.contents)        
+        
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

@@ -13,6 +13,8 @@ Changelog
 - Migration view (@@fix_base_classes) added to migrate content objects that
   were created with version 1.0a1.
   [timo]
+  
+- Mime Type Icon added for File View [loechel] 
 
 
 1.0a1 (unreleased)

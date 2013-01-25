@@ -8,6 +8,7 @@
       <required>False</required>
       <title>Text</title>
     </field>
+    <!--
     <field name="image" type="plone.namedfile.field.NamedBlobImage">
       <description i18n:translate="help_news_image">Will be shown in the news listing, and in the news item itself. Image will be scaled to a sensible size.</description>
       <required>False</required>
@@ -18,5 +19,6 @@
       <required>False</required>
       <title i18n:translate="label_image_caption">Image Caption</title>
     </field>
+    -->
   </schema>
 </model>
