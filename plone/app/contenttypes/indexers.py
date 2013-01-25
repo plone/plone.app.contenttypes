@@ -17,13 +17,21 @@ def start_date(obj):
 def end_date(obj):
     return DateTime(IEvent(obj).end_date)
 
+def SearchableText(obj, text=False):
+    return ' '.join((obj.id, obj.title, obj.description, 
+                ))
+
 @indexer(INewsItem)
 def SearchableText_news(obj):
-    return "%s %s %s" % (obj.title, obj.description, getattr(obj.text, 'output', ''))
+    return ' '.join((SearchableText(obj), getattr(obj.text, 'output', '')))
 
 @indexer(IDocument)
 def SearchableText_document(obj):
-    return "%s %s %s" % (obj.title, obj.description, getattr(obj.text, 'output', ''))
+    return ' '.join((SearchableText(obj), getattr(obj.text, 'output', '')))
+
+@indexer(ILink)
+def SearchableText_link(obj):
+    return ' '.join((SearchableText(obj), obj.remoteUrl))
 
 @indexer(ILink)
 def getRemoteUrl(obj):

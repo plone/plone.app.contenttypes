@@ -38,6 +38,16 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.link = self.folder.link
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
+    def test_id_in_searchable_text_index(self):
+        brains = self.catalog.searchResults(dict(
+            SearchableText="document",
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEquals(
+            brains[0].getPath(),
+            '/plone/folder/document'
+        )
+
     def test_title_in_searchable_text_index(self):
         self.document.title = "My title"
         self.document.reindexObject()
@@ -60,6 +70,18 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.assertEquals(
             brains[0].getPath(),
             '/plone/folder/document'
+        )
+
+    def test_remote_url_in_searchable_text_index(self):
+        self.link.remoteUrl = 'http://www.plone.org/'
+        self.link.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            SearchableText="plone",
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEquals(
+            brains[0].getPath(),
+            '/plone/folder/link'
         )
 
     def test_text_in_searchable_text_index(self):
