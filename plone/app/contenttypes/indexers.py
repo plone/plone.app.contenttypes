@@ -17,8 +17,8 @@ def end_date(obj):
 
 @indexer(INewsItem)
 def SearchableText_news(obj):
-    return "%s %s %s" % (obj.Title(), obj.Description(), obj.text.output)
+    return "%s %s %s" % (obj.title, obj.description, getattr(obj.text, 'output', ''))
 
 @indexer(IDocument)
 def SearchableText_document(obj):
-    return "%s %s %s" % (obj.Title(), obj.Description(), obj.text.output)
+    return "%s %s %s" % (obj.title, obj.description, getattr(obj.text, 'output', ''))
