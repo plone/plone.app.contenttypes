@@ -102,3 +102,40 @@ class FixBaseclassesTest(unittest.TestCase):
         self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(INewsItem.providedBy(self.obj))
+
+
+class MigrateToATContentTypesTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        self.request['URL'] = self.portal.absolute_url()
+        directlyProvides(self.request, IPloneAppContenttypesLayer)
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        self.catalog = getToolByName(self.portal, "portal_catalog")
+
+    def createATCTobject(self, klass, id):
+        '''Borrowed from ATCTFieldTestCase'''
+        portal = self.portal
+        obj = klass(oid=id)
+        obj = obj.__of__(portal)
+        portal[id] = obj
+        obj.initializeArchetype()
+        return obj
+
+    def get_migrator(self, obj, migrator_class):
+        src_portal_type = migrator_class.src_portal_type
+        dst_portal_type = migrator_class.dst_portal_type
+        migrator = migrator_class(obj, src_portal_type=src_portal_type,
+                                  dst_portal_type=dst_portal_type)
+        return migrator
+
+    def test_document(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from plone.app.contenttypes.browser.migration import DocumentMigrator
+        document = self.createATCTobject(ATDocument, 'document')
+        migrator = self.get_migrator(document, DocumentMigrator)
+        migrator.migrate()
