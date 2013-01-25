@@ -50,8 +50,8 @@
                             </tal:differentday>
 
                             <tal:sameday tal:condition="python:toLocalizedTime(context.start_date) == toLocalizedTime(context.end_date)"
-                                         tal:define="ampm
-                                         python:site_properties.getProperty('localLongTimeFormat').find('%p') >= 0"
+                                         tal:define=" lltf python: site_properties.getProperty('localLongTimeFormat');
+                                         ampm python:lltf and lltf.find('%p') >= 0"
                                          i18n:translate="event_when_sameday">
                                 <span tal:replace="python:toLocalizedTime(context.start_date)"
                                       i18n:name="date">
