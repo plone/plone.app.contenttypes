@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+from zope.viewlet.interfaces import IViewletManager
+from zope.component import queryMultiAdapter
 import unittest2 as unittest
+
+from Products.Five.browser import BrowserView as View
 
 from zope.component import createObject
 from zope.component import queryUtility
@@ -30,6 +34,11 @@ class NewsItemIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        from plone.app.contenttypes.interfaces import (
+            IPloneAppContenttypesLayer
+        )
+        from zope.interface import alsoProvides
+        alsoProvides(self.request, IPloneAppContenttypesLayer)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
@@ -81,6 +90,25 @@ class NewsItemIntegrationTest(unittest.TestCase):
         self.assertTrue('My News Item' in view())
         self.assertTrue('This is my news item.' in view())
         self.assertTrue('Lorem ipsum' in view())
+
+    def test_leadimage_viewlet_does_not_show_up_for_newsitems(self):
+        from zope.interface import alsoProvides
+        from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+        alsoProvides(self.request, ILeadImage)
+        view = View(self.portal, self.request)
+        manager = queryMultiAdapter(
+            (self.portal, self.request, view),
+            IViewletManager,
+            'plone.abovecontenttitle',
+            default=None
+        )
+        self.failUnless(manager)
+        manager.update()
+        leadimage_viewlet = [
+            v for v in manager.viewlets
+            if v.__name__ == 'contentleadimage'
+        ]
+        self.assertEqual(len(leadimage_viewlet), 0)
 
 
 class NewsItemFunctionalText(unittest.TestCase):
