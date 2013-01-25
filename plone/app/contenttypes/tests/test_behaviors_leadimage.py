@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest2 as unittest
 
 from plone.app.testing import SITE_OWNER_NAME
@@ -6,7 +7,6 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing.z2 import Browser
 
 from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 )
 
@@ -31,9 +31,14 @@ class DocumentFunctionalText(unittest.TestCase):
         fti = DexterityFTI('leadimagedocument')
         self.portal.portal_types._setObject('leadimagedocument', fti)
         fti.klass = 'plone.dexterity.content.Item'
-        fti.behaviors = ('plone.app.contenttypes.behaviors.leadimage.ILeadImage',)
+        fti.behaviors = (
+            'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
+        )
+        self.fti = fti
         alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
         alsoProvides(self.request, IPloneAppContenttypesLayer)
+        from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+        alsoProvides(self.request, ILeadImage)
         self.portal.invokeFactory(
             'leadimagedocument',
             id='leadimagedoc',
@@ -53,6 +58,26 @@ class DocumentFunctionalText(unittest.TestCase):
         self.browser.open(self.portal_url + '/leadimagedoc/edit')
         self.assertTrue('Lead Image' in self.browser.contents)
         self.assertTrue('Lead Image Caption' in self.browser.contents)
+
+    def test_lead_image_viewlet_shows_up(self):
+        self.browser.open(self.portal_url + '/leadimagedoc/edit')
+        # Image upload
+        file_path = os.path.join(os.path.dirname(__file__), "image.png")
+        file_ctl = self.browser.getControl(
+            name='form.widgets.ILeadImage.image'
+        )
+        file_ctl.add_file(open(file_path), 'image/png', 'image.png')
+        # Image caption
+        self.browser.getControl(
+            name='form.widgets.ILeadImage.image_caption'
+        ).value = 'My image caption'
+        # Submit form
+        self.browser.getControl('Save').click()
+
+        self.assertTrue('My image caption' in self.browser.contents)
+        self.assertTrue('image.png' in self.browser.contents)
+
+        self.assertTrue('<div class="leadImage">' in self.browser.contents)
 
 
 def test_suite():
