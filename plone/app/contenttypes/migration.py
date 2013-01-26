@@ -7,8 +7,12 @@ will module will only work if P.contentmigration is installed so make sure
 you catch ImportErrors
 '''
 
+from StringIO import StringIO
+
+from Products.CMFPlone.utils import safe_unicode
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
+from plone.namedfile.file import NamedFile
 
 
 def migrate(portal, migrator):
@@ -26,3 +30,23 @@ class DocumentMigrator(CMFItemMigrator):
 
 def migrate_documents(portal):
     return migrate(portal, DocumentMigrator)
+
+
+class FileMigrator(CMFItemMigrator):
+
+    src_portal_type = 'File'
+    src_meta_type = 'AT File'
+    dst_portal_type = 'File'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        old_file = self.old.getField('file').get(self.old)
+        filename = safe_unicode(old_file.filename)
+        namedfile = NamedFile(contentType=old_file.content_type,
+                              data=StringIO(old_file.data),
+                              filename=filename)
+        self.new.file = namedfile
+
+
+def migrate_files(portal):
+    return migrate(portal, FileMigrator)

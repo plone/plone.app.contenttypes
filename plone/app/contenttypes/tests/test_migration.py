@@ -155,6 +155,18 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         brains = self.catalog(portal_type='Document')
         self.assertEqual(len(brains), 1)
 
+    def test_old_content_is_unindexed(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from Products.ATContentTypes.interfaces import IATDocument
+        from plone.app.contenttypes.migration import DocumentMigrator
+        at_document = self.createATCTobject(ATDocument, 'document')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        brains = self.catalog(object_provides=IATDocument.__identifier__)
+        self.assertEqual(len(brains), 1)
+        migrator.migrate()
+        brains = self.catalog(object_provides=IATDocument.__identifier__)
+        self.assertEqual(len(brains), 0)
+
     def test_document_is_migrated(self):
         from Products.ATContentTypes.content.document import ATDocument
         from plone.app.contenttypes.migration import DocumentMigrator
@@ -165,3 +177,31 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         new_document = self.portal['document']
         self.assertTrue(IDocument.providedBy(new_document))
         self.assertTrue(at_document is not new_document)
+
+    def test_file_is_migrated(self):
+        from Products.ATContentTypes.content.file import ATFile
+        from plone.app.contenttypes.migration import FileMigrator
+        from plone.app.contenttypes.interfaces import IFile
+        at_file = self.createATCTobject(ATFile, 'file')
+        migrator = self.get_migrator(at_file, FileMigrator)
+        migrator.migrate()
+        new_file = self.portal['file']
+        self.assertTrue(IFile.providedBy(new_file))
+        self.assertTrue(at_file is not new_file)
+
+    def test_file_content_is_migrated(self):
+        from plone.app.contenttypes.migration import FileMigrator
+        from plone.namedfile.interfaces import INamedFile
+        from Products.ATContentTypes.content.file import ATFile
+        at_file = self.createATCTobject(ATFile, 'file')
+        field = at_file.getField('file')
+        field.set(at_file, 'dummydata')
+        field.setFilename(at_file, 'dummyfile.txt')
+        field.setContentType(at_file, 'text/dummy')
+        migrator = self.get_migrator(at_file, FileMigrator)
+        migrator.migrate()
+        new_file = self.portal['file']
+        self.assertTrue(INamedFile.providedBy(new_file.file))
+        self.assertEqual(new_file.file.filename, 'dummyfile.txt')
+        self.assertEqual(new_file.file.contentType, 'text/dummy')
+        self.assertEqual(new_file.file.data, 'dummydata')
