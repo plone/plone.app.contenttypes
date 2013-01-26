@@ -83,7 +83,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.assertTrue('Lorem ipsum' in view())
 
 
-class DocumentFunctionalText(unittest.TestCase):
+class DocumentFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 

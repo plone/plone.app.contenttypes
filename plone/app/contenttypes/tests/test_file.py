@@ -77,7 +77,7 @@ class FileIntegrationTest(unittest.TestCase):
         self.assertTrue('This is my file.' in view())
 
 
-class FileFunctionalText(unittest.TestCase):
+class FileFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
@@ -113,7 +113,7 @@ class FileFunctionalText(unittest.TestCase):
     def test_mime_icon_pdf_for_file_(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
-        
+
         self.browser.getControl(name='form.widgets.title')\
             .value = "My file"
         self.browser.getControl(name='form.widgets.description')\
@@ -128,17 +128,20 @@ class FileFunctionalText(unittest.TestCase):
     def test_mime_icon_odt_for_file_(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
-        
+
         self.browser.getControl(name='form.widgets.title')\
             .value = "My file"
         self.browser.getControl(name='form.widgets.description')\
             .value = "This is my odt file."
         file_path = os.path.join(os.path.dirname(__file__), "file.odt")
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(open(file_path), 'application/vnd.oasis.opendocument.text', 'file.odt')
+        file_ctl.add_file(open(file_path),
+                          'application/vnd.oasis.opendocument.text',
+                          'file.odt')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.odt/view'))
-        self.assertTrue('application.png' in self.browser.contents)        
-        
+        self.assertTrue('application.png' in self.browser.contents)
+
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

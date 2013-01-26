@@ -83,7 +83,7 @@ class EventIntegrationTest(unittest.TestCase):
         self.assertTrue('Lorem ipsum' in view())
 
 
-class EventFunctionalText(unittest.TestCase):
+class EventFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
