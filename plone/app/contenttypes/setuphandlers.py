@@ -3,6 +3,7 @@ from zope.component import (
     getUtility,
     queryUtility,
     getMultiAdapter,
+    queryMultiAdapter,
 )
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
@@ -13,12 +14,14 @@ from AccessControl import Unauthorized
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.dexterity.utils import createContent
 from plone.dexterity.fti import IDexterityFTI
+from plone.app.textfield.value import RichTextValue
 from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
 
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from Products.CMFDefault.utils import bodyfinder
 from Products.CMFPlone.Portal import member_indexhtml
 
 
@@ -163,10 +166,21 @@ def importContent(context):
                                 description=description,
                                 )
         content = addContentToContainer(portal, content)
-
-        # TODO front-page text
-        # TODO Enable presentation mode
-        ##fp.setPresentation(True)
+        front_text = None
+        if target_language != 'en':
+            util = queryUtility(ITranslationDomain, 'plonefrontpage')
+            if util is not None:
+                translated_text = util.translate(u'front-text',
+                    target_language=target_language)
+                if translated_text != u'front-text':
+                    front_text = translated_text
+        request = getattr(portal, 'REQUEST', None)
+        if front_text is None and request is not None:
+            view = queryMultiAdapter((portal, request),
+                name='plone-frontpage-setup')
+            if view is not None:
+                front_text = bodyfinder(view.index()).strip()
+        content.text = RichTextValue(front_text, 'text/html', 'text/x-html-safe')
 
         portal.setDefaultPage('front-page')
         _publish(content)
