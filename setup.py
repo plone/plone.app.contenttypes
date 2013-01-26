@@ -34,7 +34,10 @@ setup(name='plone.app.contenttypes',
       ],
       extras_require={
           'test': [
+              'lxml',
               'plone.app.testing',
+              'robotsuite',
+              'robotframework-selenium2library',
           ],
       },
       entry_points="""
