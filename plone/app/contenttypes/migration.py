@@ -61,6 +61,8 @@ class ImageMigrator(CMFItemMigrator):
 
     def migrate_schema_fields(self):
         old_image = self.old.getField('image').get(self.old)
+        if old_image == '':
+            return
         filename = safe_unicode(old_image.filename)
         namedimage = NamedImage(data=StringIO(old_image.data),
                                 filename=filename)

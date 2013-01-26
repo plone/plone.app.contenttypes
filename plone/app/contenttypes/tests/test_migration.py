@@ -218,6 +218,19 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(IImage.providedBy(new_image))
         self.assertTrue(at_image is not new_image)
 
+    def test_empty_image_is_migrated(self):
+        '''
+        This should not happened cause the image field is required,
+        but this is a special case in AT's FileField.
+        '''
+        from Products.ATContentTypes.content.image import ATImage
+        from plone.app.contenttypes.migration import ImageMigrator
+        at_image = self.createATCTobject(ATImage, 'image')
+        migrator = self.get_migrator(at_image, ImageMigrator)
+        migrator.migrate()
+        new_image = self.portal['image']
+        self.assertEqual(new_image.image, None)
+
     def test_image_content_is_migrated(self):
         from plone.app.contenttypes.migration import ImageMigrator
         from plone.namedfile.interfaces import INamedImage
