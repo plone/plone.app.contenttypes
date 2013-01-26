@@ -78,7 +78,7 @@ class FolderFunctionalTest(unittest.TestCase):
 
     def test_add_folder(self):
         self.browser.open(self.portal_url)
-        self.browser.getLink('Folder').click()
+        self.browser.getLink(url='http://nohost/plone/++add++Folder').click()
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)
