@@ -65,4 +65,7 @@ class MigrateFromATContentTypes(BrowserView):
             return msg
         portal = self.context
         migration.migrate_documents(portal)
-
+        migration.migrate_files(portal)
+        migration.migrate_images(portal)
+        migration.migrate_newsitems(portal)
+        migration.migrate_links(portal)
