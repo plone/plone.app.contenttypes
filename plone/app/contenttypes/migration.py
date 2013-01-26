@@ -71,3 +71,19 @@ class ImageMigrator(CMFItemMigrator):
 
 def migrate_images(portal):
     return migrate(portal, ImageMigrator)
+
+
+class LinkMigrator(CMFItemMigrator):
+
+    src_portal_type = 'Link'
+    src_meta_type = 'AT Link'
+    dst_portal_type = 'Link'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        remoteUrl = self.old.getField('remoteUrl').get(self.old)
+        self.new.remoteUrl = remoteUrl
+
+
+def migrate_links(portal):
+    return migrate(portal, LinkMigrator)

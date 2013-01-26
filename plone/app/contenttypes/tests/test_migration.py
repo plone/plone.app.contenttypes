@@ -253,3 +253,27 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(new_image.image.filename, 'testimage.png')
         self.assertEqual(new_image.image.contentType, 'image/png')
         self.assertEqual(new_image.image.data, test_image_data)
+
+    def test_link_is_migrated(self):
+        from Products.ATContentTypes.content.link import ATLink
+        from plone.app.contenttypes.migration import LinkMigrator
+        from plone.app.contenttypes.interfaces import ILink
+        at_link = self.createATCTobject(ATLink, 'link')
+        migrator = self.get_migrator(at_link, LinkMigrator)
+        migrator.migrate()
+        new_link = self.portal['link']
+        self.assertTrue(ILink.providedBy(new_link))
+        self.assertTrue(at_link is not new_link)
+
+    def test_link_content_is_migrated(self):
+        from plone.app.contenttypes.migration import LinkMigrator
+        from plone.app.contenttypes.interfaces import ILink
+        from Products.ATContentTypes.content.link import ATLink
+        at_link = self.createATCTobject(ATLink, 'link')
+        field = at_link.getField('remoteUrl')
+        field.set(at_link, 'http://plone.org')
+        migrator = self.get_migrator(at_link, LinkMigrator)
+        migrator.migrate()
+        new_link = self.portal['link']
+        self.assertTrue(ILink.providedBy(new_link.link))
+        self.assertEqual(new_link.link.remoteUrl, u'http://plone.org')
