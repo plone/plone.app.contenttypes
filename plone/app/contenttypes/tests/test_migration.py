@@ -185,6 +185,28 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(IDocument.providedBy(new_document))
         self.assertTrue(at_document is not new_document)
 
+    def test_document_content_is_migrated(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.textfield.interfaces import IRichTextValue
+
+        # create an ATDocument
+        at_document = self.createATCTobject(ATDocument, 'document')
+        at_document.setText('Tütensuppe')
+        at_document.setContentType('chemical/x-gaussian-checkpoint')
+
+        # migrate
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+
+        # assertions
+        new_document = self.portal['document']
+        self.assertTrue(IRichTextValue(new_document.text))
+        self.assertEqual(new_document.text.raw, u'Tütensuppe')
+        self.assertEqual(new_document.text.mimeType,
+                         'chemical/x-gaussian-checkpoint')
+        self.assertEqual(new_document.text.outputMimeType, 'text/x-html-safe')
+
     def test_file_is_migrated(self):
         from Products.ATContentTypes.content.file import ATFile
         from plone.app.contenttypes.migration import FileMigrator
@@ -294,11 +316,13 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_newsitem_content_is_migrated(self):
         from Products.ATContentTypes.content.newsitem import ATNewsItem
         from plone.app.contenttypes.migration import NewsItemMigrator
+        from plone.app.textfield.interfaces import IRichTextValue
         from plone.namedfile.interfaces import INamedImage
 
         # create an ATNewsItem
         at_newsitem = self.createATCTobject(ATNewsItem, 'newsitem')
         at_newsitem.setText('Tütensuppe')
+        at_newsitem.setContentType('chemical/x-gaussian-checkpoint')
         at_newsitem.setImageCaption('Daniel Düsentrieb')
         test_image_data = self.get_test_image_data()
         image_field = at_newsitem.getField('image')
@@ -316,5 +340,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(new_newsitem.image.contentType, 'image/png')
         self.assertEqual(new_newsitem.image.data, test_image_data)
 
-        self.assertEqual(new_newsitem.text, u'Tütensuppe')
         self.assertEqual(new_newsitem.image_caption, u'Daniel Düsentrieb')
+
+        self.assertTrue(IRichTextValue(new_newsitem.text))
+        self.assertEqual(new_newsitem.text.raw, u'Tütensuppe')
+        self.assertEqual(new_newsitem.text.mimeType,
+                         'chemical/x-gaussian-checkpoint')
+        self.assertEqual(new_newsitem.text.outputMimeType, 'text/x-html-safe')

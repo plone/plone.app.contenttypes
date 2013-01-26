@@ -12,6 +12,8 @@ from StringIO import StringIO
 from Products.CMFPlone.utils import safe_unicode
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
+
+from plone.app.textfield.value import RichTextValue
 from plone.namedfile.file import NamedFile, NamedImage
 
 
@@ -26,6 +28,16 @@ class DocumentMigrator(CMFItemMigrator):
     src_meta_type = 'ATDocument'
     dst_portal_type = 'Document'
     dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        field = self.old.getField('text')
+        mime_type = field.getContentType(self.old)
+        raw_text = safe_unicode(field.getRaw(self.old))
+        if raw_text.strip() == '':
+            return
+        richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
+                                 outputMimeType='text/x-html-safe')
+        self.new.text = richtext
 
 
 def migrate_documents(portal):
@@ -89,7 +101,7 @@ def migrate_links(portal):
     return migrate(portal, LinkMigrator)
 
 
-class NewsItemMigrator(ImageMigrator):
+class NewsItemMigrator(ImageMigrator, DocumentMigrator):
 
     src_portal_type = 'News Item'
     src_meta_type = 'ATNewsItem'
@@ -97,14 +109,13 @@ class NewsItemMigrator(ImageMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        # migrate the image
+        # migrate the image and text
         ImageMigrator.migrate_schema_fields(self)
+        DocumentMigrator.migrate_schema_fields(self)
 
         # migrate the rest of the Schema
         self.new.image_caption = safe_unicode(
             self.old.getField('imageCaption').get(self.old))
-        self.new.text = safe_unicode(
-            self.old.getField('text').getRaw(self.old))
 
 
 def migrate_newsitems(portal):
