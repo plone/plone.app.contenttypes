@@ -129,6 +129,12 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         transaction.savepoint()
         return obj
 
+    def get_test_image_data(self):
+        test_image_path = os.path.join(os.path.dirname(__file__), 'image.png')
+        with open(test_image_path, 'rb') as test_image_file:
+            test_image_data = test_image_file.read()
+        return test_image_data
+
     def get_migrator(self, obj, migrator_class):
         src_portal_type = migrator_class.src_portal_type
         dst_portal_type = migrator_class.dst_portal_type
@@ -236,13 +242,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from plone.namedfile.interfaces import INamedImage
         from Products.ATContentTypes.content.image import ATImage
 
-        # get test image data
-        test_image_path = os.path.join(os.path.dirname(__file__), 'image.png')
-        with open(test_image_path, 'rb') as test_image_file:
-            test_image_data = test_image_file.read()
-
         # create the ATImage
         at_image = self.createATCTobject(ATImage, 'image')
+        test_image_data = self.get_test_image_data()
         field = at_image.getField('image')
         field.set(at_image, test_image_data)
         field.setFilename(at_image, 'testimage.png')
@@ -277,3 +279,42 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         new_link = self.portal['link']
         self.assertTrue(ILink.providedBy(new_link.link))
         self.assertEqual(new_link.link.remoteUrl, u'http://plone.org')
+
+    def test_newsitem_is_migrated(self):
+        from Products.ATContentTypes.content.newsitem import ATNewsItem
+        from plone.app.contenttypes.migration import NewsItemMigrator
+        from plone.app.contenttypes.interfaces import INewsItem
+        at_newsitem = self.createATCTobject(ATNewsItem, 'newsitem')
+        migrator = self.get_migrator(at_newsitem, NewsItemMigrator)
+        migrator.migrate()
+        new_newsitem = self.portal['newsitem']
+        self.assertTrue(INewsItem.providedBy(new_newsitem))
+        self.assertTrue(at_newsitem is not new_newsitem)
+
+    def test_newsitem_content_is_migrated(self):
+        from Products.ATContentTypes.content.newsitem import ATNewsItem
+        from plone.app.contenttypes.migration import NewsItemMigrator
+        from plone.namedfile.interfaces import INamedImage
+
+        # create an ATNewsItem
+        at_newsitem = self.createATCTobject(ATNewsItem, 'newsitem')
+        at_newsitem.setText('Tütensuppe')
+        at_newsitem.setImageCaption('Daniel Düsentrieb')
+        test_image_data = self.get_test_image_data()
+        image_field = at_newsitem.getField('image')
+        image_field.set(at_newsitem, test_image_data)
+        image_field.setFilename(at_newsitem, 'testimage.png')
+
+        # migrate
+        migrator = self.get_migrator(at_newsitem, NewsItemMigrator)
+        migrator.migrate()
+
+        # assertions
+        new_newsitem = self.portal['newsitem']
+        self.assertTrue(INamedImage.providedBy(new_newsitem.image))
+        self.assertEqual(new_newsitem.image.filename, 'testimage.png')
+        self.assertEqual(new_newsitem.image.contentType, 'image/png')
+        self.assertEqual(new_newsitem.image.data, test_image_data)
+
+        self.assertEqual(new_newsitem.text, u'Tütensuppe')
+        self.assertEqual(new_newsitem.image_caption, u'Daniel Düsentrieb')

@@ -87,3 +87,25 @@ class LinkMigrator(CMFItemMigrator):
 
 def migrate_links(portal):
     return migrate(portal, LinkMigrator)
+
+
+class NewsItemMigrator(ImageMigrator):
+
+    src_portal_type = 'News Item'
+    src_meta_type = 'ATNewsItem'
+    dst_portal_type = 'News Item'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        # migrate the image
+        ImageMigrator.migrate_schema_fields(self)
+
+        # migrate the rest of the Schema
+        self.new.image_caption = safe_unicode(
+            self.old.getField('imageCaption').get(self.old))
+        self.new.text = safe_unicode(
+            self.old.getField('text').getRaw(self.old))
+
+
+def migrate_NewsItems(portal):
+    return migrate(portal, NewsItemMigrator)
