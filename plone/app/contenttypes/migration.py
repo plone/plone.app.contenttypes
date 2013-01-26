@@ -107,5 +107,5 @@ class NewsItemMigrator(ImageMigrator):
             self.old.getField('text').getRaw(self.old))
 
 
-def migrate_NewsItems(portal):
+def migrate_newsitems(portal):
     return migrate(portal, NewsItemMigrator)
