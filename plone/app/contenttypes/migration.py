@@ -12,7 +12,7 @@ from StringIO import StringIO
 from Products.CMFPlone.utils import safe_unicode
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
-from plone.namedfile.file import NamedFile
+from plone.namedfile.file import NamedFile, NamedImage
 
 
 def migrate(portal, migrator):
@@ -50,3 +50,22 @@ class FileMigrator(CMFItemMigrator):
 
 def migrate_files(portal):
     return migrate(portal, FileMigrator)
+
+
+class ImageMigrator(CMFItemMigrator):
+
+    src_portal_type = 'Image'
+    src_meta_type = 'AT Image'
+    dst_portal_type = 'Image'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        old_image = self.old.getField('image').get(self.old)
+        filename = safe_unicode(old_image.filename)
+        namedimage = NamedImage(data=StringIO(old_image.data),
+                                filename=filename)
+        self.new.image = namedimage
+
+
+def migrate_images(portal):
+    return migrate(portal, ImageMigrator)

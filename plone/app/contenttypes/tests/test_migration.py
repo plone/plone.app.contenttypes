@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os.path
 import unittest2 as unittest
 
 from Products.CMFCore.utils import getToolByName
@@ -205,3 +206,37 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(new_file.file.filename, 'dummyfile.txt')
         self.assertEqual(new_file.file.contentType, 'text/dummy')
         self.assertEqual(new_file.file.data, 'dummydata')
+
+    def test_image_is_migrated(self):
+        from Products.ATContentTypes.content.image import ATImage
+        from plone.app.contenttypes.migration import ImageMigrator
+        from plone.app.contenttypes.interfaces import IImage
+        at_image = self.createATCTobject(ATImage, 'image')
+        migrator = self.get_migrator(at_image, ImageMigrator)
+        migrator.migrate()
+        new_image = self.portal['image']
+        self.assertTrue(IImage.providedBy(new_image))
+        self.assertTrue(at_image is not new_image)
+
+    def test_image_content_is_migrated(self):
+        from plone.app.contenttypes.migration import ImageMigrator
+        from plone.namedfile.interfaces import INamedImage
+        from Products.ATContentTypes.content.image import ATImage
+
+        # get test image data
+        test_image_path = os.path.join(os.path.dirname(__file__), 'image.png')
+        with open(test_image_path, 'rb') as test_image_file:
+            test_image_data = test_image_file.read()
+
+        # create the ATImage
+        at_image = self.createATCTobject(ATImage, 'image')
+        field = at_image.getField('image')
+        field.set(at_image, test_image_data)
+        field.setFilename(at_image, 'testimage.png')
+        migrator = self.get_migrator(at_image, ImageMigrator)
+        migrator.migrate()
+        new_image = self.portal['image']
+        self.assertTrue(INamedImage.providedBy(new_image.image))
+        self.assertEqual(new_image.image.filename, 'testimage.png')
+        self.assertEqual(new_image.image.contentType, 'image/png')
+        self.assertEqual(new_image.image.data, test_image_data)
