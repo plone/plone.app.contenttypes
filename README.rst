@@ -1,7 +1,9 @@
+.. contents::
+
 Introduction
 ============
 
-plone.app.contenttypes offers default content types for Plone based on Dexterity. This package is a replacement for Products.ATContenttypes.
+plone.app.contenttypes offers default content types for Plone based on Dexterity. This package is a replacement for the types in Products.ATContenttypes.
 
 **Warning: plone.app.contenttypes is best used when creating a new site from scratch. Using it on a site with existing content is not recommended if you don't know exactly what you're doing!**
 
@@ -18,17 +20,17 @@ It contains the same types as default Plone does:
 
 The main difference from a users perspective is that these types are extendable through-the-web. This means you can go to the control-panel (``.../@@dexterity-types``) and add or remove fields and behaviors for the existing types.
 
-The aim is to mimick the old default-types as closely as possible.
+The aim is to mimick the old default-types as closely as possible, not to change or improve the content-creation experience for editors.
 
 
 Compatability
--------------
+=============
 
-plone.app.contenttypes works with Plone 4.2+
+plone.app.contenttypes works with Plone 4.1+
 
 
 Installation
-------------
+============
 
 Add this line in the eggs section of your ``buildout.cfg``::
 
@@ -42,6 +44,7 @@ You also have to pin the 2.x version of ``plone.app.collection`` to get the dete
     [versions]
     plone.app.collection = 2.0b4
 
+For migrations to work you need at least ``Products.contentmigration = 2.1.3`` which was not released at the time of writing.
 
 What happens to old content?
 ----------------------------
@@ -55,13 +58,11 @@ You can migrate the old items to the types provided by plone.app.contenttypes (s
 Uninstalling
 ------------
 
-To remove plone.app.contenttypes and return full functionality to old content you have to ...
-
-TODO
+To remove plone.app.contenttypes and return full functionality to old content you have to restore the AT-based default-types.
 
 
 Migration
----------
+=========
 
 **Warning: Migrations are still in an very early stage and might break your site! plone.app.contenttypes is best used when creating a new site from scratch. Please proceed at your own risk!**
 
@@ -72,14 +73,14 @@ This version plone.app.contenttypes comes with migrations for the following use-
 
 Migrations that will be will come in the future:
 
-* from default ATEvent to plone.app.event ()
 * from old p.a.c.-event to plone.app.event
+* from default ATEvent to plone.app.event
 * from ATTopic to DX-plone.app.collections
 * from AT-plone.app.collection to DX-plone.app.collections
 
 
 Migrating Archetypes-based content to plone.app.contenttypes
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+------------------------------------------------------------
 
 plone.app.contenttypes can migrate the following types:
 
@@ -92,9 +93,15 @@ plone.app.contenttypes can migrate the following types:
 
 To migrate existing content go to ``/@@migrate_from_atct``.
 
+TODO:
+
+* disable linkintegrity
+* LP
+* Plone-Version older tan 4.1.x need ``plone.app.intid``
+
 
 Migrating content that is translated with LinguaPlone
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----------------------------------------------------
 
 **Warning: This use-case has not yet been thoroughly tested!***
 
@@ -102,20 +109,20 @@ Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlon
 
 
 Migrating from old versions of plone.app.contenttypes
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----------------------------------------------------
 
 Before version 1.0a2 the content-items did not implement marker-interfaces. They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument`). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
 
 
 
 Migrating content that was extended with archetypes.schemaextender
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+------------------------------------------------------------------
 
 The migration should warn you if your typs are extended with archetypes.schemaextender. The data contained in these fields will be lost.
 
 
 How to create a new page with only Dexterity
---------------------------------------------
+============================================
 
 You have two options:
 
@@ -142,32 +149,33 @@ Modify your buildout to automatically pull the branch using mr.developer (http:/
 
 
 Differences to Products.ATContentTypes
---------------------------------------
+======================================
 
 The image of the News Item is not a field on the contenttype but a behavior that can add a image to any contenttypes (similar to http://pypi.python.org/pypi/collective.contentleadimage)
 
 
 Dependencies
-------------
+============
 
-TODO
+* ``plone.app.dexterity``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pinn the correct version for Dexterity in your buildout. See "Installing Dexterity on older versions of Plone" on http://plone.org/products/dexterity/documentation/how-to/install.
+
+* ``plone.app.collection``.
 
 
 Design descisions
 -----------------
 
-TODO: classes/interfaces/xml
+TODO
 
 
 Information for Addon-Developers
 --------------------------------
 
-TODO
 Differences to ATContentTypes Interfaces
 
 How to:
 
-* extend the types ttw or with xml
+* extend the types ttw or with xml ()
 * export a extended CT into a package to overwrite the default
 * extend with behaviors
 * make types transateable
@@ -183,6 +191,9 @@ How to:
 
 License
 -------
+
+GNU General Public License, version 2
+
 
 Roadmap
 -------
