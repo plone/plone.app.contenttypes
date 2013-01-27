@@ -17,6 +17,14 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
+  <gs:registerProfile
+    name="uninstall"
+    title="Uninstall Dexterity-based Plone Default Types"
+    directory="profiles/uninstall"
+    description="Uninstall Base Dexterity content-types and restore Archetypes default-content-types"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
   <!-- plone.app.contenttypes alternatives to profile-Products.CMFPlone:plone-content -->
   <gs:registerProfile
     name="plone-content"
