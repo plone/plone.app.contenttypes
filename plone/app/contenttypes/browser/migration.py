@@ -68,5 +68,6 @@ class MigrateFromATContentTypes(BrowserView):
                          migration.migrate_files(portal),
                          migration.migrate_images(portal),
                          migration.migrate_newsitems(portal),
-                         migration.migrate_links(portal)])
+                         migration.migrate_links(portal),
+                         migration.migrate_folders(portal)])
         return out

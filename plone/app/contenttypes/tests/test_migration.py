@@ -2,6 +2,7 @@
 import os.path
 import unittest2 as unittest
 
+from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 
 from zope.interface import directlyProvides
@@ -118,15 +119,16 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.catalog = getToolByName(self.portal, "portal_catalog")
 
-    def createATCTobject(self, klass, id):
+    def createATCTobject(self, klass, id, parent=None):
         '''Borrowed from ATCTFieldTestCase'''
         import transaction
-        portal = self.portal
+        parent = parent if parent else self.portal
         obj = klass(oid=id)
-        obj = obj.__of__(portal)
-        portal[id] = obj
-        obj.initializeArchetype()
+        parent[id] = obj
         transaction.savepoint()
+        # need to aq wrap after the savepoint. wrapped content can't be pickled
+        obj = obj.__of__(parent)
+        obj.initializeArchetype()
         return obj
 
     def get_test_image_data(self):
@@ -347,3 +349,26 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(new_newsitem.text.mimeType,
                          'chemical/x-gaussian-checkpoint')
         self.assertEqual(new_newsitem.text.outputMimeType, 'text/x-html-safe')
+
+    def test_folder_is_migrated(self):
+        from Products.ATContentTypes.content.folder import ATFolder
+        from plone.app.contenttypes.migration import FolderMigrator
+        from plone.app.contenttypes.interfaces import IFolder
+        at_folder = self.createATCTobject(ATFolder, 'folder')
+        migrator = self.get_migrator(at_folder, FolderMigrator)
+        migrator.migrate()
+        new_folder = self.portal['folder']
+        self.assertTrue(IFolder.providedBy(new_folder))
+        self.assertTrue(at_folder is not new_folder)
+
+    def test_folder_children_are_migrated(self):
+        from plone.app.contenttypes.migration import FolderMigrator
+        from Products.ATContentTypes.content.folder import ATFolder
+        from Products.ATContentTypes.content.document import ATDocument
+        at_folder = self.createATCTobject(ATFolder, 'folder')
+        at_child = self.createATCTobject(ATDocument, 'document',
+                                         parent=at_folder)
+        migrator = self.get_migrator(at_folder, FolderMigrator)
+        migrator.migrate()
+        new_folder = self.portal['folder']
+        self.assertTrue(at_child in new_folder.contentValues())

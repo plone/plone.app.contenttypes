@@ -10,7 +10,8 @@ you catch ImportErrors
 from StringIO import StringIO
 
 from Products.CMFPlone.utils import safe_unicode
-from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
+from Products.contentmigration.basemigrator.migrator import (CMFFolderMigrator,
+                                                             CMFItemMigrator)
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 
 from plone.app.textfield.value import RichTextValue
@@ -120,3 +121,15 @@ class NewsItemMigrator(ImageMigrator, DocumentMigrator):
 
 def migrate_newsitems(portal):
     return migrate(portal, NewsItemMigrator)
+
+
+class FolderMigrator(CMFFolderMigrator):
+
+    src_portal_type = 'Folder'
+    src_meta_type = 'AT Folder'
+    dst_portal_type = 'Folder'
+    dst_meta_type = None  # not used
+
+
+def migrate_folders(portal):
+    return migrate(portal, FolderMigrator)
