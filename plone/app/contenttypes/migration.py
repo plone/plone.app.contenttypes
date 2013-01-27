@@ -48,7 +48,7 @@ def migrate_documents(portal):
 class FileMigrator(CMFItemMigrator):
 
     src_portal_type = 'File'
-    src_meta_type = 'AT File'
+    src_meta_type = 'ATFile'
     dst_portal_type = 'File'
     dst_meta_type = None  # not used
 
@@ -68,7 +68,7 @@ def migrate_files(portal):
 class ImageMigrator(CMFItemMigrator):
 
     src_portal_type = 'Image'
-    src_meta_type = 'AT Image'
+    src_meta_type = 'ATImage'
     dst_portal_type = 'Image'
     dst_meta_type = None  # not used
 
@@ -89,7 +89,7 @@ def migrate_images(portal):
 class LinkMigrator(CMFItemMigrator):
 
     src_portal_type = 'Link'
-    src_meta_type = 'AT Link'
+    src_meta_type = 'ATLink'
     dst_portal_type = 'Link'
     dst_meta_type = None  # not used
 
@@ -126,7 +126,7 @@ def migrate_newsitems(portal):
 class FolderMigrator(CMFFolderMigrator):
 
     src_portal_type = 'Folder'
-    src_meta_type = 'AT Folder'
+    src_meta_type = 'ATFolder'
     dst_portal_type = 'Folder'
     dst_meta_type = None  # not used
 
