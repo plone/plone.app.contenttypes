@@ -1,8 +1,10 @@
+from collections import Counter
+from pprint import pformat
+
 from plone.dexterity.interfaces import IDexterityContent
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
-
 
 from plone.app.contenttypes.content import (
     Document,
@@ -55,7 +57,6 @@ class FixBaseClasses(BrowserView):
 class MigrateFromATContentTypes(BrowserView):
 
     def __call__(self):
-
         if not HAS_ATCT_MIGRATION:
             msg = ('You want to migrate ATContentType object to '
                    'plone.app.contetntypes objects, but we can not '
@@ -63,11 +64,25 @@ class MigrateFromATContentTypes(BrowserView):
                    'You can fix that by installing plone.app.contenttypes '
                    'with the extra_requires [migrate_atct]')
             return msg
+
+        out = '\n-----------------------------\n'
+        out += 'State before:\n'
+        out += self.stats()
         portal = self.context
-        out = '\n'.join([migration.migrate_documents(portal),
-                         migration.migrate_files(portal),
-                         migration.migrate_images(portal),
-                         migration.migrate_newsitems(portal),
-                         migration.migrate_links(portal),
-                         migration.migrate_folders(portal)])
+        migration.migrate_documents(portal)
+        migration.migrate_files(portal)
+        migration.migrate_images(portal)
+        migration.migrate_newsitems(portal)
+        migration.migrate_links(portal)
+        migration.migrate_folders(portal)
+        out += '\n-----------------------------\n'
+        out += 'Stats after:\n'
+        out += self.stats()
+        out += '\n-----------------------------\n'
+        out += 'migration done - somehow. Be careful!'
         return out
+
+    def stats(self):
+        cat = self.context.portal_catalog
+        counter = Counter([b.getObject().__class__.__name__ for b in cat()])
+        return pformat(sorted(counter.items()))
