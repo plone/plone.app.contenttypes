@@ -44,7 +44,19 @@ You also have to pin the 2.x version of ``plone.app.collection`` to get the dete
     [versions]
     plone.app.collection = 2.0b4
 
-For migrations to work you need at least ``Products.contentmigration = 2.1.3`` which was not released at the time of writing.
+Installing plone.app.contenttypes in an existing Plone-site
+-----------------------------------------------------------
+
+When you try to install plone.app.contenttypes in a existing site you will get the following error::
+
+      (...)
+      Module Products.GenericSetup.utils, line 509, in _importBody
+      Module Products.CMFCore.exportimport.typeinfo, line 60, in _importNode
+      Module Products.GenericSetup.utils, line 730, in _initProperties
+    ValueError: undefined property 'schema'
+
+Before installing plone.app.contenttypes you have to reinstall plone.app.collection to update collections to the version that uses Dexterity.
+
 
 What happens to old content?
 ----------------------------
@@ -65,6 +77,8 @@ Migration
 =========
 
 **Warning: Migrations are still in an very early stage and might break your site! plone.app.contenttypes is best used when creating a new site from scratch. Please proceed at your own risk!**
+
+For migrations to work you need at least ``Products.contentmigration = 2.1.3`` which was not released at the time of writing.
 
 This version plone.app.contenttypes comes with migrations for the following use-cases:
 
