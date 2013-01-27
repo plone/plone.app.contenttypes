@@ -90,7 +90,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
     # ATContentTypes.
 
 
-class LinkFunctionalText(unittest.TestCase):
+class LinkFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 

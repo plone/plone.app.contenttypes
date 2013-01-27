@@ -180,7 +180,7 @@ def importContent(context):
                 name='plone-frontpage-setup')
             if view is not None:
                 front_text = bodyfinder(view.index()).strip()
-        content.text = RichTextValue(front_text, 'text/html', 'text/html')
+        content.text = RichTextValue(front_text, 'text/html', 'text/x-html-safe')
 
         portal.setDefaultPage('front-page')
         _publish(content)

@@ -83,7 +83,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.assertTrue('Lorem ipsum' in view())
 
 
-class DocumentFunctionalText(unittest.TestCase):
+class DocumentFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
@@ -101,7 +101,7 @@ class DocumentFunctionalText(unittest.TestCase):
 
     def test_add_document(self):
         self.browser.open(self.portal_url)
-        self.browser.getLink('Page').click()
+        self.browser.getLink(url='http://nohost/plone/++add++Document').click()
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)

@@ -111,7 +111,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
         self.assertEqual(len(leadimage_viewlet), 0)
 
 
-class NewsItemFunctionalText(unittest.TestCase):
+class NewsItemFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 

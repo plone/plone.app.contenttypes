@@ -18,7 +18,7 @@ from plone.dexterity.fti import DexterityFTI
 from plone.app.testing import TEST_USER_ID, setRoles
 
 
-class DocumentFunctionalText(unittest.TestCase):
+class DocumentFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
