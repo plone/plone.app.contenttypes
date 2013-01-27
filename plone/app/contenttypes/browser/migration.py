@@ -69,3 +69,4 @@ class MigrateFromATContentTypes(BrowserView):
         migration.migrate_images(portal)
         migration.migrate_newsitems(portal)
         migration.migrate_links(portal)
+        migration.restoreReferences(portal)
