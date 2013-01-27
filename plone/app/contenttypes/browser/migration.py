@@ -6,6 +6,24 @@ from plone.dexterity.interfaces import IDexterityContent
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 
+# Old interfaces
+from Products.ATContentTypes.interfaces.document import IATDocument
+from Products.ATContentTypes.interfaces.file import IATFile
+from Products.ATContentTypes.interfaces.image import IATImage
+from Products.ATContentTypes.interfaces.link import IATLink
+from Products.ATContentTypes.interfaces.news import IATNewsItem
+
+# Schema Extender allowed interfaces
+from archetypes.schemaextender.interfaces import (
+    ISchemaExtender,
+    IOrderableSchemaExtender,
+    IBrowserLayerAwareExtender,
+    ISchemaModifier
+)
+
+# This is required for finding schema extensions
+from zope.component import getGlobalSiteManager
+
 from plone.app.contenttypes.content import (
     Document,
     Event,
@@ -65,22 +83,69 @@ class MigrateFromATContentTypes(BrowserView):
                    'with the extra_requires [migrate_atct]')
             return msg
 
-        out = '\n-----------------------------\n'
-        out += 'State before:\n'
-        out += self.stats()
+        stats_before = 'State before:\n'
+        stats_before += self.stats()
         portal = self.context
-        migration.migrate_documents(portal)
-        migration.migrate_files(portal)
-        migration.migrate_images(portal)
-        migration.migrate_newsitems(portal)
-        migration.migrate_links(portal)
-        migration.migrate_folders(portal)
-        out += '\n-----------------------------\n'
-        out += 'Stats after:\n'
-        out += self.stats()
-        out += '\n-----------------------------\n'
-        out += 'migration done - somehow. Be careful!'
-        return out
+
+        # Check whether and of the default content types have had their
+        # schemas extended
+        not_migrated = []
+        if not self._isSchemaExtended(IATDocument):
+            migration.migrate_documents(portal)
+        else:
+            not_migrated.append("Document")
+        if not self._isSchemaExtended(IATFile):
+            migration.migrate_files(portal)
+        else:
+            not_migrated.append("File")
+        if not self._isSchemaExtended(IATImage):
+            migration.migrate_images(portal)
+        else:
+            not_migrated.append("Image")
+        if not self._isSchemaExtended(IATNewsItem):
+            migration.migrate_newsitems(portal)
+        else:
+            not_migrated.append("NewsItem")
+        if not self._isSchemaExtended(IATLink):
+            migration.migrate_links(portal)
+        else:
+            not_migrated.append("Link")
+            
+        migration.restoreReferences(portal)
+        
+        if not_migrated:
+            msg = ("The following cannot be migrated as they "
+                   "have extended schemas (from "
+                   "archetypes.schemaextender): \n %s" 
+                   % "\n".join(not_migrated))
+        else:
+            msg = "Default content types successfully migrated\n\n"
+
+        msg += '\n-----------------------------\n'
+        msg += stats_before
+        msg += '\n-----------------------------\n'
+        msg += 'Stats after:\n'
+        msg += self.stats()
+        msg += '\n-----------------------------\n'
+        msg += 'migration done - somehow. Be careful!'
+        return msg
+
+    def _isSchemaExtended(self, interface):
+        sm = getGlobalSiteManager()
+        extender_interfaces = [
+            ISchemaExtender, 
+            ISchemaModifier, 
+            IBrowserLayerAwareExtender, 
+            IOrderableSchemaExtender]
+        # We have a few possible interfaces to test 
+        # here, so get all the interfaces that 
+        # are for the given content type first
+        registrations = \
+            [a for a in sm.registeredAdapters() if interface in a.required]
+        for adapter in registrations:
+            if adapter.provided in extender_interfaces:
+                return True
+        return False
 
     def stats(self):
         cat = self.context.portal_catalog
