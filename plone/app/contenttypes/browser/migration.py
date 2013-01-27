@@ -9,6 +9,7 @@ from Products.Five.browser import BrowserView
 # Old interfaces
 from Products.ATContentTypes.interfaces.document import IATDocument
 from Products.ATContentTypes.interfaces.file import IATFile
+from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
@@ -90,6 +91,10 @@ class MigrateFromATContentTypes(BrowserView):
         # Check whether and of the default content types have had their
         # schemas extended
         not_migrated = []
+        if not self._isSchemaExtended(IATFolder):
+            migration.migrate_folders(portal)
+        else:
+            not_migrated.append("Folder")
         if not self._isSchemaExtended(IATDocument):
             migration.migrate_documents(portal)
         else:
