@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
-import os
 
-version = '1.0a2'
+version = '1.0b1'
 
 setup(name='plone.app.contenttypes',
       version=version,
@@ -38,6 +37,9 @@ setup(name='plone.app.contenttypes',
               'plone.app.testing',
               'robotsuite',
               'robotframework-selenium2library',
+          ],
+          'migrate_atct': [
+              'Products.contentmigration',
           ],
       },
       entry_points="""

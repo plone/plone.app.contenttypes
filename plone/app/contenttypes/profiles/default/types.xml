@@ -2,7 +2,9 @@
 <object meta_type="Plone Types Tool" name="portal_types">
  <property name="title">Controls the available content types in your portal</property>
 
- <!-- should we remove old ATContentTypes if they still exist? -->
+ <!-- We remove old ATContentTypes if they exist.
+      Instances of these types can still be looked at since the
+      skin-templates in CMFPlone are there but they cannot be edited -->
  <object name="Document" remove="True"/>
  <object name="Event" remove="True"/>
  <object name="File" remove="True"/>
