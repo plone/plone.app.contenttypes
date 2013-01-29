@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0b1 (2012-01-27)
+1.0b1 (2013-01-27)
 ------------------
 
 - Added mime type icon for file.
