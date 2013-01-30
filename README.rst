@@ -230,5 +230,5 @@ Thanks to
 ---------
 
 * The organizers of the Plone-Conference 2011 in San Francisco for a great conference!
-* The organizers of the Wine-and-Beer-Sprint in Munich ans Capetown in January 2013
+* The organizers of the Wine-and-Beer-Sprint in Munich and Capetown in January 2013
 * The creators of Dexterity
