@@ -27,6 +27,7 @@ from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.interfaces import IDexterityContent
+from persistent.list import PersistentList
 
 
 def migrate(portal, migrator):
@@ -41,14 +42,17 @@ def restoreReferences(portal):
     # Seems that these newly created objs are not reindexed
     catalog.clearFindAndRebuild()
     intids = getUtility(IIntIds)
-    results = catalog.searchResults(object_provides=IDexterityContent.__identifier__)
+    results = catalog.searchResults(
+        object_provides=IDexterityContent.__identifier__)
     for brain in results:
         obj = brain.getObject()
-        
+
         # refs
         try:
-            if not hasattr(obj, 'relatedItems'):
-                obj.relatedItems = []
+            if not getattr(obj, 'relatedItems', None):
+                obj.relatedItems = PersistentList()
+            elif type(obj.relatedItems) != type(PersistentList()):
+                obj.relatedItems = PersistentList(obj.relatedItems)
             for uuid in obj._relatedItems:
                 to_obj = uuidToObject(uuid)
                 to_id = intids.getId(to_obj)
@@ -57,43 +61,48 @@ def restoreReferences(portal):
             del obj._relatedItems
         except AttributeError:
             pass
-        
+
         # backrefs
         try:
             backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
             for backrefobj in backrefobjs:
                 # Dexterity and
                 if IDexterityContent.providedBy(backrefobj):
-                    if not hasattr(backrefobj, 'relatedItems'):
-                        backrefobj.relatedItems = []
+                    if not getattr(backrefobj, 'relatedItems', None):
+                        backrefobj.relatedItems = PersistentList()
+                    elif type(backrefobj.relatedItems) != type(PersistentList()):
+                        backrefobj.relatedItems = PersistentList(
+                            obj.relatedItems)
                     to_id = intids.getId(obj)
                     backrefobj.relatedItems.append(RelationValue(to_id))
-            
+
                 # Archetypes
                 elif IATContentType.providedBy(backrefobj):
                     backrefobj.setRelatedItems(obj)
-                out += str('Restore BackRelation from %s to %s \n' % (backrefobj, obj))
+                out += str(
+                    'Restore BackRelation from %s to %s \n' % (backrefobj, obj))
             del obj._backrefs
         except AttributeError:
             pass
-        
     return out
 
+
 class ReferenceMigrator:
-    
+
     def migrate_relatedItems(self):
-        """ Store Archetype relations as target uids on the dexterity object for later restore. 
+        """ Store Archetype relations as target uids on the dexterity object for later restore.
             Backrelations are saved as well because all relation to deleted objects would be lost."""
         # Relations:
-        relItems = self.old.getField('relatedItems').get(self.old)
+        relItems = self.old.getRelatedItems()
         relUids = [item.UID() for item in relItems]
         self.new._relatedItems = relUids
-        
+
         # Backrefs:
         reference_catalog = getToolByName(self.old, REFERENCE_CATALOG)
-        backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(self.old, relationship="relatesTo")]
+        backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
+            self.old, relationship="relatesTo")]
         self.new._backrefs = backrefs
-    
+
 
 class DocumentMigrator(CMFItemMigrator, ReferenceMigrator):
 
@@ -111,7 +120,7 @@ class DocumentMigrator(CMFItemMigrator, ReferenceMigrator):
         richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
                                  outputMimeType='text/x-html-safe')
         self.new.text = richtext
-        
+
 
 def migrate_documents(portal):
     return migrate(portal, DocumentMigrator)

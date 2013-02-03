@@ -55,7 +55,7 @@ class FixBaseClasses(BrowserView):
             ('Image', Image),
             ('Link', Link),
             ('News Item', NewsItem),
-            ]
+        ]
         catalog = getToolByName(self.context, "portal_catalog")
         for portal_type, portal_type_class in portal_types:
             results = catalog.searchResults(portal_type=portal_type)
@@ -78,7 +78,7 @@ class MigrateFromATContentTypes(BrowserView):
     def __call__(self):
         if not HAS_ATCT_MIGRATION:
             msg = ('You want to migrate ATContentType object to '
-                   'plone.app.contetntypes objects, but we can not '
+                   'plone.app.contenttypes objects, but we can not '
                    'find Products.contentmigration. '
                    'You can fix that by installing plone.app.contenttypes '
                    'with the extra_requires [migrate_atct]')
@@ -115,13 +115,13 @@ class MigrateFromATContentTypes(BrowserView):
             migration.migrate_links(portal)
         else:
             not_migrated.append("Link")
-            
+
         migration.restoreReferences(portal)
-        
+
         if not_migrated:
             msg = ("The following cannot be migrated as they "
                    "have extended schemas (from "
-                   "archetypes.schemaextender): \n %s" 
+                   "archetypes.schemaextender): \n %s"
                    % "\n".join(not_migrated))
         else:
             msg = "Default content types successfully migrated\n\n"
@@ -138,12 +138,12 @@ class MigrateFromATContentTypes(BrowserView):
     def _isSchemaExtended(self, interface):
         sm = getGlobalSiteManager()
         extender_interfaces = [
-            ISchemaExtender, 
-            ISchemaModifier, 
-            IBrowserLayerAwareExtender, 
+            ISchemaExtender,
+            ISchemaModifier,
+            IBrowserLayerAwareExtender,
             IOrderableSchemaExtender]
-        # We have a few possible interfaces to test 
-        # here, so get all the interfaces that 
+        # We have a few possible interfaces to test
+        # here, so get all the interfaces that
         # are for the given content type first
         registrations = \
             [a for a in sm.registeredAdapters() if interface in a.required]
