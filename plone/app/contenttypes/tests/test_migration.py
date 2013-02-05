@@ -25,6 +25,7 @@ from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
 from plone.app.testing import TEST_USER_ID, setRoles
+
 from plone.app.contenttypes.migration import restoreReferences
 from zope.component import getSiteManager
 from zope.intid.interfaces import IIntIds
@@ -123,8 +124,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         directlyProvides(self.request, IPloneAppContenttypesLayer)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.catalog = getToolByName(self.portal, "portal_catalog")
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
 
     def createATCTobject(self, klass, id, parent=None):
         '''Borrowed from ATCTFieldTestCase'''
@@ -384,6 +383,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from Products.ATContentTypes.content.document import ATDocument
         from plone.app.contenttypes.migration import DocumentMigrator
 
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+
         # create three ATDocument
         at_doc1 = self.createATCTobject(ATDocument, 'doc1')
         at_doc2 = self.createATCTobject(ATDocument, 'doc2')
@@ -414,7 +417,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(len(new_doc2.relatedItems), 2)
         rel1 = new_doc2.relatedItems[0]
         rel2 = new_doc2.relatedItems[1]
-        self.assertEqual(set([rel1.to_object, rel2.to_object]), set([new_doc1, new_doc3]))
+        self.assertEqual(
+            set([rel1.to_object, rel2.to_object]), set([new_doc1, new_doc3]))
         self.assertEqual(len(new_doc3.relatedItems), 1)
         rel1 = new_doc3.relatedItems[0]
         self.assertEqual(rel1.to_object, new_doc1)
