@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0b2 (unreleased)
+------------------
+
+- Fixed installation of p.a.relationfield together with p.a.contenttypes.
+  [kroman0]
+
+
 1.0b1 (2013-01-27)
 ------------------
 
