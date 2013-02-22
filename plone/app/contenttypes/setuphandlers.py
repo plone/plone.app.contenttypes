@@ -255,21 +255,25 @@ def importContent(context):
         container.setDefaultPage('aggregator')
         _publish(container)
 
-        # Set up the collection
-        # type_crit = topic.addCriterion('Type', 'ATPortalTypeCriterion')
-        # type_crit.setValue('Event')
-        # topic.addCriterion('start', 'ATSortCriterion')
-        # state_crit = topic.addCriterion(
-        #     'review_state',
-        #     'ATSimpleStringCriterion'
-        # )
-        # state_crit.setValue('published')
-        # date_crit = topic.addCriterion('start', 'ATFriendlyDateCriteria')
-        # # Set date reference to now
-        # date_crit.setValue(0)
-        # # Only take events in the future
-        # date_crit.setDateRange('+') # This is irrelevant when the date is now
-        # date_crit.setOperation('more')
+        # Set the Collection criteria.
+        #: Sort on the Event start date
+        aggregator.sort_on = u'start'
+        aggregator.reverse_sort = True
+        #: Query by Type, Review State and Event start date after today
+        aggregator.query = [
+            {'i': 'portal_type',
+             'o': 'plone.app.querystring.operation.selection.is',
+             'v': ['Event']
+             },
+            {'i': 'start',
+             'o': 'plone.app.querystring.operation.date.afterToday',
+             'v': ''
+             },
+            {'i': 'review_state',
+             'o': 'plone.app.querystring.operation.selection.is',
+             'v': ['published']
+             },
+        ]
         _publish(aggregator)
 
     # configure Members folder

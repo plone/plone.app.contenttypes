@@ -7,6 +7,9 @@ Changelog
 - Fixed installation of p.a.relationfield together with p.a.contenttypes.
   [kroman0]
 
+- Fixed creating aggregator of events on creating Plone site.
+  [kroman0]
+
 
 1.0b1 (2013-01-27)
 ------------------
