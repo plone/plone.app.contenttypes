@@ -12,13 +12,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="document.pt"
     permission="zope2.View"
-    />
-
-  <browser:menuItem
-    for="plone.app.contenttypes.interfaces.IDocument"
     menu="plone_displayviews"
     title="View Document"
-    action="document_view"
     />
 
   <browser:page
@@ -27,13 +22,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="event.pt"
     permission="zope2.View"
-    />
-
-  <browser:menuItem
-    for="plone.app.contenttypes.interfaces.IEvent"
     menu="plone_displayviews"
     title="View Event"
-    action="event_view"
     />
 
   <browser:page
@@ -42,13 +32,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="file.pt"
     permission="zope2.View"
-    />
-
-  <browser:menuItem
-    for="plone.app.contenttypes.interfaces.IFile"
     menu="plone_displayviews"
     title="View File"
-    action="file_view"
     />
 
   <browser:page
@@ -57,6 +42,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="folder_listing.pt"
     permission="zope2.View"
+    menu="plone_displayviews"
+    title="Standard view"
     />
 
   <browser:page
@@ -65,6 +52,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="folder_full_view.pt"
     permission="zope2.View"
+    menu="plone_displayviews"
+    title="All content"
     />
 
   <browser:page
@@ -73,6 +62,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="folder_summary_view.pt"
     permission="zope2.View"
+    menu="plone_displayviews"
+    title="Summary view"
     />
 
   <browser:page
@@ -81,28 +72,9 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="folder_tabular_view.pt"
     permission="zope2.View"
+    menu="plone_displayviews"
+    title="Tabular view"
     />
-
-  <browser:menuItems
-    for="plone.app.contenttypes.interfaces.IFolder"
-    menu="plone_displayviews">
-    <browser:menuItem
-      title="Standard view"
-      action="folder_listing"
-      />
-    <browser:menuItem
-      title="Summary view"
-      action="folder_summary_view"
-      />
-    <browser:menuItem
-      title="All content"
-      action="folder_full_view"
-      />
-    <browser:menuItem
-      title="Tabular view"
-      action="folder_tabular_view"
-      />
-  </browser:menuItems>
 
   <browser:page
     name="image_view"
@@ -110,6 +82,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="image.pt"
     permission="zope2.View"
+    menu="plone_displayviews"
+    title="View Image"
     />
 
   <browser:page
@@ -118,20 +92,9 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="image_view_fullscreen.pt"
     permission="zope2.View"
+    menu="plone_displayviews"
+    title="View Image Fullscreen"
     />
-
-  <browser:menuItems
-    for="plone.app.contenttypes.interfaces.IImage"
-    menu="plone_displayviews">
-    <browser:menuItem
-      title="View Image"
-      action="image_view"
-      />
-    <browser:menuItem
-      title="View Image Fullscreen"
-      action="image_view_fullscreen"
-      />
-  </browser:menuItems>
 
   <browser:page
     name="link_redirect_view"
@@ -139,13 +102,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     class=".link_redirect_view.LinkRedirectView"
     permission="zope2.View"
-    />
-
-  <browser:menuItem
-    for="plone.app.contenttypes.interfaces.ILink"
     menu="plone_displayviews"
     title="View Link"
-    action="link_redirect_view"
     />
 
   <browser:page
@@ -154,13 +112,8 @@
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="newsitem.pt"
     permission="zope2.View"
-    />
-
-  <browser:menuItem
-    for="plone.app.contenttypes.interfaces.INewsItem"
     menu="plone_displayviews"
     title="View News Item"
-    action="newsitem_view"
     />
 
   <browser:page
