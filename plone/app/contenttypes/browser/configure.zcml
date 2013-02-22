@@ -4,12 +4,21 @@
   xmlns:plone="http://namespaces.plone.org/plone"
   i18n_domain="plone.app.contenttypes">
 
+  <include package="plone.app.contentmenu" />
+
   <browser:page
     name="document_view"
     for="plone.app.contenttypes.interfaces.IDocument"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="document.pt"
     permission="zope2.View"
+    />
+
+  <browser:menuItem
+    for="plone.app.contenttypes.interfaces.IDocument"
+    menu="plone_displayviews"
+    title="View Document"
+    action="document_view"
     />
 
   <browser:page
@@ -20,12 +29,26 @@
     permission="zope2.View"
     />
 
+  <browser:menuItem
+    for="plone.app.contenttypes.interfaces.IEvent"
+    menu="plone_displayviews"
+    title="View Event"
+    action="event_view"
+    />
+
   <browser:page
     name="file_view"
     for="plone.app.contenttypes.interfaces.IFile"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="file.pt"
     permission="zope2.View"
+    />
+
+  <browser:menuItem
+    for="plone.app.contenttypes.interfaces.IFile"
+    menu="plone_displayviews"
+    title="View File"
+    action="file_view"
     />
 
   <browser:page
@@ -60,6 +83,27 @@
     permission="zope2.View"
     />
 
+  <browser:menuItems
+    for="plone.app.contenttypes.interfaces.IFolder"
+    menu="plone_displayviews">
+    <browser:menuItem
+      title="Standard view"
+      action="folder_listing"
+      />
+    <browser:menuItem
+      title="Summary view"
+      action="folder_summary_view"
+      />
+    <browser:menuItem
+      title="All content"
+      action="folder_full_view"
+      />
+    <browser:menuItem
+      title="Tabular view"
+      action="folder_tabular_view"
+      />
+  </browser:menuItems>
+
   <browser:page
     name="image_view"
     for="plone.app.contenttypes.interfaces.IImage"
@@ -76,6 +120,19 @@
     permission="zope2.View"
     />
 
+  <browser:menuItems
+    for="plone.app.contenttypes.interfaces.IImage"
+    menu="plone_displayviews">
+    <browser:menuItem
+      title="View Image"
+      action="image_view"
+      />
+    <browser:menuItem
+      title="View Image Fullscreen"
+      action="image_view_fullscreen"
+      />
+  </browser:menuItems>
+
   <browser:page
     name="link_redirect_view"
     for="plone.app.contenttypes.interfaces.ILink"
@@ -84,12 +141,26 @@
     permission="zope2.View"
     />
 
+  <browser:menuItem
+    for="plone.app.contenttypes.interfaces.ILink"
+    menu="plone_displayviews"
+    title="View Link"
+    action="link_redirect_view"
+    />
+
   <browser:page
     name="newsitem_view"
     for="plone.app.contenttypes.interfaces.INewsItem"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="newsitem.pt"
     permission="zope2.View"
+    />
+
+  <browser:menuItem
+    for="plone.app.contenttypes.interfaces.INewsItem"
+    menu="plone_displayviews"
+    title="View News Item"
+    action="newsitem_view"
     />
 
   <browser:page
@@ -114,6 +185,6 @@
     permission="zope2.View"
     class=".utils.Utils"
     allowed_interface="plone.app.contenttypes.browser.utils.IUtils"
-    />  
+    />
 
 </configure>

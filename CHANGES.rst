@@ -10,6 +10,9 @@ Changelog
 - Fixed creating aggregator of events on creating Plone site.
   [kroman0]
 
+- Added titles for menuitems.
+  [kroman0]
+
 
 1.0b1 (2013-01-27)
 ------------------
