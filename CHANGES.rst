@@ -13,6 +13,9 @@ Changelog
 - Added titles for menuitems.
   [kroman0]
 
+- Hide uninstall profile from @@plone-addsite.
+  [kroman0]
+
 
 1.0b1 (2013-01-27)
 ------------------

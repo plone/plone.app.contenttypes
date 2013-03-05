@@ -44,5 +44,9 @@
   <include package=".browser" />
 
   <include file="indexers.zcml" />
+  <utility
+      factory=".setuphandlers.HiddenProfiles"
+      name="plone.app.contenttypes"
+      provides="Products.CMFPlone.interfaces.INonInstallable" />
 
 </configure>

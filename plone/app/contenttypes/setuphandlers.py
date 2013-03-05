@@ -9,6 +9,7 @@ from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
+from zope.interface import implements
 from Acquisition import aq_base, aq_inner
 from AccessControl import Unauthorized
 from plone.i18n.normalizer.interfaces import IURLNormalizer
@@ -20,9 +21,21 @@ from plone.portlets.interfaces import (
 
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import INonInstallable
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFDefault.utils import bodyfinder
 from Products.CMFPlone.Portal import member_indexhtml
+
+
+class HiddenProfiles(object):
+    implements(INonInstallable)
+
+    def getNonInstallableProfiles(self):
+        """
+        Prevents uninstall profile from showing up in the profile list
+        when creating a Plone site.
+        """
+        return [u'plone.app.contenttypes:uninstall']
 
 
 def _publish(content):
