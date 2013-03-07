@@ -16,7 +16,11 @@ Changelog
 - Hide uninstall profile from @@plone-addsite.
   [kroman0]
 
+- Fix 'ImportError: cannot import name Counter' for Python 2.6.
+  http://github.com/plone/plone.app.contenttypes/issues/19
+  [timo]
 
+ 
 1.0b1 (2013-01-27)
 ------------------
 
