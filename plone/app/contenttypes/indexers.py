@@ -2,9 +2,10 @@
 from DateTime import DateTime
 
 from plone.indexer.decorator import indexer
+from plone.rfc822.interfaces import IPrimaryFieldInfo
 
 from plone.app.contenttypes.interfaces import (
-    IEvent, IDocument, INewsItem, ILink
+    IEvent, IDocument, INewsItem, ILink, IImage, IFile
 )
 
 
@@ -40,3 +41,15 @@ def SearchableText_link(obj):
 @indexer(ILink)
 def getRemoteUrl(obj):
     return obj.remoteUrl
+
+
+@indexer(IImage)
+def getObjSize_image(obj):
+    primary_field_info = IPrimaryFieldInfo(obj)
+    return obj.getObjSize(None, primary_field_info.value.size)
+
+
+@indexer(IFile)
+def getObjSize_file(obj):
+    primary_field_info = IPrimaryFieldInfo(obj)
+    return obj.getObjSize(None, primary_field_info.value.size)
