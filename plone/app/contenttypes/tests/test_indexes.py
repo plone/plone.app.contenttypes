@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest2 as unittest
 
 from Products.CMFCore.utils import getToolByName
@@ -10,6 +11,7 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.rfc822.interfaces import IPrimaryFieldInfo
 
 
 class CatalogIntegrationTest(unittest.TestCase):
@@ -33,9 +35,19 @@ class CatalogIntegrationTest(unittest.TestCase):
             'Link',
             'link'
         )
+        self.folder.invokeFactory(
+            'Image',
+            'image'
+        )
+        self.folder.invokeFactory(
+            'File',
+            'file'
+        )
         self.document = self.folder.document
         self.news_item = self.folder.news_item
         self.link = self.folder.link
+        self.image = self.folder.image
+        self.file = self.folder.file
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
     def test_id_in_searchable_text_index(self):
@@ -142,4 +154,42 @@ class CatalogIntegrationTest(unittest.TestCase):
             brains[0].getRemoteUrl,
             "http://www.plone.org/"
         )
-        
+
+    def test_getobjsize_image(self):
+        from .test_image import dummy_image
+
+        primary_field_info = IPrimaryFieldInfo(self.image)
+        primary_field_info.field.set(self.image, dummy_image())
+        self.image.reindexObject()
+
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/image",
+        ))
+
+        # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
+        self.assertEquals(
+            self.portal.getObjSize(None, primary_field_info.value.size),
+            brains[0].getObjSize,
+        )
+
+    def test_getobjsize_file(self):
+        from plone.namedfile.file import NamedBlobFile
+
+        filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
+        test_file = NamedBlobFile(data=open(filename, 'r').read(),
+                                  filename=filename)
+
+        primary_field_info = IPrimaryFieldInfo(self.file)
+        primary_field_info.field.set(self.file, test_file)
+        self.file.reindexObject()
+
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/file",
+        ))
+
+        # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
+        self.assertEquals(
+            self.portal.getObjSize(None, primary_field_info.value.size),
+            brains[0].getObjSize,
+        )
+

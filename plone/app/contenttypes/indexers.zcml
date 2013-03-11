@@ -11,5 +11,7 @@
   <adapter name="SearchableText" factory=".indexers.SearchableText_document" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_link" />
   <adapter name="getRemoteUrl" factory=".indexers.getRemoteUrl" />
+  <adapter name="getObjSize" factory=".indexers.getObjSize_image" />
+  <adapter name="getObjSize" factory=".indexers.getObjSize_file" />
 
 </configure>
