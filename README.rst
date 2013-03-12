@@ -1,13 +1,12 @@
-
-.. image:: https://travis-ci.org/plone/plone.app.contenttypes.png
-    :target: http://travis-ci.org/plone/plone.app.contenttypes
-
 .. contents::
 
 Introduction
 ============
 
 .. image:: https://jenkins.plone.org/job/plone-4.3-plone-app-contenttypes/badge/icon
+
+.. image:: https://travis-ci.org/plone/plone.app.contenttypes.png
+    :target: http://travis-ci.org/plone/plone.app.contenttypes
 
 plone.app.contenttypes offers default content types for Plone based on Dexterity. This package is a replacement for the types in Products.ATContenttypes.
 
