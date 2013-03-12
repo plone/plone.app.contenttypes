@@ -1,4 +1,10 @@
+
+.. image:: https://travis-ci.org/plone/plone.app.contenttypes.png
+    :target: http://travis-ci.org/plone/plone.app.contenttypes
+
 .. contents::
+
+
 
 Introduction
 ============
@@ -224,6 +230,7 @@ Contributors
 * Peter Holzer <hpeter@agitator.com>
 * Patrick Gerken
 * Steffen Lindner
+* Daniel Widerin
 
 TODO: add all contributors
 
