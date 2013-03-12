@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup">
+
+  <genericsetup:upgradeStep
+      source="*"
+      destination="1000"
+      title="Update plone.app.contenttypes fti"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.update_fti"
+      />
+
+</configure>

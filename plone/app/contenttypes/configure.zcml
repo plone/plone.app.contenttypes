@@ -44,6 +44,8 @@
   <include package=".browser" />
 
   <include file="indexers.zcml" />
+  <include file="upgrades.zcml" />
+
   <utility
       factory=".setuphandlers.HiddenProfiles"
       name="plone.app.contenttypes"
