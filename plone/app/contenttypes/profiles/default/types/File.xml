@@ -29,7 +29,7 @@
  </property>
  <property name="schema"></property>
  <property name="model_source"></property>
- <property name="model_file">plone.app.contenttypes:file.xml</property>
+ <property name="model_file">plone.app.contenttypes.schema:file.xml</property>
  <alias from="(Default)" to="@@display-file"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>

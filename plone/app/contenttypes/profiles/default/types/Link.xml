@@ -26,7 +26,7 @@
  </property>
  <property name="schema"></property>
  <property name="model_source"></property>
- <property name="model_file">plone.app.contenttypes:link.xml</property>
+ <property name="model_file">plone.app.contenttypes.schema:link.xml</property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>

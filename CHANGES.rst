@@ -20,6 +20,9 @@ Changelog
   http://github.com/plone/plone.app.contenttypes/issues/19
   [timo]
 
+- Move XML schema definitions to schema folder.
+  [timo]
+
  
 1.0b1 (2013-01-27)
 ------------------
