@@ -4,8 +4,6 @@
 
 .. contents::
 
-
-
 Introduction
 ============
 
