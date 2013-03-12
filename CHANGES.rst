@@ -26,6 +26,9 @@ Changelog
 - Prevent the importContent step from being run over and over again.
   [pysailor]
 
+- Add build status image.
+  [saily]
+
 
 1.0b1 (2013-01-27)
 ------------------
