@@ -23,7 +23,10 @@ Changelog
 - Move XML schema definitions to schema folder.
   [timo]
 
- 
+- Prevent the importContent step from being run over and over again.
+  [pysailor]
+
+
 1.0b1 (2013-01-27)
 ------------------
 
