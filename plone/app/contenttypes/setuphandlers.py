@@ -150,6 +150,8 @@ def _setup_visible_ids(target_language, locale):
 
 def importContent(context):
     """Import base content into the Plone site."""
+    if context.readDataFile('plone.app.contenttypes_content.txt') is None:
+        return
     portal = context.getSite()
     # Because the portal doesn't implement __contains__?
     existing_content = portal.keys()
