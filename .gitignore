@@ -1,3 +1,5 @@
+.coverage
+*,cover
 /develop-eggs
 /eggs
 /fake-eggs
