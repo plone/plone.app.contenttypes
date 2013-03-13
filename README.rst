@@ -5,6 +5,9 @@ Introduction
 
 .. image:: https://jenkins.plone.org/job/plone-4.3-plone-app-contenttypes/badge/icon
 
+.. image:: https://travis-ci.org/plone/plone.app.contenttypes.png
+    :target: http://travis-ci.org/plone/plone.app.contenttypes
+
 plone.app.contenttypes offers default content types for Plone based on Dexterity. This package is a replacement for the types in Products.ATContenttypes.
 
 **Warning: plone.app.contenttypes is best used when creating a new site from scratch. Using it on a site with existing content is not recommended if you don't know exactly what you're doing!**
@@ -224,6 +227,7 @@ Contributors
 * Peter Holzer <hpeter@agitator.com>
 * Patrick Gerken
 * Steffen Lindner
+* Daniel Widerin
 
 TODO: add all contributors
 
