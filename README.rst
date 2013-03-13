@@ -20,12 +20,14 @@ It contains the same types as default Plone does:
 * File
 * Image
 * Link
-* Event (this will be replaced by plone.app.event in the future)
+* Event (this will be replaced by plone.app.event soon)
 * Collection (this is provided by plone.app.collection)
 
 The main difference from a users perspective is that these types are extendable through-the-web. This means you can go to the control-panel (``.../@@dexterity-types``) and add or remove fields and behaviors for the existing types.
 
-The aim is to mimick the old default-types as closely as possible, not to change or improve the content-creation experience for editors.
+The aim is to mimick the old default-types as closely as possible, not to change the content-creation experience for editors.
+
+There is a PLIP to include plone.app.contenttypes in Plone 4.4: https://dev.plone.org/ticket/12344
 
 
 Compatability
@@ -44,15 +46,15 @@ Add this line in the eggs section of your ``buildout.cfg``::
         plone.app.contenttypes
 
 
-You also have to pin the 2.x version of ``plone.app.collection`` to get the deterity-based collections instead of the Archetypes-based collection shipped since Plone 4.2. The latest version at the time of writing is 2.0b4 but you might want to check http://pypi.python.org/pypi/plone.app.collection if there is a new version::
+You also have to pin the 2.x version of ``plone.app.collection`` to get the deterity-based collections instead of the Archetypes-based collection shipped since Plone 4.2. The latest version at the time of writing is 2.0b5 but you might want to check http://pypi.python.org/pypi/plone.app.collection if there is a new version by the time you install this addon::
 
     [versions]
-    plone.app.collection = 2.0b4
+    plone.app.collection = 2.0b5
 
 Installing plone.app.contenttypes in an existing Plone-site
 -----------------------------------------------------------
 
-When you try to install plone.app.contenttypes in a existing site you will get the following error::
+When you try to install plone.app.contenttypes in a existing site you might get the following error::
 
       (...)
       Module Products.GenericSetup.utils, line 509, in _importBody
@@ -66,16 +68,21 @@ Before installing plone.app.contenttypes you have to reinstall plone.app.collect
 What happens to old content?
 ----------------------------
 
-The old content still exists and can be visited but can't be edited any more. On installation plone.app.contenttypes removes the type-definitions for the old default-types like this::
+The old Archetypes-based content still exists and can be viewed but can't be edited. On installation plone.app.contenttypes removes the type-definitions for the old default-types like this::
 
     <object name="Document" remove="True" />
 
-You can migrate the old items to the types provided by plone.app.contenttypes (see the section about migrations).
+You can also migrate the old items to the types provided by plone.app.contenttypes (see the section about migrations).
 
 Uninstalling
 ------------
 
-To remove plone.app.contenttypes and return full functionality to old content you have to restore the AT-based default-types.
+To remove plone.app.contenttypes, return full functionality to old content and restore the AT-based default-types you have to install the import step "Types Tool" of the current base profile. Follow the following steps:
+
+ * in the ZMI navigate to portal_setup and the tab "import"
+ * in "Select Profile or Snapshot" leave "Current base profile (<Name of your Plonesite>)" selected. This is usually Products.CMFPlone
+ * select the Types Tool (usually Step 44)
+ * click "import selected steps"
 
 
 Migration
