@@ -2,7 +2,6 @@
 import os.path
 import unittest2 as unittest
 
-from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 
 from zope.interface import directlyProvides
@@ -255,10 +254,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_image is not new_image)
 
     def test_empty_image_is_migrated(self):
-        '''
+        """
         This should not happened cause the image field is required,
         but this is a special case in AT's FileField.
-        '''
+        """
         from Products.ATContentTypes.content.image import ATImage
         from plone.app.contenttypes.migration import ImageMigrator
         at_image = self.createATCTobject(ATImage, 'image')
