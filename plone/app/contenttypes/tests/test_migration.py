@@ -421,3 +421,25 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(len(new_doc3.relatedItems), 1)
         rel1 = new_doc3.relatedItems[0]
         self.assertEqual(rel1.to_object, new_doc1)
+
+    def test_stats(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.contenttypes.browser.migration import \
+            MigrateFromATContentTypes as MigrationView
+
+        at_doc1 = self.createATCTobject(ATDocument, 'doc1')
+        at_doc2 = self.createATCTobject(ATDocument, 'doc2')
+
+        migrationview = MigrationView(self.portal, None)
+        stats = migrationview.stats()
+        self.assertEqual(stats, "[('ATDocument', 2), ('Folder', 1)]")
+        migrator = self.get_migrator(at_doc1, DocumentMigrator)
+        migrator.migrate()
+        stats = migrationview.stats()
+        self.assertEqual(stats, "[('ATDocument', 1), ('Document', 1), "
+                         "('Folder', 1)]")
+        migrator = self.get_migrator(at_doc2, DocumentMigrator)
+        migrator.migrate()
+        stats = migrationview.stats()
+        self.assertEqual(stats, "[('Document', 2), ('Folder', 1)]")

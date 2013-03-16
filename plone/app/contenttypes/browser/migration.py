@@ -1,9 +1,3 @@
-try:
-    from collections import Counter
-    PYTHON_26 = False
-except:
-    PYTHON_26 = True
-
 from pprint import pformat
 
 from plone.dexterity.interfaces import IDexterityContent
@@ -158,8 +152,8 @@ class MigrateFromATContentTypes(BrowserView):
         return False
 
     def stats(self):
-        if PYTHON_26:
-            return
-        cat = self.context.portal_catalog
-        counter = Counter([b.getObject().__class__.__name__ for b in cat()])
-        return pformat(sorted(counter.items()))
+        results = {}
+        for brain in self.context.portal_catalog():
+            classname = brain.getObject().__class__.__name__
+            results[classname] = results.get(classname, 0) + 1
+        return pformat(sorted(results.items()))
