@@ -4,6 +4,10 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Bind 'View' action to ``${object_url}/view`` instead of
+  ``${object_url}` as in ATCT for File and Image type.
+  [saily]
+
 - Fixed installation of p.a.relationfield together with p.a.contenttypes.
   [kroman0]
 
