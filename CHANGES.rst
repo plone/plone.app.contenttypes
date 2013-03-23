@@ -4,6 +4,13 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Add missing ``i18n:attributes`` to 'Edit' and 'View' actions of File type.
+  [saily]
+
+- Bind 'View' action to ``${object_url}/view`` instead of
+  ``${object_url}` as in ATCT for File and Image type.
+  [saily]
+
 - Fixed installation of p.a.relationfield together with p.a.contenttypes.
   [kroman0]
 
