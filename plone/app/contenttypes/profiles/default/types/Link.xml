@@ -20,6 +20,7 @@
  <property name="add_permission">cmf.AddPortalContent</property>
  <property name="klass">plone.app.contenttypes.content.Link</property>
  <property name="behaviors">
+  <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
   <element value="plone.app.content.interfaces.INameFromTitle"/>
   <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
