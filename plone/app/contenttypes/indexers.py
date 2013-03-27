@@ -25,12 +25,16 @@ def SearchableText(obj, text=False):
 
 @indexer(INewsItem)
 def SearchableText_news(obj):
-    return ' '.join((SearchableText(obj), getattr(obj.text, 'output', '')))
+    if obj.text is None or obj.text.output is None:
+        return SearchableText(obj)
+    return ' '.join((SearchableText(obj), obj.text.output))
 
 
 @indexer(IDocument)
 def SearchableText_document(obj):
-    return ' '.join((SearchableText(obj), getattr(obj.text, 'output', '')))
+    if obj.text is None or obj.text.output is None:
+        return SearchableText(obj)
+    return ' '.join((SearchableText(obj), obj.text.output))
 
 
 @indexer(ILink)
