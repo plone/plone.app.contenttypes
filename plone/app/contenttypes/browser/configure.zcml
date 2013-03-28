@@ -47,6 +47,16 @@
     />
 
   <browser:page
+    name="folder_listing"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="folder_listing.pt"
+    permission="zope2.View"
+    menu="plone_displayviews"
+    title="Standard view"
+    />
+
+  <browser:page
     name="folder_full_view"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
