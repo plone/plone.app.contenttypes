@@ -1,0 +1,70 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+<metal:content-core fill-slot="content-core">
+<metal:main_macro define-macro="content-core"
+     tal:define="data context/getFoldersAndImages;
+                total_number_of_images data/total_number_of_images;
+                site_properties context/portal_properties/site_properties;
+                use_view_action site_properties/typesUseViewActionInListings|python:();">
+
+    <div metal:define-macro="text-field-view"
+         id="parent-fieldname-text" class="stx"
+         tal:define="has_text exists:context/getText;
+                     text python:has_text and here.getText() or ''"
+         tal:condition="text"
+         tal:attributes="class python:here.Format() in ('text/structured', 'text/x-rst', ) and 'stx' or 'plain'">
+        <div metal:define-slot="inside" tal:replace="structure text">The body</div>
+    </div>
+
+    <tal:results tal:repeat="item data/results"
+                 tal:condition="total_number_of_images">
+    <div class="photoAlbumEntry photoAlbumFolder"
+         tal:define="item_path item/getPath;
+                     item_type item/portal_type;
+                     is_album python:item_type=='Folder';
+                     images_album python:data['images'][item_path];
+                     number_of_images python:len(images_album);
+                     item_title item/Title;
+                     item_url item/getURL;
+                     item_description item/Description;
+                     item_view python:item_type in use_view_action and item_url+'/view' or item_url;
+                     random python:modules['random'];
+                     random_image python:number_of_images and random.choice(images_album).getObject() or None"
+          tal:attributes="class python:is_album and 'photoAlbumEntry photoAlbumFolder' or 'photoAlbumEntry'">
+                <a tal:attributes="href item_view;
+                                   title item_description">
+                    <span class="photoAlbumEntryWrapper"
+                          tal:condition="number_of_images">
+                     <img src="" alt=""
+                          tal:define="scales random_image/@@images;
+                                      scale python:scales.scale('image', 'thumb')"
+                          tal:replace="structure python:scale and scale.tag(title=item_description) or None" />
+                    </span>
+                    <span class="photoAlbumEntryTitle">
+                       <tal:title content="item_title">Title</tal:title>
+                       <tal:count condition="is_album">(<tal:number content="number_of_images" />)</tal:count>
+                    </span>
+                </a>
+    </div>
+    </tal:results>
+    <div class="visualClear"><!-- --></div>
+
+    <p class="discreet"
+       i18n:translate=""
+       tal:condition="not: total_number_of_images">
+        No images found in this collection.
+    </p>
+
+</metal:main_macro>
+</metal:content-core>
+
+</body>
+</html>

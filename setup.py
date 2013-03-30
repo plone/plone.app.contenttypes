@@ -25,18 +25,16 @@ setup(name='plone.app.contenttypes',
       install_requires=[
           'setuptools',
           'Products.CMFPlone',
-          'plone.app.collection>=2.0a1',
+          'plone.app.contentmenu',
           'plone.app.dexterity',
           'plone.app.relationfield',
+          'plone.formwidget.querystring',
           'plone.namedfile [blobs]',
-          # -*- Extra requirements: -*-
       ],
       extras_require={
           'test': [
               'lxml',
-              'plone.app.testing',
-              'robotsuite',
-              'robotframework-selenium2library',
+              'plone.app.testing[robot]',
           ],
           'migrate_atct': [
               'Products.contentmigration',

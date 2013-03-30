@@ -7,7 +7,7 @@ from plone.autoform.interfaces import IFormFieldProvider
 
 from plone.namedfile import field as namedfile
 
-from plone.app.contenttypes import MessageFactory as _
+from plone.app.contenttypes import _
 
 
 class ILeadImage(model.Schema):

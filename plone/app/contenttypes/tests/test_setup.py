@@ -20,13 +20,14 @@ class PloneAppContenttypesSetupTest(unittest.TestCase):
         self.assertTrue('Topic' not in self.types.objectIds())
 
     def test_atcontenttypes_replaced_by_dexterity_types(self):
-        self.assertEquals(self.types['Document'].meta_type, 'Dexterity FTI')
-        self.assertEquals(self.types['Event'].meta_type, 'Dexterity FTI')
-        self.assertEquals(self.types['File'].meta_type, 'Dexterity FTI')
-        self.assertEquals(self.types['Folder'].meta_type, 'Dexterity FTI')
-        self.assertEquals(self.types['Image'].meta_type, 'Dexterity FTI')
-        self.assertEquals(self.types['Link'].meta_type, 'Dexterity FTI')
-        self.assertEquals(self.types['News Item'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['Collection'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['Document'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['Event'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['File'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['Folder'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['Image'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['Link'].meta_type, 'Dexterity FTI')
+        self.assertEqual(self.types['News Item'].meta_type, 'Dexterity FTI')
 
     def test_browserlayer_available(self):
         from plone.browserlayer import utils
@@ -35,6 +36,13 @@ class PloneAppContenttypesSetupTest(unittest.TestCase):
         self.assertTrue(
             IPloneAppContenttypesLayer in utils.registered_layers()
         )
+
+    def test_css_registered(self):
+        cssreg = getattr(self.portal, 'portal_css')
+        stylesheets_ids = cssreg.getResourceIds()
+        self.assertTrue(
+            '++resource++collection.css' in stylesheets_ids)
+
 
 
 def test_suite():

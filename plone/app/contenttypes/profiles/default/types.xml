@@ -5,6 +5,7 @@
  <!-- We remove old ATContentTypes if they exist.
       Instances of these types can still be looked at since the
       skin-templates in CMFPlone are there but they cannot be edited -->
+ <object name="Collection" remove="True"/>
  <object name="Document" remove="True"/>
  <object name="Event" remove="True"/>
  <object name="File" remove="True"/>
@@ -14,6 +15,7 @@
  <object name="News Item" remove="True"/>
  <object name="Topic" remove="True"/>
 
+ <object meta_type="Dexterity FTI" name="Collection" />
  <object meta_type="Dexterity FTI" name="Document" />
  <object meta_type="Dexterity FTI" name="Folder" />
  <object meta_type="Dexterity FTI" name="Link" />

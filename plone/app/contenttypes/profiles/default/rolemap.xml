@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<rolemap>
+  <roles>
+    <role name="Manager"></role>
+  </roles>
+  <permissions>
+    <permission name="plone.app.contenttypes: Add Collection" acquire="True">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+    </permission>
+  </permissions>
+</rolemap>

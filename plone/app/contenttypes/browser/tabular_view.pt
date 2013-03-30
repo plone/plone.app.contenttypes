@@ -1,0 +1,77 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+
+<body>
+
+    <div metal:fill-slot="content-core"
+         tal:define="b_start python:request.get('b_start', 0);
+                     batch python:context.results(b_start=b_start);">
+
+         <div metal:define-macro="text-field-view"
+              id="parent-fieldname-text" class="stx"
+              tal:define="has_text exists:context/getText;
+                          text python:has_text and here.getText() or ''"
+              tal:condition="text"
+              tal:attributes="class python:here.Format() in ('text/structured', 'text/x-rst', ) and 'stx' or 'plain'">
+             <div metal:define-slot="inside" tal:replace="structure text">The body</div>
+         </div>
+
+        <p class="discreet"
+           tal:condition="not: batch"
+           i18n:translate="description_no_items_in_folder">
+            There are currently no items in this folder.
+        </p>
+
+        <table class="listing" summary="Content listing"
+            i18n:attributes="summary"
+            tal:condition="batch"
+            tal:define="fields context/selectedViewFields;
+                        pas_member context/@@pas_member">
+            <thead>
+                <tr>
+                    <th class="nosort"
+                        i18n:translate=""
+                        tal:repeat="field fields"
+                        tal:content="python: field[1]">Field name</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tal:block tal:repeat="item batch">
+                <tr tal:define="oddrow repeat/item/odd;"
+                    tal:attributes="class python:oddrow and 'even' or 'odd'" >
+                <tal:block tal:repeat="field fields">
+                    <td tal:condition="python:field[0] not in ['Title', 'Creator', ]"
+                        tal:define="field_data python:getattr(item, field[0])">
+                        <tal:block tal:replace="field_data" />
+                    </td>
+                    <td tal:condition="python:field[0] == 'Title'">
+                        <a href="#"
+                           tal:attributes="href item/getURL;
+                                           title item/Title"
+                           tal:content="item/Title">Item Title</a>
+                    </td>
+                    <td tal:condition="python:field[0] == 'Creator'"
+                        tal:define="author python:pas_member.info(item.Creator());
+                                    name python:author['fullname'] or author['username']">
+                        <a href="#"
+                           tal:condition="author"
+                           tal:attributes="href string:author/${author/username};
+                                           title name"
+                           tal:content="name">Jos Henken</a>
+                    </td>
+                </tal:block>
+                </tr>
+            </tal:block>
+            </tbody>
+        </table>
+
+        <div metal:use-macro="context/batch_macros/macros/navigation" />
+  </div>
+
+</body>
+</html>

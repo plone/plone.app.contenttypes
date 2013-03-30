@@ -12,6 +12,7 @@ from plone.testing import z2
 
 from zope.configuration import xmlconfig
 
+
 class PloneAppContenttypes(PloneSandboxLayer):
 
     defaultBases = (PLONE_FIXTURE,)
@@ -42,10 +43,13 @@ class PloneAppContenttypes(PloneSandboxLayer):
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
 PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
-    name="PloneAppContenttypes:Integration")
+    name="PloneAppContenttypes:Integration"
+)
 PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
-    name="PloneAppContenttypes:Functional")
-PLONE_APP_CONTENTTYPES_ACCEPTANCE_TESTING = FunctionalTesting(
+    name="PloneAppContenttypes:Functional"
+)
+PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE, z2.ZSERVER_FIXTURE),
-    name="PloneAppContenttypes:Acceptance")
+    name="PloneAppContenttypes:Robot"
+)

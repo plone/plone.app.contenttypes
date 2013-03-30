@@ -6,6 +6,88 @@
 
   <include package="plone.app.contentmenu" />
 
+  <browser:resource
+      name="collection.css"
+      file="collection.css" />
+
+  <!-- COLLECTION VIEWS -->
+
+  <browser:page
+    name="view"
+    permission="zope2.View"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    template="standard_view.pt"
+    />
+
+  <browser:page
+    name="standard_view"
+    permission="zope2.View"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    template="standard_view.pt"
+    />
+
+  <browser:page
+    name="summary_view"
+    permission="zope2.View"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    template="summary_view.pt"
+    />
+
+  <browser:page
+    name="all_content"
+    permission="zope2.View"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    template="all_content.pt"
+    />
+
+  <browser:page
+    name="tabular_view"
+    permission="zope2.View"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    template="tabular_view.pt"
+    />
+
+  <browser:page
+    name="thumbnail_view"
+    permission="zope2.View"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    template="thumbnail_view.pt"
+    />
+
+  <browser:page
+    name="RSS"
+    permission="zope2.View"
+    for="plone.app.contenttypes.interfaces.ICollection"
+    template="rss.pt"
+    />
+
+  <!-- COLLECTION MENU ITEMS -->
+
+  <browser:menuItems
+    for="plone.app.contenttypes.interfaces.ICollection"
+    menu="plone_displayviews">
+    <browser:menuItem
+      title="Standard view"
+      action="standard_view"
+      />
+    <browser:menuItem
+      title="Summary view"
+      action="summary_view"
+      />
+    <browser:menuItem
+      title="All content"
+      action="all_content"
+      />
+    <browser:menuItem
+      title="Tabular view"
+      action="tabular_view"
+      />
+    <browser:menuItem
+      title="Thumbnail view"
+      action="thumbnail_view"
+      />
+  </browser:menuItems>
+
   <browser:page
     name="document_view"
     for="plone.app.contenttypes.interfaces.IDocument"
