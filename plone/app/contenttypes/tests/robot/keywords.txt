@@ -1,0 +1,107 @@
+*** Keywords ***
+
+# ----------------------------------------------------------------------------
+# Suite
+# ----------------------------------------------------------------------------
+
+Suite Setup
+    Open browser  ${PLONE_URL}  browser=${BROWSER}  remote_url=${REMOTE_URL}  desired_capabilities=${DESIRED_CAPABILITIES}
+    Log in as site owner
+
+Suite Teardown
+    Close All Browsers
+
+
+# ----------------------------------------------------------------------------
+# Login/Logout
+# ----------------------------------------------------------------------------
+
+Log in
+    [Documentation]  Log in to the site as ${userid} using ${password}. There
+    ...              is no guarantee of where in the site you are once this is
+    ...              done. (You are responsible for knowing where you are and
+    ...              where you want to be)
+    [Arguments]  ${userid}  ${password}
+
+    Go to  ${PLONE_URL}/login_form
+    Page should contain element  __ac_name
+    Page should contain element  __ac_password
+    Page should contain button  Log in
+    Input text  __ac_name  ${userid}
+    Input text  __ac_password  ${password}
+    Click Button  Log in
+
+Log in as site owner
+    [Documentation]  Log in as the SITE_OWNER provided by plone.app.testing,
+    ...              with all the rights and privileges of that user.
+    Log in  ${SITE_OWNER_NAME}  ${SITE_OWNER_PASSWORD}
+
+Log in as test user
+
+    Log in  ${TEST_USER_NAME}  ${TEST_USER_PASSWORD}
+
+Log out
+    Go to  ${PLONE_URL}/logout
+    Page should contain  logged out
+
+
+# ----------------------------------------------------------------------------
+# Content
+# ----------------------------------------------------------------------------
+
+a collection
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++Collection
+    Wait until page contains  Add Collection
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
+a document
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++Document
+    Wait until page contains  Add Page
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
+a event
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++Event
+    Wait until page contains  Add Event
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
+a file
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++File
+    Wait until page contains  Add File
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
+a folder
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++Folder
+    Wait until page contains  Add Folder
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
+a image    
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++Image
+    Wait until page contains  Add Image
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
+a link
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++Link
+    Wait until page contains  Add Link
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
+a folder '${foldername}' with a document '${documentname}'
+    Go to ${TEST_FOLDER}/createObject?type_name=Folder
+    Input text name=title ${foldername}
+    Click Button Save
+    Go to ${TEST_FOLDER}/folder/edit
+    Input text name=title ${documentname}
+    Click Button Save
