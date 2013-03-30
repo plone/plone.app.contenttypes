@@ -98,6 +98,13 @@ a link
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
 
+a news item
+    [Arguments]  ${title}
+    Go to  ${TEST_FOLDER}/++add++News Item
+    Wait until page contains  Add News Item
+    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Click Button  Save
+
 a folder '${foldername}' with a document '${documentname}'
     Go to ${TEST_FOLDER}/createObject?type_name=Folder
     Input text name=title ${foldername}
