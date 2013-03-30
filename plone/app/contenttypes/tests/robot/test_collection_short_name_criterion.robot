@@ -31,13 +31,3 @@ I set the collection short name (id) criterion to
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
     Input Text  name=form.widgets.query.v:records  ${criterion}
     Click Button  Save
-
-the collection should contain
-    [Arguments]  ${title}
-    Go to  ${TEST_FOLDER}/my-collection
-    Page Should Contain  ${title}
-
-the collection should not contain
-    [Arguments]  ${title}
-    Go to  ${TEST_FOLDER}/my-collection
-    Page Should Not Contain  ${title}
