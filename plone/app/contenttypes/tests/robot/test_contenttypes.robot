@@ -1,46 +1,40 @@
 *** Settings ***
 
-Library  Selenium2Library  timeout=2  implicit_wait=0
+Library  Selenium2Library  timeout=2  implicit_wait=2
 
-Resource  contenttypes_keywords.txt
+Resource  plone/app/contenttypes/tests/robot/keywords.txt
 Resource  library-settings.txt
-
 Variables  plone/app/testing/interfaces.py
+Variables  plone/app/contenttypes/tests/robot/variables.py
 
 Suite Setup  Suite Setup
 Suite Teardown  Suite Teardown
 
-*** Variables ***
-
-${front-page}  http://localhost:55001/plone/
-${test-folder}  http://localhost:55001/plone/robot-test-folder
-
-${PORT} =  55001
-${ZOPE_URL} =  http://localhost:${PORT}
-${PLONE_URL} =  ${ZOPE_URL}/plone
-${BROWSER} =  Firefox
-
 
 *** Test Cases ***
 
-Test Folderlisting with all Contenttypes
-    Log in as site owner
-    Go to  ${test-folder}
-    Create Folder  Test-Folder
-    Create Image  Test-Image
-    Create Collection  Test-Collection
-    Create Event  Test-Event 
-    Create Link  Test-Link 
-    Create News Item  Test-News 
-    Create Document  Test-Document
+Scenario: Test Folderlisting
+    Given a Folder  Test-Folder
+      And a File  Test-File
+      And a Image  Test-Image
+      And a Collection  Test-Collection
+#      And a Event  Test-Event 
+      And a Link  Test-Link 
+      And a News Item  Test-News 
+      And a Document  Test-Document
+     When I Go to  ${TEST_FOLDER}/folder_contents
+     Then Page Should Contain  Test-Folder
+      And Page Should Contain  Test-File
+      And Page Should Contain  Test-Image
+      And Page Should Contain  Test-Collection 
+#      And Page Should Contain  Test-Event 
+      And Page Should Contain  Test-Link 
+      And Page Should Contain  Test-News 
+      And Page Should Contain  Test-Document 
 
-    Go to  ${test-folder}/folder_contents
 
+*** Keywords ***
 
-    Page Should Contain  Test-Folder 
-    Page Should Contain  Test-Image 
-    Page Should Contain  Test-Collection 
-    Page Should Contain  Test-Event 
-    Page Should Contain  Test-Link 
-    Page Should Contain  Test-News 
-    Page Should Contain  Test-Document 
+I go to
+    [Arguments]  ${location}
+    Go to  ${location}

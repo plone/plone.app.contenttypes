@@ -55,6 +55,7 @@ a collection
     Wait until page contains  Add Collection
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
+    Wait until page contains  Item created
 
 a document
     [Arguments]  ${title}
@@ -62,6 +63,7 @@ a document
     Wait until page contains  Add Page
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
+    Wait until page contains  Item created
 
 a event
     [Arguments]  ${title}
@@ -69,13 +71,16 @@ a event
     Wait until page contains  Add Event
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
+    Wait until page contains  Item created
 
 a file
     [Arguments]  ${title}
     Go to  ${TEST_FOLDER}/++add++File
     Wait until page contains  Add File
-    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Input text  name=form.widgets.title  ${title}
+    Choose File  name=form.widgets.file  ${PATH_TO_TEST_FILES}/file.pdf
     Click Button  Save
+    Wait until page contains  Item created
 
 a folder
     [Arguments]  ${title}
@@ -83,13 +88,16 @@ a folder
     Wait until page contains  Add Folder
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
+    Wait until page contains  Item created
 
 a image    
     [Arguments]  ${title}
     Go to  ${TEST_FOLDER}/++add++Image
     Wait until page contains  Add Image
-    Input text  name=form.widgets.IDublinCore.title  ${title}
+    Input text  name=form.widgets.title  ${title}
+    Choose File  name=form.widgets.image  ${PATH_TO_TEST_FILES}/image.png
     Click Button  Save
+    Wait until page contains  Item created  error=Image could not be created.
 
 a link
     [Arguments]  ${title}
@@ -97,6 +105,7 @@ a link
     Wait until page contains  Add Link
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
+    Wait until page contains  Item created
 
 a news item
     [Arguments]  ${title}
@@ -104,6 +113,7 @@ a news item
     Wait until page contains  Add News Item
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
+    Wait until page contains  Item created
 
 
 # ----------------------------------------------------------------------------
