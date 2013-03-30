@@ -15,8 +15,11 @@
   <property name="klass">plone.app.contenttypes.content.Collection</property>
   <property name="add_permission">plone.app.contenttypes.addCollection</property>
   <property name="behaviors">
-    <element value="plone.app.dexterity.behaviors.metadata.IBasic" />
     <element value="plone.app.content.interfaces.INameFromTitle"/>
+    <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
+    <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
+    <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
+    <element value="plone.app.relationfield.behavior.IRelatedItems"/>
   </property>
 
   <!-- View information -->

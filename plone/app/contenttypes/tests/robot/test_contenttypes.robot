@@ -13,7 +13,7 @@ Suite Teardown  Suite Teardown
 *** Variables ***
 
 ${front-page}  http://localhost:55001/plone/
-${test-folder}  http://localhost:55001/plone/acceptance-test-folder
+${test-folder}  http://localhost:55001/plone/robot-test-folder
 
 ${PORT} =  55001
 ${ZOPE_URL} =  http://localhost:${PORT}

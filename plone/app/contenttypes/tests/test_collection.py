@@ -168,34 +168,6 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-
-class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
-
-    layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-
-    def setUp(self):
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        login(self.portal, TEST_USER_NAME)
-        self.portal.invokeFactory('Folder', 'test-folder')
-        self.folder = self.portal['test-folder']
-        self.folder.invokeFactory('Collection',
-                                  'collection1')
-        self.collection = aq_inner(self.folder['collection1'])
-        self.request.set('URL', self.collection.absolute_url())
-        self.request.set('ACTUAL_URL', self.collection.absolute_url())
-
-    def test_search_result(self):
-        view = self.collection.restrictedTraverse('@@edit')
-        html = view()
-        self.assertTrue('form-widgets-query' in html)
-        self.assertTrue('No results were found.' in html)
-        #from plone.app.contentlisting.interfaces import IContentListing
-        #self.assertTrue(IContentListing.providedBy(view.accessor()))
-        #self.assertTrue(getattr(accessor(), "actual_result_count"))
-        #self.assertEqual(accessor().actual_result_count, 0)
-
     @unittest.skip("Needs to be refactored")
     def test_collection_templates(self):
         portal = self.layer['portal']
@@ -345,6 +317,36 @@ class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
         collection.setQuery(query)
         imagecount = collection.getFoldersAndImages()['total_number_of_images']
         self.assertTrue(imagecount == 2)
+
+
+class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        login(self.portal, TEST_USER_NAME)
+        self.portal.invokeFactory('Folder', 'test-folder')
+        self.folder = self.portal['test-folder']
+        self.folder.invokeFactory(
+            'Collection',
+            'collection1'
+        )
+        self.collection = aq_inner(self.folder['collection1'])
+        self.request.set('URL', self.collection.absolute_url())
+        self.request.set('ACTUAL_URL', self.collection.absolute_url())
+
+    def test_search_result(self):
+        view = self.collection.restrictedTraverse('@@edit')
+        html = view()
+        self.assertTrue('form-widgets-query' in html)
+        self.assertTrue('No results were found.' in html)
+        #from plone.app.contentlisting.interfaces import IContentListing
+        #self.assertTrue(IContentListing.providedBy(view.accessor()))
+        #self.assertTrue(getattr(accessor(), "actual_result_count"))
+        #self.assertEqual(accessor().actual_result_count, 0)
 
 
 def test_suite():

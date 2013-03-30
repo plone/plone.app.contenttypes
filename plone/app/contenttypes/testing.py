@@ -36,7 +36,7 @@ class PloneAppContenttypes(PloneSandboxLayer):
         setRoles(portal, TEST_USER_ID, ['Manager'])
         portal.invokeFactory(
             "Folder",
-            id="acceptance-test-folder",
+            id="robot-test-folder",
             title=u"Test Folder"
         )
 

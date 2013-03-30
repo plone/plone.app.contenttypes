@@ -62,7 +62,7 @@ Create Collection
     [Arguments]  ${title}
     Go to  ${test-folder}/++add++Collection
 
-    Input text  name=form.widgets.IBasic.title  ${title}
+    Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
 
     Page Should Contain  Item created 
