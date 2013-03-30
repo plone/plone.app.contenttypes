@@ -105,14 +105,6 @@ a news item
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
 
-a folder '${foldername}' with a document '${documentname}'
-    Go to ${TEST_FOLDER}/createObject?type_name=Folder
-    Input text name=title ${foldername}
-    Click Button Save
-    Go to ${TEST_FOLDER}/folder/edit
-    Input text name=title ${documentname}
-    Click Button Save
-
 
 # ----------------------------------------------------------------------------
 # Collection
