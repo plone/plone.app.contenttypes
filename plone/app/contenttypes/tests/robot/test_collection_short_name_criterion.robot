@@ -1,11 +1,10 @@
 *** Settings ***
 
-Library  Selenium2Library  timeout=120  implicit_wait=0.1
+Library  Selenium2Library  timeout=2  implicit_wait=0.1
 
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 Variables  plone/app/testing/interfaces.py
 Variables  plone/app/contenttypes/tests/robot/variables.py
-
 
 Suite Setup  Suite Setup
 Suite Teardown  Suite Teardown
