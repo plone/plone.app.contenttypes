@@ -36,6 +36,12 @@ Changelog
 - Add build status image.
   [saily]
 
+- Merge plone.app.collection (Tag: 2.0b5) into plone.app.contenttypes.
+  [timo]
+
+- Refactor p.a.collection robot framework tests
+  [timo]
+
 
 1.0b1 (2013-01-27)
 ------------------
