@@ -20,9 +20,7 @@ from plone.namedfile.file import NamedFile, NamedImage
 from Products.Archetypes.config import REFERENCE_CATALOG
 from plone.app.uuid.utils import uuidToObject
 from Products.ATContentTypes.interfaces.interfaces import IATContentType
-from plone.app.relationfield.behavior import IRelatedItems
 from z3c.relationfield import RelationValue
-from plone.uuid.interfaces import IUUID
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from Products.CMFCore.utils import getToolByName
@@ -72,7 +70,8 @@ def restoreReferences(portal):
                         backrefobj.relatedItems = PersistentList()
                     elif type(backrefobj.relatedItems) != type(PersistentList()):
                         backrefobj.relatedItems = PersistentList(
-                            obj.relatedItems)
+                            obj.relatedItems
+                        )
                     to_id = intids.getId(obj)
                     backrefobj.relatedItems.append(RelationValue(to_id))
 
@@ -80,7 +79,11 @@ def restoreReferences(portal):
                 elif IATContentType.providedBy(backrefobj):
                     backrefobj.setRelatedItems(obj)
                 out += str(
-                    'Restore BackRelation from %s to %s \n' % (backrefobj, obj))
+                    'Restore BackRelation from %s to %s \n' % (
+                        backrefobj,
+                        obj
+                    )
+                )
             del obj._backrefs
         except AttributeError:
             pass
@@ -90,8 +93,10 @@ def restoreReferences(portal):
 class ReferenceMigrator:
 
     def migrate_relatedItems(self):
-        """ Store Archetype relations as target uids on the dexterity object for later restore.
-            Backrelations are saved as well because all relation to deleted objects would be lost."""
+        """ Store Archetype relations as target uids on the dexterity object
+            for later restore. Backrelations are saved as well because all
+            relation to deleted objects would be lost.
+        """
         # Relations:
         relItems = self.old.getRelatedItems()
         relUids = [item.UID() for item in relItems]
