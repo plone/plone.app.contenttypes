@@ -66,10 +66,10 @@ def restoreReferences(portal):
             for backrefobj in backrefobjs:
                 # Dexterity and
                 if IDexterityContent.providedBy(backrefobj):
-                    if not getattr(backrefobj, 'relatedItems', None):
+                    relitems = getattr(backrefobj, 'relatedItems', None)
+                    if not relitems:
                         backrefobj.relatedItems = PersistentList()
-                    elif type(backrefobj.relatedItems) != type(PersistentList()):
-
+                    elif type(relitems) != type(PersistentList()):
                         backrefobj.relatedItems = PersistentList(
                             obj.relatedItems
                         )
