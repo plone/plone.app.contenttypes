@@ -185,17 +185,25 @@ def importContent(context):
         if target_language != 'en':
             util = queryUtility(ITranslationDomain, 'plonefrontpage')
             if util is not None:
-                translated_text = util.translate(u'front-text',
-                    target_language=target_language)
+                translated_text = util.translate(
+                    u'front-text',
+                    target_language=target_language
+                )
                 if translated_text != u'front-text':
                     front_text = translated_text
         request = getattr(portal, 'REQUEST', None)
         if front_text is None and request is not None:
-            view = queryMultiAdapter((portal, request),
-                name='plone-frontpage-setup')
+            view = queryMultiAdapter(
+                (portal, request),
+                name='plone-frontpage-setup'
+            )
             if view is not None:
                 front_text = bodyfinder(view.index()).strip()
-        content.text = RichTextValue(front_text, 'text/html', 'text/x-html-safe')
+        content.text = RichTextValue(
+            front_text,
+            'text/html',
+            'text/x-html-safe'
+        )
 
         portal.setDefaultPage('front-page')
         _publish(content)

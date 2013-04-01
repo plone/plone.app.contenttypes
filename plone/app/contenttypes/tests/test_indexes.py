@@ -192,4 +192,3 @@ class CatalogIntegrationTest(unittest.TestCase):
             self.portal.getObjSize(None, primary_field_info.value.size),
             brains[0].getObjSize,
         )
-

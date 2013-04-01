@@ -145,5 +145,6 @@ class NewsItemFunctionalTest(unittest.TestCase):
         self.assertTrue('This is my news item' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
 
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

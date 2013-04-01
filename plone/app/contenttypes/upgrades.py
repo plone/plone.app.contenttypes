@@ -1,8 +1,6 @@
-from Products.CMFCore.utils import getToolByName
+from plone.dexterity.interfaces import IDexterityFTI
 
 from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
 
 
 def update_fti(context):

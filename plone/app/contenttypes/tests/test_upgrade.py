@@ -1,22 +1,14 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
 
-from zope.component import createObject
 from zope.component import queryUtility
 
 from plone.dexterity.interfaces import IDexterityFTI
 
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
 from plone.app.testing import TEST_USER_ID, setRoles
 
-from plone.app.contenttypes.interfaces import IFolder
-
 from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 )
 
 from plone.app.contenttypes.upgrades import update_fti
