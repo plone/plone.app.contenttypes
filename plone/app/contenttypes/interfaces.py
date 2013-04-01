@@ -5,7 +5,6 @@ from plone.supermodel import model
 
 from zope.interface import Interface, Attribute
 from zope import schema
-from zope import interface
 from plone.app.contenttypes import _
 
 
