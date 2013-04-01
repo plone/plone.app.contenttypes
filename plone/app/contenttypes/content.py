@@ -21,6 +21,7 @@ from zope.interface import implements
 
 
 class Collection(Item):
+    implements(ICollection)
 
     #security.declareProtected(View, 'listMetaDataFields')
     def listMetaDataFields(self, exclude=True):
