@@ -69,6 +69,7 @@ def restoreReferences(portal):
                     if not getattr(backrefobj, 'relatedItems', None):
                         backrefobj.relatedItems = PersistentList()
                     elif type(backrefobj.relatedItems) != type(PersistentList()):
+
                         backrefobj.relatedItems = PersistentList(
                             obj.relatedItems
                         )

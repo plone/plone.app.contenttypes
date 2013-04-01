@@ -38,7 +38,7 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             name='Document'
         )
         self.assertEqual(
-            fti.model_file, 
+            fti.model_file,
             'plone.app.contenttypes.schema:document.xml'
         )
 
@@ -56,7 +56,7 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             name='Event'
         )
         self.assertEqual(
-            fti.model_file, 
+            fti.model_file,
             'plone.app.contenttypes.schema:event.xml'
         )
 
@@ -74,7 +74,7 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             name='File'
         )
         self.assertEqual(
-            fti.model_file, 
+            fti.model_file,
             'plone.app.contenttypes.schema:file.xml'
         )
 
@@ -92,7 +92,7 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             name='Folder'
         )
         self.assertEqual(
-            fti.model_file, 
+            fti.model_file,
             'plone.app.contenttypes.schema:folder.xml'
         )
 
@@ -110,7 +110,7 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             name='File'
         )
         self.assertEqual(
-            fti.model_file, 
+            fti.model_file,
             'plone.app.contenttypes.schema:file.xml'
         )
 
@@ -128,7 +128,7 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             name='Link'
         )
         self.assertEqual(
-            fti.model_file, 
+            fti.model_file,
             'plone.app.contenttypes.schema:link.xml'
         )
 
@@ -146,9 +146,10 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             name='News Item'
         )
         self.assertEqual(
-            fti.model_file, 
+            fti.model_file,
             'plone.app.contenttypes.schema:news_item.xml'
         )
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

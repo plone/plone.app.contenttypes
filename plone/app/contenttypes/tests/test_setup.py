@@ -44,6 +44,5 @@ class PloneAppContenttypesSetupTest(unittest.TestCase):
             '++resource++collection.css' in stylesheets_ids)
 
 
-
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
