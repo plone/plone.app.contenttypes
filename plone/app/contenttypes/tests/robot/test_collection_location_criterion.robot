@@ -36,6 +36,7 @@ Scenario: Test Absolute Location Criterion
 
 a folder '${folder-id}' with a document '${document-title}'
     Go to  ${TEST_FOLDER}/++add++Folder
+    Wait until page contains element  name=form.widgets.IDublinCore.title
     Input text  name=form.widgets.IDublinCore.title  ${folder-id}
     Click Button  Save
     Go to  ${TEST_FOLDER}/${folder-id}/++add++Document
