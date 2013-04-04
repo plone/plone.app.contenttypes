@@ -12,6 +12,7 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+from plone.app.collection.interfaces import ICollection
 
 # Schema Extender allowed interfaces
 from archetypes.schemaextender.interfaces import (
@@ -32,6 +33,7 @@ from plone.app.contenttypes.content import (
     Image,
     Link,
     NewsItem,
+    Collection,
 )
 try:
     from plone.app.contenttypes import migration
@@ -118,6 +120,10 @@ class MigrateFromATContentTypes(BrowserView):
             migration.migrate_links(portal)
         else:
             not_migrated.append("Link")
+        if not self._isSchemaExtended(ICollection):
+            migration.migrate_collections(portal)
+        else:
+            not_migrated.append("Collection")
 
         migration.restoreReferences(portal)
 
