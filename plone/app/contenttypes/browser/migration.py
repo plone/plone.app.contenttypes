@@ -34,7 +34,6 @@ from plone.app.contenttypes.content import (
     Image,
     Link,
     NewsItem,
-    Collection,
 )
 try:
     from plone.app.contenttypes import migration
