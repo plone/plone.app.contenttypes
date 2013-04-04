@@ -193,15 +193,19 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_document is not new_document)
 
     def test_collection_is_migrated(self):
-        from plone.app.collection.collection import Collection
-        from plone.app.contenttypes.migration import CollectionMigrator
-        from plone.app.contenttypes.interfaces import ICollection
-        at_collection = self.createATCTobject(Collection, 'collection')
-        migrator = self.get_migrator(at_collection, CollectionMigrator)
-        migrator.migrate()
-        new_collection = self.portal['collection']
-        self.assertTrue(ICollection.providedBy(new_collection))
-        self.assertTrue(at_collection is not new_collection)
+        try:
+            from plone.app.collection.collection import Collection
+        except ImportError:
+            pass
+        else:
+            from plone.app.contenttypes.migration import CollectionMigrator
+            from plone.app.contenttypes.interfaces import ICollection
+            at_collection = self.createATCTobject(Collection, 'collection')
+            migrator = self.get_migrator(at_collection, CollectionMigrator)
+            migrator.migrate()
+            new_collection = self.portal['collection']
+            self.assertTrue(ICollection.providedBy(new_collection))
+            self.assertTrue(at_collection is not new_collection)
 
     def test_document_content_is_migrated(self):
         from Products.ATContentTypes.content.document import ATDocument
