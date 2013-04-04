@@ -221,3 +221,15 @@ class FolderMigrator(CMFFolderMigrator, ReferenceMigrator):
 
 def migrate_folders(portal):
     return migrate(portal, FolderMigrator)
+
+
+class CollectionMigrator(DocumentMigrator, ReferenceMigrator):
+
+    src_portal_type = 'Collection'
+    src_meta_type = 'Collection'
+    dst_portal_type = 'Collection'
+    dst_meta_type = None  # not used
+
+
+def migrate_collections(portal):
+    return migrate(portal, CollectionMigrator)
