@@ -4,6 +4,8 @@ from zope.component import queryUtility
 
 
 def update_fti(context):
+    """ Schema-files moved into their own folder after 1.0b1
+    """
     # Document
     fti = queryUtility(
         IDexterityFTI,

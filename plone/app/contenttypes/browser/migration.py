@@ -44,6 +44,8 @@ class FixBaseClasses(BrowserView):
 
     def __call__(self):
         """Make sure all content objects use the proper base classes.
+           Instances before version 1.0b1 had no base-class.
+           To update them call @@fix_base_classes on your site-root.
         """
         out = ""
         portal_types = [
@@ -73,6 +75,8 @@ class FixBaseClasses(BrowserView):
 
 
 class MigrateFromATContentTypes(BrowserView):
+    """ Migrate the default-types (except event and topic)
+    """
 
     def __call__(self):
         if not HAS_ATCT_MIGRATION:
