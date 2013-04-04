@@ -40,6 +40,7 @@ a folder '${folder-id}' with a document '${document-title}'
     Input text  name=form.widgets.IDublinCore.title  ${folder-id}
     Click Button  Save
     Go to  ${TEST_FOLDER}/${folder-id}/++add++Document
+    Wait until page contains element  name=form.widgets.IDublinCore.title
     Input text  name=form.widgets.IDublinCore.title  ${document-title}
     Click Button  Save
 
