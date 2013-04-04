@@ -17,7 +17,6 @@ PLONE_FIXTURE.products = tuple(
 )
 
 
-
 class PloneAppContenttypes(PloneSandboxLayer):
 
     defaultBases = (PLONE_FIXTURE,)
