@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 from plone.app.testing.interfaces import PLONE_SITE_ID

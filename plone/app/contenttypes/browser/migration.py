@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pprint import pformat
 
 from plone.dexterity.interfaces import IDexterityContent
