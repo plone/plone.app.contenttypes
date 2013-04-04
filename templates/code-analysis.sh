@@ -14,4 +14,4 @@ function failure {
     echo "$${@:2}"
 }
 
-log=$$(${parts.buildout.directory}/bin/flake8 plone) && success "Flake8" || failure "Flake8" $$log
+log=$$(${options['bin']} ${options['directory']}) && success ${options['title']} || failure ${options['title']} $$log
