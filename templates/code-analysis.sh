@@ -14,4 +14,4 @@ function failure {
     echo "$${@:2}"
 }
 
-log=$$(${options['run']}) && success ${options['title']} || failure ${options['title']} "$$log"
+log=$$(${options['run']}) && success "${options['title']}" || failure "${options['title']}" "$$log"
