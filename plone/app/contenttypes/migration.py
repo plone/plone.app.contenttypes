@@ -57,7 +57,8 @@ def restoreReferences(portal):
                 to_id = intids.getId(to_obj)
                 obj.relatedItems.append(RelationValue(to_id))
                 out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
-            del obj._relatedItems
+            # keep the _relatedItems to restore the order
+            # del obj._relatedItems
         except AttributeError:
             pass
 
@@ -90,6 +91,14 @@ def restoreReferences(portal):
         except AttributeError:
             pass
     return out
+
+
+def restoreReferencesOrder(self):
+    """ Ich erstelle ein dict mit ordernr: UID. Die OrderNr kommt aus
+        obj._relatedItems und die Relation aus obj.relatedItems. Dann
+        sortiere ich das dict mit sorted. Danach setze ich die relatedItems
+        gleich dict.values(). """
+        pass
 
 
 class ReferenceMigrator:
