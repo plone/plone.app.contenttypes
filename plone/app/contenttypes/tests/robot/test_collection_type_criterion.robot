@@ -34,3 +34,4 @@ I set the collection's type criterion to
     Click Element  xpath=//span[@class='arrowDownAlternative']
     Select Checkbox  ${criterion}
     Click Button  Save
+    Wait until page contains  Changes saved

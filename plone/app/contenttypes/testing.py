@@ -12,8 +12,10 @@ from plone.testing import z2
 
 from zope.configuration import xmlconfig
 
-PLONE_FIXTURE.products = tuple([
-    i for i in PLONE_FIXTURE.products if i[0] != 'plone.app.collection'])
+PLONE_FIXTURE.products = tuple(
+    [i for i in PLONE_FIXTURE.products if i[0] != 'plone.app.collection']
+)
+
 
 
 class PloneAppContenttypes(PloneSandboxLayer):

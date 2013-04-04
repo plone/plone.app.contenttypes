@@ -45,3 +45,4 @@ I set the collection's creator criterion to
     Select From List  xpath=//select[@class='queryoperator']  Is
     Input Text  name=form.widgets.query.v:records  ${criterion}
     Click Button  Save
+    Wait until page contains  Changes saved

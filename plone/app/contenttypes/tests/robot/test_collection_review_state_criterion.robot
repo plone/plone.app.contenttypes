@@ -44,3 +44,4 @@ I set the collection's review state criterion to
     Click Element  xpath=//span[@class='arrowDownAlternative']
     Select Checkbox  ${criterion}
     Click Button  Save
+    Wait until page contains  Changes saved
