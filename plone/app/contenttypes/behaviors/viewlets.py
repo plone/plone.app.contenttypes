@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from plone.app.layout.viewlets import ViewletBase
 
 from plone.app.contenttypes.interfaces import INewsItem

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Migrating ATContentTypes to plone.app.contenttypes objects.
 
