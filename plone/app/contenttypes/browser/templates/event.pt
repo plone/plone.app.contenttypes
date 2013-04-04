@@ -118,13 +118,15 @@
                                tal:attributes="href string:$here_url/vcs_view"
                                title="Download this event in vCal format"
                                i18n:attributes="title title_add_to_vcal;">
-                                <img tal:replace="structure portal/icon_export_vcal.png" src="" alt="" />
+                                <img src="" alt=""
+                                     tal:attributes="src string:${portal_url}/++resource++plone.app.contenttypes.images/icon_export_vcal.png"/>
                                 <span i18n:translate="label_add_to_vcal">vCal</span></a><br />
                             <a href="#"
                                tal:attributes="href string:$here_url/ics_view"
                                title="Download this event in iCal format"
                                i18n:attributes="title title_add_to_ical;">
-                                <img tal:replace="structure portal/icon_export_ical.png" src="" alt="" />
+                                <img src="" alt=""
+                                     tal:attributes="src string:${portal_url}/++resource++plone.app.contenttypes.images/icon_export_ical.png"/>
                                 <span i18n:translate="label_add_to_ical">iCal</span></a>
                         </td>
                     </tr>

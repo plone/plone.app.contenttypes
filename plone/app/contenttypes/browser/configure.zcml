@@ -8,7 +8,11 @@
 
   <browser:resource
       name="collection.css"
-      file="collection.css" />
+      file="stylesheets/collection.css" />
+
+  <browser:resourceDirectory
+      name="plone.app.contenttypes.images"
+      directory="images" />
 
   <!-- COLLECTION VIEWS -->
 
@@ -16,49 +20,49 @@
     name="view"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="standard_view.pt"
+    template="templates/standard_view.pt"
     />
 
   <browser:page
     name="standard_view"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="standard_view.pt"
+    template="templates/standard_view.pt"
     />
 
   <browser:page
     name="summary_view"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="summary_view.pt"
+    template="templates/summary_view.pt"
     />
 
   <browser:page
     name="all_content"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="all_content.pt"
+    template="templates/all_content.pt"
     />
 
   <browser:page
     name="tabular_view"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="tabular_view.pt"
+    template="templates/tabular_view.pt"
     />
 
   <browser:page
     name="thumbnail_view"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="thumbnail_view.pt"
+    template="templates/thumbnail_view.pt"
     />
 
   <browser:page
     name="RSS"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="rss.pt"
+    template="templates/rss.pt"
     />
 
   <!-- COLLECTION MENU ITEMS -->
@@ -92,7 +96,7 @@
     name="document_view"
     for="plone.app.contenttypes.interfaces.IDocument"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="document.pt"
+    template="templates/document.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="View Document"
@@ -102,7 +106,7 @@
     name="event_view"
     for="plone.app.contenttypes.interfaces.IEvent"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="event.pt"
+    template="templates/event.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="View Event"
@@ -112,7 +116,7 @@
     name="file_view"
     for="plone.app.contenttypes.interfaces.IFile"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="file.pt"
+    template="templates/file.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="View File"
@@ -122,7 +126,7 @@
     name="folder_listing"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="folder_listing.pt"
+    template="templates/folder_listing.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Standard view"
@@ -132,7 +136,7 @@
     name="folder_listing"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="folder_listing.pt"
+    template="templates/folder_listing.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Standard view"
@@ -142,7 +146,7 @@
     name="folder_full_view"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="folder_full_view.pt"
+    template="templates/folder_full_view.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="All content"
@@ -152,7 +156,7 @@
     name="folder_summary_view"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="folder_summary_view.pt"
+    template="templates/folder_summary_view.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Summary view"
@@ -162,7 +166,7 @@
     name="folder_tabular_view"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="folder_tabular_view.pt"
+    template="templates/folder_tabular_view.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Tabular view"
@@ -172,7 +176,7 @@
     name="image_view"
     for="plone.app.contenttypes.interfaces.IImage"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="image.pt"
+    template="templates/image.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="View Image"
@@ -182,7 +186,7 @@
     name="image_view_fullscreen"
     for="plone.app.contenttypes.interfaces.IImage"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="image_view_fullscreen.pt"
+    template="templates/image_view_fullscreen.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="View Image Fullscreen"
@@ -202,7 +206,7 @@
     name="newsitem_view"
     for="plone.app.contenttypes.interfaces.INewsItem"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="newsitem.pt"
+    template="templates/newsitem.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="View News Item"

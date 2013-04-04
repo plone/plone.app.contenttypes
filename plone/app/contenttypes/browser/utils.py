@@ -1,18 +1,11 @@
+from Acquisition import aq_inner
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser import BrowserView
+from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
+from plone.memoize.view import memoize
+from zope.component import getMultiAdapter
 from zope.interface import Interface
 from zope.interface import implements
-
-from plone.memoize.view import memoize
-
-from Acquisition import aq_inner
-
-from zope.component import getMultiAdapter
-
-from Products.CMFCore.utils import getToolByName
-
-from Products.Five.browser import BrowserView
-
-
-from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
 
 
 class IUtils(Interface):

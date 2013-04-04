@@ -6,7 +6,7 @@ from Products.CMFCore.utils import getToolByName
 
 class LinkRedirectView(BrowserView):
 
-    template = ViewPageTemplateFile('link.pt')
+    template = ViewPageTemplateFile('templates/link.pt')
 
     def __call__(self):
         """Redirect to the Link target URL, if and only if:
