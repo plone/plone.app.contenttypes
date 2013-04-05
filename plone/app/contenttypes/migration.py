@@ -113,8 +113,6 @@ def restoreReferencesOrder(portal):
         for i in atRelItems:
             for rel in obj.relatedItems:
                 if rel.to_object.UID() == i:
-                    import ipdb
-                    ipdb.set_trace()
                     atRelItems[atRelItems.index(i)] = rel
                     break
         obj.relatedItems = atRelItems
