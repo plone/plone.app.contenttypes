@@ -121,6 +121,7 @@ class MigrateFromATContentTypes(BrowserView):
             not_migrated.append("Link")
 
         migration.restoreReferences(portal)
+        migration.restoreReferencesOrder(portal)
 
         if not_migrated:
             msg = ("The following cannot be migrated as they "
