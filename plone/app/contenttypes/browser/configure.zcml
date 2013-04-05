@@ -236,4 +236,7 @@
     allowed_interface="plone.app.contenttypes.browser.utils.IUtils"
     />
 
+  <!-- Query string widget -->
+  <adapter factory=".widgets.QueryStringFieldWidget" />
+
 </configure>
