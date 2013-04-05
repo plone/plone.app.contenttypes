@@ -35,9 +35,10 @@ def migrate(portal, migrator):
 
 
 def restoreReferences(portal):
-    """ iterate over all Dexterity Objs and restore es Dexterity Reference. """
+    """ iterate over all Dexterity Objs and restore as Dexterity Reference. """
     out = ''
     catalog = getToolByName(portal, "portal_catalog")
+    uid_catalog = getToolByName(portal, 'uid_catalog')
     # Seems that these newly created objs are not reindexed
     catalog.clearFindAndRebuild()
     intids = getUtility(IIntIds)
@@ -80,6 +81,9 @@ def restoreReferences(portal):
 
                 # Archetypes
                 elif IATContentType.providedBy(backrefobj):
+                    # reindex UID so we are able to set the reference
+                    path = '/'.join(obj.getPhysicalPath())
+                    uid_catalog.catalog_object(obj, path)
                     backrefobj.setRelatedItems(obj)
                 out += str(
                     'Restore BackRelation from %s to %s \n' % (
