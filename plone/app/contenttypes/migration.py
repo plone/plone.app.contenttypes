@@ -93,12 +93,34 @@ def restoreReferences(portal):
     return out
 
 
-def restoreReferencesOrder(self):
-    """ Ich erstelle ein dict mit ordernr: UID. Die OrderNr kommt aus
-        obj._relatedItems und die Relation aus obj.relatedItems. Dann
-        sortiere ich das dict mit sorted. Danach setze ich die relatedItems
-        gleich dict.values(). """
-        pass
+def restoreReferencesOrder(portal):
+    """ In obj._relatedItems is the correct order of references. Let's
+        replace the ATReference (UID) by the new Dexterity Refeŕence.
+        Then we have a list with ordered Refs and can replace
+        obj.relatedItems."""
+    out = ''
+    catalog = getToolByName(portal, "portal_catalog")
+    results = catalog.searchResults(
+        object_provides=IDexterityContent.__identifier__)
+    # Iteration on all dexterity objects
+    for brain in results:
+        obj = brain.getObject()
+        if not getattr(obj, '_relatedItems', None):
+            continue
+        # In obj._relatedItems we have the right order.
+        atRelItems = obj._relatedItems
+        # Replace the AT Ref by the Dex. Ref
+        for i in atRelItems:
+            for rel in obj.relatedItems:
+                if rel.to_object.UID() == i:
+                    import ipdb
+                    ipdb.set_trace()
+                    atRelItems[atRelItems.index(i)] = rel
+                    break
+        obj.relatedItems = atRelItems
+        del obj._relatedItems
+        out += str('%s ordered.' % obj)
+    return out
 
 
 class ReferenceMigrator:
