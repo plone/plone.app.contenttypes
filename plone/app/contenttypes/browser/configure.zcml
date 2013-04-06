@@ -163,6 +163,16 @@
     />
 
   <browser:page
+    name="folder_summary_view"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="templates/folder_summary_view.pt"
+    permission="zope2.View"
+    menu="plone_displayviews"
+    title="Summary view"
+    />
+
+  <browser:page
     name="folder_tabular_view"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
