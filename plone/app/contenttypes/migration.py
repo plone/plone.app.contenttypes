@@ -35,9 +35,10 @@ def migrate(portal, migrator):
 
 
 def restoreReferences(portal):
-    """ iterate over all Dexterity Objs and restore es Dexterity Reference. """
+    """ iterate over all Dexterity Objs and restore as Dexterity Reference. """
     out = ''
     catalog = getToolByName(portal, "portal_catalog")
+    uid_catalog = getToolByName(portal, 'uid_catalog')
     # Seems that these newly created objs are not reindexed
     catalog.clearFindAndRebuild()
     intids = getUtility(IIntIds)
@@ -57,7 +58,8 @@ def restoreReferences(portal):
                 to_id = intids.getId(to_obj)
                 obj.relatedItems.append(RelationValue(to_id))
                 out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
-            del obj._relatedItems
+            # keep the _relatedItems to restore the order
+            # del obj._relatedItems
         except AttributeError:
             pass
 
@@ -79,6 +81,9 @@ def restoreReferences(portal):
 
                 # Archetypes
                 elif IATContentType.providedBy(backrefobj):
+                    # reindex UID so we are able to set the reference
+                    path = '/'.join(obj.getPhysicalPath())
+                    uid_catalog.catalog_object(obj, path)
                     backrefobj.setRelatedItems(obj)
                 out += str(
                     'Restore BackRelation from %s to %s \n' % (
@@ -89,6 +94,34 @@ def restoreReferences(portal):
             del obj._backrefs
         except AttributeError:
             pass
+    return out
+
+
+def restoreReferencesOrder(portal):
+    """ In obj._relatedItems is the correct order of references. Let's
+        replace the ATReference (UID) by the new Dexterity Refeŕence.
+        Then we have a list with ordered Refs and can replace
+        obj.relatedItems."""
+    out = ''
+    catalog = getToolByName(portal, "portal_catalog")
+    results = catalog.searchResults(
+        object_provides=IDexterityContent.__identifier__)
+    # Iteration on all dexterity objects
+    for brain in results:
+        obj = brain.getObject()
+        if not getattr(obj, '_relatedItems', None):
+            continue
+        # In obj._relatedItems we have the right order.
+        atRelItems = obj._relatedItems
+        # Replace the AT Ref by the Dex. Ref
+        for i in atRelItems:
+            for rel in obj.relatedItems:
+                if rel.to_object.UID() == i:
+                    atRelItems[atRelItems.index(i)] = rel
+                    break
+        obj.relatedItems = atRelItems
+        del obj._relatedItems
+        out += str('%s ordered.' % obj)
     return out
 
 
