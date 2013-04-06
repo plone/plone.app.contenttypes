@@ -425,7 +425,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_stats(self):
         from Products.ATContentTypes.content.document import ATDocument
         from plone.app.contenttypes.migration import DocumentMigrator
-        from plone.app.contenttypes.browser.migration import \
+        from plone.app.contenttypes.migration.browser import \
             MigrateFromATContentTypes as MigrationView
 
         at_doc1 = self.createATCTobject(ATDocument, 'doc1')

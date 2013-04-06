@@ -4,6 +4,8 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Moved migration related code to specific module [gborelli]
+
 - Add missing ``i18n:attributes`` to 'Edit' and 'View' actions of File type.
   [saily]
 

@@ -47,6 +47,10 @@
   <include file="permissions.zcml" />
   <include file="upgrades.zcml" />
 
+  <include
+    zcml:condition="installed Products.ATContentTypes"
+    package=".migration" />
+
   <utility
       factory=".setuphandlers.HiddenProfiles"
       name="plone.app.contenttypes"
