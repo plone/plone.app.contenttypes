@@ -8,25 +8,25 @@ will module will only work if P.contentmigration is installed so make sure
 you catch ImportErrors
 '''
 
-from StringIO import StringIO
-
+from Products.ATContentTypes.interfaces.interfaces import IATContentType
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.contentmigration.basemigrator.migrator import (CMFFolderMigrator,
                                                              CMFItemMigrator)
 from Products.contentmigration.basemigrator.walker import CatalogWalker
-
+from StringIO import StringIO
+from persistent.list import PersistentList
 from plone.app.textfield.value import RichTextValue
-from plone.namedfile.file import NamedFile, NamedImage
-
-from Products.Archetypes.config import REFERENCE_CATALOG
 from plone.app.uuid.utils import uuidToObject
-from Products.ATContentTypes.interfaces.interfaces import IATContentType
+from plone.dexterity.interfaces import IDexterityContent
+from plone.namedfile.file import (NamedFile,
+                                  NamedImage,
+                                  NamedBlobFile,
+                                  NamedBlobImage)
 from z3c.relationfield import RelationValue
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
-from Products.CMFCore.utils import getToolByName
-from plone.dexterity.interfaces import IDexterityContent
-from persistent.list import PersistentList
 
 
 def migrate(portal, migrator):
@@ -186,6 +186,26 @@ def migrate_files(portal):
     return migrate(portal, FileMigrator)
 
 
+class BlobFileMigrator(CMFItemMigrator, ReferenceMigrator):
+
+    src_portal_type = 'File'
+    src_meta_type = 'ATBlob'
+    dst_portal_type = 'File'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        old_file = self.old.getField('file').get(self.old)
+        filename = safe_unicode(old_file.filename)
+        namedblobfile = NamedBlobFile(contentType=old_file.content_type,
+                                      data=old_file.data,
+                                      filename=filename)
+        self.new.file = namedblobfile
+
+
+def migrate_blobfiles(portal):
+    return migrate(portal, BlobFileMigrator)
+
+
 class ImageMigrator(CMFItemMigrator, ReferenceMigrator):
 
     src_portal_type = 'Image'
@@ -205,6 +225,28 @@ class ImageMigrator(CMFItemMigrator, ReferenceMigrator):
 
 def migrate_images(portal):
     return migrate(portal, ImageMigrator)
+
+
+class BlobImageMigrator(CMFItemMigrator, ReferenceMigrator):
+
+    src_portal_type = 'Image'
+    src_meta_type = 'ATBlob'
+    dst_portal_type = 'Image'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+
+        old_image = self.old.getField('image').get(self.old)
+        if old_image == '':
+            return
+        filename = safe_unicode(old_image.filename)
+        namedblobimage = NamedBlobImage(data=old_image.data,
+                                        filename=filename)
+        self.new.image = namedblobimage
+
+
+def migrate_blobimages(portal):
+    return migrate(portal, BlobImageMigrator)
 
 
 class LinkMigrator(CMFItemMigrator, ReferenceMigrator):
