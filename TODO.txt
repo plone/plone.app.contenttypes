@@ -9,15 +9,25 @@ Todo
 
   [x] Use behaviors for lead image / event
 
-  [x] Write AT migration steps
+  [ ] Translate
 
   [ ] Use plone.app.event (PLIP 10886: https://dev.plone.org/ticket/10886) (works in branch 'events')
 
-  [ ] integrate new widgets from plone.app.widgets (works in branch 'widgets')
+  [ ] Sort out dependencies on plone.app.collection
 
-  [ ] Documentation. What kind of documentation do we need?
+  [ ] integrate new widgets from plone.app.widgets (branch 'widgets')
+
+  [ ] Improve and test documentation
 
   [x] Search indexes. Search for content in any of the custom fields does not work now.
+
+  [x] Write AT migration steps
+
+  [x] Migrate references
+
+  [ ] Migrate all metadata
+
+  [ ] Tests for all migrations
 
   [ ] Improve migration. Create a form for this:
 
