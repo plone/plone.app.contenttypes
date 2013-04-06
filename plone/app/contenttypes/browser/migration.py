@@ -120,6 +120,12 @@ class MigrateFromATContentTypes(BrowserView):
         else:
             not_migrated.append("Link")
 
+        # blobfiles and images are always schma-extended
+        # we need to find out if they are extended even further
+        # in another way
+        migration.migrate_blobimages(portal)
+        migration.migrate_blobfiles(portal)
+
         migration.restoreReferences(portal)
         migration.restoreReferencesOrder(portal)
 
