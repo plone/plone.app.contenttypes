@@ -223,22 +223,6 @@
     />
 
   <browser:page
-    name="fix_base_classes"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    class=".migration.FixBaseClasses"
-    permission="zope2.View"
-    />
-
-  <browser:page
-    name="migrate_from_atct"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    class=".migration.MigrateFromATContentTypes"
-    permission="zope2.View"
-    />
-
-  <browser:page
     name="contenttype_utils"
     for="*"
     permission="zope2.View"
