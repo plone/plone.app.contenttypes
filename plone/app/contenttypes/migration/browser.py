@@ -13,6 +13,12 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+try:
+    from plone.app.collection.interfaces import ICollection
+    HAS_APP_COLLECTION = True
+except ImportError:
+    ICollection = None
+    HAS_APP_COLLECTION = False
 
 # Schema Extender allowed interfaces
 from archetypes.schemaextender.interfaces import (
@@ -108,6 +114,10 @@ class MigrateFromATContentTypes(BrowserView):
             migration.migrate_links(portal)
         else:
             not_migrated.append("Link")
+        if HAS_APP_COLLECTION and not self._isSchemaExtended(ICollection):
+            migration.migrate_collections(portal)
+        else:
+            not_migrated.append("Collection")
 
         # blobfiles and images are always schma-extended
         # we need to find out if they are extended even further
