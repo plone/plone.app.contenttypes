@@ -198,7 +198,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         except ImportError:
             pass
         else:
-            from plone.app.contenttypes.migration import CollectionMigrator
+            from plone.app.contenttypes.migration.migration import \
+                CollectionMigrator
             from plone.app.contenttypes.interfaces import ICollection
             at_collection = self.createATCTobject(Collection, 'collection')
             migrator = self.get_migrator(at_collection, CollectionMigrator)
