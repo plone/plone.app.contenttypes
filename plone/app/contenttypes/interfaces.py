@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from plone.autoform import directives as form
-from plone.formwidget.querystring.widget import QueryStringFieldWidget
 from plone.supermodel import model
 
 from zope.interface import Interface, Attribute
