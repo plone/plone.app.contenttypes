@@ -3,7 +3,7 @@
 Introduction
 ============
 
-.. image:: https://jenkins.plone.org/job/plone-4.3-plone-app-contenttypes/badge/icon
+.. image:: http://jenkins.plone.org/job/plone-4.3-plone-app-contenttypes/badge/icon
 
 .. image:: https://travis-ci.org/plone/plone.app.contenttypes.png
     :target: http://travis-ci.org/plone/plone.app.contenttypes
