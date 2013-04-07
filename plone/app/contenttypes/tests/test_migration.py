@@ -243,7 +243,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_file_content_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FileMigrator
-        from plone.namedfile.interfaces import INamedFile
+        from plone.namedfile.interfaces import INamedBlobFile
         from Products.ATContentTypes.content.file import ATFile
         at_file = self.createATCTobject(ATFile, 'file')
         field = at_file.getField('file')
@@ -253,7 +253,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         migrator = self.get_migrator(at_file, FileMigrator)
         migrator.migrate()
         new_file = self.portal['file']
-        self.assertTrue(INamedFile.providedBy(new_file.file))
+        self.assertTrue(INamedBlobFile.providedBy(new_file.file))
         self.assertEqual(new_file.file.filename, 'dummyfile.txt')
         self.assertEqual(new_file.file.contentType, 'text/dummy')
         self.assertEqual(new_file.file.data, 'dummydata')
@@ -284,7 +284,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_image_content_is_migrated(self):
         from plone.app.contenttypes.migration.migration import ImageMigrator
-        from plone.namedfile.interfaces import INamedImage
+        from plone.namedfile.interfaces import INamedBlobImage
         from Products.ATContentTypes.content.image import ATImage
 
         # create the ATImage
@@ -296,7 +296,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         migrator = self.get_migrator(at_image, ImageMigrator)
         migrator.migrate()
         new_image = self.portal['image']
-        self.assertTrue(INamedImage.providedBy(new_image.image))
+        self.assertTrue(INamedBlobImage.providedBy(new_image.image))
         self.assertEqual(new_image.image.filename, 'testimage.png')
         self.assertEqual(new_image.image.contentType, 'image/png')
         self.assertEqual(new_image.image.data, test_image_data)
@@ -340,7 +340,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from Products.ATContentTypes.content.newsitem import ATNewsItem
         from plone.app.contenttypes.migration.migration import NewsItemMigrator
         from plone.app.textfield.interfaces import IRichTextValue
-        from plone.namedfile.interfaces import INamedImage
+        from plone.namedfile.interfaces import INamedBlobImage
 
         # create an ATNewsItem
         at_newsitem = self.createATCTobject(ATNewsItem, 'newsitem')
@@ -358,7 +358,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # assertions
         new_newsitem = self.portal['newsitem']
-        self.assertTrue(INamedImage.providedBy(new_newsitem.image))
+        self.assertTrue(INamedBlobImage.providedBy(new_newsitem.image))
         self.assertEqual(new_newsitem.image.filename, 'testimage.png')
         self.assertEqual(new_newsitem.image.contentType, 'image/png')
         self.assertEqual(new_newsitem.image.data, test_image_data)

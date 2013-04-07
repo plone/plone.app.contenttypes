@@ -11,19 +11,16 @@ you catch ImportErrors
 from Products.ATContentTypes.interfaces.interfaces import IATContentType
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from Products.contentmigration.basemigrator.migrator import (CMFFolderMigrator,
-                                                             CMFItemMigrator)
+from Products.CMFPlone.utils import safe_unicode, safe_hasattr
+from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
+from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
-from StringIO import StringIO
 from persistent.list import PersistentList
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
-from plone.namedfile.file import (NamedFile,
-                                  NamedImage,
-                                  NamedBlobFile,
-                                  NamedBlobImage)
+from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
 from z3c.relationfield import RelationValue
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
@@ -176,10 +173,10 @@ class FileMigrator(CMFItemMigrator, ReferenceMigrator):
     def migrate_schema_fields(self):
         old_file = self.old.getField('file').get(self.old)
         filename = safe_unicode(old_file.filename)
-        namedfile = NamedFile(contentType=old_file.content_type,
-                              data=StringIO(old_file.data),
-                              filename=filename)
-        self.new.file = namedfile
+        namedblobfile = NamedBlobFile(contentType=old_file.content_type,
+                                      data=old_file.data,
+                                      filename=filename)
+        self.new.file = namedblobfile
 
 
 def migrate_files(portal):
@@ -218,9 +215,9 @@ class ImageMigrator(CMFItemMigrator, ReferenceMigrator):
         if old_image == '':
             return
         filename = safe_unicode(old_image.filename)
-        namedimage = NamedImage(data=StringIO(old_image.data),
-                                filename=filename)
-        self.new.image = namedimage
+        namedblobimage = NamedBlobImage(data=old_image.data,
+                                        filename=filename)
+        self.new.image = namedblobimage
 
 
 def migrate_images(portal):
@@ -265,7 +262,7 @@ def migrate_links(portal):
     return migrate(portal, LinkMigrator)
 
 
-class NewsItemMigrator(ImageMigrator, DocumentMigrator, ReferenceMigrator):
+class NewsItemMigrator(DocumentMigrator, ReferenceMigrator):
 
     src_portal_type = 'News Item'
     src_meta_type = 'ATNewsItem'
@@ -273,11 +270,21 @@ class NewsItemMigrator(ImageMigrator, DocumentMigrator, ReferenceMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        # migrate the image and text
-        ImageMigrator.migrate_schema_fields(self)
+        # migrate the text
         DocumentMigrator.migrate_schema_fields(self)
 
         # migrate the rest of the Schema
+
+        old_image = self.old.getField('image').get(self.old)
+        if old_image == '':
+            return
+        filename = safe_unicode(old_image.filename)
+        old_image_data = old_image.data
+        if safe_hasattr(old_image_data, 'data'):
+            old_image_data = old_image_data.data
+        namedblobimage = NamedBlobImage(data=old_image_data,
+                                        filename=filename)
+        self.new.image = namedblobimage
         self.new.image_caption = safe_unicode(
             self.old.getField('imageCaption').get(self.old))
 
