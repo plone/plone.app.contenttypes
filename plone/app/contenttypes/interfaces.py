@@ -20,7 +20,6 @@ class IPloneAppContenttypesLayer(Interface):
 
 class ICollection(model.Schema):
 
-    form.widget(query=QueryStringFieldWidget)
     query = schema.List(
         title=_(u'label_query', default=u'Search terms'),
         description=_(u"""Define the search terms for the items you want to
