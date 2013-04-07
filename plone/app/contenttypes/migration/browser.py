@@ -40,11 +40,8 @@ from plone.app.contenttypes.content import (
     Link,
     NewsItem,
 )
-try:
-    from plone.app.contenttypes import migration
-    HAS_ATCT_MIGRATION = True
-except ImportError:
-    HAS_ATCT_MIGRATION = False
+
+from . import migration
 
 
 class FixBaseClasses(BrowserView):
@@ -86,14 +83,6 @@ class MigrateFromATContentTypes(BrowserView):
     """
 
     def __call__(self):
-        if not HAS_ATCT_MIGRATION:
-            msg = ('You want to migrate ATContentType object to '
-                   'plone.app.contenttypes objects, but we can not '
-                   'find Products.contentmigration. '
-                   'You can fix that by installing plone.app.contenttypes '
-                   'with the extra_requires [migrate_atct]')
-            return msg
-
         stats_before = 'State before:\n'
         stats_before += self.stats()
         portal = self.context
@@ -130,7 +119,14 @@ class MigrateFromATContentTypes(BrowserView):
         else:
             not_migrated.append("Collection")
 
+        # blobfiles and images are always schma-extended
+        # we need to find out if they are extended even further
+        # in another way
+        migration.migrate_blobimages(portal)
+        migration.migrate_blobfiles(portal)
+
         migration.restoreReferences(portal)
+        migration.restoreReferencesOrder(portal)
 
         if not_migrated:
             msg = ("The following cannot be migrated as they "

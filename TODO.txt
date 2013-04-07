@@ -1,24 +1,58 @@
-Plone Conference 2012 Arnhem Meeting - Open Space
-=================================================
-
-  [X] Migrate skin templates to browser views
-  [ ] Move interfaces (INewsItem, IFolder, etc.) to Products.CMFPlone or
-      plone.app.content (no PLIP needed)
-  [ ] Use behaviors for lead image / event
-
-Future
-------
-
-  [ ] Write AT migration steps (gsoc?)
-  [ ] Integrate plone.app.event
-  [ ] Discuss PLIP to change the standard types (e.g. combine file and image)
-  [ ] PLIP lead image
-
-
 Todo
 ====
 
- [ ] Search indexes. Search for content in any of the custom fields does not work now.
+
+  [X] Migrate skin templates to browser views
+
+  [ ] Move interfaces (INewsItem, IFolder, etc.) to Products.CMFPlone or
+      plone.app.content (no PLIP needed)
+
+  [x] Use behaviors for lead image / event
+
+  [ ] Translate
+
+  [ ] Use plone.app.event (PLIP 10886: https://dev.plone.org/ticket/10886) (works in branch 'events')
+
+  [ ] Sort out dependencies on plone.app.collection
+
+  [ ] integrate new widgets from plone.app.widgets (branch 'widgets')
+
+  [ ] Improve and test documentation
+
+  [x] Search indexes. Search for content in any of the custom fields does not work now.
+
+  [x] Write AT migration steps
+
+  [x] Migrate references
+
+  [ ] Migrate all metadata
+
+  [ ] Tests for all migrations
+
+  [ ] Improve migration. Create a form for this:
+
+      Migrate Content-Types
+
+      link: migrate all items
+      Existing content:
+      ATDocument: 330  link: migrate ATDocuments
+      ATEvent: 120 link: migrate ATEvent
+      (...)
+
+      options:
+      - migrate references (default: on)
+
+      Documentation:
+      Note about Schema-extender
+      Note about LinguaPlone
+      Note about how long it might take
+
+      Output after running
+      Migrating xxx objects:
+      Results:
+      Successful migration:
+      xxx Objects of Type were migrated
+      xxx Objects werde not migrated because...
 
  [ ] Fix AddPloneSite form which selects which content-type framework to use.
 
@@ -32,16 +66,8 @@ Todo
 
      2. Fix the default content generation setupstep to work with both Archetypes and Dexterity.
 
- [ ] Migration steps for base content-types
-
- [ ] (Issue) The Discussion Item (Comment) is installed even when "No base content-types" is selected in the Plone addform.
-
- [ ] (Issue) The Document (Page) content type is missing presentation mode.
-
- [ ] (Issue) The Folder content type is missing functionality to set locally addable types.
- 
- [ ] Remove references to Archetypes and ATContentTypes from Plone Core products. The following packages 
-     currently contain at least one reference to Archetypes or ATContentTypes in py/pt/cpy/xml/zcml 
+ [ ] Remove references to Archetypes and ATContentTypes from Plone Core products. The following packages
+     currently contain at least one reference to Archetypes or ATContentTypes in py/pt/cpy/xml/zcml
      (Plone 4.3 core branch):
          - archetypes.querywidget
          - archetypes.referencebrowserwidget
@@ -85,18 +111,5 @@ Todo
          - Products.validation
          - txtfilter
          - wicked
-    There is a full breakdown of specific files that mention Archetypes or ATContentTypes, along with line numbers 
+    There is a full breakdown of specific files that mention Archetypes or ATContentTypes, along with line numbers
     in the files archetypes-mentions.txt and atct-mentions.txt at the root of the plone.app.contenttypes product.
-
-Postponed
-=========
-
- [ ] Migration steps for customized content-types? Is this possible?
-
- [ ] Use the new plone.app.event type (PLIP 10886: https://dev.plone.org/ticket/10886)
-
- [ ] Documentation. What kind of documentation do we need?
-
- [ ] Write PLIP to factor out ATContentTypes dependency from
-     Products.CMFPlone: https://dev.plone.org/ticket/12344
-

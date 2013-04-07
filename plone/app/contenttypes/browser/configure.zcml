@@ -163,6 +163,16 @@
     />
 
   <browser:page
+    name="folder_summary_view"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="templates/folder_summary_view.pt"
+    permission="zope2.View"
+    menu="plone_displayviews"
+    title="Summary view"
+    />
+
+  <browser:page
     name="folder_tabular_view"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
@@ -213,27 +223,14 @@
     />
 
   <browser:page
-    name="fix_base_classes"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    class=".migration.FixBaseClasses"
-    permission="zope2.View"
-    />
-
-  <browser:page
-    name="migrate_from_atct"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    class=".migration.MigrateFromATContentTypes"
-    permission="zope2.View"
-    />
-
-  <browser:page
     name="contenttype_utils"
     for="*"
     permission="zope2.View"
     class=".utils.Utils"
     allowed_interface="plone.app.contenttypes.browser.utils.IUtils"
     />
+
+  <!-- Query string widget -->
+  <adapter factory=".widgets.QueryStringFieldWidget" />
 
 </configure>

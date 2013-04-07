@@ -25,7 +25,7 @@ from plone.app.contenttypes.testing import \
 
 from plone.app.testing import TEST_USER_ID, setRoles
 
-from plone.app.contenttypes.migration import restoreReferences
+from plone.app.contenttypes.migration.migration import restoreReferences
 from zope.component import getSiteManager
 from zope.intid.interfaces import IIntIds
 from five.intid.intid import IntIds
@@ -151,7 +151,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_new_content_is_indexed(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
         from plone.app.contenttypes.interfaces import IDocument
         at_document = self.createATCTobject(ATDocument, 'document')
         migrator = self.get_migrator(at_document, DocumentMigrator)
@@ -162,7 +162,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_old_content_is_removed(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
         at_document = self.createATCTobject(ATDocument, 'document')
         migrator = self.get_migrator(at_document, DocumentMigrator)
         migrator.migrate()
@@ -172,7 +172,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_old_content_is_unindexed(self):
         from Products.ATContentTypes.content.document import ATDocument
         from Products.ATContentTypes.interfaces import IATDocument
-        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
         at_document = self.createATCTobject(ATDocument, 'document')
         migrator = self.get_migrator(at_document, DocumentMigrator)
         brains = self.catalog(object_provides=IATDocument.__identifier__)
@@ -183,7 +183,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_document_is_migrated(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
         from plone.app.contenttypes.interfaces import IDocument
         at_document = self.createATCTobject(ATDocument, 'document')
         migrator = self.get_migrator(at_document, DocumentMigrator)
@@ -209,7 +209,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_document_content_is_migrated(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
         from plone.app.textfield.interfaces import IRichTextValue
 
         # create an ATDocument
@@ -231,7 +231,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_file_is_migrated(self):
         from Products.ATContentTypes.content.file import ATFile
-        from plone.app.contenttypes.migration import FileMigrator
+        from plone.app.contenttypes.migration.migration import FileMigrator
         from plone.app.contenttypes.interfaces import IFile
         at_file = self.createATCTobject(ATFile, 'file')
         migrator = self.get_migrator(at_file, FileMigrator)
@@ -241,7 +241,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_file is not new_file)
 
     def test_file_content_is_migrated(self):
-        from plone.app.contenttypes.migration import FileMigrator
+        from plone.app.contenttypes.migration.migration import FileMigrator
         from plone.namedfile.interfaces import INamedFile
         from Products.ATContentTypes.content.file import ATFile
         at_file = self.createATCTobject(ATFile, 'file')
@@ -259,7 +259,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_image_is_migrated(self):
         from Products.ATContentTypes.content.image import ATImage
-        from plone.app.contenttypes.migration import ImageMigrator
+        from plone.app.contenttypes.migration.migration import ImageMigrator
         from plone.app.contenttypes.interfaces import IImage
         at_image = self.createATCTobject(ATImage, 'image')
         migrator = self.get_migrator(at_image, ImageMigrator)
@@ -274,7 +274,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         but this is a special case in AT's FileField.
         """
         from Products.ATContentTypes.content.image import ATImage
-        from plone.app.contenttypes.migration import ImageMigrator
+        from plone.app.contenttypes.migration.migration import ImageMigrator
         at_image = self.createATCTobject(ATImage, 'image')
         migrator = self.get_migrator(at_image, ImageMigrator)
         migrator.migrate()
@@ -282,7 +282,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(new_image.image, None)
 
     def test_image_content_is_migrated(self):
-        from plone.app.contenttypes.migration import ImageMigrator
+        from plone.app.contenttypes.migration.migration import ImageMigrator
         from plone.namedfile.interfaces import INamedImage
         from Products.ATContentTypes.content.image import ATImage
 
@@ -302,7 +302,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_link_is_migrated(self):
         from Products.ATContentTypes.content.link import ATLink
-        from plone.app.contenttypes.migration import LinkMigrator
+        from plone.app.contenttypes.migration.migration import LinkMigrator
         from plone.app.contenttypes.interfaces import ILink
         at_link = self.createATCTobject(ATLink, 'link')
         migrator = self.get_migrator(at_link, LinkMigrator)
@@ -312,7 +312,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_link is not new_link)
 
     def test_link_content_is_migrated(self):
-        from plone.app.contenttypes.migration import LinkMigrator
+        from plone.app.contenttypes.migration.migration import LinkMigrator
         from plone.app.contenttypes.interfaces import ILink
         from Products.ATContentTypes.content.link import ATLink
         at_link = self.createATCTobject(ATLink, 'link')
@@ -326,7 +326,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_newsitem_is_migrated(self):
         from Products.ATContentTypes.content.newsitem import ATNewsItem
-        from plone.app.contenttypes.migration import NewsItemMigrator
+        from plone.app.contenttypes.migration.migration import NewsItemMigrator
         from plone.app.contenttypes.interfaces import INewsItem
         at_newsitem = self.createATCTobject(ATNewsItem, 'newsitem')
         migrator = self.get_migrator(at_newsitem, NewsItemMigrator)
@@ -337,7 +337,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_newsitem_content_is_migrated(self):
         from Products.ATContentTypes.content.newsitem import ATNewsItem
-        from plone.app.contenttypes.migration import NewsItemMigrator
+        from plone.app.contenttypes.migration.migration import NewsItemMigrator
         from plone.app.textfield.interfaces import IRichTextValue
         from plone.namedfile.interfaces import INamedImage
 
@@ -372,7 +372,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_folder_is_migrated(self):
         from Products.ATContentTypes.content.folder import ATFolder
-        from plone.app.contenttypes.migration import FolderMigrator
+        from plone.app.contenttypes.migration.migration import FolderMigrator
         from plone.app.contenttypes.interfaces import IFolder
         at_folder = self.createATCTobject(ATFolder, 'folder')
         migrator = self.get_migrator(at_folder, FolderMigrator)
@@ -382,7 +382,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_folder is not new_folder)
 
     def test_folder_children_are_migrated(self):
-        from plone.app.contenttypes.migration import FolderMigrator
+        from plone.app.contenttypes.migration.migration import FolderMigrator
         from Products.ATContentTypes.content.folder import ATFolder
         from Products.ATContentTypes.content.document import ATDocument
         at_folder = self.createATCTobject(ATFolder, 'folder')
@@ -395,7 +395,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_relations_are_migrated(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
 
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
@@ -439,8 +439,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_stats(self):
         from Products.ATContentTypes.content.document import ATDocument
-        from plone.app.contenttypes.migration import DocumentMigrator
-        from plone.app.contenttypes.browser.migration import \
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.browser import \
             MigrateFromATContentTypes as MigrationView
 
         at_doc1 = self.createATCTobject(ATDocument, 'doc1')
