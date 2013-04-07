@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-from zope.interface import alsoProvides
-from zope import schema
-from plone.supermodel import model
 from plone.autoform.interfaces import IFormFieldProvider
+from plone.supermodel import model
+from zope import schema
+from zope.interface import alsoProvides
+from zope.i18nmessageid import MessageFactory
 
-from plone.app.contenttypes import _
+_ = MessageFactory('atcontenttypes')
 
 
 class ITableOfContents(model.Schema):
+
+    model.fieldset('settings', label=_(u"Settings"),
+                   fields=['table_of_contents'])
 
     table_of_contents = schema.Bool(
         title=_(
