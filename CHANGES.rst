@@ -4,7 +4,39 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
-- Moved migration related code to specific module [gborelli]
+- Add migration for blobnewsitems as proposed in
+  https://github.com/plone/plone.app.blob/pull/2
+  [pbauer]
+
+- Require cmf.ManagePortal for migration
+  [pbauer]
+
+- Always migrate files and images to blob (fixes #26)
+  [pbauer]
+
+- Add table of contents-behavior for documents
+  [pbauer]
+
+- Add versioning-behavior and it's dependencies
+  [pbauer]
+
+- Remove image_view_fullscreen from the display-dropdown
+  [pbauer]
+
+- Enable selecting addable types on folders by default
+  [pbauer]
+
+- Fix reference-migrations if some objects were not migrated
+  [pbauer]
+
+- Keep the order references when migrating
+  [pabo3000]
+
+- Move templates into their own folder
+  [pbauer]
+
+- Moved migration related code to specific module
+  [gborelli]
 
 - Add missing ``i18n:attributes`` to 'Edit' and 'View' actions of File type.
   [saily]
