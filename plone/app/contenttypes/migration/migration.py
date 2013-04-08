@@ -274,7 +274,6 @@ class NewsItemMigrator(DocumentMigrator, ReferenceMigrator):
         DocumentMigrator.migrate_schema_fields(self)
 
         # migrate the rest of the Schema
-
         old_image = self.old.getField('image').get(self.old)
         if old_image == '':
             return
@@ -291,6 +290,39 @@ class NewsItemMigrator(DocumentMigrator, ReferenceMigrator):
 
 def migrate_newsitems(portal):
     return migrate(portal, NewsItemMigrator)
+
+
+class BlobNewsItemMigrator(DocumentMigrator, ReferenceMigrator):
+    """ Migrator for NewsItems with blobs based on the implementation in
+        https://github.com/plone/plone.app.blob/pull/2
+    """
+
+    src_portal_type = 'News Item'
+    src_meta_type = 'ATBlobContent'
+    dst_portal_type = 'News Item'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        # migrate the text
+        DocumentMigrator.migrate_schema_fields(self)
+
+        # migrate the rest of the Schema
+        old_image = self.old.getField('image').get(self.old)
+        if old_image == '':
+            return
+        filename = safe_unicode(old_image.filename)
+        old_image_data = old_image.data
+        if safe_hasattr(old_image_data, 'data'):
+            old_image_data = old_image_data.data
+        namedblobimage = NamedBlobImage(data=old_image_data,
+                                        filename=filename)
+        self.new.image = namedblobimage
+        self.new.image_caption = safe_unicode(
+            self.old.getField('imageCaption').get(self.old))
+
+
+def migrate_blobnewsitems(portal):
+    return migrate(portal, BlobNewsItemMigrator)
 
 
 class FolderMigrator(CMFFolderMigrator, ReferenceMigrator):

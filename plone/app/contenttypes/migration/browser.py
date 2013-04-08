@@ -20,6 +20,7 @@ except ImportError:
     ICollection = None
     HAS_APP_COLLECTION = False
 
+
 # Schema Extender allowed interfaces
 from archetypes.schemaextender.interfaces import (
     ISchemaExtender,
@@ -124,6 +125,7 @@ class MigrateFromATContentTypes(BrowserView):
         # in another way
         migration.migrate_blobimages(portal)
         migration.migrate_blobfiles(portal)
+        migration.migrate_blobnewsitems(portal)
 
         migration.restoreReferences(portal)
         migration.restoreReferencesOrder(portal)
