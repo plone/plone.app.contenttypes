@@ -38,6 +38,9 @@ Changelog
 - Moved migration related code to specific module
   [gborelli]
 
+- Added migration Collection from app.collection to app.contenttypes
+  [kroman0]
+
 - Add missing ``i18n:attributes`` to 'Edit' and 'View' actions of File type.
   [saily]
 
