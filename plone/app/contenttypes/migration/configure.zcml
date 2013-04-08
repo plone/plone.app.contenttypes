@@ -11,7 +11,7 @@
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     class=".browser.FixBaseClasses"
-    permission="zope2.View"
+    permission="cmf.ManagePortal"
     />
 
   <browser:page
@@ -19,7 +19,7 @@
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     class=".browser.MigrateFromATContentTypes"
-    permission="zope2.View"
+    permission="cmf.ManagePortal"
     />
 
 </configure>
