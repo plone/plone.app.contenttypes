@@ -4,6 +4,10 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Removed dependency for collective.dexteritydiff since its features were
+  merged into Products.CMFDiffTool
+  [pbauer]
+
 - Add test for behavior table_of_contents
   [pbauer]
 
