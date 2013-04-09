@@ -4,6 +4,9 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Add test for behavior table_of_contents
+  [pbauer]
+
 - Add migration for blobnewsitems as proposed in
   https://github.com/plone/plone.app.blob/pull/2
   [pbauer]
@@ -94,6 +97,9 @@ Changelog
 
 - SearchableText indexes added.
   [reinhardt]
+
+- Set the text of front-page when creating a new Plone
+  [pbauer]
 
 - Robot framework test added.
   [Gomez]
