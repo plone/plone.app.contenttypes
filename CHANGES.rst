@@ -4,6 +4,9 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Fix atct_album_view
+  [pbauer]
+
 - Removed dependency for collective.dexteritydiff since its features were
   merged into Products.CMFDiffTool
   [pbauer]

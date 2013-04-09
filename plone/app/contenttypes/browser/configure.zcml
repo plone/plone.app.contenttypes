@@ -183,6 +183,16 @@
     />
 
   <browser:page
+    name="atct_album_view"
+    for="plone.app.contenttypes.interfaces.IFolder"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="templates/atct_album_view.pt"
+    permission="zope2.View"
+    menu="plone_displayviews"
+    title="Album"
+    />
+
+  <browser:page
     name="image_view"
     for="plone.app.contenttypes.interfaces.IImage"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
