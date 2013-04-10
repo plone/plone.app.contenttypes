@@ -43,11 +43,16 @@ class CatalogIntegrationTest(unittest.TestCase):
             'File',
             'file'
         )
+        self.folder.invokeFactory(
+            'Folder',
+            'folder'
+        )
         self.document = self.folder.document
         self.news_item = self.folder.news_item
         self.link = self.folder.link
         self.image = self.folder.image
         self.file = self.folder.file
+        self.folder = self.folder.folder
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
     def test_id_in_searchable_text_index(self):
@@ -82,6 +87,29 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.assertEquals(
             brains[0].getPath(),
             '/plone/folder/document'
+        )
+
+    def test_folder_fields_in_searchable_text_index(self):
+        self.folder.title = "Carpeta"
+        self.folder.description = "My description"
+        self.folder.reindexObject()
+        # Description
+        brains = self.catalog.searchResults(dict(
+            SearchableText="My description",
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEquals(
+            brains[0].getPath(),
+            '/plone/folder/folder'
+        )
+        # Title
+        brains = self.catalog.searchResults(dict(
+            SearchableText="Carpeta",
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEquals(
+            brains[0].getPath(),
+            '/plone/folder/folder'
         )
 
     def test_remote_url_in_searchable_text_index(self):
