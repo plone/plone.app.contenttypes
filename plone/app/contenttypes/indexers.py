@@ -5,7 +5,7 @@ from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 
 from plone.app.contenttypes.interfaces import (
-    IEvent, IDocument, INewsItem, ILink, IImage, IFile
+    IEvent, IDocument, INewsItem, ILink, IImage, IFile, IFolder
 )
 
 
@@ -40,6 +40,11 @@ def SearchableText_document(obj):
 @indexer(ILink)
 def SearchableText_link(obj):
     return ' '.join((SearchableText(obj), obj.remoteUrl))
+
+
+@indexer(IFolder)
+def SearchableText_folder(obj):
+    return SearchableText(obj)
 
 
 @indexer(ILink)
