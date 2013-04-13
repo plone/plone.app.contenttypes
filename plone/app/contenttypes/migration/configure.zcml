@@ -1,7 +1,5 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="plone.app.contenttypes">
@@ -9,7 +7,7 @@
   <browser:page
     name="fix_base_classes"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    layer="..interfaces.IPloneAppContenttypesLayer"
     class=".browser.FixBaseClasses"
     permission="cmf.ManagePortal"
     />
@@ -17,9 +15,22 @@
   <browser:page
     name="migrate_from_atct"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    layer="..interfaces.IPloneAppContenttypesLayer"
     class=".browser.MigrateFromATContentTypes"
     permission="cmf.ManagePortal"
     />
+
+  <browser:page
+    name="atct_migration"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".browser.ATCTMigration"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    />
+
+  <utility
+      factory=".vocabularies.ATCTypesVocabulary"
+      name="plone.app.contenttypes.migration.atcttypes"
+      provides="zope.schema.interfaces.IVocabularyFactory" />
 
 </configure>
