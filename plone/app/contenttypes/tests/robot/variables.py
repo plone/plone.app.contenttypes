@@ -19,3 +19,4 @@ REMOTE_URL = os.environ.get('REMOTE_URL', "")
 DESIRED_CAPABILITIES = os.environ.get('DESIRED_CAPABILITIES', "")
 
 TEST_FOLDER = os.environ.get('TEST_FOLDER', "%s/robot-test-folder" % PLONE_URL)
+PATH_TO_TEST_FILES = os.path.join(os.path.dirname(__file__), '..')
