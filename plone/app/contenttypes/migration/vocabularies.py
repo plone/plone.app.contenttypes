@@ -1,6 +1,5 @@
 from collections import Counter
 from zope.interface import implements
-from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.interfaces import IVocabularyFactory
 
