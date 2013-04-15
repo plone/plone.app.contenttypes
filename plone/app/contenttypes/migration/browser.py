@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
 from pprint import pformat
-from zope.interface import Interface
-from zope import schema
-from z3c.form import form, button, field
-from z3c.form.browser.checkbox import CheckBoxFieldWidget
-
-from plone.z3cform.layout import wrap_form
 
 from plone.dexterity.interfaces import IDexterityContent
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 # Old interfaces
 from Products.ATContentTypes.interfaces.document import IATDocument
@@ -20,9 +13,6 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
-from Products.Archetypes.interfaces import IBaseObject
-
-
 try:
     from plone.app.collection.interfaces import ICollection
     HAS_APP_COLLECTION = True
@@ -180,56 +170,3 @@ class MigrateFromATContentTypes(BrowserView):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return pformat(sorted(results.items()))
-
-
-class IATCTMigrationForm(Interface):
-
-    content_types = schema.List(
-        title=u"Content types to migrate",
-        description=u"Select which content types you want to migrate",
-        value_type=schema.Choice(
-            vocabulary="plone.app.contenttypes.migration.atcttypes",
-        )
-    )
-
-    migrate_references = schema.Bool(
-        title=u"Migrate references?",
-        description=(
-            u"Select this option to migrate all "
-            u"references to each content type"
-        ),
-        default=True
-    )
-
-    migrate_schemaextended_content = schema.Bool(
-        title=(
-            u"Migrate content that was extended "
-            u"trough archetypes.schemaextender?"
-        ),
-        description=(
-            u"Please, pay attention. You will lose the data "
-            u"in the in the extended Fields"
-        ),
-        default=False
-    )
-
-
-class ATCTMigrationForm(form.Form):
-
-    fields = field.Fields(IATCTMigrationForm)
-    fields['content_types'].widgetFactory = CheckBoxFieldWidget
-    ignoreContext = True
-
-    @button.buttonAndHandler(u'Migrate', name='migrate')
-    def handle_migrate(self, action):
-        data, errors = self.extractData()
-
-    def updateActions(self):
-        super(ATCTMigrationForm, self).updateActions()
-        self.actions['migrate'].addClass("btn-danger")
-
-
-ATCTMigration = wrap_form(
-    ATCTMigrationForm,
-    index=ViewPageTemplateFile('atct_migration.pt')
-)
