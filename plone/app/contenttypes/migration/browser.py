@@ -20,7 +20,7 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
-# from Products.Archetypes.interfaces import IBaseObject
+from Products.Archetypes.interfaces import IBaseObject
 
 
 try:
