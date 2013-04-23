@@ -226,11 +226,13 @@ def importContent(context):
                             description=description)
         aggregator = container['aggregator']
 
-        # Set the content-types that can be added to this container.
-        # FIXME The following 3 lines
-        ##container.setConstrainTypesMode(constraintypes.ENABLED)
-        ##container.setLocallyAllowedTypes(allowed_types)
-        ##container.setImmediatelyAddableTypes(allowed_types)
+        # Constain types
+        allowed_types = ['News Item', ]
+
+        behavior = ISelectableConstrainTypes(container)
+        behavior.setConstrainTypesMode(constrains.ENABLED)
+        # Allow only News Item
+        behavior.setImmediatelyAddableTypes(allowed_types)
 
         container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
