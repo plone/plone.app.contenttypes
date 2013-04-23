@@ -15,6 +15,7 @@ from AccessControl import Unauthorized
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.dexterity.utils import createContent
 from plone.dexterity.fti import IDexterityFTI
+from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
 from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
@@ -22,6 +23,7 @@ from plone.portlets.interfaces import (
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import INonInstallable
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFDefault.utils import bodyfinder
 from Products.CMFPlone.Portal import member_indexhtml
@@ -268,11 +270,13 @@ def importContent(context):
                             description=description)
         aggregator = container['aggregator']
 
-        # Set the content-types that can be added to this container.
-        # FIXME The following 3 lines
-        ##container.setConstrainTypesMode(constraintypes.ENABLED)
-        ##container.setLocallyAllowedTypes(allowed_types)
-        ##container.setImmediatelyAddableTypes(allowed_types)
+        # Constain types
+        allowed_types = ['Event', ]
+
+        behavior = ISelectableConstrainTypes(container)
+        behavior.setConstrainTypesMode(constrains.ENABLED)
+        # Allow only Event
+        behavior.setImmediatelyAddableTypes(allowed_types)
 
         container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
