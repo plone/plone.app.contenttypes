@@ -147,15 +147,11 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(news, 'review_state')
         self.assertEqual(current_state, 'published')
 
-# XXX: Todo
-#    def test_news_allowable_types(self):
-#        # Have we set the locally allowable types on the container object?
-#
-#        # NOTE Setting constrains locally on what content types can be added
-#        #      to a container is currently not implemented anywhere.
-#
-#        self.fail("The implementation for local allowed types on containers "
-#                  "is missing.")
+    def test_news_allowable_types(self):
+        news = self.portal['news']
+        behavior = ISelectableConstrainTypes(news)
+        types = ['News Item']
+        self.assertEqual(types, behavior.getImmediatelyAddableTypes())
 
     def test_news_aggregator_settings(self):
         # Has the news aggregator (Collection) been set up?
