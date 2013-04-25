@@ -6,6 +6,11 @@ from Products.PythonScripts.PythonScript import PythonScript
 from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
 
+try:
+    DEXTERITY_WITH_CONSTRAINS = True
+    from plone.app.dexterity.behaviors import constrains
+except ImportError:
+    DEXTERITY_WITH_CONSTRAINS = False
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from plone.app.testing import PloneSandboxLayer, IntegrationTesting
 from plone.app.contenttypes.testing import \
@@ -120,10 +125,11 @@ class ContentProfileTestCase(unittest.TestCase):
         self.assertEqual(current_state, 'published')
 
     def test_events_allowable_types(self):
-        events = self.portal['events']
-        behavior = ISelectableConstrainTypes(events)
-        types = ['Event']
-        self.assertEqual(types, behavior.getImmediatelyAddableTypes())
+        if DEXTERITY_WITH_CONSTRAINS:
+            events = self.portal['events']
+            behavior = ISelectableConstrainTypes(events)
+            types = ['Event']
+            self.assertEqual(types, behavior.getImmediatelyAddableTypes())
 
     # ############## #
     #   news tests   #
@@ -148,10 +154,11 @@ class ContentProfileTestCase(unittest.TestCase):
         self.assertEqual(current_state, 'published')
 
     def test_news_allowable_types(self):
-        news = self.portal['news']
-        behavior = ISelectableConstrainTypes(news)
-        types = ['News Item']
-        self.assertEqual(types, behavior.getImmediatelyAddableTypes())
+        if DEXTERITY_WITH_CONSTRAINS:
+            news = self.portal['news']
+            behavior = ISelectableConstrainTypes(news)
+            types = ['News Item']
+            self.assertEqual(types, behavior.getImmediatelyAddableTypes())
 
     def test_news_aggregator_settings(self):
         # Has the news aggregator (Collection) been set up?
