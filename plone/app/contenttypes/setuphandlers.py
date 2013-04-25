@@ -15,7 +15,6 @@ from AccessControl import Unauthorized
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.dexterity.utils import createContent
 from plone.dexterity.fti import IDexterityFTI
-from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
 from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
@@ -23,6 +22,11 @@ from plone.portlets.interfaces import (
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import INonInstallable
+try:
+    DEXTERITY_WITH_CONSTRAINS = True
+    from plone.app.dexterity.behaviors import constrains
+except ImportError:
+    DEXTERITY_WITH_CONSTRAINS = False
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFDefault.utils import bodyfinder
@@ -150,6 +154,14 @@ def _setup_visible_ids(target_language, locale):
         site_properties.visible_ids = False
 
 
+def _setup_constrains(container, allowed_types):
+    if DEXTERITY_WITH_CONSTRAINS:
+        behavior = ISelectableConstrainTypes(container)
+        behavior.setConstrainTypesMode(constrains.ENABLED)
+        behavior.setImmediatelyAddableTypes(allowed_types)
+        return True
+
+
 def importContent(context):
     """Import base content into the Plone site."""
     if context.readDataFile('plone.app.contenttypes_content.txt') is None:
@@ -228,11 +240,7 @@ def importContent(context):
 
         # Constain types
         allowed_types = ['News Item', ]
-
-        behavior = ISelectableConstrainTypes(container)
-        behavior.setConstrainTypesMode(constrains.ENABLED)
-        # Allow only News Item
-        behavior.setImmediatelyAddableTypes(allowed_types)
+        _setup_constrains(container, allowed_types)
 
         container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
@@ -275,10 +283,7 @@ def importContent(context):
         # Constain types
         allowed_types = ['Event', ]
 
-        behavior = ISelectableConstrainTypes(container)
-        behavior.setConstrainTypesMode(constrains.ENABLED)
-        # Allow only Event
-        behavior.setImmediatelyAddableTypes(allowed_types)
+        _setup_constrains(container, allowed_types)
 
         container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
