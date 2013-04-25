@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0b2'
+version = '1.0b2-thorn1'
 
 setup(name='plone.app.contenttypes',
       version=version,
