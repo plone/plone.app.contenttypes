@@ -6,6 +6,12 @@ from Products.PythonScripts.PythonScript import PythonScript
 from plone.portlets.interfaces import (
     ILocalPortletAssignmentManager, IPortletManager,)
 
+try:
+    DEXTERITY_WITH_CONSTRAINS = True
+    from plone.app.dexterity.behaviors import constrains
+except ImportError:
+    DEXTERITY_WITH_CONSTRAINS = False
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from plone.app.testing import PloneSandboxLayer, IntegrationTesting
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_FIXTURE
@@ -118,6 +124,13 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(events, 'review_state')
         self.assertEqual(current_state, 'published')
 
+    def test_events_allowable_types(self):
+        if DEXTERITY_WITH_CONSTRAINS:
+            events = self.portal['events']
+            behavior = ISelectableConstrainTypes(events)
+            types = ['Event']
+            self.assertEqual(types, behavior.getImmediatelyAddableTypes())
+
     # ############## #
     #   news tests   #
     # ############## #
@@ -140,15 +153,12 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(news, 'review_state')
         self.assertEqual(current_state, 'published')
 
-# XXX: Todo
-#    def test_news_allowable_types(self):
-#        # Have we set the locally allowable types on the container object?
-#
-#        # NOTE Setting constrains locally on what content types can be added
-#        #      to a container is currently not implemented anywhere.
-#
-#        self.fail("The implementation for local allowed types on containers "
-#                  "is missing.")
+    def test_news_allowable_types(self):
+        if DEXTERITY_WITH_CONSTRAINS:
+            news = self.portal['news']
+            behavior = ISelectableConstrainTypes(news)
+            types = ['News Item']
+            self.assertEqual(types, behavior.getImmediatelyAddableTypes())
 
     def test_news_aggregator_settings(self):
         # Has the news aggregator (Collection) been set up?

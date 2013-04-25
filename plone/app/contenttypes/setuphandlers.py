@@ -22,6 +22,12 @@ from plone.portlets.interfaces import (
 from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import INonInstallable
+try:
+    DEXTERITY_WITH_CONSTRAINS = True
+    from plone.app.dexterity.behaviors import constrains
+except ImportError:
+    DEXTERITY_WITH_CONSTRAINS = False
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFDefault.utils import bodyfinder
 from Products.CMFPlone.Portal import member_indexhtml
@@ -148,6 +154,14 @@ def _setup_visible_ids(target_language, locale):
         site_properties.visible_ids = False
 
 
+def _setup_constrains(container, allowed_types):
+    if DEXTERITY_WITH_CONSTRAINS:
+        behavior = ISelectableConstrainTypes(container)
+        behavior.setConstrainTypesMode(constrains.ENABLED)
+        behavior.setImmediatelyAddableTypes(allowed_types)
+        return True
+
+
 def importContent(context):
     """Import base content into the Plone site."""
     if context.readDataFile('plone.app.contenttypes_content.txt') is None:
@@ -224,11 +238,9 @@ def importContent(context):
                             description=description)
         aggregator = container['aggregator']
 
-        # Set the content-types that can be added to this container.
-        # FIXME The following 3 lines
-        ##container.setConstrainTypesMode(constraintypes.ENABLED)
-        ##container.setLocallyAllowedTypes(allowed_types)
-        ##container.setImmediatelyAddableTypes(allowed_types)
+        # Constain types
+        allowed_types = ['News Item', ]
+        _setup_constrains(container, allowed_types)
 
         container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
@@ -268,11 +280,10 @@ def importContent(context):
                             description=description)
         aggregator = container['aggregator']
 
-        # Set the content-types that can be added to this container.
-        # FIXME The following 3 lines
-        ##container.setConstrainTypesMode(constraintypes.ENABLED)
-        ##container.setLocallyAllowedTypes(allowed_types)
-        ##container.setImmediatelyAddableTypes(allowed_types)
+        # Constain types
+        allowed_types = ['Event', ]
+
+        _setup_constrains(container, allowed_types)
 
         container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
