@@ -4,6 +4,12 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Add constrains for content create with the Content profile
+  [ericof]
+
+- Add SearchableText indexer to Folder content type
+  [ericof]
+
 - Fix atct_album_view
   [pbauer]
 
