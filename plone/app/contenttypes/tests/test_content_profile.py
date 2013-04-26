@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-from zope.component import getUtility, getMultiAdapter
+from plone.app.testing import PloneSandboxLayer, IntegrationTesting
+from plone.app.contenttypes.testing import (
+    PLONE_APP_CONTENTTYPES_FIXTURE
+)
+from plone.portlets.interfaces import (
+    ILocalPortletAssignmentManager,
+    IPortletManager
+)
 from Products.CMFCore.utils import getToolByName
 from Products.PythonScripts.PythonScript import PythonScript
-from plone.portlets.interfaces import (
-    ILocalPortletAssignmentManager, IPortletManager,)
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
+from zope.component import getUtility, getMultiAdapter
+
+import unittest2 as unittest
+import pkg_resources
 
 try:
-    DEXTERITY_WITH_CONSTRAINS = True
-    from plone.app.dexterity.behaviors import constrains
-except ImportError:
+    pkg_resources.get_distribution('plone.app.dexterity.behaviors.constraints')
+except pkg_resources.DistributionNotFound:
     DEXTERITY_WITH_CONSTRAINS = False
-from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from plone.app.testing import PloneSandboxLayer, IntegrationTesting
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_FIXTURE
+else:
+    DEXTERITY_WITH_CONSTRAINS = True
 
 
 class PloneAppContenttypesContent(PloneSandboxLayer):
@@ -124,12 +130,14 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(events, 'review_state')
         self.assertEqual(current_state, 'published')
 
+    @unittest.skipUnless(
+        DEXTERITY_WITH_CONSTRAINS,
+        "Dexterity constraints are not present")
     def test_events_allowable_types(self):
-        if DEXTERITY_WITH_CONSTRAINS:
-            events = self.portal['events']
-            behavior = ISelectableConstrainTypes(events)
-            types = ['Event']
-            self.assertEqual(types, behavior.getImmediatelyAddableTypes())
+        events = self.portal['events']
+        behavior = ISelectableConstrainTypes(events)
+        types = ['Event']
+        self.assertEqual(types, behavior.getImmediatelyAddableTypes())
 
     # ############## #
     #   news tests   #
@@ -153,8 +161,10 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(news, 'review_state')
         self.assertEqual(current_state, 'published')
 
+    @unittest.skipUnless(
+        DEXTERITY_WITH_CONSTRAINS,
+        "Dexterity constraints are not present")
     def test_news_allowable_types(self):
-        if DEXTERITY_WITH_CONSTRAINS:
             news = self.portal['news']
             behavior = ISelectableConstrainTypes(news)
             types = ['News Item']
