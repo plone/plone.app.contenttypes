@@ -33,11 +33,13 @@
     <tal:albumsimages tal:condition="python:albums or images">
         <tal:images tal:condition="batch" tal:repeat="image batch">
             <div class="photoAlbumEntry">
-                <a tal:define="id python:int(b_start)+int(repeat['image'].number()-1)"
+                <a tal:define="id python:int(b_start)+int(repeat['image'].number()-1);
+                               scale image/@@images;
+                               img_tag python:scale.scale('image', scale='thumb').tag()"
                    tal:attributes="href string:${image/absolute_url}/view;
                                    title image/Description">
                     <span class="photoAlbumEntryWrapper">
-                    <img src="" alt="" tal:replace="structure image/@@images/image/thumb" />
+                        <img src="" alt="" tal:replace="structure img_tag" />
                     </span>
                     <span class="photoAlbumEntryTitle" tal:content="image/pretty_title_or_id">
                        Title
@@ -59,7 +61,9 @@
                             <span class="photoAlbumEntryWrapper">
                                 <img src="" alt=""
                                      tal:condition="number_of_images"
-                                     tal:replace="structure random_image/@@images/image/thumb" />
+                                     tal:define="scale random_image/@@images;
+                                                 img_tag python:scale.scale('image', scale='thumb').tag()"
+                                     tal:replace="structure img_tag" />
                             </span>
                             <span class="photoAlbumEntryTitle">
                                <tal:title content="album/pretty_title_or_id">Title</tal:title>
