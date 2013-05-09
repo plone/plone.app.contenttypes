@@ -4,6 +4,9 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Fix atct_album_view and don't use atctListAlbum.py
+  [pbauer]
+
 - Add constrains for content create with the Content profile
   [ericof]
 

@@ -186,6 +186,7 @@
     name="atct_album_view"
     for="plone.app.contenttypes.interfaces.IFolder"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".album_view.AlbumView"
     template="templates/atct_album_view.pt"
     permission="zope2.View"
     menu="plone_displayviews"

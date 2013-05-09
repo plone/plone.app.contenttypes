@@ -6,8 +6,9 @@
 <body>
 
 <metal:content-core fill-slot="content-core">
+
 <metal:main_macro define-macro="content-core"
-     tal:define="result python:here.atctListAlbum(images=1, folders=1, subimages=0, others=1);
+     tal:define="result python:view.getAlbumContent(images=1, folders=1, subimages=0, others=1);
                  images result/images;
                  albums result/folders;
                  otherContents result/others;
@@ -52,18 +53,19 @@
         <tal:albums tal:repeat="album albums">
 
             <div class="photoAlbumEntry photoAlbumFolder"
-                 tal:define="image_brains_in_album python:album.atctListAlbum(subimages=1)['subimages'];
+                 tal:define="image_brains_in_album python:view.getAlbumContent(subimages=1, container=album)['subimages'];
                              number_of_images python:len(image_brains_in_album);
                              random python:modules['random'];
                              random_image python:number_of_images and random.choice(image_brains_in_album).getObject() or None">
                         <a tal:attributes="href album/getURL;
                                            title album/Description">
                             <span class="photoAlbumEntryWrapper">
+                                <tal:block condition="number_of_images">
                                 <img src="" alt=""
-                                     tal:condition="number_of_images"
                                      tal:define="scale random_image/@@images;
                                                  img_tag python:scale.scale('image', scale='thumb').tag()"
                                      tal:replace="structure img_tag" />
+                                </tal:block>
                             </span>
                             <span class="photoAlbumEntryTitle">
                                <tal:title content="album/pretty_title_or_id">Title</tal:title>
@@ -71,7 +73,6 @@
                             </span>
                         </a>
             </div>
-
 
         </tal:albums>
         </div>
@@ -97,8 +98,6 @@
         </metal:listing>
 
     </tal:listing>
-
-    <metal:subtopics use-macro="here/atct_topic_view/macros/folderlisting_macro" />
 
 </metal:main_macro>
 </metal:content-core>
