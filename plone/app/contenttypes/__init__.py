@@ -1,3 +1,3 @@
 from zope.i18nmessageid import MessageFactory
 
-_ = MessageFactory('plone.app.collection')
+_ = MessageFactory('plone')
