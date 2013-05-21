@@ -4,6 +4,10 @@ Changelog
 1.0b2 (unreleased)
 ------------------
 
+- Fix translations to the plone domain, and some translations match existing 
+  translations in the plone domain. (ported from plone.app.collection)
+  [bosim]
+
 - Fix atct_album_view and don't use atctListAlbum.py
   [pbauer]
 
