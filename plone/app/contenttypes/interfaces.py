@@ -20,7 +20,9 @@ class ICollection(model.Schema):
 
     query = schema.List(
         title=_(u'Search terms'),
-        description=_(u"""Define the search terms for the items you want to list by choosing what to match on. The list of results will be dynamically updated"""),
+        description=_(u"Define the search terms for the items you want "
+                      u"to list by choosing what to match on. "
+                      u"The list of results will be dynamically updated"),
         value_type=schema.Dict(value_type=schema.Field(),
                                key_type=schema.TextLine()),
         required=False
