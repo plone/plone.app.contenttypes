@@ -68,7 +68,7 @@ Changelog
   [saily]
 
 - Bind 'View' action to ``${object_url}/view`` instead of
-  ``${object_url}` as in ATCT for File and Image type.
+  ``${object_url}`` as in ATCT for File and Image type.
   [saily]
 
 - Fixed installation of p.a.relationfield together with p.a.contenttypes.
