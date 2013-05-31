@@ -24,7 +24,8 @@ The main difference from a users perspective is that these types are extendable 
 
 The aim is to mimick the old default-types as closely as possible, not to change the content-creation experience for editors.
 
-There is a PLIP to include plone.app.contenttypes in Plone 4.4: https://dev.plone.org/ticket/12344
+plone.app.contenttypes has been merged into the Plone 4.4 branch and will
+be shipped with the next Plone release: https://dev.plone.org/ticket/12344
 
 
 Compatability
