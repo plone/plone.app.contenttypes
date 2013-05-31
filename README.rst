@@ -3,7 +3,7 @@
 Introduction
 ============
 
-.. image:: http://jenkins.plone.org/job/plone-4.3-plone-app-contenttypes/badge/icon
+.. image:: http://jenkins.plone.org/job/plone.app.contenttypes/badge/icon
 
 plone.app.contenttypes offers default content types for Plone based on Dexterity. This package is a replacement for the types in Products.ATContenttypes.
 
@@ -45,7 +45,9 @@ Add this line in the eggs section of your ``buildout.cfg``::
 
 .. note::
 
-  The following paragraph applies just form plone.app.contenttypes 1.0b1 and earlier versions.
+  The following paragraph applies only for plone.app.contenttypes 1.0b1 and earlier versions. From version 1.0b2 on plone.app.collection is no longer
+  a dependency because its functionality has been refactored into
+  plone.app.contenttypes.
 
 You also have to pin the 2.x version of ``plone.app.collection`` to get the deterity-based collections instead of the Archetypes-based collection shipped since Plone 4.2. The latest version at the time of writing is 2.0b5 but you might want to check http://pypi.python.org/pypi/plone.app.collection if there is a new version by the time you install this addon::
 
