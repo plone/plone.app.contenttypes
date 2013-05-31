@@ -7,7 +7,7 @@ long_description = open("README.rst").read() + "\n" + \
 
 setup(name='plone.app.contenttypes',
       version=version,
-      description="",
+      description="Default content types for Plone based on Dexterity",
       long_description=long_description,
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
