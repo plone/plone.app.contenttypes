@@ -1,10 +1,10 @@
 Changelog
 =========
 
-1.0b2 (unreleased)
+1.0b2 (2013-05-31)
 ------------------
 
-- Fix translations to the plone domain, and some translations match existing 
+- Fix translations to the plone domain, and some translations match existing
   translations in the plone domain. (ported from plone.app.collection)
   [bosim]
 
