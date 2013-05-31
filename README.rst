@@ -43,6 +43,10 @@ Add this line in the eggs section of your ``buildout.cfg``::
         plone.app.contenttypes
 
 
+.. note::
+
+  The following paragraph applies just form plone.app.contenttypes 1.0b1 and earlier versions.
+
 You also have to pin the 2.x version of ``plone.app.collection`` to get the deterity-based collections instead of the Archetypes-based collection shipped since Plone 4.2. The latest version at the time of writing is 2.0b5 but you might want to check http://pypi.python.org/pypi/plone.app.collection if there is a new version by the time you install this addon::
 
     [versions]
