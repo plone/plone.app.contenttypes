@@ -187,7 +187,7 @@ The image of the News Item is not a field on the contenttype but a behavior that
 Dependencies
 ============
 
-* ``plone.app.dexterity``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pinn the correct version for Dexterity in your buildout. See "Installing Dexterity on older versions of Plone" on http://plone.org/products/dexterity/documentation/how-to/install.
+* ``plone.app.dexterity``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`.
 
 * ``plone.app.collection``.
 
