@@ -109,9 +109,11 @@ a news item
   fill in metadata
   Click Button  Save
   Wait until page contains  Item created
-  # ----------------------------------------------------------------------------
-  # Collection
-  # ----------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------
+# Collection
+# ----------------------------------------------------------------------------
 
 the collection should contain
   [Arguments]  ${title}
@@ -127,9 +129,8 @@ fill in metadata
   Click Link  Categorization
   Input text  name=form.widgets.IDublinCore.subjects  testcreated\nrobot
   Click Link  Dates
-  ${currentyear}=  Get Time  year
-  fill date field  form.widgets.IDublinCore.effective  2009  January  1
-  fill date field  form.widgets.IDublinCore.expires  2022  December  12
+  fill date field  form.widgets.IDublinCore.effective  2009  February  14
+  fill date field  form.widgets.IDublinCore.expires  2022  November  19
   Click Link  Ownership
   Input text  name=form.widgets.IDublinCore.creators  another_creator
   Input text  name=form.widgets.IDublinCore.contributors  contributor1\ncontributor2
@@ -146,3 +147,35 @@ fill date field
   Select from list  id=calmonth  ${month}
   Select from list  id=calyear  ${year}
   Click Link  xpath=//div[@class='calweek']//a[contains(text(), "${day}")]
+
+a ATNewsItem
+  [Arguments]  ${title}
+  [Documentation]  Create an Archetype based news item
+  Go to  ${PLONE_URL}/createObject?type_name=News+Item
+  Wait until page contains  Add News Item
+  Input text  name=title  ${title}
+  Choose File  name=image_file  ${PATH_TO_TEST_FILES}/image.png
+  Input text  name=imageCaption  ${title}'s caption
+  fill in metadata for an AT content
+  Click Button  Save
+
+
+fill in metadata for an AT content
+  Click Link  Categorization
+  Input text  name=subject_keywords:lines  testcreated\nrobot
+  Click Link  Dates
+  fill AT date field  effectiveDate  2009  January  1
+  fill AT date field  expirationDate  2018  December  12
+  Click Link  Creators
+  Input text  name=creators:lines  another_creator
+  Input text  name=contributors:lines  contributor1\ncontributor2
+  Input text  name=rights  Copyright\nstatement\nhere
+  Click Link  Settings
+  Select Checkbox  name=allowDiscussion:boolean
+  Select Checkbox  name=excludeFromNav:boolean
+
+fill AT date field
+  [Arguments]  ${fieldid}  ${year}=2012  ${month}=January  ${day}=10
+  Select from List  name=${fieldid}_year  ${year}
+  Select from List  name=${fieldid}_month  ${month}
+  Select from List  name=${fieldid}_day  ${day}
