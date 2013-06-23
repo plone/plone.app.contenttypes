@@ -122,8 +122,8 @@ class EventFunctionalTest(unittest.TestCase):
         self.assertTrue('My event' in self.browser.contents)
         self.assertTrue('This is my event' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
-        self.assertTrue('Jan 01, 2013 12:00 AM' in self.browser.contents)
-        self.assertTrue('Jan 12, 2013 12:00 AM' in self.browser.contents)
+        self.assertTrue('2013-01-01' in self.browser.contents)
+        self.assertTrue('2013-01-12' in self.browser.contents)
 
 
 def test_suite():
