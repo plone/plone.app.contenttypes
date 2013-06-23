@@ -111,11 +111,11 @@ class EventFunctionalTest(unittest.TestCase):
         self.browser.getControl(name='form.widgets.start_date-day')\
             .value = ["1"]
         self.browser.getControl(name='form.widgets.start_date-year')\
-            .value = "2013"
+            .value = ["2013"]
         self.browser.getControl(name='form.widgets.end_date-day')\
-            .value = "12"
+            .value = ["12"]
         self.browser.getControl(name='form.widgets.end_date-year')\
-            .value = "2013"
+            .value = ["2013"]
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-event/view'))
