@@ -130,9 +130,6 @@ class NewsItemFunctionalTest(unittest.TestCase):
     def test_add_news_item(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('News Item').click()
-        self.assertTrue('Title' in self.browser.contents)
-        self.assertTrue('Description' in self.browser.contents)
-        self.assertTrue('Text' in self.browser.contents)
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
             .value = "My news item"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
@@ -140,6 +137,7 @@ class NewsItemFunctionalTest(unittest.TestCase):
         self.browser.getControl(name='form.widgets.text')\
             .value = "Lorem Ipsum"
         self.browser.getControl('Save').click()
+
         self.assertTrue(self.browser.url.endswith('my-news-item/view'))
         self.assertTrue('My news item' in self.browser.contents)
         self.assertTrue('This is my news item' in self.browser.contents)

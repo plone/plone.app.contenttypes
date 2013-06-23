@@ -96,8 +96,6 @@ class FileFunctionalTest(unittest.TestCase):
     def test_add_file(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
-        self.assertTrue('Title' in self.browser.contents)
-        self.assertTrue('Description' in self.browser.contents)
         self.browser.getControl(name='form.widgets.title')\
             .value = "My file"
         self.browser.getControl(name='form.widgets.description')\

@@ -102,9 +102,6 @@ class DocumentFunctionalTest(unittest.TestCase):
     def test_add_document(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Document').click()
-        self.assertTrue('Title' in self.browser.contents)
-        self.assertTrue('Description' in self.browser.contents)
-        self.assertTrue('Text' in self.browser.contents)
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
             .value = "My document"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\

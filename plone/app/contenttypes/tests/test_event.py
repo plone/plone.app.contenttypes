@@ -102,9 +102,6 @@ class EventFunctionalTest(unittest.TestCase):
     def test_add_event(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Event').click()
-        self.assertTrue('Title' in self.browser.contents)
-        self.assertTrue('Description' in self.browser.contents)
-        self.assertTrue('Text' in self.browser.contents)
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
             .value = "My event"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
@@ -112,7 +109,7 @@ class EventFunctionalTest(unittest.TestCase):
         self.browser.getControl(name='form.widgets.text')\
             .value = "Lorem Ipsum"
         self.browser.getControl(name='form.widgets.start_date-day')\
-            .value = "1"
+            .value = ["1"]
         self.browser.getControl(name='form.widgets.start_date-year')\
             .value = "2013"
         self.browser.getControl(name='form.widgets.end_date-day')\

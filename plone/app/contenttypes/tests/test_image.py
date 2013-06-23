@@ -129,9 +129,6 @@ class ImageFunctionalTest(unittest.TestCase):
     def test_add_image(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Image').click()
-        self.assertTrue('Title' in self.browser.contents)
-        self.assertTrue('Description' in self.browser.contents)
-        self.assertTrue('Text' in self.browser.contents)
         self.browser.getControl(name='form.widgets.title')\
             .value = "My image"
         self.browser.getControl(name='form.widgets.description')\
