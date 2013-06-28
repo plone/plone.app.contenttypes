@@ -21,6 +21,15 @@ from plone.app.contenttypes.testing import (
 
 from plone.app.testing import TEST_USER_ID, setRoles
 
+import pkg_resources
+
+try:
+    pkg_resources.get_distribution('plone.app.event')
+except pkg_resources.DistributionNotFound:
+    HAS_PLONE_APP_EVENT = False
+else:
+    HAS_PLONE_APP_EVENT = True
+
 
 class EventIntegrationTest(unittest.TestCase):
 
@@ -99,6 +108,7 @@ class EventFunctionalTest(unittest.TestCase):
             'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
+    @unittest.skip(HAS_PLONE_APP_EVENT)
     def test_add_event(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Event').click()
@@ -109,13 +119,13 @@ class EventFunctionalTest(unittest.TestCase):
         self.browser.getControl(name='form.widgets.text')\
             .value = "Lorem Ipsum"
         self.browser.getControl(name='form.widgets.start_date-day')\
-            .value = ["1"]
+            .value = "1"
         self.browser.getControl(name='form.widgets.start_date-year')\
-            .value = ["2013"]
+            .value = "2013"
         self.browser.getControl(name='form.widgets.end_date-day')\
-            .value = ["12"]
+            .value = "12"
         self.browser.getControl(name='form.widgets.end_date-year')\
-            .value = ["2013"]
+            .value = "2013"
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-event/view'))
