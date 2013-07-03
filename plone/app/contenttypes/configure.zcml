@@ -47,9 +47,11 @@
   <include file="permissions.zcml" />
   <include file="upgrades.zcml" />
 
+  <configure zcml:condition="installed Products.ATContentTypes">
   <include
-    zcml:condition="installed Products.ATContentTypes"
+    zcml:condition="installed archetypes.schemaextender"
     package=".migration" />
+  </configure>
 
   <utility
       factory=".setuphandlers.HiddenProfiles"

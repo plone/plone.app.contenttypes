@@ -4,7 +4,10 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
--
+- Include the migration module not only when Products.ATContentTypes is
+  installed but also archetypes.schemaextender. The schemaextender might not
+  always be available.
+  [thet]
 
 
 1.0b2 (2013-05-31)
