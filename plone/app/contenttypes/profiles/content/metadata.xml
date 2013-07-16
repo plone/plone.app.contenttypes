@@ -1,5 +1,5 @@
 <metadata>
- <version>1.0</version>
+ <version>1000</version>
  <dependencies>
   <dependency>profile-plone.app.contenttypes:default</dependency>
  </dependencies>
