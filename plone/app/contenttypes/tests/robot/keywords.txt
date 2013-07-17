@@ -104,8 +104,6 @@ a news item
   Go to  ${TEST_FOLDER}/++add++News Item
   Wait until page contains  Add News Item
   Input text  name=form.widgets.IDublinCore.title  ${title}
-  Choose File  name=form.widgets.ILeadImage.image  ${PATH_TO_TEST_FILES}/image.png
-  Input text  name=form.widgets.ILeadImage.image_caption  ${title}'s caption
   fill in metadata
   Click Button  Save
   Wait until page contains  Item created
