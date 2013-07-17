@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from pkg_resources import resource_filename
 import os
 
 from plone.app.testing.interfaces import PLONE_SITE_ID
@@ -20,5 +21,4 @@ DESIRED_CAPABILITIES = os.environ.get('DESIRED_CAPABILITIES', "")
 
 TEST_FOLDER = os.environ.get('TEST_FOLDER', "%s/robot-test-folder" % PLONE_URL)
 
-PATH_TO_TEST_FILES = os.environ.get('BUILDOUT_DIR', '') + \
-    '/src/plone.app.contenttypes/plone/app/contenttypes/tests'
+PATH_TO_TEST_FILES = resource_filename("plone.app.contenttypes.tests", "")
