@@ -39,7 +39,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.relationfield',
           'plone.formwidget.querystring',
           'plone.namedfile [blobs]',
-          'plone.app.versioningbehavior>=1.1.1',  # important bugfix
+          'plone.app.versioningbehavior',
           'plone.app.referenceablebehavior',
       ],
       extras_require={
