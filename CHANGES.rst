@@ -9,6 +9,9 @@ Changelog
   always be available.
   [thet]
 
+- Add fulltext search of file objects.
+  [do3cc]
+
 
 1.0b2 (2013-05-31)
 ------------------

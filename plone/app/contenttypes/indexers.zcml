@@ -7,10 +7,11 @@
 
   <adapter name="start" factory=".indexers.start_date" />
   <adapter name="end" factory=".indexers.end_date" />
-  <adapter name="SearchableText" factory=".indexers.SearchableText_news" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_document" />
+  <adapter name="SearchableText" factory=".indexers.SearchableText_file" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_folder" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_link" />
+  <adapter name="SearchableText" factory=".indexers.SearchableText_news" />
   <adapter name="getRemoteUrl" factory=".indexers.getRemoteUrl" />
   <adapter name="getObjSize" factory=".indexers.getObjSize_image" />
   <adapter name="getObjSize" factory=".indexers.getObjSize_file" />

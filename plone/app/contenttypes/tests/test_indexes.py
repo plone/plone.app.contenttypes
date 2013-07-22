@@ -150,6 +150,24 @@ class CatalogIntegrationTest(unittest.TestCase):
             '/plone/folder/document'
         )
 
+    def test_file_fulltext_in_searchable_text_index(self):
+        from plone.namedfile.file import NamedBlobFile
+        filename = os.path.join(os.path.dirname(__file__), u'file.odt')
+        test_file = NamedBlobFile(data=open(filename, 'r').read(),
+                                  filename=filename)
+
+        primary_field_info = IPrimaryFieldInfo(self.file)
+        primary_field_info.field.set(self.file, test_file)
+        self.file.reindexObject()
+
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum'))
+        self.assertEqual(len(brains), 1)
+
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Köln'))
+        self.assertEqual(len(brains), 0)
+
     def test_title_in_metadata(self):
         self.document.title = "My title"
         self.document.reindexObject()
