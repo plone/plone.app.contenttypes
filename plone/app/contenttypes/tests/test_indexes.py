@@ -162,6 +162,10 @@ class CatalogIntegrationTest(unittest.TestCase):
 
         brains = self.catalog.searchResults(dict(
             SearchableText=u'Lorem ipsum'))
+        # by default we cant index odt, so this may fail. any idea how to fix?
+        # does it make sense at all?
+        # and why does the file.odt does not contain the searched string?
+        # ... questions over questions -- jensens
         self.assertEqual(len(brains), 1)
 
         brains = self.catalog.searchResults(dict(
