@@ -14,8 +14,9 @@ def set_title_description(obj, event):
             datafield = obj.image
         else:
             datafield = obj.file
-        filename = datafield.filename
-        obj.title = filename
+        if datafield:
+            filename = datafield.filename
+            obj.title = filename
 
     description = obj.description
     if not description:
