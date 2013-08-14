@@ -45,6 +45,7 @@
 
   <include file="indexers.zcml" />
   <include file="permissions.zcml" />
+  <include file="subscribers.zcml" />
   <include file="upgrades.zcml" />
 
   <configure zcml:condition="installed Products.ATContentTypes">
