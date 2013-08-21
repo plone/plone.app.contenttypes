@@ -15,6 +15,9 @@ Changelog
 - Add fulltext search of file objects.
   [do3cc]
 
+- Fix link_redirect_view: Use index instead of template class var to
+  let customization by ZCML of the template
+  [toutpt]
 
 1.0b2 (2013-05-31)
 ------------------
