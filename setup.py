@@ -40,7 +40,6 @@ setup(name='plone.app.contenttypes',
           'plone.formwidget.querystring',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
-          'plone.app.referenceablebehavior',
       ],
       extras_require={
           'test': [
