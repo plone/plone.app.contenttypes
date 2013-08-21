@@ -4,6 +4,9 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+- make collection syndicatable
+  [vangheem]
+
 - Include the migration module not only when Products.ATContentTypes is
   installed but also archetypes.schemaextender. The schemaextender might not
   always be available.
@@ -12,6 +15,9 @@ Changelog
 - Add fulltext search of file objects.
   [do3cc]
 
+- Fix link_redirect_view: Use index instead of template class var to
+  let customization by ZCML of the template
+  [toutpt]
 
 1.0b2 (2013-05-31)
 ------------------

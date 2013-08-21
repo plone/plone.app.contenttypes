@@ -18,7 +18,7 @@
         <div class="tileItem visualIEFloatFix"
              tal:define="obj item/getObject">
             <a href="#"
-                  tal:condition="obj/image|nothing"
+                  tal:condition="python:getattr(obj.aq_explicit, 'image', None)"
                   tal:attributes="href item/getURL">
                   <div class="tileImage">
                       <img src="" alt=""

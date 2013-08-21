@@ -7,7 +7,7 @@ from Products.CMFCore.utils import getToolByName
 
 class LinkRedirectView(BrowserView):
 
-    template = ViewPageTemplateFile('templates/link.pt')
+    index = ViewPageTemplateFile('templates/link.pt')
 
     def __call__(self):
         """Redirect to the Link target URL, if and only if:
@@ -58,4 +58,4 @@ class LinkRedirectView(BrowserView):
                     url = context.remoteUrl
                 return context.REQUEST.RESPONSE.redirect(url)
         else:
-            return self.template()
+            return self.index()
