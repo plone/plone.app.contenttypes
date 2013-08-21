@@ -152,7 +152,7 @@ class CatalogIntegrationTest(unittest.TestCase):
 
     def test_file_fulltext_in_searchable_text_index(self):
         from plone.namedfile.file import NamedBlobFile
-        filename = os.path.join(os.path.dirname(__file__), u'file.odt')
+        filename = os.path.join(os.path.dirname(__file__), u'file.html')
         test_file = NamedBlobFile(data=open(filename, 'r').read(),
                                   filename=filename)
 
