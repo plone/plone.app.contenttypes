@@ -4,6 +4,10 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+- Remove dependency on plone.app.referenceablebehavior, as it depends on
+  Products.Archetypes which installs the uid_catalog.
+  [thet]
+
 - make collection syndicatable
   [vangheem]
 
