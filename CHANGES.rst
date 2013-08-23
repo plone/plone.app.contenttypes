@@ -23,6 +23,9 @@ Changelog
   let customization by ZCML of the template
   [toutpt]
 
+- Add a permission for each content types
+  [toutpt]
+
 1.0b2 (2013-05-31)
 ------------------
 
