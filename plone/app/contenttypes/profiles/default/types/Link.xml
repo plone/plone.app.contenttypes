@@ -17,7 +17,7 @@
   <element value="link_redirect_view"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">plone.app.contenttypes.addLink</property>
  <property name="klass">plone.app.contenttypes.content.Link</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>

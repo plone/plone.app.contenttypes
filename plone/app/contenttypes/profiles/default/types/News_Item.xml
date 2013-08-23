@@ -17,7 +17,7 @@
   <element value="newsitem_view"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">plone.app.contenttypes.addNewsItem</property>
  <property name="klass">plone.app.contenttypes.content.NewsItem</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>

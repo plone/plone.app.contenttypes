@@ -18,7 +18,7 @@
   <element value="image_view"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">plone.app.contenttypes.addImage</property>
  <property name="klass">plone.app.contenttypes.content.Image</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.ICategorization"/>

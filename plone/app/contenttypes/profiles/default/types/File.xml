@@ -17,7 +17,7 @@
   <element value="file_view"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">plone.app.contenttypes.addFile</property>
  <property name="klass">plone.app.contenttypes.content.File</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.ICategorization"/>

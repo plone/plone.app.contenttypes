@@ -17,7 +17,7 @@
   <element value="document_view"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">plone.app.contenttypes.addDocument</property>
  <property name="klass">plone.app.contenttypes.content.Document</property>
  <property name="behaviors">
   <element value="plone.app.content.interfaces.INameFromTitle"/>

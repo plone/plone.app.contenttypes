@@ -21,7 +21,7 @@
   <element value="folder_listing"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">plone.app.contenttypes.addFolder</property>
  <property name="klass">plone.app.contenttypes.content.Folder</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
