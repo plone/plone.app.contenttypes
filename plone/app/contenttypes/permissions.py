@@ -4,7 +4,6 @@ from Products.CMFCore.permissions import setDefaultRoles
 security = ModuleSecurityInfo('plone.app.contenttypes')
 TYPE_ROLES = ('Manager', 'Site Administrator', 'Owner')
 perms = []
-import logging
 for typename in (
     "Collection",
     "Document",
@@ -20,7 +19,6 @@ for typename in (
     permname = 'plone.app.contenttypes: Add ' + typename
     security.declarePublic(permid)
     setDefaultRoles(permname, TYPE_ROLES)
-    logging.getLogger("log").info("setDefaultRoles(%s, %s)" % (permname, TYPE_ROLES))
 
 AddCollection = "plone.app.contenttypes: Add Collection"
 AddDocument = "plone.app.contenttypes: Add Document"
