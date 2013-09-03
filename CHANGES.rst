@@ -4,6 +4,12 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+- Fix Bug on SearchableText_file indexer when input stream contains
+  characters not convertable in ASCII. Assumes now utf-8 and replaces
+  all unknown. Even if search can not find the words with special
+  characters in, indexer does not break completely on those items.
+  [jensens]
+
 - Remove dependency on plone.app.referenceablebehavior, as it depends on
   Products.Archetypes which installs the uid_catalog.
   [thet]

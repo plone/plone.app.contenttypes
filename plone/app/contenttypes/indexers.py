@@ -58,7 +58,9 @@ def SearchableText_file(obj):
                                                  filename=filename)
         if not transformed_value:
             return SearchableText(obj)
-        return ' '.join((SearchableText(obj), str(transformed_value)))
+        transformed_value = unicode(transformed_value).encode('utf-8',
+                                                              'replace')
+        return ' '.join((SearchableText(obj), transformed_value))
     except (ConflictError, KeyboardInterrupt):
         raise
     except:
