@@ -15,6 +15,19 @@ from plone.app.contenttypes.interfaces import (
 logger = getLogger(__name__)
 
 
+def _unicode_save_string_concat(*args):
+    """
+    concats args with spaces between and returns utf-8 string, it does not
+    matter if input was unicode or str
+    """
+    result = ''
+    for value in args:
+        if isinstance(value, unicode):
+            value = value.encode('utf-8', 'replace')
+        result = ' '.join((result, value))
+    return result
+
+
 @indexer(IEvent)
 def start_date(obj):
     return DateTime(IEvent(obj).start_date)
@@ -33,14 +46,14 @@ def SearchableText(obj, text=False):
 def SearchableText_news(obj):
     if obj.text is None or obj.text.output is None:
         return SearchableText(obj)
-    return ' '.join((SearchableText(obj), obj.text.output))
+    return _unicode_save_string_concat(SearchableText(obj), obj.text.output)
 
 
 @indexer(IDocument)
 def SearchableText_document(obj):
     if obj.text is None or obj.text.output is None:
         return SearchableText(obj)
-    return ' '.join((SearchableText(obj), obj.text.output))
+    return _unicode_save_string_concat(SearchableText(obj), obj.text.output)
 
 
 @indexer(IFile)
@@ -58,9 +71,8 @@ def SearchableText_file(obj):
                                                  filename=filename)
         if not transformed_value:
             return SearchableText(obj)
-        transformed_value = unicode(transformed_value).encode('utf-8',
-                                                              'replace')
-        return ' '.join((SearchableText(obj), transformed_value))
+        return _unicode_save_string_concat(SearchableText(obj),
+                                           transformed_value.getData())
     except (ConflictError, KeyboardInterrupt):
         raise
     except:
@@ -71,7 +83,7 @@ def SearchableText_file(obj):
 
 @indexer(ILink)
 def SearchableText_link(obj):
-    return ' '.join((SearchableText(obj), obj.remoteUrl))
+    return _unicode_save_string_concat(SearchableText(obj), obj.remoteUrl)
 
 
 @indexer(IFolder)
