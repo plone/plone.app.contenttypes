@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from pprint import pformat
 
+from zope.component import queryUtility
+
 from plone.dexterity.interfaces import IDexterityContent
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import IPropertiesTool
 from Products.Five.browser import BrowserView
 
 # Old interfaces
@@ -88,6 +91,13 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before += self.stats()
         portal = self.context
 
+        # switch linkintegrity temp off
+        ptool = queryUtility(IPropertiesTool)
+        site_props = getattr(ptool, 'site_properties', None)
+        link_integrity = site_props.getProperty('enable_link_integrity_checks',
+                                                False)
+        site_props.manage_changeProperties(enable_link_integrity_checks=False)
+
         # Check whether and of the default content types have had their
         # schemas extended
         not_migrated = []
@@ -129,6 +139,11 @@ class MigrateFromATContentTypes(BrowserView):
 
         migration.restoreReferences(portal)
         migration.restoreReferencesOrder(portal)
+
+        # switch linkintegrity back
+        site_props.manage_changeProperties(
+            enable_link_integrity_checks=link_integrity
+        )
 
         if not_migrated:
             msg = ("The following cannot be migrated as they "

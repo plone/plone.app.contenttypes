@@ -4,6 +4,9 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+- disable LinkIntegrityNotifications during migrations, closes #40
+  [jensens]
+
 - Fix Bug on SearchableText_file indexer when input stream contains
   characters not convertable in ASCII. Assumes now utf-8 and replaces
   all unknown. Even if search can not find the words with special
