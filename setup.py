@@ -54,6 +54,9 @@ setup(name='plone.app.contenttypes',
               'Products.contentmigration',
               'plone.app.collection',
           ],
+          'atrefs': [
+              'plone.app.referenceablebehavior',
+          ],
       },
       entry_points="""
       # -*- Entry points: -*-

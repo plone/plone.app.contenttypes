@@ -41,6 +41,8 @@ Add this line in the eggs section of your ``buildout.cfg``::
     eggs =
         ...
         plone.app.contenttypes
+        
+If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement ``plone.app.contenttypes['at_refs']``.             
 
 .. note:: 
 
@@ -94,6 +96,8 @@ Migration
 **Warning: Migrations are still in an very early stage and might break your site! plone.app.contenttypes is best used when creating a new site from scratch. Please proceed at your own risk!**
 
 For migrations to work you need at least ``Products.contentmigration = 2.1.3``.
+
+For migration sites use the extra requirement ``plone.app.contenttypes['migrate_atct']``.            
 
 This version plone.app.contenttypes comes with migrations for the following use-cases:
 
