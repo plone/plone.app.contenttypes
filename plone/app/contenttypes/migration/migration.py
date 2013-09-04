@@ -139,7 +139,7 @@ class ReferenceMigrator(object):
         backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
             self.old, relationship="relatesTo")]
         self.new._backrefs = backrefs
-        
+
 
 class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
 
@@ -148,14 +148,14 @@ class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
         self.new.exclude_from_nav = field.get(self.old)
 
 
-class ATCTContentMigrator(ATCTBaseMigrator, 
-                          CMFItemMigrator, 
+class ATCTContentMigrator(ATCTBaseMigrator,
+                          CMFItemMigrator,
                           ReferenceMigrator):
     """Base for contentish ATCT
     """
 
 
-class ATCTFolderMigrator(ATCTBaseMigrator, 
+class ATCTFolderMigrator(ATCTBaseMigrator,
                          CMFFolderMigrator,
                          ReferenceMigrator):
     """Base for folderish ATCT

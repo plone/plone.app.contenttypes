@@ -233,7 +233,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_document_excludefromnav_is_migrated(self):
         from Products.ATContentTypes.content.document import ATDocument
         from plone.app.contenttypes.migration.migration import DocumentMigrator
-        from plone.app.textfield.interfaces import IRichTextValue
 
         # create an ATDocument
         at_document = self.createATCTobject(ATDocument, 'document')
