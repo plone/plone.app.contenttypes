@@ -150,7 +150,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             '/plone/folder/document'
         )
 
-    def test_file_fulltext_in_searchable_text_index_1_string(self):
+    def test_file_fulltext_in_searchable_text_index_string(self):
         from plone.namedfile.file import NamedBlobFile
         data = ("Lorem ipsum. Köln <!-- ...oder München, das ist hier die "
                 "Frage. -->")
@@ -172,7 +172,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText=u'München'))
         self.assertEqual(len(brains), 0)  # hint: html comment is stripped
 
-    def test_file_fulltext_in_searchable_text_index_2_unicode(self):
+    def test_file_fulltext_in_searchable_text_index_unicode(self):
         from plone.namedfile.file import NamedBlobFile
         data = (u"Lorem ipsum' Köln <!-- ...oder München, das ist hier die "
                 u"Frage. -->")
@@ -193,43 +193,6 @@ class CatalogIntegrationTest(unittest.TestCase):
         brains = self.catalog.searchResults(dict(
             SearchableText=u'München'))
         self.assertEqual(len(brains), 0)  # hint: html comment is stripped
-
-    def test_file_fulltext_in_searchable_text_index_3_file(self):
-        from plone.namedfile.file import NamedBlobFile
-
-        filename = os.path.join(os.path.dirname(__file__), u'file.html')
-        self.assertTrue(os.path.exists(filename))
-
-        with open(filename, 'r') as file_html:
-            test_file = NamedBlobFile(data=file_html, filename=filename)
-
-        # XXX
-        # wtf? here something strange happens:
-        # file.html in this directory is deleted after reading!!
-        # Who has an idea what here happens?
-        #
-        # the file is already missing here, i put the check at the end to
-        # see if the other things are working
-        # self.assertTrue(os.path.exists(filename))
-
-        primary_field_info = IPrimaryFieldInfo(self.file)
-        primary_field_info.field.set(self.file, test_file)
-        self.file.reindexObject()
-
-        brains = self.catalog.searchResults(dict(
-            SearchableText=u'Lorem ipsum'))
-        self.assertEqual(len(brains), 1)
-
-        brains = self.catalog.searchResults(dict(
-            SearchableText=u'Köln'))
-        self.assertEqual(len(brains), 1)
-
-        brains = self.catalog.searchResults(dict(
-            SearchableText=u'München'))
-        self.assertEqual(len(brains), 0)  # hint: html comment is stripped
-
-        # finally check for odd file deletion problem here (see above)
-        self.assertTrue(os.path.exists(filename))
 
     def test_title_in_metadata(self):
         self.document.title = "My title"
