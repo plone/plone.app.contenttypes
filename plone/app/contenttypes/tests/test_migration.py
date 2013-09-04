@@ -230,6 +230,23 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                          'chemical/x-gaussian-checkpoint')
         self.assertEqual(new_document.text.outputMimeType, 'text/x-html-safe')
 
+    def test_document_excludefromnav_is_migrated(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.app.textfield.interfaces import IRichTextValue
+
+        # create an ATDocument
+        at_document = self.createATCTobject(ATDocument, 'document')
+        at_document.setExcludeFromNav(True)
+
+        # migrate
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+
+        # assertions
+        new_document = self.portal['document']
+        self.assertTrue(new_document.exclude_from_nav)
+
     def test_file_is_migrated(self):
         from Products.ATContentTypes.content.file import ATFile
         from plone.app.contenttypes.migration.migration import FileMigrator

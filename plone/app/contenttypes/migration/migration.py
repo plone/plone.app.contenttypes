@@ -122,7 +122,7 @@ def restoreReferencesOrder(portal):
     return out
 
 
-class ReferenceMigrator:
+class ReferenceMigrator(object):
 
     def migrate_relatedItems(self):
         """ Store Archetype relations as target uids on the dexterity object
@@ -139,9 +139,30 @@ class ReferenceMigrator:
         backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
             self.old, relationship="relatesTo")]
         self.new._backrefs = backrefs
+        
+
+class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
+
+    def migrate_atctmetadata(self):
+        field = self.old.getField('excludeFromNav')
+        self.new.exclude_from_nav = field.get(self.old)
 
 
-class DocumentMigrator(CMFItemMigrator, ReferenceMigrator):
+class ATCTContentMigrator(ATCTBaseMigrator, 
+                          CMFItemMigrator, 
+                          ReferenceMigrator):
+    """Base for contentish ATCT
+    """
+
+
+class ATCTFolderMigrator(ATCTBaseMigrator, 
+                         CMFFolderMigrator,
+                         ReferenceMigrator):
+    """Base for folderish ATCT
+    """
+
+
+class DocumentMigrator(ATCTContentMigrator):
 
     src_portal_type = 'Document'
     src_meta_type = 'ATDocument'
@@ -163,7 +184,7 @@ def migrate_documents(portal):
     return migrate(portal, DocumentMigrator)
 
 
-class FileMigrator(CMFItemMigrator, ReferenceMigrator):
+class FileMigrator(ATCTContentMigrator):
 
     src_portal_type = 'File'
     src_meta_type = 'ATFile'
@@ -183,7 +204,7 @@ def migrate_files(portal):
     return migrate(portal, FileMigrator)
 
 
-class BlobFileMigrator(CMFItemMigrator, ReferenceMigrator):
+class BlobFileMigrator(ATCTContentMigrator):
 
     src_portal_type = 'File'
     src_meta_type = 'ATBlob'
@@ -203,7 +224,7 @@ def migrate_blobfiles(portal):
     return migrate(portal, BlobFileMigrator)
 
 
-class ImageMigrator(CMFItemMigrator, ReferenceMigrator):
+class ImageMigrator(ATCTContentMigrator):
 
     src_portal_type = 'Image'
     src_meta_type = 'ATImage'
@@ -224,7 +245,7 @@ def migrate_images(portal):
     return migrate(portal, ImageMigrator)
 
 
-class BlobImageMigrator(CMFItemMigrator, ReferenceMigrator):
+class BlobImageMigrator(ATCTContentMigrator):
 
     src_portal_type = 'Image'
     src_meta_type = 'ATBlob'
@@ -246,7 +267,7 @@ def migrate_blobimages(portal):
     return migrate(portal, BlobImageMigrator)
 
 
-class LinkMigrator(CMFItemMigrator, ReferenceMigrator):
+class LinkMigrator(ATCTContentMigrator):
 
     src_portal_type = 'Link'
     src_meta_type = 'ATLink'
@@ -262,7 +283,7 @@ def migrate_links(portal):
     return migrate(portal, LinkMigrator)
 
 
-class NewsItemMigrator(DocumentMigrator, ReferenceMigrator):
+class NewsItemMigrator(DocumentMigrator):
 
     src_portal_type = 'News Item'
     src_meta_type = 'ATNewsItem'
@@ -271,7 +292,7 @@ class NewsItemMigrator(DocumentMigrator, ReferenceMigrator):
 
     def migrate_schema_fields(self):
         # migrate the text
-        DocumentMigrator.migrate_schema_fields(self)
+        super(NewsItemMigrator, self).migrate_schema_fields()
 
         # migrate the rest of the Schema
         old_image = self.old.getField('image').get(self.old)
@@ -292,7 +313,7 @@ def migrate_newsitems(portal):
     return migrate(portal, NewsItemMigrator)
 
 
-class BlobNewsItemMigrator(DocumentMigrator, ReferenceMigrator):
+class BlobNewsItemMigrator(DocumentMigrator):
     """ Migrator for NewsItems with blobs based on the implementation in
         https://github.com/plone/plone.app.blob/pull/2
     """
@@ -304,7 +325,7 @@ class BlobNewsItemMigrator(DocumentMigrator, ReferenceMigrator):
 
     def migrate_schema_fields(self):
         # migrate the text
-        DocumentMigrator.migrate_schema_fields(self)
+        super(BlobNewsItemMigrator, self).migrate_schema_fields()
 
         # migrate the rest of the Schema
         old_image = self.old.getField('image').get(self.old)
@@ -325,7 +346,7 @@ def migrate_blobnewsitems(portal):
     return migrate(portal, BlobNewsItemMigrator)
 
 
-class FolderMigrator(CMFFolderMigrator, ReferenceMigrator):
+class FolderMigrator(ATCTFolderMigrator):
 
     src_portal_type = 'Folder'
     src_meta_type = 'ATFolder'
@@ -337,7 +358,7 @@ def migrate_folders(portal):
     return migrate(portal, FolderMigrator)
 
 
-class CollectionMigrator(DocumentMigrator, ReferenceMigrator):
+class CollectionMigrator(DocumentMigrator):
 
     src_portal_type = 'Collection'
     src_meta_type = 'Collection'

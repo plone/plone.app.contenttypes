@@ -4,6 +4,9 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+- fix #58: Migration ignores "Exclude from Navigation"
+  [jensens]
+
 - disable LinkIntegrityNotifications during migrations, closes #40
   [jensens]
 
