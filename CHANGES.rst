@@ -4,6 +4,10 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+- fix #60: File Type has no mimetype specific icon in catalog metadata.
+  Also fixed for Image
+  [jensens]
+
 - fix #58: Migration ignores "Exclude from Navigation"
   [jensens]
 
