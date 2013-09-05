@@ -264,3 +264,20 @@ class CatalogIntegrationTest(unittest.TestCase):
             self.portal.getObjSize(None, primary_field_info.value.size),
             brains[0].getObjSize,
         )
+
+    def test_geticon_file(self):
+        from plone.namedfile.file import NamedBlobFile
+
+        filename = os.path.join(os.path.dirname(__file__), u'file.pdf')
+        test_file = NamedBlobFile(data=open(filename, 'r').read(),
+                                  filename=filename)
+
+        primary_field_info = IPrimaryFieldInfo(self.file)
+        primary_field_info.field.set(self.file, test_file)
+        self.file.reindexObject()
+
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/file",
+        ))
+
+        self.assertEquals('pdf.png', brains[0].getIcon)
