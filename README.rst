@@ -41,19 +41,15 @@ Add this line in the eggs section of your ``buildout.cfg``::
     eggs =
         ...
         plone.app.contenttypes
-        
-If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement ``plone.app.contenttypes['at_refs']``.             
 
-.. note:: 
+If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement ``plone.app.contenttypes['at_refs']``.
 
-   The following paragraph applies only for plone.app.contenttypes 1.0b1 and earlier versions. From version 1.0b2 on plone.app.collection is no longer a dependency because its functionality has been refactored into plone.app.contenttypes. 
+.. note::
 
-You also have to pin the 2.x version of ``plone.app.collection`` to get the dexterity-based collections instead of the Archetypes-based collection shipped since Plone 4.2. 
-
-The latest version at the time of writing is 2.0b5 but you might want to check http://pypi.python.org/pypi/plone.app.collection if there is a new version by the time you install this addon:: 
-
-    [versions] 
-    plone.app.collection = 2.0b5
+   plone.app.contenttypes 1.0b1 and earlier versions did not include a
+   collection type (later versions ship with a collection type). In order to
+   be able to use the Dexterity-based collection, you have to pin
+   plone.app.collection to 2.0b5.
 
 
 Installing plone.app.contenttypes in an existing Plone-site
@@ -97,7 +93,7 @@ Migration
 
 For migrations to work you need at least ``Products.contentmigration = 2.1.3``.
 
-For migration sites use the extra requirement ``plone.app.contenttypes['migrate_atct']``.            
+For migration sites use the extra requirement ``plone.app.contenttypes['migrate_atct']``.
 
 This version plone.app.contenttypes comes with migrations for the following use-cases:
 
