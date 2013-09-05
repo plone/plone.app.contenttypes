@@ -14,6 +14,8 @@ from plone.app.contenttypes.interfaces import (
 
 logger = getLogger(__name__)
 
+FALLBACK_CONTENTTYPE = 'application/octet-stream'
+
 
 def _unicode_save_string_concat(*args):
     """
@@ -106,3 +108,39 @@ def getObjSize_image(obj):
 def getObjSize_file(obj):
     primary_field_info = IPrimaryFieldInfo(obj)
     return obj.getObjSize(None, primary_field_info.value.size)
+
+
+@indexer(IFile)
+def getIcon_file(obj):
+    """icon of the given mimetype,
+
+    parts of this this code are borrowed form atct.
+    """
+    mtr = getToolByName(obj, 'mimetypes_registry', None)
+    if mtr is None:
+        return None
+
+    primary_field_info = IPrimaryFieldInfo(obj)
+    if not primary_field_info.value:
+        return None
+
+    contenttype = primary_field_info.value.contentType
+    if not contenttype:
+        contenttype = FALLBACK_CONTENTTYPE
+
+    mimetypeitem = None
+    try:
+        mimetypeitem = mtr.lookup(contenttype)
+    except Exception, msg:
+        logger.warn('mimetype lookup falied for %s. Error: %s' %
+                    (obj.absolute_url(), str(msg)))
+
+    if not mimetypeitem:
+        mimetypeitem = mtr.lookup(FALLBACK_CONTENTTYPE)
+
+    return mimetypeitem[0].icon_path
+
+
+@indexer(IImage)
+def getIcon_image(obj):
+    return getIcon_file(obj)

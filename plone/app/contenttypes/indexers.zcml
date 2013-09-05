@@ -15,5 +15,7 @@
   <adapter name="getRemoteUrl" factory=".indexers.getRemoteUrl" />
   <adapter name="getObjSize" factory=".indexers.getObjSize_image" />
   <adapter name="getObjSize" factory=".indexers.getObjSize_file" />
+  <adapter name="getIcon" factory=".indexers.getIcon_image" />
+  <adapter name="getIcon" factory=".indexers.getIcon_file" />
 
 </configure>

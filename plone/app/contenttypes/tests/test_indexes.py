@@ -265,6 +265,19 @@ class CatalogIntegrationTest(unittest.TestCase):
             brains[0].getObjSize,
         )
 
+    def test_geticon_image(self):
+        from .test_image import dummy_image
+
+        primary_field_info = IPrimaryFieldInfo(self.image)
+        primary_field_info.field.set(self.image, dummy_image())
+        self.image.reindexObject()
+
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/image",
+        ))
+
+        self.assertEquals('image.png', brains[0].getIcon)
+
     def test_geticon_file(self):
         from plone.namedfile.file import NamedBlobFile
 
