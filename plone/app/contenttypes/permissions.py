@@ -3,7 +3,7 @@ from AccessControl.SecurityInfo import ModuleSecurityInfo
 from Products.CMFCore.permissions import setDefaultRoles
 #http://developer.plone.org/security/custom_permissions.html
 security = ModuleSecurityInfo('plone.app.contenttypes')
-TYPE_ROLES = ('Manager', 'Site Administrator', 'Owner')
+TYPE_ROLES = ('Manager', 'Site Administrator', 'Owner', 'Contributor')
 perms = []
 for typename in (
     "Collection",

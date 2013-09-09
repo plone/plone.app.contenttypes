@@ -4,6 +4,11 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
+- Add contributor role as default for all add permissions in order to
+  work together with the different plone worklfows, which assume it is 
+  set this way.
+  [jensens]
+
 - fix #60: File Type has no mimetype specific icon in catalog metadata.
   Also fixed for Image
   [jensens]
