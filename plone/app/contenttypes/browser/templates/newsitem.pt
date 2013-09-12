@@ -9,22 +9,30 @@
 
 <metal:content-core fill-slot="content-core">
     <metal:block define-macro="content-core"
-          tal:define="templateId template/getId;">
+          tal:define="templateId template/getId;
+                      scale_func context/@@images;
+                      scaled_image python: scale_func.scale('image', scale='mini')">
 
         <div class="newsImageContainer"
-             tal:define="image nocall:context/image"
-             tal:condition="nocall:image">
-            <img tal:define="scale context/@@images"
-                 tal:replace="structure python: scale.scale('image',
-                              scale='mini').tag(css_class='newsImage')" />
-            <p class="discreet" tal:condition="context/image_caption|nothing"
+             tal:condition="python: scaled_image">
+            <img tal:replace="structure python: scaled_image.tag(css_class='newsImage')" />                        
+            <p class="discreet" 
+               tal:condition="context/image_caption|nothing"
                tal:content="structure context/image_caption" >
             </p>
         </div>
 
+
         <div id="parent-fieldname-text"
              tal:condition="context/text"
              tal:content="structure context/text/output" />
+
+        <div class="newsFileContainer"
+             tal:condition="python: not scaled_image">
+            <a tal:content="structure python:context.image_caption or context.image.filename"
+               tal:attributes="href python:'%s/@@download/image' % context.absolute_url()">
+            </a>
+        </div>
 
     </metal:block>
 </metal:content-core>
