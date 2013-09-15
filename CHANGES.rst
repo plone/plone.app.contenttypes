@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0rc1 (unreleased)
+1.0rc1 (2013-09-15)
 -------------------
 
 - Its possible to upload non-image data into a newsitem. The view was broken 
@@ -51,6 +51,7 @@ Changelog
 
 - Add a permission for each content types
   [toutpt]
+
 
 1.0b2 (2013-05-31)
 ------------------
@@ -195,4 +196,5 @@ Changelog
 1.0a1 (unreleased)
 ------------------
 
-- Initial release
+- Initial release.
+
