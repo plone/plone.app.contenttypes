@@ -40,6 +40,10 @@ class PloneAppContenttypes(PloneSandboxLayer):
             title=u"Test Folder"
         )
 
+    def tearDownPloneSite(self, portal):
+        applyProfile(portal, 'plone.app.contenttypes:uninstall')
+
+
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
 PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),

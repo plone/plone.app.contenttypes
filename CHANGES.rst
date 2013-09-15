@@ -4,13 +4,17 @@ Changelog
 1.0rc1 (unreleased)
 -------------------
 
-- Its possible to upload non-image data into a newsitem. The view was broken 
-  then. Now it shows the uploaded file for download below the content. Its no 
+- Implement a tearDownPloneSite method in testing.py to prevent test
+  isolation problems.
+  [timo]
+
+- Its possible to upload non-image data into a newsitem. The view was broken
+  then. Now it shows the uploaded file for download below the content. Its no
   longer broken.
   [jensens]
 
 - Add contributor role as default for all add permissions in order to
-  work together with the different plone worklfows, which assume it is 
+  work together with the different plone worklfows, which assume it is
   set this way.
   [jensens]
 
