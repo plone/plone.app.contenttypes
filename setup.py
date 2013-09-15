@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0rc1'
+version = '1.0rc1dev'
 
 long_description = open("README.rst").read() + "\n" + \
     open("CHANGES.rst").read()
@@ -37,7 +37,6 @@ setup(name='plone.app.contenttypes',
           'plone.app.contentmenu',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
           'plone.app.relationfield',
-          'plone.app.layout>=2.3.6',  # viewlets for table of contents and related items
           'plone.formwidget.querystring',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
