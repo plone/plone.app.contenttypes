@@ -19,13 +19,13 @@ Changelog
   [jensens]
 
 - fix #60: File Type has no mimetype specific icon in catalog metadata.
-  Also fixed for Image
+  Also fixed for Image.
   [jensens]
 
-- fix #58: Migration ignores "Exclude from Navigation"
+- fix #58: Migration ignores "Exclude from Navigation".
   [jensens]
 
-- disable LinkIntegrityNotifications during migrations, closes #40
+- disable LinkIntegrityNotifications during migrations, closes #40.
   [jensens]
 
 - Fix Bug on SearchableText_file indexer when input stream contains
@@ -38,7 +38,7 @@ Changelog
   Products.Archetypes which installs the uid_catalog.
   [thet]
 
-- make collection syndicatable
+- Make collection syndicatable.
   [vangheem]
 
 - Include the migration module not only when Products.ATContentTypes is
@@ -50,11 +50,12 @@ Changelog
   [do3cc]
 
 - Fix link_redirect_view: Use index instead of template class var to
-  let customization by ZCML of the template
+  let customization by ZCML of the template.
   [toutpt]
 
-- Add a permission for each content types
+- Add a permission for each content types.
   [toutpt]
+
 
 1.0b2 (2013-05-31)
 ------------------
@@ -63,60 +64,60 @@ Changelog
   translations in the plone domain. (ported from plone.app.collection)
   [bosim]
 
-- Fix atct_album_view and don't use atctListAlbum.py
+- Fix atct_album_view and don't use atctListAlbum.py.
   [pbauer]
 
-- Add constrains for content create with the Content profile
+- Add constrains for content create with the Content profile.
   [ericof]
 
-- Add SearchableText indexer to Folder content type
+- Add SearchableText indexer to Folder content type.
   [ericof]
 
-- Fix atct_album_view
+- Fix atct_album_view.
   [pbauer]
 
 - Removed dependency for collective.dexteritydiff since its features were
-  merged into Products.CMFDiffTool
+  merged into Products.CMFDiffTool.
   [pbauer]
 
-- Add test for behavior table_of_contents
+- Add test for behavior table_of_contents.
   [pbauer]
 
 - Add migration for blobnewsitems as proposed in
-  https://github.com/plone/plone.app.blob/pull/2
+  https://github.com/plone/plone.app.blob/pull/2.
   [pbauer]
 
-- Require cmf.ManagePortal for migration
+- Require cmf.ManagePortal for migration.
   [pbauer]
 
-- Always migrate files and images to blob (fixes #26)
+- Always migrate files and images to blob (fixes #26).
   [pbauer]
 
-- Add table of contents-behavior for documents
+- Add table of contents-behavior for documents.
   [pbauer]
 
-- Add versioning-behavior and it's dependencies
+- Add versioning-behavior and it's dependencies.
   [pbauer]
 
-- Remove image_view_fullscreen from the display-dropdown
+- Remove image_view_fullscreen from the display-dropdown.
   [pbauer]
 
-- Enable selecting addable types on folders by default
+- Enable selecting addable types on folders by default.
   [pbauer]
 
-- Fix reference-migrations if some objects were not migrated
+- Fix reference-migrations if some objects were not migrated.
   [pbauer]
 
-- Keep the order references when migrating
+- Keep the order references when migrating.
   [pabo3000]
 
-- Move templates into their own folder
+- Move templates into their own folder.
   [pbauer]
 
-- Moved migration related code to specific module
+- Moved migration related code to specific module.
   [gborelli]
 
-- Added migration Collection from app.collection to app.contenttypes
+- Added migration Collection from app.collection to app.contenttypes.
   [kroman0]
 
 - Add missing ``i18n:attributes`` to 'Edit' and 'View' actions of File type.
@@ -154,7 +155,7 @@ Changelog
 - Merge plone.app.collection (Tag: 2.0b5) into plone.app.contenttypes.
   [timo]
 
-- Refactor p.a.collection robot framework tests
+- Refactor p.a.collection robot framework tests.
   [timo]
 
 
@@ -173,7 +174,7 @@ Changelog
 - SearchableText indexes added.
   [reinhardt]
 
-- Set the text of front-page when creating a new Plone
+- Set the text of front-page when creating a new Plone.
   [pbauer]
 
 - Robot framework test added.
@@ -193,10 +194,11 @@ Changelog
   were created with version 1.0a1.
   [timo]
 
-- Mime Type Icon added for File View [loechel]
+- Mime Type Icon added for File View.
+ [loechel]
 
 
 1.0a1 (unreleased)
 ------------------
 
-- Initial release
+- Initial release.
