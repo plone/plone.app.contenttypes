@@ -37,6 +37,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.contentmenu',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
           'plone.app.relationfield',
+          'plone.app.layout>=2.3.6',  # viewlets for table of contents and related items
           'plone.formwidget.querystring',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
