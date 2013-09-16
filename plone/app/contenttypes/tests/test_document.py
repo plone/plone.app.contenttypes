@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
 
+from zope.interface import alsoProvides
 from zope.component import createObject
 from zope.component import queryUtility
 
@@ -20,6 +21,7 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.z3cform.interfaces import IPloneFormLayer
 
 
 class DocumentIntegrationTest(unittest.TestCase):
@@ -74,6 +76,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         )
         self.request.set('URL', document.absolute_url())
         self.request.set('ACTUAL_URL', document.absolute_url())
+        alsoProvides(self.request, IPloneFormLayer)
         view = document.restrictedTraverse('@@view')
 
         self.assertTrue(view())

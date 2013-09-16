@@ -2,6 +2,7 @@
 import os.path
 import unittest2 as unittest
 
+from zope.interface import alsoProvides
 from zope.component import createObject
 from zope.component import queryUtility
 
@@ -19,6 +20,7 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.z3cform.interfaces import IPloneFormLayer
 
 
 def dummy_image():
@@ -88,6 +90,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
         self.image = image
         self.request.set('URL', image.absolute_url())
         self.request.set('ACTUAL_URL', image.absolute_url())
+        alsoProvides(self.request, IPloneFormLayer)
 
     def test_image_view(self):
         view = self.image.restrictedTraverse('@@view')

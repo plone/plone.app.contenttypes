@@ -3,6 +3,7 @@ import unittest2 as unittest
 
 import os.path
 
+from zope.interface import alsoProvides
 from zope.component import createObject
 from zope.component import queryUtility
 
@@ -20,6 +21,7 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.z3cform.interfaces import IPloneFormLayer
 
 
 class FileIntegrationTest(unittest.TestCase):
@@ -69,6 +71,7 @@ class FileIntegrationTest(unittest.TestCase):
         file.description = "This is my file."
         self.request.set('URL', file.absolute_url())
         self.request.set('ACTUAL_URL', file.absolute_url())
+        alsoProvides(self.request, IPloneFormLayer)
         view = file.restrictedTraverse('@@view')
 
         self.assertTrue(view())

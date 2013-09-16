@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
 
+from zope.interface import alsoProvides
 from zope.component import createObject
 from zope.component import queryUtility
 
@@ -20,6 +21,7 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.z3cform.interfaces import IPloneFormLayer
 
 import pkg_resources
 
@@ -83,6 +85,7 @@ class EventIntegrationTest(unittest.TestCase):
         )
         self.request.set('URL', event.absolute_url())
         self.request.set('ACTUAL_URL', event.absolute_url())
+        alsoProvides(self.request, IPloneFormLayer)
         view = event.restrictedTraverse('@@view')
 
         self.assertTrue(view())

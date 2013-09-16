@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from zope.interface import alsoProvides
 from zope.viewlet.interfaces import IViewletManager
 from zope.component import queryMultiAdapter
 import unittest2 as unittest
@@ -24,6 +25,7 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.z3cform.interfaces import IPloneFormLayer
 
 
 class NewsItemIntegrationTest(unittest.TestCase):
@@ -37,8 +39,8 @@ class NewsItemIntegrationTest(unittest.TestCase):
         from plone.app.contenttypes.interfaces import (
             IPloneAppContenttypesLayer
         )
-        from zope.interface import alsoProvides
         alsoProvides(self.request, IPloneAppContenttypesLayer)
+        alsoProvides(self.request, IPloneFormLayer)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
