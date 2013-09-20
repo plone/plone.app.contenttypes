@@ -52,7 +52,7 @@ class FixBaseclassesTest(unittest.TestCase):
 
     def test_view_is_registered(self):
         view = self.portal.restrictedTraverse('fix_base_classes')
-        self.assertIsInstance(view(), str)
+        self.assertTrue(isinstance(view(), str))
 
     def test_fix_interface_for_document(self):
         self.obj.portal_type = 'Document'
