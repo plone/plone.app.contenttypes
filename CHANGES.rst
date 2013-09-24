@@ -11,6 +11,10 @@ Changelog
 1.0rc1 (2013-09-24)
 -------------------
 
+- Unicode is expected, but ``obj.title`` and/or ``obj.description`` can be
+  still be None in SearchableText indexer.
+  [saily]
+
 - Implement a tearDownPloneSite method in testing.py to prevent test
   isolation problems.
   [timo]

@@ -41,7 +41,11 @@ def end_date(obj):
 
 
 def SearchableText(obj, text=False):
-    return ' '.join((obj.id, obj.title, obj.description, ))
+    return u" ".join((
+        obj.id,
+        obj.title or u"",
+        obj.description or u"",
+    ))
 
 
 @indexer(INewsItem)
