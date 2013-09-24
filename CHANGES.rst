@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0rc1 (unreleased)
+1.0rc1 (2013-09-24)
 -------------------
 
 - Implement a tearDownPloneSite method in testing.py to prevent test
