@@ -28,7 +28,7 @@
   <!-- plone.app.contenttypes alternatives to profile-Products.CMFPlone:plone-content -->
   <gs:registerProfile
     name="plone-content"
-    title="plone.app.contenttypes example content"
+    title="Dexterity-based Plone Default Types (example content)"
     directory="profiles/content"
     description="Same as Products.CMFPlone:plone-content except for plone.app.contenttypes content-types"
     provides="Products.GenericSetup.interfaces.EXTENSION"
