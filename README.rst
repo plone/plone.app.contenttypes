@@ -226,10 +226,6 @@ License
 GNU General Public License, version 2
 
 
-Roadmap
--------
-
-
 Contributors
 ------------
 
@@ -241,8 +237,6 @@ Contributors
 * Steffen Lindner
 * Daniel Widerin
 * Jens Klein <jens@bluedynamics.com>
-
-TODO: add all contributors
 
 
 Thanks to

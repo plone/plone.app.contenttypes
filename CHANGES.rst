@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0 (unreleased)
+----------------
+
+- Use the default profile title for the example content profile.
+  [timo]
+
+
 1.0rc1 (2013-09-24)
 -------------------
 
