@@ -7,13 +7,13 @@ Changelog
 - Use the default profile title for the example content profile.
   [timo]
 
-
-1.0rc1 (2013-09-24)
--------------------
-
 - Unicode is expected, but ``obj.title`` and/or ``obj.description`` can be
   still be None in SearchableText indexer.
   [saily]
+
+
+1.0rc1 (2013-09-24)
+-------------------
 
 - Implement a tearDownPloneSite method in testing.py to prevent test
   isolation problems.
