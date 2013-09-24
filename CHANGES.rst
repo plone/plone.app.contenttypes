@@ -195,7 +195,7 @@ Changelog
   [timo]
 
 - Mime Type Icon added for File View.
- [loechel]
+  [loechel]
 
 
 1.0a1 (unreleased)
