@@ -42,24 +42,6 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             'plone.app.contenttypes.schema:document.xml'
         )
 
-    def test_update_fti_event(self):
-        fti = queryUtility(
-            IDexterityFTI,
-            name='Event'
-        )
-        fti.model_file = 'plone.app.contenttypes:event.xml'
-
-        update_fti(self.portal)
-
-        fti = queryUtility(
-            IDexterityFTI,
-            name='Event'
-        )
-        self.assertEqual(
-            fti.model_file,
-            'plone.app.contenttypes.schema:event.xml'
-        )
-
     def test_update_fti_file(self):
         fti = queryUtility(
             IDexterityFTI,

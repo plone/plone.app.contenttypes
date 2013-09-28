@@ -35,6 +35,7 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
+          'plone.app.event [dexterity]',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
           'plone.app.relationfield',
           'plone.formwidget.querystring',

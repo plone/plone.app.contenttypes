@@ -12,7 +12,6 @@ from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 
 from plone.app.contenttypes.interfaces import (
     IDocument,
-    IEvent,
     IFile,
     IFolder,
     IImage,
@@ -61,14 +60,6 @@ class FixBaseclassesTest(unittest.TestCase):
         self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(IDocument.providedBy(self.obj))
-
-    def test_fix_interface_for_event(self):
-        self.obj.portal_type = 'Event'
-        self.catalog.reindexObject(self.obj)
-
-        self.portal.restrictedTraverse('fix_base_classes')()
-
-        self.assertTrue(IEvent.providedBy(self.obj))
 
     def test_fix_interface_for_file(self):
         self.obj.portal_type = 'File'

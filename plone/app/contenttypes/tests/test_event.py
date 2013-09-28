@@ -13,7 +13,7 @@ from plone.testing.z2 import Browser
 
 from plone.app.textfield.value import RichTextValue
 
-from plone.app.contenttypes.interfaces import IEvent
+from plone.event.interfaces import IEvent
 
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,

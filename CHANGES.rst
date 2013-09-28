@@ -4,6 +4,9 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+- Integrate plone.app.event.
+  [thet]
+
 - Use the default profile title for the example content profile.
   [timo]
 

@@ -17,7 +17,7 @@ It contains the same types as default Plone does:
 * File
 * Image
 * Link
-* Event (this will be replaced by plone.app.event soon)
+* Event (Using behaviors from plone.app.event)
 * Collection (this already replaces plone.app.collection which is no longer needed then)
 
 The main difference from a users perspective is that these types are extendable through-the-web. This means you can go to the control-panel (``.../@@dexterity-types``) and add or remove fields and behaviors for the existing types.
