@@ -126,7 +126,10 @@ def getIcon_file(obj):
 
     primary_field_info = IPrimaryFieldInfo(obj)
     if not primary_field_info.value:
-        return None
+        # There is no file so we should show a generic icon
+        # TODO : find a better icon for generic
+        return 'png.png'
+        # return None
 
     contenttype = None
     if hasattr(primary_field_info.value, "contentType"):
