@@ -128,7 +128,9 @@ def getIcon_file(obj):
     if not primary_field_info.value:
         return None
 
-    contenttype = primary_field_info.value.contentType
+    contenttype = None
+    if hasattr(primary_field_info.value, "contentType"):
+        contenttype = primary_field_info.value.contentType
     if not contenttype:
         contenttype = FALLBACK_CONTENTTYPE
 
