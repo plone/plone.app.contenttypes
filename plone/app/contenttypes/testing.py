@@ -18,6 +18,13 @@ class PloneAppContenttypes(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
+        import Products.ATContentTypes
+        xmlconfig.file(
+            'configure.zcml',
+            Products.ATContentTypes,
+            context=configurationContext
+        )
+
         import plone.app.contenttypes
         xmlconfig.file(
             'configure.zcml',
@@ -26,6 +33,10 @@ class PloneAppContenttypes(PloneSandboxLayer):
         )
 
     def setUpPloneSite(self, portal):
+        # make sure ATContentTypes is configured, for testing migration
+        if 'Document' not in portal.portal_types:
+            applyProfile(portal, 'Products.ATContentTypes:default')
+
         applyProfile(portal, 'plone.app.contenttypes:default')
         portal.acl_users.userFolderAddUser('admin',
                                            'secret',
