@@ -18,6 +18,7 @@ from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
 try:
     from plone.app.collection.interfaces import ICollection
+    ICollection  # pyflakes
     HAS_APP_COLLECTION = True
 except ImportError:
     ICollection = None
