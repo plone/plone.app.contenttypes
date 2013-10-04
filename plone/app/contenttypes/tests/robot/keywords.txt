@@ -144,7 +144,7 @@ fill in metadata
   Click Link  Dates
   ${currentyear}=  Get Time  year
   fill date field  form.widgets.IDublinCore.effective  2009  January  1
-  fill date field  form.widgets.IDublinCore.expires  2022  December  12
+  fill date field  form.widgets.IDublinCore.expires  2017  December  12
   Click Link  Ownership
   Input text  name=form.widgets.IDublinCore.creators  another_creator
   Input text  name=form.widgets.IDublinCore.contributors  contributor1\ncontributor2
