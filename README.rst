@@ -44,14 +44,7 @@ Add this line in the eggs section of your ``buildout.cfg``::
 
 If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement::
 
-    ``plone.app.contenttypes ['at_refs']``
-
-.. note::
-
-   plone.app.contenttypes 1.0b1 and earlier versions did not include a
-   collection type (later versions ship with a collection type). In order to
-   be able to use the Dexterity-based collections, you have to pin
-   plone.app.collection to 2.0b5.
+    ``plone.app.contenttypes ['atrefs']``
 
 
 What happens to existing content?
