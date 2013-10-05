@@ -118,7 +118,7 @@ def getObjSize_file(obj):
 def getIcon_file(obj):
     """icon of the given mimetype,
 
-    parts of this this code are borrowed form atct.
+    parts of this this code are borrowed from atct.
     """
     mtr = getToolByName(obj, 'mimetypes_registry', None)
     if mtr is None:
@@ -141,7 +141,7 @@ def getIcon_file(obj):
     try:
         mimetypeitem = mtr.lookup(contenttype)
     except Exception, msg:
-        logger.warn('mimetype lookup falied for %s. Error: %s' %
+        logger.warn('mimetype lookup failed for %s. Error: %s' %
                     (obj.absolute_url(), str(msg)))
 
     if not mimetypeitem:
