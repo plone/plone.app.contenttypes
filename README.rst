@@ -50,11 +50,15 @@ If you have a mixed Plone site with Archetypes content and dexterity content use
 What happens to existing content?
 ---------------------------------
 
-Any Archetypes-based content of the default Types still exists and can be viewed but can't be edited. On installation plone.app.contenttypes removes the type-definitions for the old default-types like this::
+If you install plone.app.contenttypes on a fresh site (i.e. when no content has been edited or added) the existing default-content will be replaced by dexterity-content to make sure it is still editable.
+
+If you install plone.app.contenttypes in a existing site all Archetypes-based content of the default Types still exists and can be viewed but can't be edited. On installation plone.app.contenttypes removes the type-definitions for the old default-types like this::
 
     <object name="Document" remove="True" />
 
-To make this content editable egain you need to migrate it to Dexterity (please see the section on migration). Archetypes-based content provided by add-ons like Products.PloneFormGen will still work since only the default-types are replaced.
+To make this content editable egain you need to migrate it to Dexterity (please see the section on migration) or uninstall plone.app.contenttypes.
+
+Archetypes-based content provided by add-ons like Products.PloneFormGen will still work since only the default-types are replaced.
 
 
 Uninstalling
@@ -135,16 +139,6 @@ Migrating custom content
 Custom content will not be changed by plone.app.contenttypes and should continue to work as expeced. However if you'd like to migrate your content-types to Dexterity (you'll have to create these types in Dexterity first) you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint.
 
 
-How to create a new page with only Dexterity
-============================================
-
-Installing plone.app.contenttypes remove the types automatically, you only have to remove or migrate the default content created by Plone (front-page, events, news, members).
-
-.. note::
-
-    You can prevent Plone from creating that default-content in the first place if you use the advanced form for creating a plonesite (``/@@plone-addsite?advanced=1``).
-
-
 Dependencies
 ============
 
@@ -176,6 +170,7 @@ The schemata of the types are set in xml-files using ``plone.supermodel``. This 
 
 If you want to extend these types with code consider using behaviors.
 
+
 Differences to Products.ATContentTypes
 ======================================
 
@@ -205,10 +200,3 @@ Contributors
 * Daniel Widerin
 * Jens Klein <jens@bluedynamics.com>
 
-
-Thanks to
-=========
-
-* The organizers of the Plone-Conference 2011 in San Francisco for a great conference!
-* The organizers of the Wine-and-Beer-Sprint in Munich and Capetown in January 2013
-* The creators of Dexterity

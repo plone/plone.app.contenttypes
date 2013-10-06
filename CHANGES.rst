@@ -4,6 +4,15 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+- Remove AT content and create DX-content when installing in a fresh site.
+  [pbauer]
+
+- Remove obsolete extra 'migrate_atct'.
+  [pbauer]
+
+- Add link and popup to the image of News Items.
+  [pbauer]
+
 - Use the default profile title for the example content profile.
   [timo]
 
