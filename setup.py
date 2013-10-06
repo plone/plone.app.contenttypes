@@ -49,11 +49,6 @@ setup(name='plone.app.contenttypes',
               'Products.ATContentTypes',
               'Products.contentmigration',
           ],
-          'migrate_atct': [
-              'Products.ATContentTypes',
-              'Products.contentmigration',
-              'plone.app.collection',
-          ],
           'atrefs': [
               'plone.app.referenceablebehavior',
           ],
