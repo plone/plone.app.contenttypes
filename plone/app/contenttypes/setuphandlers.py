@@ -54,7 +54,7 @@ def _publish(content):
 
 
 def _translate(name, target_language, default=u''):
-    """Simple function to tranlate a string."""
+    """Simple function to translate a string."""
     result = None
     if target_language != 'en':
         util = queryUtility(ITranslationDomain, 'plonefrontpage')
