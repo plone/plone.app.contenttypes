@@ -11,9 +11,9 @@
 
   <gs:registerProfile
     name="default"
-    title="Dexterity-based Plone Default Types"
+    title="Dexterity-based Plone Default Types (without example content)"
     directory="profiles/default"
-    description="Base Dexterity content-types used as an alternative to Archetypes default-content-types"
+    description="This provides Plones default types without adding example comntent"
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
@@ -28,17 +28,10 @@
   <!-- plone.app.contenttypes alternatives to profile-Products.CMFPlone:plone-content -->
   <gs:registerProfile
     name="plone-content"
-    title="Dexterity-based Plone Default Types (example content)"
+    title="Dexterity-based Plone Default Types"
     directory="profiles/content"
-    description="Same as Products.CMFPlone:plone-content except for plone.app.contenttypes content-types"
+    description="Dexterity content-types used as a replacement for Archetypes default-content-types"
     provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:importStep
-    name="create-plone-content"
-    title="Create default content"
-    description=""
-    handler="plone.app.contenttypes.setuphandlers.importContent"
     />
 
   <plone:behavior
