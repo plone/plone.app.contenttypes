@@ -34,6 +34,13 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
+  <gs:importStep
+    name="create-plone-content"
+    title="Create default content"
+    description=""
+    handler="plone.app.contenttypes.setuphandlers.importContent"
+    />
+
   <plone:behavior
     title="Start and End indexing behavior"
     description="Enables the start and end indexers for a content type"
