@@ -189,7 +189,7 @@ def importContent(context):
         'aggregator',
         'Members'
     ]
-    if not all(i.id in expected for i in all_content):
+    if not [i.id for i in all_content] == expected:
         return
     to_delete = ['front-page', 'news', 'events']
     for i in to_delete:
