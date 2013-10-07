@@ -178,31 +178,7 @@ def importContent(context):
     _set_language_settings(portal, is_combined_language)
     _setup_calendar(locale)
     _setup_visible_ids(target_language, locale)
-
-    portal_catalog = portal.portal_catalog
-    all_content = portal_catalog()
-    expected = [
-        'front-page',
-        'news',
-        'aggregator',
-        'events',
-        'aggregator',
-        'Members'
-    ]
-    if not [i.id for i in all_content] == expected:
-        return
-    to_delete = ['front-page', 'news', 'events']
-    for i in to_delete:
-        obj = portal[i]
-        if IDexterityContent.providedBy(obj):
-            return
-        modification_date = obj.modification_date.utcdatetime()
-        creation_date = obj.creation_date.utcdatetime()
-        delta = modification_date - creation_date
-        if delta >= timedelta(seconds=1):
-            return
-    # None of the default content is dexterity and has been modified.
-    portal.manage_delObjects(to_delete)
+    _delete_at_example_content(portal)
 
     existing_content = portal.keys()
     # The front-page
@@ -368,3 +344,30 @@ def importContent(context):
             assignable.setBlacklistStatus('context', True)
             assignable.setBlacklistStatus('group', True)
             assignable.setBlacklistStatus('content_type', True)
+
+
+def _delete_at_example_content(portal):
+    all_content = portal.portal_catalog()
+    if all_content:
+        expected = [
+            'front-page',
+            'news',
+            'aggregator',
+            'events',
+            'aggregator',
+            'Members'
+        ]
+        if not [i.id for i in all_content] == expected:
+            return
+        to_delete = ['front-page', 'news', 'events']
+        for i in to_delete:
+            obj = portal[i]
+            if IDexterityContent.providedBy(obj):
+                return
+            modification_date = obj.modification_date.utcdatetime()
+            creation_date = obj.creation_date.utcdatetime()
+            delta = modification_date - creation_date
+            if delta >= timedelta(seconds=1):
+                return
+        # None of the default content is dexterity and has been modified.
+        portal.manage_delObjects(to_delete)
