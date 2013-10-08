@@ -42,7 +42,12 @@
 
   <utility
       factory=".vocabularies.ATCTypesVocabulary"
-      name="plone.app.contenttypes.migration.atcttypes"
+      name="plone.app.contenttypes.migration.atctypes"
+      provides="zope.schema.interfaces.IVocabularyFactory" />
+
+  <utility
+      factory=".vocabularies.ExtendedTypesVocabulary"
+      name="plone.app.contenttypes.migration.extendedtypes"
       provides="zope.schema.interfaces.IVocabularyFactory" />
 
 </configure>

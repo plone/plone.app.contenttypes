@@ -13,9 +13,8 @@ from z3c.form import form, field, button
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
 from zope.component import queryUtility
+from zope.component import getMultiAdapter
 from zope.interface import Interface
-from plone.app.blob.interfaces import IATBlobImage
-from plone.app.blob.interfaces import IATBlobFile
 
 # Old interfaces
 
@@ -69,8 +68,10 @@ class MigrateFromATContentTypes(BrowserView):
     """
 
     def __call__(self,
-                 types_not_to_migrate=[],
-                 migrate_schemaextended_content=True):
+                 content_types="all",
+                 migrate_schemaextended_content=False,
+                 migrate_references=True):
+
         stats_before = 'State before:\n'
         stats_before += self.stats()
         portal = self.context
@@ -82,40 +83,21 @@ class MigrateFromATContentTypes(BrowserView):
                                                 False)
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
 
-        # Check whether any of the default content types have had their
-        # schemas extended
         not_migrated = []
         for (k, v) in ATCT_LIST.items():
-            if k in types_not_to_migrate:
+            if content_types != "all" and k not in content_types:
                 not_migrated.append(k)
                 continue
-            if isSchemaExtended(v['iface']) and not migrate_schemaextended_content:
+            if len(isSchemaExtended(v['iface'])) > len(v['extended_fields']) \
+                    and not migrate_schemaextended_content:
                 not_migrated.append(k)
                 continue
             v['migrator'](portal)
 
-        default_blob_types = {
-            "BlobImage": {
-                'iface': IATBlobImage,
-                'migrator': migration.migrate_blobimages
-            },
-            "BlobFile": {
-                'iface': IATBlobFile,
-                'migrator': migration.migrate_blobfiles
-            },
-        }
-
-        for (k, v) in default_blob_types.items():
-            if len(isSchemaExtended(v['iface'])) > 1 \
-                    and not migrate_schemaextended_content:
-                not_migrated.append(k)
-            else:
-                v['migrator'](portal)
-
         # TODO: migration.migrate_blobnewsitems(portal)
-
-        migration.restoreReferences(portal)
-        migration.restoreReferencesOrder(portal)
+        if migrate_references:
+            migration.restoreReferences(portal)
+            migration.restoreReferencesOrder(portal)
 
         # switch linkintegrity back
         site_props.manage_changeProperties(
@@ -123,7 +105,7 @@ class MigrateFromATContentTypes(BrowserView):
         )
 
         if not_migrated:
-            msg = ("The following cannot be migrated as they "
+            msg = ("The following were not migrated as they "
                    "have extended schemas (from "
                    "archetypes.schemaextender): \n %s"
                    % "\n".join(not_migrated))
@@ -153,8 +135,9 @@ class IATCTMigratorForm(Interface):
         title=u"Existing content that can be migrated",
         description=u"Select which content types you want to migrate",
         value_type=schema.Choice(
-            vocabulary="plone.app.contenttypes.migration.atcttypes",
-        )
+            vocabulary="plone.app.contenttypes.migration.atctypes",
+        ),
+        required=False,
     )
 
     migrate_references = schema.Bool(
@@ -166,16 +149,19 @@ class IATCTMigratorForm(Interface):
         default=True
     )
 
-    migrate_schemaextended_content = schema.Bool(
+    extended_content = schema.List(
         title=(
             u"Migrate content that was extended "
             u"trough archetypes.schemaextender?"
         ),
         description=(
             u"Please, pay attention. You will lose the data "
-            u"in the in the extended Fields"
+            u"in the in the extended fields!"
         ),
-        default=False
+        value_type=schema.Choice(
+            vocabulary="plone.app.contenttypes.migration.extendedtypes",
+        ),
+        required=False,
     )
 
 
@@ -183,6 +169,7 @@ class ATCTMigratorForm(form.Form):
 
     fields = field.Fields(IATCTMigratorForm)
     fields['content_types'].widgetFactory = CheckBoxFieldWidget
+    fields['extended_content'].widgetFactory = CheckBoxFieldWidget
     ignoreContext = True
 
     @button.buttonAndHandler(u'Migrate', name='migrate')
@@ -192,24 +179,18 @@ class ATCTMigratorForm(form.Form):
         if errors:
             return
 
-        migrate_references = data['migrate_references']
-        migrate_schemaextended_content = data['migrate_schemaextended_content']
-        portal = self.context
-        res = []
-        for ct in data['content_types']:
-            el = ATCT_LIST.get(ct)
-            if not el:
-                continue
+        content_types = data['content_types']
+        content_types.extend(data['extended_content'])
 
-            if not migrate_schemaextended_content and \
-                    isSchemaExtended(el['iface']):
-                continue
-
-            res.append(el['migrator'](portal))
-
-        if migrate_references:
-            res.append(migration.restoreReferences(portal))
-            res.append(migration.restoreReferencesOrder(portal))
+        migration_view = getMultiAdapter(
+            (self.context, self.request),
+            name=u'migrate_from_atct'
+        )
+        migration_view(
+            content_types=content_types,
+            migrate_schemaextended_content=True,
+            migrate_references=data['migrate_references'],
+        )
 
     def updateActions(self):
         super(ATCTMigratorForm, self).updateActions()

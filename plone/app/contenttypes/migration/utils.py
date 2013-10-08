@@ -8,6 +8,8 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+from plone.app.blob.interfaces import IATBlobImage
+from plone.app.blob.interfaces import IATBlobFile
 
 # Schema Extender allowed interfaces
 from archetypes.schemaextender.interfaces import (
@@ -31,34 +33,51 @@ from plone.app.contenttypes.migration import migration
 ATCT_LIST = {
     "Folder": {
         'iface': IATFolder,
-        'migrator': migration.migrate_folders
+        'migrator': migration.migrate_folders,
+        'extended_fields': [],
     },
     "Document": {
         'iface': IATDocument,
-        'migrator': migration.migrate_documents
+        'migrator': migration.migrate_documents,
+        'extended_fields': [],
     },
     "File": {
         'iface': IATFile,
-        'migrator': migration.migrate_files
+        'migrator': migration.migrate_files,
+        'extended_fields': [],
     },
     "Image": {
         'iface': IATImage,
-        'migrator': migration.migrate_images
+        'migrator': migration.migrate_images,
+        'extended_fields': [],
     },
     "News Item": {
         'iface': IATNewsItem,
-        'migrator': migration.migrate_newsitems
+        'migrator': migration.migrate_newsitems,
+        'extended_fields': [],
     },
     "Link": {
         'iface': IATLink,
-        'migrator': migration.migrate_links
-    }
+        'migrator': migration.migrate_links,
+        'extended_fields': [],
+    },
+    "BlobImage": {
+        'iface': IATBlobImage,
+        'migrator': migration.migrate_blobimages,
+        'extended_fields': ['image'],
+    },
+    "BlobFile": {
+        'iface': IATBlobFile,
+        'migrator': migration.migrate_blobfiles,
+        'extended_fields': ['file'],
+    },
 }
 
 if HAS_APP_COLLECTION:
     ATCT_LIST["Collection"] = {
         'iface': ICollection,
-        'migrator': migration.migrate_collections
+        'migrator': migration.migrate_collections,
+        'extended_fields': [],
     }
 
 
@@ -71,7 +90,8 @@ def isSchemaExtended(interface):
         ISchemaExtender,
         ISchemaModifier,
         IBrowserLayerAwareExtender,
-        IOrderableSchemaExtender]
+        IOrderableSchemaExtender,
+    ]
     # We have a few possible interfaces to test
     # here, so get all the interfaces that
     # are for the given content type first
@@ -81,4 +101,4 @@ def isSchemaExtended(interface):
         if adapter.provided in extender_interfaces:
             fields = adapter.factory(None).fields
             return [field.getName() for field in fields]
-    return False
+    return []
