@@ -3,7 +3,6 @@ from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.contenttypes.interfaces import (
     ICollection,
     IDocument,
-    IEvent,
     IFile,
     IFolder,
     IImage,
@@ -105,10 +104,6 @@ class Collection(Item):
 
 class Document(Item):
     implements(IDocument)
-
-
-class Event(Item):
-    implements(IEvent)
 
 
 class File(Item):

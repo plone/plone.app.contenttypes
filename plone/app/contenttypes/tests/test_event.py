@@ -1,36 +1,21 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
-from zope.interface import alsoProvides
-from zope.component import createObject
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
-
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
-from plone.app.textfield.value import RichTextValue
-
-from plone.app.contenttypes.interfaces import IEvent
-
+from datetime import datetime
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 )
-
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.z3cform.interfaces import IPloneFormLayer
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.event.interfaces import IEvent
+from plone.testing.z2 import Browser
+from zope.component import createObject
+from zope.component import queryUtility
+from zope.interface import alsoProvides
 
-import pkg_resources
-
-try:
-    pkg_resources.get_distribution('plone.app.event')
-except pkg_resources.DistributionNotFound:
-    HAS_PLONE_APP_EVENT = False
-else:
-    HAS_PLONE_APP_EVENT = True
+import unittest2 as unittest
 
 
 class EventIntegrationTest(unittest.TestCase):
@@ -41,6 +26,7 @@ class EventIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        self.request['LANGUAGE'] = 'en'
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
     def test_schema(self):
@@ -78,21 +64,20 @@ class EventIntegrationTest(unittest.TestCase):
         event = self.portal['event']
         event.title = "My Event"
         event.description = "This is my event."
-        event.text = RichTextValue(
-            u"Lorem ipsum",
-            'text/plain',
-            'text/html'
-        )
+        event.start = datetime(2013, 1, 1, 10, 0)
+        event.end = datetime(2013, 1, 1, 12, 0)
+
         self.request.set('URL', event.absolute_url())
         self.request.set('ACTUAL_URL', event.absolute_url())
         alsoProvides(self.request, IPloneFormLayer)
         view = event.restrictedTraverse('@@view')
 
+        # TODO: start/end are not set??
+        #
         self.assertTrue(view())
         self.assertEquals(view.request.response.status, 200)
         self.assertTrue('My Event' in view())
         self.assertTrue('This is my event.' in view())
-        self.assertTrue('Lorem ipsum' in view())
 
 
 class EventFunctionalTest(unittest.TestCase):
@@ -111,24 +96,36 @@ class EventFunctionalTest(unittest.TestCase):
             'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
-    @unittest.skip(HAS_PLONE_APP_EVENT)
     def test_add_event(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Event').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My event"
-        self.browser.getControl(name='form.widgets.IDublinCore.description')\
-            .value = "This is my event."
-        self.browser.getControl(name='form.widgets.text')\
-            .value = "Lorem Ipsum"
-        self.browser.getControl(name='form.widgets.start_date-day')\
-            .value = "1"
-        self.browser.getControl(name='form.widgets.start_date-year')\
-            .value = "2013"
-        self.browser.getControl(name='form.widgets.end_date-day')\
-            .value = "12"
-        self.browser.getControl(name='form.widgets.end_date-year')\
-            .value = "2013"
+        self.browser.getControl(
+            name='form.widgets.IDublinCore.title'
+        ).value = "My event"
+        self.browser.getControl(
+            name='form.widgets.IDublinCore.description'
+        ).value = "This is my event."
+        self.browser.getControl(
+            name='form.widgets.IEventSummary.text'
+        ).value = "Lorem Ipsum"
+        self.browser.getControl(
+            name='form.widgets.IEventBasic.start-day'
+        ).value = ['1']
+        self.browser.getControl(
+            name='form.widgets.IEventBasic.start-month'
+        ).value = ['1']
+        self.browser.getControl(
+            name='form.widgets.IEventBasic.start-year'
+        ).value = ['2013']
+        self.browser.getControl(
+            name='form.widgets.IEventBasic.end-day'
+        ).value = ['12']
+        self.browser.getControl(
+            name='form.widgets.IEventBasic.end-month'
+        ).value = ['1']
+        self.browser.getControl(
+            name='form.widgets.IEventBasic.end-year'
+        ).value = ['2013']
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-event/view'))

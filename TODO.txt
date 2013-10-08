@@ -11,7 +11,7 @@ Todo
 
   [ ] Translate
 
-  [ ] Use plone.app.event (PLIP 10886: https://dev.plone.org/ticket/10886) (works in branch 'events')
+  [X] Use plone.app.event (PLIP 10886: https://dev.plone.org/ticket/10886) (works in branch 'events')
 
   [ ] Sort out dependencies on plone.app.collection
 
