@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0 (unreleased)
+1.0 (2013-10-08)
 ----------------
 
 - Remove AT content and create DX-content when installing in a fresh site.
