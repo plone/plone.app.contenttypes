@@ -27,8 +27,10 @@ from zope.intid.interfaces import IIntIds
 
 
 def migrate(portal, migrator):
-    walker = CatalogWalker(portal, migrator)
-    return walker.go()
+    """return a CatalogWalker instance in order
+    to have its output after migration"""
+    walker = CatalogWalker(portal, migrator)()
+    return walker
 
 
 def restoreReferences(portal):

@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
-from pprint import pformat
-
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityContent
-
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces import IPropertiesTool
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.contenttypes.migration import migration
+from plone.app.contenttypes.migration.utils import ATCT_LIST
+from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.dexterity.interfaces import IDexterityContent
+from plone.z3cform.layout import wrap_form
+from pprint import pformat
+from z3c.form import form, field, button
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from zope import schema
+from zope.component import getGlobalSiteManager
+from zope.component import queryUtility
+from zope.interface import Interface
 
 # Old interfaces
 from Products.ATContentTypes.interfaces.document import IATDocument
@@ -24,7 +31,6 @@ except ImportError:
     ICollection = None
     HAS_APP_COLLECTION = False
 
-
 # Schema Extender allowed interfaces
 from archetypes.schemaextender.interfaces import (
     ISchemaExtender,
@@ -32,9 +38,6 @@ from archetypes.schemaextender.interfaces import (
     IBrowserLayerAwareExtender,
     ISchemaModifier
 )
-
-# This is required for finding schema extensions
-from zope.component import getGlobalSiteManager
 
 from plone.app.contenttypes.content import (
     Document,
@@ -44,8 +47,6 @@ from plone.app.contenttypes.content import (
     Link,
     NewsItem,
 )
-
-from . import migration
 
 
 class FixBaseClasses(BrowserView):
@@ -85,7 +86,9 @@ class MigrateFromATContentTypes(BrowserView):
     """ Migrate the default-types (except event and topic)
     """
 
-    def __call__(self):
+    def __call__(self,
+                 types_not_to_migrate=[],
+                 migrate_schemaextended_content=True):
         stats_before = 'State before:\n'
         stats_before += self.stats()
         portal = self.context
@@ -97,7 +100,7 @@ class MigrateFromATContentTypes(BrowserView):
                                                 False)
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
 
-        # Check whether and of the default content types have had their
+        # Check whether any of the default content types have had their
         # schemas extended
         not_migrated = []
         if not self._isSchemaExtended(IATFolder):
@@ -184,3 +187,82 @@ class MigrateFromATContentTypes(BrowserView):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return pformat(sorted(results.items()))
+
+
+class IATCTMigratorForm(Interface):
+
+    content_types = schema.List(
+        title=u"Existing content that can be migrated",
+        description=u"Select which content types you want to migrate",
+        value_type=schema.Choice(
+            vocabulary="plone.app.contenttypes.migration.atcttypes",
+        )
+    )
+
+    migrate_references = schema.Bool(
+        title=u"Migrate references?",
+        description=(
+            u"Select this option to migrate all "
+            u"references to each content type"
+        ),
+        default=True
+    )
+
+    migrate_schemaextended_content = schema.Bool(
+        title=(
+            u"Migrate content that was extended "
+            u"trough archetypes.schemaextender?"
+        ),
+        description=(
+            u"Please, pay attention. You will lose the data "
+            u"in the in the extended Fields"
+        ),
+        default=False
+    )
+
+
+class ATCTMigratorForm(form.Form):
+
+    fields = field.Fields(IATCTMigratorForm)
+    fields['content_types'].widgetFactory = CheckBoxFieldWidget
+    ignoreContext = True
+
+    @button.buttonAndHandler(u'Migrate', name='migrate')
+    def handle_migrate(self, action):
+        data, errors = self.extractData()
+
+        if errors:
+            return
+
+        migrate_references = data['migrate_references']
+        migrate_schemaextended_content = data['migrate_schemaextended_content']
+        portal = self.context
+        res = []
+        for ct in data['content_types']:
+            el = ATCT_LIST.get(ct)
+            if not el:
+                continue
+
+            if not migrate_schemaextended_content and \
+                    isSchemaExtended(el['iface']):
+                continue
+
+            res.append(el['migrator'](portal))
+
+        if migrate_references:
+            res.append(migration.restoreReferences(portal))
+            res.append(migration.restoreReferencesOrder(portal))
+
+    def updateActions(self):
+        super(ATCTMigratorForm, self).updateActions()
+        self.actions['migrate'].addClass("btn-danger")
+
+
+ATCTMigrator = wrap_form(
+    ATCTMigratorForm,
+    index=ViewPageTemplateFile('atct_migrator.pt')
+)
+
+
+class ATCTMigratorResults(BrowserView):
+    pass

@@ -22,4 +22,27 @@
     permission="cmf.ManagePortal"
     />
 
+  <browser:page
+    name="atct_migrator"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".browser.ATCTMigrator"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    />
+
+
+  <browser:page
+    name="atct_migrator_results"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".browser.ATCTMigratorResults"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    template="atct_migrator_results.pt"
+    />
+
+  <utility
+      factory=".vocabularies.ATCTypesVocabulary"
+      name="plone.app.contenttypes.migration.atcttypes"
+      provides="zope.schema.interfaces.IVocabularyFactory" />
+
 </configure>
