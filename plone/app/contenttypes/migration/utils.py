@@ -26,7 +26,7 @@ else:
     HAS_APP_COLLECTION = True
     from plone.app.collection.interfaces import ICollection
 
-from . import migration
+from plone.app.contenttypes.migration import migration
 
 ATCT_LIST = {
     "Folder": {
@@ -55,7 +55,6 @@ ATCT_LIST = {
     }
 }
 
-
 if HAS_APP_COLLECTION:
     ATCT_LIST["Collection"] = {
         'iface': ICollection,
@@ -80,5 +79,6 @@ def isSchemaExtended(interface):
         [a for a in sm.registeredAdapters() if interface in a.required]
     for adapter in registrations:
         if adapter.provided in extender_interfaces:
-            return True
+            fields = adapter.factory(None).fields
+            return [field.getName() for field in fields]
     return False

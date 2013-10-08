@@ -12,32 +12,14 @@ from pprint import pformat
 from z3c.form import form, field, button
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from zope import schema
-from zope.component import getGlobalSiteManager
 from zope.component import queryUtility
 from zope.interface import Interface
+from plone.app.blob.interfaces import IATBlobImage
+from plone.app.blob.interfaces import IATBlobFile
 
 # Old interfaces
-from Products.ATContentTypes.interfaces.document import IATDocument
-from Products.ATContentTypes.interfaces.file import IATFile
-from Products.ATContentTypes.interfaces.folder import IATFolder
-from Products.ATContentTypes.interfaces.image import IATImage
-from Products.ATContentTypes.interfaces.link import IATLink
-from Products.ATContentTypes.interfaces.news import IATNewsItem
-try:
-    from plone.app.collection.interfaces import ICollection
-    ICollection  # pyflakes
-    HAS_APP_COLLECTION = True
-except ImportError:
-    ICollection = None
-    HAS_APP_COLLECTION = False
 
 # Schema Extender allowed interfaces
-from archetypes.schemaextender.interfaces import (
-    ISchemaExtender,
-    IOrderableSchemaExtender,
-    IBrowserLayerAwareExtender,
-    ISchemaModifier
-)
 
 from plone.app.contenttypes.content import (
     Document,
@@ -103,41 +85,34 @@ class MigrateFromATContentTypes(BrowserView):
         # Check whether any of the default content types have had their
         # schemas extended
         not_migrated = []
-        if not self._isSchemaExtended(IATFolder):
-            migration.migrate_folders(portal)
-        else:
-            not_migrated.append("Folder")
-        if not self._isSchemaExtended(IATDocument):
-            migration.migrate_documents(portal)
-        else:
-            not_migrated.append("Document")
-        if not self._isSchemaExtended(IATFile):
-            migration.migrate_files(portal)
-        else:
-            not_migrated.append("File")
-        if not self._isSchemaExtended(IATImage):
-            migration.migrate_images(portal)
-        else:
-            not_migrated.append("Image")
-        if not self._isSchemaExtended(IATNewsItem):
-            migration.migrate_newsitems(portal)
-        else:
-            not_migrated.append("NewsItem")
-        if not self._isSchemaExtended(IATLink):
-            migration.migrate_links(portal)
-        else:
-            not_migrated.append("Link")
-        if HAS_APP_COLLECTION and not self._isSchemaExtended(ICollection):
-            migration.migrate_collections(portal)
-        else:
-            not_migrated.append("Collection")
+        for (k, v) in ATCT_LIST.items():
+            if k in types_not_to_migrate:
+                not_migrated.append(k)
+                continue
+            if isSchemaExtended(v['iface']) and not migrate_schemaextended_content:
+                not_migrated.append(k)
+                continue
+            v['migrator'](portal)
 
-        # blobfiles and images are always schma-extended
-        # we need to find out if they are extended even further
-        # in another way
-        migration.migrate_blobimages(portal)
-        migration.migrate_blobfiles(portal)
-        migration.migrate_blobnewsitems(portal)
+        default_blob_types = {
+            "BlobImage": {
+                'iface': IATBlobImage,
+                'migrator': migration.migrate_blobimages
+            },
+            "BlobFile": {
+                'iface': IATBlobFile,
+                'migrator': migration.migrate_blobfiles
+            },
+        }
+
+        for (k, v) in default_blob_types.items():
+            if len(isSchemaExtended(v['iface'])) > 1 \
+                    and not migrate_schemaextended_content:
+                not_migrated.append(k)
+            else:
+                v['migrator'](portal)
+
+        # TODO: migration.migrate_blobnewsitems(portal)
 
         migration.restoreReferences(portal)
         migration.restoreReferencesOrder(portal)
@@ -163,23 +138,6 @@ class MigrateFromATContentTypes(BrowserView):
         msg += '\n-----------------------------\n'
         msg += 'migration done - somehow. Be careful!'
         return msg
-
-    def _isSchemaExtended(self, interface):
-        sm = getGlobalSiteManager()
-        extender_interfaces = [
-            ISchemaExtender,
-            ISchemaModifier,
-            IBrowserLayerAwareExtender,
-            IOrderableSchemaExtender]
-        # We have a few possible interfaces to test
-        # here, so get all the interfaces that
-        # are for the given content type first
-        registrations = \
-            [a for a in sm.registeredAdapters() if interface in a.required]
-        for adapter in registrations:
-            if adapter.provided in extender_interfaces:
-                return True
-        return False
 
     def stats(self):
         results = {}
