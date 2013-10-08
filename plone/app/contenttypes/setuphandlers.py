@@ -1,36 +1,36 @@
 # -*- coding: utf-8 -*-
-from zope.component import (
-    getUtility,
-    queryUtility,
-    getMultiAdapter,
-    queryMultiAdapter,
-)
+from AccessControl import Unauthorized
+from Acquisition import aq_base, aq_inner
+from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.utils import bodyfinder
+from Products.CMFPlone.Portal import member_indexhtml
+from Products.CMFPlone.interfaces import INonInstallable
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
+from Products.CMFPlone.utils import _createObjectByType
+from Products.PythonScripts.PythonScript import PythonScript
+from datetime import timedelta
+from plone.app.textfield.value import RichTextValue
+from plone.dexterity.fti import IDexterityFTI
+from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.utils import createContent
+from plone.i18n.normalizer.interfaces import IURLNormalizer
+from plone.portlets.interfaces import ILocalPortletAssignmentManager
+from plone.portlets.interfaces import IPortletManager
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.component import queryMultiAdapter
+from zope.component import queryUtility
 from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.interface import implements
-from Acquisition import aq_base, aq_inner
-from AccessControl import Unauthorized
-from plone.i18n.normalizer.interfaces import IURLNormalizer
-from plone.dexterity.utils import createContent
-from plone.dexterity.fti import IDexterityFTI
-from plone.app.textfield.value import RichTextValue
-from plone.portlets.interfaces import (
-    ILocalPortletAssignmentManager, IPortletManager,)
 
-from Products.PythonScripts.PythonScript import PythonScript
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import INonInstallable
 try:
     DEXTERITY_WITH_CONSTRAINS = True
     from plone.app.dexterity.behaviors import constrains
 except ImportError:
     DEXTERITY_WITH_CONSTRAINS = False
-from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from Products.CMFPlone.utils import _createObjectByType
-from Products.CMFDefault.utils import bodyfinder
-from Products.CMFPlone.Portal import member_indexhtml
 
 
 class HiddenProfiles(object):
@@ -41,7 +41,10 @@ class HiddenProfiles(object):
         Prevents uninstall profile from showing up in the profile list
         when creating a Plone site.
         """
-        return [u'plone.app.contenttypes:uninstall']
+        return [
+            u'plone.app.contenttypes:uninstall',
+            u'plone.app.contenttypes:default'
+        ]
 
 
 def _publish(content):
@@ -54,7 +57,7 @@ def _publish(content):
 
 
 def _translate(name, target_language, default=u''):
-    """Simple function to tranlate a string."""
+    """Simple function to translate a string."""
     result = None
     if target_language != 'en':
         util = queryUtility(ITranslationDomain, 'plonefrontpage')
@@ -163,21 +166,21 @@ def _setup_constrains(container, allowed_types):
 
 
 def importContent(context):
-    """Import base content into the Plone site."""
+    """Remove existing AT-content and create DX-content instead."""
+
     if context.readDataFile('plone.app.contenttypes_content.txt') is None:
         return
     portal = context.getSite()
     # Because the portal doesn't implement __contains__?
-    existing_content = portal.keys()
     target_language, is_combined_language, locale = _get_locales_info(portal)
 
     # Set up Language specific information
     _set_language_settings(portal, is_combined_language)
     _setup_calendar(locale)
     _setup_visible_ids(target_language, locale)
+    _delete_at_example_content(portal)
 
-    # TODO Content translations
-
+    existing_content = portal.keys()
     # The front-page
     frontpage_id = 'front-page'
     if frontpage_id not in existing_content:
@@ -341,3 +344,30 @@ def importContent(context):
             assignable.setBlacklistStatus('context', True)
             assignable.setBlacklistStatus('group', True)
             assignable.setBlacklistStatus('content_type', True)
+
+
+def _delete_at_example_content(portal):
+    all_content = portal.portal_catalog()
+    if all_content:
+        expected = [
+            'front-page',
+            'news',
+            'aggregator',
+            'events',
+            'aggregator',
+            'Members'
+        ]
+        if not [i.id for i in all_content] == expected:
+            return
+        to_delete = ['front-page', 'news', 'events']
+        for i in to_delete:
+            obj = portal[i]
+            if IDexterityContent.providedBy(obj):
+                return
+            modification_date = obj.modification_date.utcdatetime()
+            creation_date = obj.creation_date.utcdatetime()
+            delta = modification_date - creation_date
+            if delta >= timedelta(seconds=1):
+                return
+        # None of the default content is dexterity and has been modified.
+        portal.manage_delObjects(to_delete)

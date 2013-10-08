@@ -119,15 +119,24 @@ a news item
 # Collection
 # ----------------------------------------------------------------------------
 
+the content area should contain
+  [Arguments]  ${text}
+  Element Should Contain  id=content  ${text}
+
+the content area should not contain
+  [Arguments]  ${text}
+  ${passed} =  Run Keyword And Return Status  Element Should Contain  id=content  ${text}
+  Should Not Be True  ${passed}
+
 the collection should contain
   [Arguments]  ${title}
   Go to  ${TEST_FOLDER}/my-collection
-  Page Should Contain  ${title}
+  The content area should contain  ${title}
 
 the collection should not contain
   [Arguments]  ${title}
   Go to  ${TEST_FOLDER}/my-collection
-  Page Should Not Contain  ${title}
+  The content area should not contain  ${title}
 
 fill in metadata
   Click Link  Categorization
@@ -135,7 +144,7 @@ fill in metadata
   Click Link  Dates
   ${currentyear}=  Get Time  year
   fill date field  form.widgets.IDublinCore.effective  2009  January  1
-  fill date field  form.widgets.IDublinCore.expires  2022  December  12
+  fill date field  form.widgets.IDublinCore.expires  2017  December  12
   Click Link  Ownership
   Input text  name=form.widgets.IDublinCore.creators  another_creator
   Input text  name=form.widgets.IDublinCore.contributors  contributor1\ncontributor2

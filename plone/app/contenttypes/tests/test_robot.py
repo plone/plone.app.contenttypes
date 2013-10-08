@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-import os
-import unittest
-
 from plone.testing import layered
-
-import robotsuite
-
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_ROBOT_TESTING
 )
+import os
+import robotsuite
+import unittest
+
+UNIT_TEST_LEVEL = 1
+INTEGRATION_TEST_LEVEL = 2
+FUNCTIONAL_TEST_LEVEL = 3
+ROBOT_TEST_LEVEL = 5
 
 
 def test_suite():
@@ -20,9 +22,13 @@ def test_suite():
         os.listdir(robot_dir) if doc.endswith('.robot') and
         doc.startswith('test_')
     ]
-    for test in robot_tests:
+    for robot_test in robot_tests:
+        robottestsuite = robotsuite.RobotTestSuite(robot_test)
+        robottestsuite.level = ROBOT_TEST_LEVEL
         suite.addTests([
-            layered(robotsuite.RobotTestSuite(test),
-                    layer=PLONE_APP_CONTENTTYPES_ROBOT_TESTING),
+            layered(
+                robottestsuite,
+                layer=PLONE_APP_CONTENTTYPES_ROBOT_TESTING
+            ),
         ])
     return suite

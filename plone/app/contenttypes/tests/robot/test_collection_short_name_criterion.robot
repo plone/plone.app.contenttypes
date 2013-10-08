@@ -30,6 +30,7 @@ I set the collection short name (id) criterion to
     Wait Until Page Contains Element  xpath=//select[@name="addindex"]
     Select From List  xpath=//select[@name="addindex"]  Short name (id)
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
+    Wait Until Page Contains Element  xpath=//input[@name='form.widgets.query.v:records']
     Input Text  name=form.widgets.query.v:records  ${criterion}
     Click Button  Save
     Wait until page contains  Changes saved

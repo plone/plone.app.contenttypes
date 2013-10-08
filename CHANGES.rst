@@ -1,11 +1,25 @@
 Changelog
 =========
 
-1.0 (unreleased)
+1.1 (unreleased)
 ----------------
 
 - Integrate plone.app.event.
   [thet]
+
+
+1.0 (2013-10-08)
+----------------
+
+- Remove AT content and create DX-content when installing in a fresh site.
+  [pbauer]
+
+- Remove obsolete extra 'migrate_atct'.
+  [pbauer]
+
+- Add link and popup to the image of News Items.
+  [pbauer]
+>>>>>>> master
 
 - Use the default profile title for the example content profile.
   [timo]

@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0dev'
+version = '1.0'
 
 long_description = open("README.rst").read() + "\n" + \
     open("CHANGES.rst").read()
@@ -49,11 +49,6 @@ setup(name='plone.app.contenttypes',
               'plone.app.robotframework',
               'Products.ATContentTypes',
               'Products.contentmigration',
-          ],
-          'migrate_atct': [
-              'Products.ATContentTypes',
-              'Products.contentmigration',
-              'plone.app.collection',
           ],
           'atrefs': [
               'plone.app.referenceablebehavior',

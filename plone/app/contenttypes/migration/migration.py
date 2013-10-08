@@ -4,7 +4,7 @@ Migrating ATContentTypes to plone.app.contenttypes objects.
 
 This module imports from Product.contentmigration on which we depend
 only in the setuptools extra_requiers [migrate_atct]. Importing this
-will module will only work if P.contentmigration is installed so make sure
+module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
 '''
 
