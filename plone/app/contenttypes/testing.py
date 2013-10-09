@@ -7,6 +7,8 @@ from plone.app.testing import FunctionalTesting
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 from plone.app.testing import login
+from plone.app.testing import quickInstallProduct
+
 
 from plone.testing import z2
 
@@ -55,10 +57,46 @@ class PloneAppContenttypes(PloneSandboxLayer):
         applyProfile(portal, 'plone.app.contenttypes:uninstall')
 
 
+class PloneAppContenttypesMigration(PloneSandboxLayer):
+
+    defaultBases = (PLONE_FIXTURE,)
+
+    def setUpZope(self, app, configurationContext):
+
+        import plone.app.blob
+        xmlconfig.file(
+            'configure.zcml',
+            plone.app.blob,
+            context=configurationContext
+        )
+
+        import Products.ATContentTypes
+        xmlconfig.file(
+            'configure.zcml',
+            Products.ATContentTypes,
+            context=configurationContext
+        )
+
+        import plone.app.contenttypes
+        xmlconfig.file(
+            'configure.zcml',
+            plone.app.contenttypes,
+            context=configurationContext
+        )
+
+    def setUpPloneSite(self, portal):
+        quickInstallProduct(portal, 'Products.ATContentTypes')
+
+
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
 PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
     name="PloneAppContenttypes:Integration"
+)
+PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE = PloneAppContenttypesMigration()
+PLONE_APP_CONTENTTYPES_MIGRATION_TESTING = IntegrationTesting(
+    bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,),
+    name="PloneAppContenttypes:Migration"
 )
 PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
