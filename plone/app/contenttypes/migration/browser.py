@@ -29,6 +29,8 @@ from plone.app.contenttypes.content import (
     NewsItem,
 )
 
+# time to migrate one archetype object, in milisecond
+ONE_OBJECT_MIGRATION_TIME = 250
 
 class FixBaseClasses(BrowserView):
 
@@ -206,6 +208,27 @@ ATCTMigrator = wrap_form(
     ATCTMigratorForm,
     index=ViewPageTemplateFile('atct_migrator.pt')
 )
+
+
+class ATCTMigratorHelpers(BrowserView):
+    
+    def objects_to_be_migrated(self):
+        """ Return the number of AT objects in the portal """
+        catalog = getToolByName(self.context, "portal_catalog")         
+        brains = catalog(portal_type = ATCT_LIST.keys())
+        self._objects_to_be_migrated = len(brains)
+        return self._objects_to_be_migrated
+
+    def estimated_migration_time(self):
+        """ Return the estimated migration time """
+        total_time = self.objects_to_be_migrated() * ONE_OBJECT_MIGRATION_TIME
+        hours, remainder = divmod(total_time / 1000, 3600)
+        minutes, seconds = divmod(remainder, 6000)
+        return {
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds
+        }
 
 
 class ATCTMigratorResults(BrowserView):

@@ -30,6 +30,14 @@
     permission="cmf.ManagePortal"
     />
 
+  <browser:page
+    name="atct_migrator_helpers"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".browser.ATCTMigratorHelpers"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    />
+
 
   <browser:page
     name="atct_migrator_results"
