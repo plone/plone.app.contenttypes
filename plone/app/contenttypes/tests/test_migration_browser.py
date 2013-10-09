@@ -11,13 +11,14 @@ from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 
 from plone.app.contenttypes.interfaces import (
     IDocument,
-    IEvent,
     IFile,
     IFolder,
     IImage,
     ILink,
     INewsItem,
 )
+
+from plone.event.interfaces import IEvent
 
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
