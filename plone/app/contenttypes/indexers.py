@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from DateTime import DateTime
 from logging import getLogger
 
 from Products.CMFCore.utils import getToolByName
@@ -9,7 +8,7 @@ from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 
 from plone.app.contenttypes.interfaces import (
-    IEvent, IDocument, INewsItem, ILink, IImage, IFile, IFolder
+    IDocument, INewsItem, ILink, IImage, IFile, IFolder
 )
 
 logger = getLogger(__name__)
@@ -28,16 +27,6 @@ def _unicode_save_string_concat(*args):
             value = value.encode('utf-8', 'replace')
         result = ' '.join((result, value))
     return result
-
-
-@indexer(IEvent)
-def start_date(obj):
-    return DateTime(IEvent(obj).start_date)
-
-
-@indexer(IEvent)
-def end_date(obj):
-    return DateTime(IEvent(obj).end_date)
 
 
 def SearchableText(obj, text=False):

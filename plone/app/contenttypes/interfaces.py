@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.supermodel import model
 
-from zope.interface import Interface, Attribute
+from zope.interface import Interface
 from zope import schema
 from plone.app.contenttypes import _
 
@@ -64,13 +64,6 @@ class ICollection(model.Schema):
 class IDocument(Interface):
     """
     """
-
-
-class IEvent(Interface):
-    """
-    """
-    start_date = Attribute('A start date.')
-    end_date = Attribute('An end date.')
 
 
 class IFile(Interface):

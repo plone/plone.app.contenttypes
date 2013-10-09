@@ -13,12 +13,6 @@ def update_fti(context):
         name='Document'
     )
     fti.model_file = "plone.app.contenttypes.schema:document.xml"
-    # Event
-    fti = queryUtility(
-        IDexterityFTI,
-        name='Event'
-    )
-    fti.model_file = "plone.app.contenttypes.schema:event.xml"
     # File
     fti = queryUtility(
         IDexterityFTI,

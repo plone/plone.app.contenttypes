@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.1 (unreleased)
+----------------
+
+- Integrate plone.app.event.
+  [thet]
+
+
 1.0 (2013-10-08)
 ----------------
 
@@ -12,6 +19,7 @@ Changelog
 
 - Add link and popup to the image of News Items.
   [pbauer]
+>>>>>>> master
 
 - Use the default profile title for the example content profile.
   [timo]
