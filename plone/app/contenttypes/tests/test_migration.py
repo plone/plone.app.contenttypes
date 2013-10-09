@@ -30,6 +30,8 @@ from zope.intid.interfaces import IIntIds
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 
+from zope.component import getUtility
+from zope.schema.interfaces import IVocabularyFactory
 
 class FixBaseclassesTest(unittest.TestCase):
 
@@ -466,3 +468,108 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         migrator.migrate()
         stats = migrationview.stats()
         self.assertEqual(stats, "[('Document', 2), ('Folder', 1)]")
+
+    def test_migration_atctypes_vocabulary_registered(self):
+        name = 'plone.app.contenttypes.migration.atctypes'
+        factory = getUtility(IVocabularyFactory, name)
+        self.assertIsNotNone(factory,
+                             'Vocabulary %s does not exist' % name)
+
+        vocabulary = factory(self.portal)
+        self.assertEquals((), tuple(vocabulary))
+
+    def test_migration_atctypes_vocabulary_result(self):
+        from Products.ATContentTypes.content.document import ATDocument
+        from Products.ATContentTypes.content.file import ATFile
+        from Products.ATContentTypes.content.image import ATImage
+        from Products.ATContentTypes.content.folder import ATFolder
+        from Products.ATContentTypes.content.link import ATLink
+
+
+        name = 'plone.app.contenttypes.migration.atctypes'
+        factory = getUtility(IVocabularyFactory, name)
+
+        self.createATCTobject(ATDocument, 'doc1')
+        self.createATCTobject(ATDocument, 'doc2')
+        self.createATCTobject(ATFile, 'file')
+        self.createATCTobject(ATImage, 'image')
+        self.createATCTobject(ATFolder, 'folder')
+        self.createATCTobject(ATLink, 'link')
+
+        vocabulary = factory(self.portal)
+
+        self.assertEquals(
+            5,
+            len(vocabulary),
+            'Expect 5 entries in vocab because there are 5 diffrent types')
+
+        # Result format
+        docs = [term for term in vocabulary if term.token == 'Document'][0]
+        self.assertEquals('Document', docs.value)
+        self.assertEquals('Document (2)', docs.title)
+
+    def test_migration_extendedtypes_vocabulary_registered(self):
+        name = 'plone.app.contenttypes.migration.extendedtypes'
+        factory = getUtility(IVocabularyFactory, name)
+        self.assertIsNotNone(factory,
+                             'Vocabulary %s does not exist' % name)
+
+        vocabulary = factory(self.portal)
+        self.assertEquals((), tuple(vocabulary))
+
+    def test_migration_extendedtypes_vocabulary_result(self):
+        from archetypes.schemaextender.field import ExtensionField
+        from archetypes.schemaextender.interfaces import ISchemaExtender
+        from Products.Archetypes import atapi
+        from Products.ATContentTypes.content.document import ATDocument
+        from zope.component import adapts
+        from zope.component import provideAdapter
+        from zope.interface import classImplements
+        from zope.interface import implements
+        from zope.interface import Interface
+
+
+        SCHEMA_EXTENDER_CACHE_KEY = '__archetypes_schemaextender_cache'
+
+        name = 'plone.app.contenttypes.migration.extendedtypes'
+        factory = getUtility(IVocabularyFactory, name)
+
+
+        class IDummy(Interface):
+            """Taggable content
+            """
+
+
+        classImplements(ATDocument, IDummy)
+        doc = self.createATCTobject(ATDocument, 'doc')
+
+
+        class DummyField(ExtensionField, atapi.StringField):
+            """Dummy Field"""
+
+
+        class DummySchemaExtender(object):
+            implements(ISchemaExtender)
+            adapts(IDummy)
+
+            _fields = [DummyField('dummy')]
+
+            def __init__(self, context):
+                self.context = context
+
+            def getFields(self):
+                return self._fields
+
+
+        provideAdapter(DummySchemaExtender, name=u"dummy.extender")
+
+        # Clear cache
+        delattr(self.request, SCHEMA_EXTENDER_CACHE_KEY)
+        self.assertIn('dummy', doc.Schema()._names)
+
+        vocabulary = factory(self.portal)
+
+        self.assertEquals(1, len(vocabulary), 'Expect one entry')
+
+        self.assertEquals("Document (1) - extended fields: 'dummy'",
+                          tuple(vocabulary)[0].title)
