@@ -1,29 +1,20 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
 from Products.CMFCore.utils import getToolByName
-
-from zope.interface import directlyProvides
-
 from plone.dexterity.fti import DexterityFTI
-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
-
-from plone.app.contenttypes.interfaces import (
-    IDocument,
-    IFile,
-    IFolder,
-    IImage,
-    ILink,
-    INewsItem,
-)
-
-from plone.event.interfaces import IEvent
-
+from plone.app.contenttypes.interfaces import IDocument
+from plone.app.contenttypes.interfaces import IFile
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IImage
+from plone.app.contenttypes.interfaces import ILink
+from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.event.interfaces import IEvent
+from zope.interface import directlyProvides
+
+import unittest2 as unittest
 
 
 class FixBaseclassesTest(unittest.TestCase):

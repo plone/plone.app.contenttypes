@@ -1,22 +1,18 @@
 # -*- coding: utf-8 -*-
-import os.path
-import unittest2 as unittest
-
-import transaction
-
 from Products.CMFCore.utils import getToolByName
-
+from five.intid.intid import IntIds
+from five.intid.site import addUtility
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
-
 from plone.app.testing import login
-
 from plone.app.contenttypes.migration.migration import restoreReferences
 from plone.app.testing import applyProfile
 from zope.component import getSiteManager
 from zope.intid.interfaces import IIntIds
-from five.intid.intid import IntIds
-from five.intid.site import addUtility
+
+import os.path
+import unittest2 as unittest
+import transaction
 
 
 class MigrateToATContentTypesTest(unittest.TestCase):
@@ -185,9 +181,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_file, FileMigrator)
         migrator.migrate()
-        new_file = self.portal['file']
-        self.assertTrue(IFile.providedBy(new_file))
-        self.assertTrue(at_file is not new_file)
+        dx_file = self.portal['file']
+        self.assertTrue(IFile.providedBy(dx_file))
+        self.assertTrue(at_file is not dx_file)
 
     def test_file_content_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FileMigrator
@@ -201,11 +197,11 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_file, FileMigrator)
         migrator.migrate()
-        new_file = self.portal['file']
-        self.assertTrue(INamedBlobFile.providedBy(new_file.file))
-        self.assertEqual(new_file.file.filename, 'dummyfile.txt')
-        self.assertEqual(new_file.file.contentType, 'text/dummy')
-        self.assertEqual(new_file.file.data, 'dummydata')
+        dx_file = self.portal['file']
+        self.assertTrue(INamedBlobFile.providedBy(dx_file.file))
+        self.assertEqual(dx_file.file.filename, 'dummyfile.txt')
+        self.assertEqual(dx_file.file.contentType, 'text/dummy')
+        self.assertEqual(dx_file.file.data, 'dummydata')
 
     def test_image_is_migrated(self):
         from Products.ATContentTypes.content.image import ATImage
@@ -215,9 +211,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_image, ImageMigrator)
         migrator.migrate()
-        new_image = self.portal['image']
-        self.assertTrue(IImage.providedBy(new_image))
-        self.assertTrue(at_image is not new_image)
+        dx_image = self.portal['image']
+        self.assertTrue(IImage.providedBy(dx_image))
+        self.assertTrue(at_image is not dx_image)
 
     def test_empty_image_is_migrated(self):
         """
@@ -230,8 +226,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_image, ImageMigrator)
         migrator.migrate()
-        new_image = self.portal['image']
-        self.assertEqual(new_image.image, None)
+        dx_image = self.portal['image']
+        self.assertEqual(dx_image.image, None)
 
     def test_image_content_is_migrated(self):
         from plone.app.contenttypes.migration.migration import ImageMigrator
@@ -247,11 +243,11 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_image, ImageMigrator)
         migrator.migrate()
-        new_image = self.portal['image']
-        self.assertTrue(INamedBlobImage.providedBy(new_image.image))
-        self.assertEqual(new_image.image.filename, 'testimage.png')
-        self.assertEqual(new_image.image.contentType, 'image/png')
-        self.assertEqual(new_image.image.data, test_image_data)
+        dx_image = self.portal['image']
+        self.assertTrue(INamedBlobImage.providedBy(dx_image.image))
+        self.assertEqual(dx_image.image.filename, 'testimage.png')
+        self.assertEqual(dx_image.image.contentType, 'image/png')
+        self.assertEqual(dx_image.image.data, test_image_data)
 
     def test_blob_file_is_migrated(self):
         from plone.app.contenttypes.migration.migration import BlobFileMigrator

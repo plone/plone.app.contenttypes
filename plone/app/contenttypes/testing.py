@@ -8,7 +8,6 @@ from plone.app.testing import FunctionalTesting
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 from plone.app.testing import login
-from plone.app.testing import quickInstallProduct
 
 from plone.testing import z2
 
