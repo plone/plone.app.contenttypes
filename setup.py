@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0dev'
+version = '1.0'
 
 long_description = open("README.rst").read() + "\n" + \
     open("CHANGES.rst").read()
@@ -35,6 +35,7 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
+          'plone.app.event [dexterity]',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
           'plone.app.relationfield',
           'plone.formwidget.querystring',

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone.app.event.testing import PAEvent_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
 from plone.app.testing import PLONE_FIXTURE
@@ -9,7 +10,6 @@ from plone.app.testing import setRoles
 from plone.app.testing import login
 from plone.app.testing import quickInstallProduct
 
-
 from plone.testing import z2
 
 from zope.configuration import xmlconfig
@@ -17,22 +17,19 @@ from zope.configuration import xmlconfig
 
 class PloneAppContenttypes(PloneSandboxLayer):
 
-    defaultBases = (PLONE_FIXTURE,)
+    defaultBases = (PAEvent_FIXTURE, PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
-        import Products.ATContentTypes
-        xmlconfig.file(
-            'configure.zcml',
-            Products.ATContentTypes,
-            context=configurationContext
-        )
-
         import plone.app.contenttypes
         xmlconfig.file(
             'configure.zcml',
             plone.app.contenttypes,
             context=configurationContext
         )
+
+        import plone.app.event.dx
+        self.loadZCML(package=plone.app.event.dx,
+                      context=configurationContext)
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')

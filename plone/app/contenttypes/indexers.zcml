@@ -5,8 +5,6 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone.app.contenttypes">
 
-  <adapter name="start" factory=".indexers.start_date" />
-  <adapter name="end" factory=".indexers.end_date" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_document" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_file" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_folder" />
