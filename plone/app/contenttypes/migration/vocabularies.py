@@ -31,6 +31,11 @@ def results(context, show_extended=False):
     counter = {}
     for i in brains:
         pt = i.portal_type
+        if "Blob" in i.meta_type:
+            if pt == "File":
+                pt = "BlobFile"
+            else:
+                pt = "BlobImage"
         if not counter.get(pt):
             counter[pt] = 0
         counter[pt] += 1
