@@ -49,8 +49,10 @@ def results(context, show_extended=False):
                 results.append(term)
         else:
             if k in ext_dict:
-                ext = str(ext_dict[k]['fields']).replace("[", "").replace("]", "")
-                display = "{0} ({1}) - extended fields: {2}".format(context.translate(_(k)), v, ext)
+                ext = str(ext_dict[k]['fields']).\
+                    replace("[", "").replace("]", "")
+                display = "{0} ({1}) - extended fields: {2}".\
+                    format(context.translate(_(k)), v, ext)
                 term = SimpleVocabulary.createTerm(k, k, display)
                 results.append(term)
     results.sort(key=lambda x: x.title)

@@ -14,7 +14,9 @@
       tal:define="dummy python:request.set('disable_border',1);
 
           disable_column_two python:request.set('disable_plone.rightcolumn',1);
-          disable_column_two python:request.set('disable_plone.leftcolumn',1)">
+          disable_column_two python:request.set('disable_plone.leftcolumn',1);
+          portal_state context/@@plone_portal_state;
+          portal_url portal_state/portal_url">
 
     <style type="text/css">
       div.important {
@@ -80,24 +82,29 @@
     <metal:bodytext fill-slot="main">
       <metal:main define-macro="main">
         <h1 class="documentFirstHeading"
-            i18n:translate="">ATCT Migration results</h1>
+            i18n:translate="">Migration results</h1>
 
-        <div id="content-core">
-          <pre>
-Output after running:
-Successfully migrated xxx objects
-xxx Documeents were migrated
-xxx Objects werde not migrated because...
+        <div id="content-core"
+             tal:define="results view/results">
+          <p>The migration finished within <span tal:replace="results/duration">20</span> seconds</p>
+          <h3>Before</h3>
+          <p tal:repeat="stat results/before">
+            <span tal:content="stat"/>
+          </p>
+          <h3>After</h3>
+          <p tal:repeat="stat results/after">
+            <span tal:content="stat"/>
+          </p>
 
-Error-Messages
-          </pre>
         </div>
 
         <div class="links">
-          <a href="atct_migrator">
-            <span i18n:translate="">Back to migrator</span>
+          <a href="atct_migrator"
+             tal:attributes="href string:${portal_url}/@@atct_migrator">
+            <span i18n:translate="">Back to the Migration-Form</span>
           </a><br/>
-          <a href="..">
+          <a href=""
+             tal:attributes="href portal_url">
             <span i18n:translate="">Back to Plone</span>
           </a>
         </div>

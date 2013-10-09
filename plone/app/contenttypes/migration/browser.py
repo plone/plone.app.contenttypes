@@ -3,6 +3,7 @@ from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from datetime import datetime
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
@@ -28,6 +29,9 @@ from plone.app.contenttypes.content import (
     Link,
     NewsItem,
 )
+
+# average time to migrate one archetype object, in milliseconds
+ONE_OBJECT_MIGRATION_TIME = 255
 
 
 class FixBaseClasses(BrowserView):
@@ -73,8 +77,8 @@ class MigrateFromATContentTypes(BrowserView):
                  migrate_references=True,
                  from_form=False):
 
-        stats_before = 'State before:\n'
-        stats_before += self.stats()
+        stats_before = self.stats()
+        starttime = datetime.now()
         portal = self.context
 
         # switch linkintegrity temp off
@@ -104,7 +108,8 @@ class MigrateFromATContentTypes(BrowserView):
         site_props.manage_changeProperties(
             enable_link_integrity_checks=link_integrity
         )
-
+        endtime = datetime.now()
+        duration = (endtime-starttime).seconds
         if not from_form:
             if not_migrated:
                 msg = ("The following were not migrated as they "
@@ -114,23 +119,29 @@ class MigrateFromATContentTypes(BrowserView):
             else:
                 msg = "Default content types successfully migrated\n\n"
 
+            msg += 'Migration finished in %s seconds' % duration
             msg += '\n-----------------------------\n'
-            msg += stats_before
+            msg += 'State before:\n'
+            msg += pformat(stats_before)
             msg += '\n-----------------------------\n'
             msg += 'Stats after:\n'
-            msg += self.stats()
+            msg += pformat(self.stats())
             msg += '\n-----------------------------\n'
-            msg += 'migration done - somehow. Be careful!'
             return msg
         else:
-            return self.stats()
+            stats = {
+                'duration': duration,
+                'before': stats_before,
+                'after': self.stats()
+            }
+            return stats
 
     def stats(self):
         results = {}
         for brain in self.context.portal_catalog():
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
-        return pformat(sorted(results.items()))
+        return sorted(results.items())
 
 
 class IATCTMigratorForm(Interface):
@@ -178,6 +189,7 @@ class ATCTMigratorForm(form.Form):
     @button.buttonAndHandler(u'Migrate', name='migrate')
     def handle_migrate(self, action):
         data, errors = self.extractData()
+        context = self.context
 
         if errors:
             return
@@ -186,7 +198,7 @@ class ATCTMigratorForm(form.Form):
         content_types.extend(data['extended_content'])
 
         migration_view = getMultiAdapter(
-            (self.context, self.request),
+            (context, self.request),
             name=u'migrate_from_atct'
         )
         results = migration_view(
@@ -195,7 +207,11 @@ class ATCTMigratorForm(form.Form):
             migrate_references=data['migrate_references'],
             from_form=True,
         )
-        return results
+        sdm = getToolByName(context, "session_data_manager")
+        session = sdm.getSessionData(create=True)
+        session.set("atct_migrator_results", results)
+        url = context.absolute_url()
+        self.request.response.redirect(url + "/@@atct_migrator_results")
 
     def updateActions(self):
         super(ATCTMigratorForm, self).updateActions()
@@ -208,5 +224,33 @@ ATCTMigrator = wrap_form(
 )
 
 
+class ATCTMigratorHelpers(BrowserView):
+
+    def objects_to_be_migrated(self):
+        """ Return the number of AT objects in the portal """
+        catalog = getToolByName(self.context, "portal_catalog")
+        brains = catalog(portal_type=ATCT_LIST.keys())
+        self._objects_to_be_migrated = len(brains)
+        return self._objects_to_be_migrated
+
+    def estimated_migration_time(self):
+        """ Return the estimated migration time """
+        total_time = self.objects_to_be_migrated() * ONE_OBJECT_MIGRATION_TIME
+        hours, remainder = divmod(total_time / 1000, 3600)
+        minutes, seconds = divmod(remainder, 6000)
+        return {
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds
+        }
+
+
 class ATCTMigratorResults(BrowserView):
-    pass
+
+    index = ViewPageTemplateFile('atct_migrator_results.pt')
+
+    def results(self):
+        sdm = self.context.session_data_manager
+        session = sdm.getSessionData(create=True)
+        results = session.get("atct_migrator_results", None)
+        return results

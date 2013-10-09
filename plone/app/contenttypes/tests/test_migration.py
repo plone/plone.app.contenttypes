@@ -458,16 +458,16 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         migrationview = MigrationView(self.portal, None)
         stats = migrationview.stats()
-        self.assertEqual(stats, "[('ATDocument', 2), ('Folder', 1)]")
+        self.assertEqual(str(stats), "[('ATDocument', 2), ('Folder', 1)]")
         migrator = self.get_migrator(at_doc1, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(stats, "[('ATDocument', 1), ('Document', 1), "
+        self.assertEqual(str(stats), "[('ATDocument', 1), ('Document', 1), "
                          "('Folder', 1)]")
         migrator = self.get_migrator(at_doc2, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(stats, "[('Document', 2), ('Folder', 1)]")
+        self.assertEqual(str(stats), "[('Document', 2), ('Folder', 1)]")
 
     def test_migration_atctypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.atctypes'
@@ -484,7 +484,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from Products.ATContentTypes.content.image import ATImage
         from Products.ATContentTypes.content.folder import ATFolder
         from Products.ATContentTypes.content.link import ATLink
-
 
         name = 'plone.app.contenttypes.migration.atctypes'
         factory = getUtility(IVocabularyFactory, name)
@@ -528,25 +527,20 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from zope.interface import implements
         from zope.interface import Interface
 
-
         SCHEMA_EXTENDER_CACHE_KEY = '__archetypes_schemaextender_cache'
 
         name = 'plone.app.contenttypes.migration.extendedtypes'
         factory = getUtility(IVocabularyFactory, name)
 
-
         class IDummy(Interface):
             """Taggable content
             """
 
-
         classImplements(ATDocument, IDummy)
         doc = self.createATCTobject(ATDocument, 'doc')
 
-
         class DummyField(ExtensionField, atapi.StringField):
             """Dummy Field"""
-
 
         class DummySchemaExtender(object):
             implements(ISchemaExtender)
@@ -559,7 +553,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
             def getFields(self):
                 return self._fields
-
 
         provideAdapter(DummySchemaExtender, name=u"dummy.extender")
 
