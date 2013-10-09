@@ -55,6 +55,8 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
 
+        z2.installProduct(app, 'Products.DateRecurringIndex')
+
         import plone.app.contenttypes
         xmlconfig.file(
             'configure.zcml',
