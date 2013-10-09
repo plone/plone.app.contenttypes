@@ -156,11 +156,10 @@ class IATCTMigratorForm(Interface):
     extended_content = schema.List(
         title=(
             u"Migrate content that was extended "
-            u"trough archetypes.schemaextender?"
+            u"using archetypes.schemaextender?"
         ),
         description=(
-            u"Please, pay attention. You will lose the data "
-            u"in the in the extended fields!"
+            u"Warning: You will loose all data in the extended fields!"
         ),
         value_type=schema.Choice(
             vocabulary="plone.app.contenttypes.migration.extendedtypes",
