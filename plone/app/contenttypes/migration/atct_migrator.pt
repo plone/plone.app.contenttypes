@@ -1,3 +1,7 @@
+<tal:page
+  tal:define="ajax_load python:request.set('ajax_load', True);
+      ajax_include_head python:request.set('ajax_include_head', True)">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
@@ -124,14 +128,14 @@
           </div>
           <div class="important">
             <h2 i18n:translate="">Estimation</h2>
-            <p i18n:translate="">You currently have <span class="strong" i18n:name="number_of_objects" tal:content="context/@@atct_migrator_helpers/objects_to_be_migrated">23</span> archetypes objects to be migrated.</p> 
-            <p i18n:translate="" tal:define="time context/@@atct_migrator_helpers/estimated_migration_time">The estimated time for the migration is around : 
-            <span class="strong">  
+            <p i18n:translate="">You currently have <span class="strong" i18n:name="number_of_objects" tal:content="context/@@atct_migrator_helpers/objects_to_be_migrated">23</span> archetypes objects to be migrated.</p>
+            <p i18n:translate="" tal:define="time context/@@atct_migrator_helpers/estimated_migration_time">The estimated time for the migration is around :
+            <span class="strong">
               <tal:block i18n:name="hours" content="time/hours">4</tal:block> hours
               <tal:block i18n:name="minutes" content="time/minutes">45</tal:block> minutes
               <tal:block i18n:name="seconds" content="time/seconds">23</tal:block> seconds
             </span>
-            </p> 
+            </p>
           </div>
           <div id="nothing-to-migrate" style="display: none;">
             <h2 i18n:translate="">No content to migrate</h2>
@@ -152,3 +156,4 @@
     </metal:bodytext>
   </body>
 </html>
+</tal:page>

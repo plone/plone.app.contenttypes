@@ -456,13 +456,13 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         migrationview = MigrationView(self.portal, None)
         stats = migrationview.stats()
-        self.assertEqual(stats, "[('ATDocument', 2), ('Folder', 1)]")
+        self.assertEqual(str(stats), "[('ATDocument', 2), ('Folder', 1)]")
         migrator = self.get_migrator(at_doc1, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(stats, "[('ATDocument', 1), ('Document', 1), "
+        self.assertEqual(str(stats), "[('ATDocument', 1), ('Document', 1), "
                          "('Folder', 1)]")
         migrator = self.get_migrator(at_doc2, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(stats, "[('Document', 2), ('Folder', 1)]")
+        self.assertEqual(str(stats), "[('Document', 2), ('Folder', 1)]")
