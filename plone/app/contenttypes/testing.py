@@ -8,6 +8,7 @@ from plone.app.testing import FunctionalTesting
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 from plone.app.testing import login
+
 from plone.testing import z2
 
 from zope.configuration import xmlconfig
@@ -30,10 +31,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
                       context=configurationContext)
 
     def setUpPloneSite(self, portal):
-        # make sure ATContentTypes is configured, for testing migration
-        if 'Document' not in portal.portal_types:
-            applyProfile(portal, 'Products.ATContentTypes:default')
-
         applyProfile(portal, 'plone.app.contenttypes:default')
         portal.acl_users.userFolderAddUser('admin',
                                            'secret',
@@ -52,10 +49,31 @@ class PloneAppContenttypes(PloneSandboxLayer):
         applyProfile(portal, 'plone.app.contenttypes:uninstall')
 
 
+class PloneAppContenttypesMigration(PloneSandboxLayer):
+
+    defaultBases = (PLONE_FIXTURE,)
+
+    def setUpZope(self, app, configurationContext):
+
+        z2.installProduct(app, 'Products.DateRecurringIndex')
+
+        import plone.app.contenttypes
+        xmlconfig.file(
+            'configure.zcml',
+            plone.app.contenttypes,
+            context=configurationContext
+        )
+
+
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
 PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
     name="PloneAppContenttypes:Integration"
+)
+PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE = PloneAppContenttypesMigration()
+PLONE_APP_CONTENTTYPES_MIGRATION_TESTING = IntegrationTesting(
+    bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,),
+    name="PloneAppContenttypes:Migration"
 )
 PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
