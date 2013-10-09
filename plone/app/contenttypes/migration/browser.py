@@ -70,7 +70,8 @@ class MigrateFromATContentTypes(BrowserView):
     def __call__(self,
                  content_types="all",
                  migrate_schemaextended_content=False,
-                 migrate_references=True):
+                 migrate_references=True,
+                 from_form=False):
 
         stats_before = 'State before:\n'
         stats_before += self.stats()
@@ -104,22 +105,25 @@ class MigrateFromATContentTypes(BrowserView):
             enable_link_integrity_checks=link_integrity
         )
 
-        if not_migrated:
-            msg = ("The following were not migrated as they "
-                   "have extended schemas (from "
-                   "archetypes.schemaextender): \n %s"
-                   % "\n".join(not_migrated))
-        else:
-            msg = "Default content types successfully migrated\n\n"
+        if not from_form:
+            if not_migrated:
+                msg = ("The following were not migrated as they "
+                       "have extended schemas (from "
+                       "archetypes.schemaextender): \n %s"
+                       % "\n".join(not_migrated))
+            else:
+                msg = "Default content types successfully migrated\n\n"
 
-        msg += '\n-----------------------------\n'
-        msg += stats_before
-        msg += '\n-----------------------------\n'
-        msg += 'Stats after:\n'
-        msg += self.stats()
-        msg += '\n-----------------------------\n'
-        msg += 'migration done - somehow. Be careful!'
-        return msg
+            msg += '\n-----------------------------\n'
+            msg += stats_before
+            msg += '\n-----------------------------\n'
+            msg += 'Stats after:\n'
+            msg += self.stats()
+            msg += '\n-----------------------------\n'
+            msg += 'migration done - somehow. Be careful!'
+            return msg
+        else:
+            return self.stats()
 
     def stats(self):
         results = {}
@@ -186,11 +190,13 @@ class ATCTMigratorForm(form.Form):
             (self.context, self.request),
             name=u'migrate_from_atct'
         )
-        migration_view(
+        results = migration_view(
             content_types=content_types,
             migrate_schemaextended_content=True,
             migrate_references=data['migrate_references'],
+            from_form=True,
         )
+        return results
 
     def updateActions(self):
         super(ATCTMigratorForm, self).updateActions()

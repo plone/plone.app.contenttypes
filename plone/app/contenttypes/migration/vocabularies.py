@@ -9,19 +9,22 @@ from plone.app.contenttypes.migration.utils import isSchemaExtended
 from .. import _
 
 
-def results(context, extended_types=False):
-    extended = {}
+def results(context, show_extended=False):
+    ext_dict = {}
     ifaces = []
     for k, v in ATCT_LIST.items():
         iface = v['iface'].__identifier__
-        real = isSchemaExtended(v['iface'])
+        extendend_fields = isSchemaExtended(v['iface'])
         expected = v['extended_fields']
-        is_extended = len(real) > len(expected)
-        if is_extended and extended_types:
+        is_extended = len(extendend_fields) > len(expected)
+        if is_extended and show_extended:
             ifaces.append(iface)
-            extended[k]['fields'] = real.remove(expected[0])
+            ext_dict[k] = {}
+            if expected:
+                extendend_fields.remove(expected[0])
+            ext_dict[k]['fields'] = extendend_fields
 
-        elif not extended_types and not is_extended:
+        elif not show_extended and not is_extended:
             ifaces.append(iface)
     catalog = getToolByName(context, "portal_catalog")
     brains = catalog.search({'object_provides': ifaces})
@@ -34,13 +37,17 @@ def results(context, extended_types=False):
 
     results = []
     for k, v in counter.iteritems():
-        if extended_types:
-            display = "{0} ({1}) - extended fields: {2}".format(context.translate(_(k)), v, extended[k]['fields'])
+        if not show_extended:
+            if k not in ext_dict:
+                display = "{0} ({1})".format(context.translate(_(k)), v)
+                term = SimpleVocabulary.createTerm(k, k, display)
+                results.append(term)
         else:
-            display = "{0} ({1})".format(context.translate(_(k)), v)
-        term = SimpleVocabulary.createTerm(k, k, display)
-        results.append(term)
-        # for k, v in counter.iteritems()
+            if k in ext_dict:
+                ext = str(ext_dict[k]['fields']).replace("[", "").replace("]", "")
+                display = "{0} ({1}) - extended fields: {2}".format(context.translate(_(k)), v, ext)
+                term = SimpleVocabulary.createTerm(k, k, display)
+                results.append(term)
     results.sort(key=lambda x: x.title)
 
     return SimpleVocabulary(results)
@@ -53,7 +60,7 @@ class ATCTypesVocabulary(object):
         """Return a vocabulary with standard content types
         and, for each one, the number of occurrences
         """
-        return results(context, extended_types=False)
+        return results(context, show_extended=False)
 
 
 class ExtendedTypesVocabulary(object):
@@ -62,4 +69,4 @@ class ExtendedTypesVocabulary(object):
     def __call__(self, context):
         """bla
         """
-        return results(context, extended_types=True)
+        return results(context, show_extended=True)

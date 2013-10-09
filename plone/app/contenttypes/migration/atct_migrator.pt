@@ -69,6 +69,22 @@
 
   </metal:block>
 
+
+<metal:head fill-slot="javascript_head_slot">
+<script type="text/javascript">
+  jQuery(function($) {
+    var el = $("#formfield-form-widgets-extended_content, #formfield-form-widgets-content_types");
+    el.each(function(i) {
+      if (!($(".option", el[i]).length)) {
+        $(el[i]).hide();
+      }
+    })
+  });
+</script>
+</metal:head>
+
+
+
   <body metal:use-macro="content">
 
     <metal:bodytext fill-slot="main">

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pkg_resources
 from zope.component import getGlobalSiteManager
+from zope.component.hooks import getSite
 
 from Products.ATContentTypes.interfaces.document import IATDocument
 from Products.ATContentTypes.interfaces.file import IATFile
@@ -44,12 +45,12 @@ ATCT_LIST = {
     "File": {
         'iface': IATFile,
         'migrator': migration.migrate_files,
-        'extended_fields': [],
+        'extended_fields': ['file'],
     },
     "Image": {
         'iface': IATImage,
         'migrator': migration.migrate_images,
-        'extended_fields': [],
+        'extended_fields': ['image'],
     },
     "News Item": {
         'iface': IATNewsItem,
@@ -81,7 +82,33 @@ if HAS_APP_COLLECTION:
     }
 
 
-def isSchemaExtended(interface):
+def isSchemaExtended(iface):
+    """Return whether a specific content type
+    is extended by archetypes.schemaextender or not
+    """
+    fields = _compareSchemata(iface)
+    fields2 = _checkForExtenderInterfaces(iface)
+    fields.extend(fields2)
+    return [i for i in set(fields)]
+
+
+def _compareSchemata(interface):
+    """Return whether a specific content type
+    is extended by archetypes.schemaextender or not
+    """
+    portal = getSite()
+    pc = portal.portal_catalog
+    brains = pc(object_provides=interface.__identifier__)
+    if brains:
+        obj = brains[0].getObject()
+        real_fields = set(obj.Schema()._names)
+        orig_fields = set(obj.schema._names)
+        diff = [i for i in real_fields.difference(orig_fields)]
+        return diff
+    return []
+
+
+def _checkForExtenderInterfaces(interface):
     """Return whether a specific content type interface
     is extended by archetypes.schemaextender or not
     """
