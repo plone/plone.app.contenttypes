@@ -591,6 +591,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual((), tuple(vocabulary))
 
     def test_migration_extendedtypes_vocabulary_result(self):
+        from archetypes.schemaextender.extender import CACHE_ENABLED
+        from archetypes.schemaextender.extender import CACHE_KEY
         from archetypes.schemaextender.field import ExtensionField
         from archetypes.schemaextender.interfaces import ISchemaExtender
         from Products.Archetypes import atapi
@@ -601,7 +603,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from zope.interface import implements
         from zope.interface import Interface
 
-        SCHEMA_EXTENDER_CACHE_KEY = '__archetypes_schemaextender_cache'
 
         name = 'plone.app.contenttypes.migration.extendedtypes'
         factory = getUtility(IVocabularyFactory, name)
@@ -631,7 +632,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         provideAdapter(DummySchemaExtender, name=u"dummy.extender")
 
         # Clear cache
-        delattr(self.request, SCHEMA_EXTENDER_CACHE_KEY)
+        if CACHE_ENABLED:
+            delattr(self.request, CACHE_KEY)
         self.assertIn('dummy', doc.Schema()._names)
 
         vocabulary = factory(self.portal)
