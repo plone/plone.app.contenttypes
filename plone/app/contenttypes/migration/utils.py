@@ -83,8 +83,7 @@ if HAS_APP_COLLECTION:
 
 
 def isSchemaExtended(iface):
-    """Return whether a specific content type
-    is extended by archetypes.schemaextender or not
+    """Return a list of fields added by archetypes.schemaextender
     """
     fields = _compareSchemata(iface)
     fields2 = _checkForExtenderInterfaces(iface)
@@ -93,8 +92,8 @@ def isSchemaExtended(iface):
 
 
 def _compareSchemata(interface):
-    """Return whether a specific content type
-    is extended by archetypes.schemaextender or not
+    """Return a list of extended fields by archetypes.schemaextender
+    by comparing the real and the default schemata.
     """
     portal = getSite()
     pc = portal.portal_catalog
@@ -110,7 +109,7 @@ def _compareSchemata(interface):
 
 def _checkForExtenderInterfaces(interface):
     """Return whether a specific content type interface
-    is extended by archetypes.schemaextender or not
+    is extended by archetypes.schemaextender or not.
     """
     sm = getGlobalSiteManager()
     extender_interfaces = [
