@@ -44,9 +44,10 @@ setup(name='plone.app.contenttypes',
       ],
       extras_require={
           'test': [
+              'archetypes.schemaextender',
               'lxml',
-              'plone.app.testing[robot]',
               'plone.app.robotframework',
+              'plone.app.testing[robot]',
               'Products.ATContentTypes',
               'Products.contentmigration',
           ],
