@@ -75,7 +75,7 @@ class FileIntegrationTest(unittest.TestCase):
         view = file.restrictedTraverse('@@view')
 
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
+        self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My File' in view())
         self.assertTrue('This is my file.' in view())
 

@@ -88,7 +88,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
         view = news_item.restrictedTraverse('@@view')
 
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
+        self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My News Item' in view())
         self.assertTrue('This is my news item.' in view())
         self.assertTrue('Lorem ipsum' in view())

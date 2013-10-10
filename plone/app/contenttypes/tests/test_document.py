@@ -80,7 +80,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         view = document.restrictedTraverse('@@view')
 
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
+        self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My Document' in view())
         self.assertTrue('This is my document.' in view())
         self.assertTrue('Lorem ipsum' in view())

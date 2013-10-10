@@ -498,7 +498,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                              'Vocabulary %s does not exist' % name)
 
         vocabulary = factory(self.portal)
-        self.assertEquals((), tuple(vocabulary))
+        self.assertEqual((), tuple(vocabulary))
 
     def test_migration_atctypes_vocabulary_result(self):
         from Products.ATContentTypes.content.document import ATDocument
@@ -519,15 +519,15 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         vocabulary = factory(self.portal)
 
-        self.assertEquals(
+        self.assertEqual(
             5,
             len(vocabulary),
             'Expect 5 entries in vocab because there are 5 diffrent types')
 
         # Result format
         docs = [term for term in vocabulary if term.token == 'Document'][0]
-        self.assertEquals('Document', docs.value)
-        self.assertEquals('Document (2)', docs.title)
+        self.assertEqual('Document', docs.value)
+        self.assertEqual('Document (2)', docs.title)
 
     def test_migration_extendedtypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.extendedtypes'
@@ -536,7 +536,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                              'Vocabulary %s does not exist' % name)
 
         vocabulary = factory(self.portal)
-        self.assertEquals((), tuple(vocabulary))
+        self.assertEqual((), tuple(vocabulary))
 
     def test_migration_extendedtypes_vocabulary_result(self):
         from archetypes.schemaextender.field import ExtensionField
@@ -584,7 +584,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         vocabulary = factory(self.portal)
 
-        self.assertEquals(1, len(vocabulary), 'Expect one entry')
+        self.assertEqual(1, len(vocabulary), 'Expect one entry')
 
-        self.assertEquals("Document (1) - extended fields: 'dummy'",
+        self.assertEqual("Document (1) - extended fields: 'dummy'",
                           tuple(vocabulary)[0].title)

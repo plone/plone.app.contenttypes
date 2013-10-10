@@ -75,7 +75,7 @@ class EventIntegrationTest(unittest.TestCase):
         # TODO: start/end are not set??
         #
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
+        self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My Event' in view())
         self.assertTrue('This is my event.' in view())
 
