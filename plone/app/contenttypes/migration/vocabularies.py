@@ -10,6 +10,8 @@ from .. import _
 
 
 def results(context, show_extended=False):
+    """Helper method to create the vocabularies used below.
+    """
     ext_dict = {}
     ifaces = []
     for k, v in ATCT_LIST.items():
@@ -65,7 +67,7 @@ class ATCTypesVocabulary(object):
 
     def __call__(self, context):
         """Return a vocabulary with standard content types
-        and, for each one, the number of occurrences
+        and, for each one, the number of occurrences.
         """
         return results(context, show_extended=False)
 
@@ -74,6 +76,8 @@ class ExtendedTypesVocabulary(object):
     implements(IVocabularyFactory)
 
     def __call__(self, context):
-        """bla
+        """Return a vocabulary with all extended types
+        and for each the number of occurences and a list of the
+        extended fields.
         """
         return results(context, show_extended=True)

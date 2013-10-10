@@ -38,8 +38,8 @@ class FixBaseClasses(BrowserView):
 
     def __call__(self):
         """Make sure all content objects use the proper base classes.
-           Instances before version 1.0b1 had no base-class.
-           To update them call @@fix_base_classes on your site-root.
+        Instances before version 1.0b1 had no base-class.
+        To update them call @@fix_base_classes on your site-root.
         """
         out = ""
         portal_types = [
@@ -68,7 +68,10 @@ class FixBaseClasses(BrowserView):
 
 
 class MigrateFromATContentTypes(BrowserView):
-    """ Migrate the default-types (except event and topic)
+    """ Migrate the default-types (except event and topic).
+    This view can be called directly and it will migrate all content
+    provided they were not schema-extended.
+    This is also called by the migration-form below with some variables.
     """
 
     def __call__(self,
@@ -93,18 +96,22 @@ class MigrateFromATContentTypes(BrowserView):
             if content_types != "all" and k not in content_types:
                 not_migrated.append(k)
                 continue
+            # test if the ct is extended beyond blobimage and blobfile
             if len(isSchemaExtended(v['iface'])) > len(v['extended_fields']) \
                     and not migrate_schemaextended_content:
                 not_migrated.append(k)
                 continue
+            # call the migrator
             v['migrator'](portal)
 
-        # TODO: migration.migrate_blobnewsitems(portal)
+        # if there are blobnewsitems we just migrate them silently.
+        migration.migrate_blobnewsitems(portal)
+
         if migrate_references:
             migration.restoreReferences(portal)
             migration.restoreReferencesOrder(portal)
 
-        # switch linkintegrity back
+        # switch linkintegrity back to what it was before migrating
         site_props.manage_changeProperties(
             enable_link_integrity_checks=link_integrity
         )
@@ -201,6 +208,7 @@ class ATCTMigratorForm(form.Form):
             (context, self.request),
             name=u'migrate_from_atct'
         )
+        # call the migration-view above to actually migrate stuff.
         results = migration_view(
             content_types=content_types,
             migrate_schemaextended_content=True,
