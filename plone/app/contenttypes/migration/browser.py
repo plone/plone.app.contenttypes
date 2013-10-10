@@ -244,6 +244,11 @@ class ATCTMigratorHelpers(BrowserView):
             'seconds': seconds
         }
 
+    def linguaplone_installed(self):
+        """ Is Products.LinguaPlone installed ? """
+        pq = getToolByName(self.context, 'portal_quickinstaller')
+        return pq.isProductInstalled('LinguaPlone')
+
 
 class ATCTMigratorResults(BrowserView):
 
