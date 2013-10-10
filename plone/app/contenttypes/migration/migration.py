@@ -373,9 +373,8 @@ def migrate_collections(portal):
     return migrate(portal, CollectionMigrator)
 
 
-class EventMigrator(DocumentMigrator):
-    """  Use DocumentMigrator since it also migrates the text
-    (IEventSummary) field
+class EventMigrator(ATCTContentMigrator):
+    """
     """
 
     src_portal_type = 'Event'
@@ -384,7 +383,7 @@ class EventMigrator(DocumentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        super(EventMigrator, self).migrate_schema_fields()
+        # super(EventMigrator, self).migrate_schema_fields()
 
         old_start = self.old.getField('startDate').get(self.old)
         old_end = self.old.getField('endDate').get(self.old)
@@ -394,6 +393,13 @@ class EventMigrator(DocumentMigrator):
         old_contactname = self.old.getField('contactName').get(self.old)
         old_contactemail = self.old.getField('contactEmail').get(self.old)
         old_contactphone = self.old.getField('contactPhone').get(self.old)
+        old_text_field = self.old.getField('text')
+        raw_text = safe_unicode(old_text_field.getRaw(self.old))
+        mime_type = old_text_field.getContentType(self.old)
+        if raw_text.strip() == '':
+            raw_text = ''
+        old_richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
+                                     outputMimeType='text/x-html-safe')
 
         acc = IEventAccessor(self.new)
         acc.start = old_start.asdatetime()  # IEventBasic
@@ -405,6 +411,7 @@ class EventMigrator(DocumentMigrator):
         acc.contact_name = old_contactname  # IEventContact
         acc.contact_email = old_contactemail  # IEventContact
         acc.contact_phone = old_contactphone  # IEventContact
+        acc.text = old_richtext.raw
 
 def migrate_events(portal):
     return migrate(portal, EventMigrator)

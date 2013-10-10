@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from plone.app.contenttypes.migration.migration import restoreReferences
@@ -402,8 +403,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_event_is_migrated(self):
         from DateTime import DateTime
         from plone.app.contenttypes.migration.migration import EventMigrator
-        from plone.app.textfield.interfaces import IRichTextValue
-
 
         # create an ATEvent
         self.portal.invokeFactory('Event', 'event')
@@ -428,6 +427,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # Text
         at_event.setText('Tütensuppe')
+        at_text = safe_unicode(at_event.getRawText())
         at_event.setContentType('chemical/x-gaussian-checkpoint')
 
         # migrate
@@ -437,7 +437,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # assertions
         dx_event = self.portal['event']
-
         dx_acc = IEventAccessor(dx_event)
         self.assertEqual('%s+00:00' % start.asdatetime().isoformat(),
                          dx_acc.start.isoformat())
@@ -448,14 +447,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual('Name', dx_acc.contact_name)
         self.assertEqual('http://www.plone.org', dx_acc.event_url)
         self.assertEqual(('You', 'Me'), dx_acc.attendees)
-
-        self.assertTrue(IRichTextValue(dx_event.text))
-        self.assertEqual(dx_event.text.raw, u'Tütensuppe')
-        self.assertEqual(dx_event.text.mimeType,
-                         'chemical/x-gaussian-checkpoint')
-        self.assertEqual(dx_event.text.outputMimeType, 'text/x-html-safe')
-
-        # self.assertEquals('Event', dx_event.__class__.__name__)
+        self.assertEqual(dx_acc.text, at_text)
+        self.assertEquals('Item', dx_event.__class__.__name__)
 
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
