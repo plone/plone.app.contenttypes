@@ -53,7 +53,7 @@ class LinkIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(ILink.providedBy(new_object))
+        self.assertTrue(ILink.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(

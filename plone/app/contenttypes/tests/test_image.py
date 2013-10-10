@@ -63,7 +63,7 @@ class ImageIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IImage.providedBy(new_object))
+        self.assertTrue(IImage.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(

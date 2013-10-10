@@ -55,7 +55,7 @@ class FileIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IFile.providedBy(new_object))
+        self.assertTrue(IFile.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(

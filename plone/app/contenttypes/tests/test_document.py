@@ -55,7 +55,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IDocument.providedBy(new_object))
+        self.assertTrue(IDocument.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(

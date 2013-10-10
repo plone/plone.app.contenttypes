@@ -64,7 +64,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(INewsItem.providedBy(new_object))
+        self.assertTrue(INewsItem.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(
@@ -104,7 +104,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
             'plone.abovecontenttitle',
             default=None
         )
-        self.failUnless(manager)
+        self.assertTrue(manager)
         manager.update()
         leadimage_viewlet = [
             v for v in manager.viewlets

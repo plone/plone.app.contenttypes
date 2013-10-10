@@ -51,7 +51,7 @@ class FolderIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IFolder.providedBy(new_object))
+        self.assertTrue(IFolder.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(

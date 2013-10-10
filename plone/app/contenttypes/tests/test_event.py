@@ -50,7 +50,7 @@ class EventIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IEvent.providedBy(new_object))
+        self.assertTrue(IEvent.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(
