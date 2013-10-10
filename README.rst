@@ -79,6 +79,8 @@ Migration
 
 **Warning: Migrations are in an early stage and might break your site in some cases! Please read this thoroughly!**
 
+To migrate your content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
+
 plone.app.contenttypes includes migrations for the following use-cases:
 
 * from default Archetypes-based types to plone.app.contenttypes
@@ -108,8 +110,7 @@ plone.app.contenttypes can migrate the following types:
 * File
 * Image
 * Link
-
-To migrate existing content go to ``/@@migrate_from_atct``.
+* Collection
 
 
 Migrating content that is translated with LinguaPlone
@@ -195,8 +196,10 @@ Contributors
 * Michael Mulich <michael.mulich@gmail.com>
 * Timo Stollenwerk <contact@timostollenwerk.net>
 * Peter Holzer <hpeter@agitator.com>
-* Patrick Gerken
+* Patrick Gerken <gerken@starzel.de>
 * Steffen Lindner
 * Daniel Widerin
 * Jens Klein <jens@bluedynamics.com>
-
+* Joscha Krutzki <joka@jokasis.de>
+* Mathias Leimgruber <m.leimgruber@4teamwork.ch>
+* Matthias Broquet <mbroquet@atreal.fr>

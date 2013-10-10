@@ -4,6 +4,15 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- Add tests for vocabularies used for the migration
+  [maethu]
+
+- Add migration-form /@@atct_migrate based on initial work by gborelli
+  [pbauer, tiazma]
+
+- Add ATBlob tests and use migration layer for test_migration
+  [joka]
+
 - Integrate plone.app.event.
   [thet]
 
@@ -19,7 +28,6 @@ Changelog
 
 - Add link and popup to the image of News Items.
   [pbauer]
->>>>>>> master
 
 - Use the default profile title for the example content profile.
   [timo]
