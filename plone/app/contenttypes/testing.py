@@ -61,7 +61,6 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
 
         z2.installProduct(app, 'Products.Archetypes')
         z2.installProduct(app, 'Products.ATContentTypes')
-        z2.installProduct(app, 'archetypes.schemaextender')
         z2.installProduct(app, 'plone.app.blob')
         # prepare installing plone.app.collection
         try:
@@ -87,7 +86,6 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         except pkg_resources.DistributionNotFound:
             pass
         z2.uninstallProduct(app, 'plone.app.blob')
-        z2.uninstallProduct(app, 'archetypes.schemaextender')
         z2.uninstallProduct(app, 'Products.ATContentTypes')
         z2.uninstallProduct(app, 'Products.Archetypes')
 
