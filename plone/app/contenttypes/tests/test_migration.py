@@ -5,8 +5,9 @@ from five.intid.site import addUtility
 from plone.app.contenttypes.migration.migration import restoreReferences
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
-from plone.app.testing import applyProfile
+from plone.event.interfaces import IEventAccessor
 from plone.app.testing import login
+from plone.app.testing import applyProfile
 from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
@@ -397,6 +398,64 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(dx_newsitem.text.mimeType,
                          'chemical/x-gaussian-checkpoint')
         self.assertEqual(dx_newsitem.text.outputMimeType, 'text/x-html-safe')
+
+    def test_event_is_migrated(self):
+        from DateTime import DateTime
+        from plone.app.contenttypes.migration.migration import EventMigrator
+        from plone.app.textfield.interfaces import IRichTextValue
+
+
+        # create an ATEvent
+        self.portal.invokeFactory('Event', 'event')
+        at_event = self.portal['event']
+
+        # Date
+        start = DateTime('2013-01-01')
+        end = DateTime('2013-02-01')
+        at_event.getField('startDate').set(at_event, DateTime('2013-01-01'))
+        at_event.getField('endDate').set(at_event, DateTime('2013-02-01'))
+
+        # Contact
+        at_event.getField('contactPhone').set(at_event, '123456789')
+        at_event.getField('contactEmail').set(at_event, 'dummy@email.com')
+        at_event.getField('contactName').set(at_event, 'Name')
+
+        # URL
+        at_event.getField('eventUrl').set(at_event, 'http://www.plone.org')
+
+        # Attendees
+        at_event.getField('attendees').set(at_event, ('You', 'Me'))
+
+        # Text
+        at_event.setText('Tütensuppe')
+        at_event.setContentType('chemical/x-gaussian-checkpoint')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_event, EventMigrator)
+        migrator.migrate()
+
+        # assertions
+        dx_event = self.portal['event']
+
+        dx_acc = IEventAccessor(dx_event)
+        self.assertEqual('%s+00:00' % start.asdatetime().isoformat(),
+                         dx_acc.start.isoformat())
+        self.assertEqual('%s+00:00' % end.asdatetime().isoformat(),
+                         dx_acc.end.isoformat())
+        self.assertEqual('123456789', dx_acc.contact_phone)
+        self.assertEqual('dummy@email.com', dx_acc.contact_email)
+        self.assertEqual('Name', dx_acc.contact_name)
+        self.assertEqual('http://www.plone.org', dx_acc.event_url)
+        self.assertEqual(('You', 'Me'), dx_acc.attendees)
+
+        self.assertTrue(IRichTextValue(dx_event.text))
+        self.assertEqual(dx_event.text.raw, u'Tütensuppe')
+        self.assertEqual(dx_event.text.mimeType,
+                         'chemical/x-gaussian-checkpoint')
+        self.assertEqual(dx_event.text.outputMimeType, 'text/x-html-safe')
+
+        # self.assertEquals('Event', dx_event.__class__.__name__)
 
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator

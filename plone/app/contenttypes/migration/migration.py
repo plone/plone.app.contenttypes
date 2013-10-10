@@ -19,6 +19,7 @@ from persistent.list import PersistentList
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from plone.event.interfaces import IEventAccessor
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from z3c.relationfield import RelationValue
@@ -370,3 +371,40 @@ class CollectionMigrator(DocumentMigrator):
 
 def migrate_collections(portal):
     return migrate(portal, CollectionMigrator)
+
+
+class EventMigrator(DocumentMigrator):
+    """  Use DocumentMigrator since it also migrates the text
+    (IEventSummary) field
+    """
+
+    src_portal_type = 'Event'
+    src_meta_type = 'ATEvent'
+    dst_portal_type = 'Event'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        super(EventMigrator, self).migrate_schema_fields()
+
+        old_start = self.old.getField('startDate').get(self.old)
+        old_end = self.old.getField('endDate').get(self.old)
+        old_location = self.old.getField('location').get(self.old)
+        old_attendees = self.old.getField('attendees').get(self.old)
+        old_eventurl = self.old.getField('eventUrl').get(self.old)
+        old_contactname = self.old.getField('contactName').get(self.old)
+        old_contactemail = self.old.getField('contactEmail').get(self.old)
+        old_contactphone = self.old.getField('contactPhone').get(self.old)
+
+        acc = IEventAccessor(self.new)
+        acc.start = old_start.asdatetime()  # IEventBasic
+        acc.end = old_end.asdatetime()  # IEventBasic
+        acc.timezone = 'UTC'  # IEventBasic
+        acc.location = old_location  # IEventLocation
+        acc.attendees = old_attendees  # IEventAttendees
+        acc.event_url = old_eventurl  # IEventContact
+        acc.contact_name = old_contactname  # IEventContact
+        acc.contact_email = old_contactemail  # IEventContact
+        acc.contact_phone = old_contactphone  # IEventContact
+
+def migrate_events(portal):
+    return migrate(portal, EventMigrator)

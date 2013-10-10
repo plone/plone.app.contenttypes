@@ -17,8 +17,6 @@ from zope.component import queryUtility
 from zope.component import getMultiAdapter
 from zope.interface import Interface
 
-# Old interfaces
-
 # Schema Extender allowed interfaces
 
 from plone.app.contenttypes.content import (
@@ -92,6 +90,7 @@ class MigrateFromATContentTypes(BrowserView):
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
 
         not_migrated = []
+
         for (k, v) in ATCT_LIST.items():
             if content_types != "all" and k not in content_types:
                 not_migrated.append(k)
