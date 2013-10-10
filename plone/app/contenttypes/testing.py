@@ -55,6 +55,7 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
 
+        # prepare installing plone.app.contenttypes
         z2.installProduct(app, 'Products.DateRecurringIndex')
 
         import plone.app.contenttypes
@@ -63,6 +64,12 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
             plone.app.contenttypes,
             context=configurationContext
         )
+
+    def setUpPloneSite(self, portal):
+        # Plone >= 5: manually install Products.ATContentTypes
+        profiles = [x['id'] for x in portal.portal_setup.listProfileInfo()]
+        if 'Products.ATContentTypes:default' in profiles:
+            applyProfile(portal, 'Products.ATContentTypes:default')
 
 
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
