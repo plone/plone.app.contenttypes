@@ -165,25 +165,10 @@ def _setup_constrains(container, allowed_types):
         return True
 
 
-def importContent(context):
-    """Remove existing AT-content and create DX-content instead."""
-
-    if context.readDataFile('plone.app.contenttypes_content.txt') is None:
-        return
-    portal = context.getSite()
-    # Because the portal doesn't implement __contains__?
-    target_language, is_combined_language, locale = _get_locales_info(portal)
-
-    # Set up Language specific information
-    _set_language_settings(portal, is_combined_language)
-    _setup_calendar(locale)
-    _setup_visible_ids(target_language, locale)
-    _delete_at_example_content(portal)
-
-    existing_content = portal.keys()
-    # The front-page
+def create_frontpage(portal, target_language):
     frontpage_id = 'front-page'
-    if frontpage_id not in existing_content:
+
+    if frontpage_id not in portal.keys():
         title = _translate(
             u'front-title',
             target_language,
@@ -226,9 +211,11 @@ def importContent(context):
         _publish(content)
         content.reindexObject()
 
-    # News topic
+
+def create_news_topic(portal, target_language):
     news_id = 'news'
-    if news_id not in existing_content:
+
+    if news_id not in portal.keys():
         title = _translate(u'news-title', target_language, u'News')
         description = _translate(u'news-description', target_language,
                                  u'Site News')
@@ -268,9 +255,11 @@ def importContent(context):
 
         _publish(aggregator)
 
-    # Events topic
+
+def create_events_topic(portal, target_language):
     events_id = 'events'
-    if events_id not in existing_content:
+
+    if events_id not in portal.keys():
         title = _translate(u'events-title', target_language, u'Events')
         description = _translate(u'events-description', target_language,
                                  u'Site Events')
@@ -313,9 +302,11 @@ def importContent(context):
         ]
         _publish(aggregator)
 
-    # configure Members folder
+
+def configure_members_folder(portal, target_language):
     members_id = 'Members'
-    if members_id not in existing_content:
+
+    if members_id not in portal.keys():
         title = _translate(u'members-title', target_language, u'Users')
         description = _translate(u'members-description', target_language,
                                  u"Site Users")
@@ -344,6 +335,34 @@ def importContent(context):
             assignable.setBlacklistStatus('context', True)
             assignable.setBlacklistStatus('group', True)
             assignable.setBlacklistStatus('content_type', True)
+
+
+def importContent(context):
+    """Remove existing AT-content and create DX-content instead."""
+
+    if context.readDataFile('plone.app.contenttypes_content.txt') is None:
+        return
+    portal = context.getSite()
+    # Because the portal doesn't implement __contains__?
+    target_language, is_combined_language, locale = _get_locales_info(portal)
+
+    # Set up Language specific information
+    _set_language_settings(portal, is_combined_language)
+    _setup_calendar(locale)
+    _setup_visible_ids(target_language, locale)
+    _delete_at_example_content(portal)
+
+    # The front-page
+    create_frontpage(portal, target_language)
+
+    # News topic
+    create_news_topic(portal, target_language)
+
+    # Events topic
+    create_events_topic(portal, target_language)
+
+    # configure Members folder
+    configure_members_folder(portal, target_language)
 
 
 def _delete_at_example_content(portal):

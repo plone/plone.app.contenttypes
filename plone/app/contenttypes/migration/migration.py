@@ -34,66 +34,85 @@ def migrate(portal, migrator):
     return walker
 
 
+def refs(obj):
+    intids = getUtility(IIntIds)
+    out = ''
+
+    try:
+        if not getattr(obj, 'relatedItems', None):
+            obj.relatedItems = PersistentList()
+
+        elif type(obj.relatedItems) != type(PersistentList()):
+            obj.relatedItems = PersistentList(obj.relatedItems)
+
+        for uuid in obj._relatedItems:
+            to_obj = uuidToObject(uuid)
+            to_id = intids.getId(to_obj)
+            obj.relatedItems.append(RelationValue(to_id))
+            out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
+        # keep the _relatedItems to restore the order
+        # del obj._relatedItems
+
+    except AttributeError:
+        pass
+    return out
+
+
+def backrefs(portal, obj):
+    intids = getUtility(IIntIds)
+    uid_catalog = getToolByName(portal, 'uid_catalog')
+    out = ''
+
+    try:
+        backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
+        for backrefobj in backrefobjs:
+            # Dexterity and
+            if IDexterityContent.providedBy(backrefobj):
+                relitems = getattr(backrefobj, 'relatedItems', None)
+                if not relitems:
+                    backrefobj.relatedItems = PersistentList()
+                elif type(relitems) != type(PersistentList()):
+                    backrefobj.relatedItems = PersistentList(
+                        obj.relatedItems
+                    )
+                to_id = intids.getId(obj)
+                backrefobj.relatedItems.append(RelationValue(to_id))
+
+            # Archetypes
+            elif IATContentType.providedBy(backrefobj):
+                # reindex UID so we are able to set the reference
+                path = '/'.join(obj.getPhysicalPath())
+                uid_catalog.catalog_object(obj, path)
+                backrefobj.setRelatedItems(obj)
+            out += str(
+                'Restore BackRelation from %s to %s \n' % (
+                    backrefobj,
+                    obj
+                )
+            )
+        del obj._backrefs
+    except AttributeError:
+        pass
+    return out
+
+
 def restoreReferences(portal):
     """ iterate over all Dexterity Objs and restore as Dexterity Reference. """
     out = ''
     catalog = getToolByName(portal, "portal_catalog")
-    uid_catalog = getToolByName(portal, 'uid_catalog')
     # Seems that these newly created objs are not reindexed
     catalog.clearFindAndRebuild()
-    intids = getUtility(IIntIds)
     results = catalog.searchResults(
         object_provides=IDexterityContent.__identifier__)
+
     for brain in results:
         obj = brain.getObject()
 
         # refs
-        try:
-            if not getattr(obj, 'relatedItems', None):
-                obj.relatedItems = PersistentList()
-            elif type(obj.relatedItems) != type(PersistentList()):
-                obj.relatedItems = PersistentList(obj.relatedItems)
-            for uuid in obj._relatedItems:
-                to_obj = uuidToObject(uuid)
-                to_id = intids.getId(to_obj)
-                obj.relatedItems.append(RelationValue(to_id))
-                out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
-            # keep the _relatedItems to restore the order
-            # del obj._relatedItems
-        except AttributeError:
-            pass
-
+        out += refs(obj)
         # backrefs
-        try:
-            backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
-            for backrefobj in backrefobjs:
-                # Dexterity and
-                if IDexterityContent.providedBy(backrefobj):
-                    relitems = getattr(backrefobj, 'relatedItems', None)
-                    if not relitems:
-                        backrefobj.relatedItems = PersistentList()
-                    elif type(relitems) != type(PersistentList()):
-                        backrefobj.relatedItems = PersistentList(
-                            obj.relatedItems
-                        )
-                    to_id = intids.getId(obj)
-                    backrefobj.relatedItems.append(RelationValue(to_id))
+        out += backrefs(portal, obj)
 
-                # Archetypes
-                elif IATContentType.providedBy(backrefobj):
-                    # reindex UID so we are able to set the reference
-                    path = '/'.join(obj.getPhysicalPath())
-                    uid_catalog.catalog_object(obj, path)
-                    backrefobj.setRelatedItems(obj)
-                out += str(
-                    'Restore BackRelation from %s to %s \n' % (
-                        backrefobj,
-                        obj
-                    )
-                )
-            del obj._backrefs
-        except AttributeError:
-            pass
     return out
 
 
