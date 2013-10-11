@@ -13,7 +13,6 @@ from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
 
 import os.path
-import transaction
 import unittest2 as unittest
 
 
@@ -34,9 +33,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         login(self.portal, 'admin')
         self.portal.portal_workflow.setDefaultChain(
             "simple_publication_workflow")
-        transaction.commit()
 
-    def tearDownPloneSite(self, portal):
+    def tearDown(self):
         try:
             applyProfile(self.portal, 'plone.app.contenttypes:uninstall')
         except KeyError:
@@ -66,6 +64,56 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         obj = obj.__of__(parent)
         obj.initializeArchetype()
         return obj
+
+    def createATCTBlobNewsItem(self, id, parent=None):
+        from Products.Archetypes.atapi import StringField, TextField
+        from Products.ATContentTypes.interface import IATNewsItem
+        from archetypes.schemaextender.interfaces import ISchemaExtender
+        from archetypes.schemaextender.field import ExtensionField
+        from plone.app.blob.subtypes.image import ExtensionBlobField
+        from zope.component import getGlobalSiteManager
+        from zope.interface import implements
+
+        # create schema extension
+        class ExtensionTextField(ExtensionField, TextField):
+            """ derivative of text for extending schemas """
+
+        class ExtensionStringField(ExtensionField, StringField):
+            """ derivative of text for extending schemas """
+
+        class SchemaExtender(object):
+            implements(ISchemaExtender)
+            fields = [
+                ExtensionTextField('text',
+                                   primary=True,
+                                   ),
+                ExtensionBlobField('image',
+                                   accessor='getImage',
+                                   mutator='setImage',
+                                   ),
+                ExtensionStringField('imageCaption',
+                                     ),
+            ]
+
+            def __init__(self, context):
+                self.context = context
+
+            def getFields(self):
+                return self.fields
+
+        # register adapter
+        gsm = getGlobalSiteManager()
+        gsm.registerAdapter(SchemaExtender, (IATNewsItem,), ISchemaExtender)
+
+        # create content
+        container = parent or self.portal
+        container.invokeFactory('News Item', id)
+        at_newsitem = container['newsitem']
+
+        # unregister adapter assure test isolation
+        gsm.unregisterAdapter(required=[IATNewsItem], provided=ISchemaExtender)
+
+        return at_newsitem
 
     def test_assert_at_contenttypes(self):
         from plone.app.contenttypes.interfaces import IDocument
@@ -235,8 +283,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from plone.app.contenttypes.migration.migration import ImageMigrator
         from plone.namedfile.interfaces import INamedBlobImage
         from Products.ATContentTypes.content.image import ATImage
-
-        # create the ATImage
         at_image = self.createATCTobject(ATImage, 'image')
         test_image_data = self.get_test_image_data()
         field = at_image.getField('image')
@@ -398,6 +444,51 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                          'chemical/x-gaussian-checkpoint')
         self.assertEqual(dx_newsitem.text.outputMimeType, 'text/x-html-safe')
 
+    def test_blob_newsitem_is_migrated(self):
+        from plone.app.contenttypes.migration.migration import\
+            BlobNewsItemMigrator
+        from plone.app.contenttypes.interfaces import INewsItem
+        at_newsitem = self.createATCTBlobNewsItem('newsitem')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_newsitem, BlobNewsItemMigrator)
+        migrator.migrate()
+        dx_newsitem = self.portal['newsitem']
+        self.assertTrue(INewsItem.providedBy(dx_newsitem))
+        self.assertTrue(at_newsitem is not dx_newsitem)
+
+    def test_blob_newsitem_content_is_migrated(self):
+        from plone.app.contenttypes.migration.migration import \
+            BlobNewsItemMigrator
+        from plone.app.textfield.interfaces import IRichTextValue
+        from plone.namedfile.interfaces import INamedBlobImage
+
+        # create a BlobATNewsItem
+        at_newsitem = self.createATCTBlobNewsItem('newsitem')
+        at_newsitem.setText('Tütensuppe')
+        at_newsitem.setContentType('chemical/x-gaussian-checkpoint')
+        at_newsitem.setImageCaption('Daniel Düsentrieb')
+        test_image_data = self.get_test_image_data()
+        at_newsitem.setImage(test_image_data, filename='testimage.png')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_newsitem, BlobNewsItemMigrator)
+        migrator.migrate()
+        dx_newsitem = self.portal['newsitem']
+
+        # assertions
+        self.assertTrue(INamedBlobImage.providedBy(dx_newsitem.image))
+        self.assertEqual(dx_newsitem.image.filename, 'testimage.png')
+        self.assertEqual(dx_newsitem.image.contentType, 'image/png')
+        self.assertEqual(dx_newsitem.image.data, test_image_data)
+
+        self.assertEqual(dx_newsitem.image_caption, u'Daniel Düsentrieb')
+
+        self.assertTrue(IRichTextValue(dx_newsitem.text))
+        self.assertEqual(dx_newsitem.text.raw, u'Tütensuppe')
+        self.assertEqual(dx_newsitem.text.mimeType,
+                         'chemical/x-gaussian-checkpoint')
+
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
         from plone.app.contenttypes.interfaces import IFolder
@@ -436,13 +527,15 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_doc2 = self.portal['doc2']
         self.portal.invokeFactory('Document', 'doc3')
         at_doc3 = self.portal['doc3']
+        self.portal.invokeFactory('Document', 'doc4')
+        at_doc4 = self.portal['doc4']
 
         # relate them
-        at_doc1.setRelatedItems([at_doc2.UID(), ])
-        at_doc2.setRelatedItems([at_doc1, at_doc3])
-        at_doc3.setRelatedItems(at_doc1)
+        at_doc1.setRelatedItems([at_doc2.UID()])
+        at_doc2.setRelatedItems([at_doc1.UID(), at_doc3.UID(), at_doc4.UID()])
+        at_doc3.setRelatedItems(at_doc1.UID())
 
-        # migrate
+        # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_doc1, DocumentMigrator)
         migrator.migrate()
@@ -450,24 +543,34 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         migrator.migrate()
         migrator = self.get_migrator(at_doc3, DocumentMigrator)
         migrator.migrate()
-        restoreReferences(self.portal)
-
-        # assertions
+        migrator = self.get_migrator(at_doc4, DocumentMigrator)
+        migrator.migrate()
         dx_doc1 = self.portal['doc1']
         dx_doc2 = self.portal['doc2']
         dx_doc3 = self.portal['doc3']
+        dx_doc4 = self.portal['doc4']
+        # migrate references
+        restoreReferences(self.portal)
+        # migrate references order
+        #restoreReferencesOrder(self.portal)
 
+        # assertions references
         self.assertEqual(len(dx_doc1.relatedItems), 1)
-        rel1 = dx_doc1.relatedItems[0]
-        self.assertEqual(rel1.to_object, dx_doc2)
-        self.assertEqual(len(dx_doc2.relatedItems), 2)
-        rel1 = dx_doc2.relatedItems[0]
-        rel2 = dx_doc2.relatedItems[1]
-        self.assertEqual(
-            set([rel1.to_object, rel2.to_object]), set([dx_doc1, dx_doc3]))
+        self.assertEqual(len(dx_doc2.relatedItems), 3)
         self.assertEqual(len(dx_doc3.relatedItems), 1)
-        rel1 = dx_doc3.relatedItems[0]
-        self.assertEqual(rel1.to_object, dx_doc1)
+        self.assertEqual(len(dx_doc4.relatedItems), 0)
+
+        dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
+        self.assertEqual(dx_doc1_related, [dx_doc2])
+
+        dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
+        self.assertEqual(dx_doc2_related, [dx_doc1, dx_doc3, dx_doc4])
+
+        dx_doc3_related = [x.to_object for x in dx_doc3.relatedItems]
+        self.assertEqual(dx_doc3_related, [dx_doc1])
+
+        dx_doc4_related = [x.to_object for x in dx_doc4.relatedItems]
+        self.assertEqual(dx_doc4_related, [])
 
     def test_stats(self):
         from plone.app.contenttypes.migration.migration import DocumentMigrator
@@ -588,3 +691,62 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         self.assertEquals("Document (1) - extended fields: 'dummy'",
                           tuple(vocabulary)[0].title)
+
+    def test_migrate_function(self):
+        from plone.app.contenttypes.migration.migration import migrate
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        self.portal.invokeFactory('Document', 'document')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrate(self.portal, DocumentMigrator)
+        dx_document = self.portal["document"]
+        self.assertEqual(dx_document.meta_type, 'Dexterity Item')
+
+    def test_migrate_xx_functions(self):
+        from Products.ATContentTypes.content.image import ATImage
+        from Products.ATContentTypes.content.file import ATFile
+        from plone.app.contenttypes.migration.migration import (
+            migrate_documents,
+            migrate_collections,
+            migrate_images,
+            migrate_blobimages,
+            migrate_files,
+            migrate_blobfiles,
+            migrate_links,
+            migrate_newsitems,
+            migrate_blobnewsitems,
+            migrate_folders,
+        )
+
+        # create all content types
+        self.portal.invokeFactory('Document', 'document')
+        self.portal.invokeFactory('Image', 'image')
+        self.createATCTobject(ATImage, 'blobimage')
+        self.portal.invokeFactory('File', 'blobfile')
+        self.createATCTobject(ATFile, 'file')
+        self.portal.invokeFactory('Collection', 'collection')
+        self.portal.invokeFactory('Link', 'link')
+        self.portal.invokeFactory('News Item', 'newsitem')
+        self.createATCTBlobNewsItem('blobnewsitem')
+        self.portal.invokeFactory('Folder', 'folder')
+
+        # migrate all
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrate_documents(self.portal)
+        migrate_collections(self.portal)
+        migrate_images(self.portal)
+        migrate_blobimages(self.portal)
+        migrate_files(self.portal)
+        migrate_blobfiles(self.portal)
+        migrate_links(self.portal)
+        migrate_newsitems(self.portal)
+        migrate_blobnewsitems(self.portal)
+        migrate_folders(self.portal)
+
+        # assertions
+        cat = self.catalog
+        at_contents = cat(object_provides='Products.ATContentTypes'
+                          '.interfaces.IATContentType')
+        dx_contents = cat(object_provides='plone.dexterity'
+                          '.interfaces.IDexterityContent')
+        self.assertEqual(len(at_contents), 0)
+        self.assertEqual(len(dx_contents), 10)

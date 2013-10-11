@@ -4,6 +4,9 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- Improved test coverage for test_migration
+  [joka]
+
 - Add tests for vocabularies used for the migration
   [maethu]
 
