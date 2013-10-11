@@ -89,3 +89,7 @@ class ILink(Interface):
 class INewsItem(Interface):
     """
     """
+
+class IEvent(Interface):
+    """
+    """
