@@ -7,7 +7,8 @@ from plone.app.contenttypes.interfaces import (
     IFolder,
     IImage,
     ILink,
-    INewsItem
+    INewsItem,
+    IEvent,
 )
 from plone.app.querystring.querybuilder import QueryBuilder
 
@@ -124,3 +125,7 @@ class Link(Item):
 
 class NewsItem(Item):
     implements(INewsItem)
+
+
+class Event(Item):
+    implements(IEvent)

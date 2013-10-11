@@ -165,7 +165,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual('http://www.plone.org', dx_acc.event_url)
         self.assertEqual(('You', 'Me'), dx_acc.attendees)
         self.assertEqual(dx_acc.text, at_text)
-        self.assertEquals('Item', dx_event.__class__.__name__)
+        self.assertEquals('Event', dx_event.__class__.__name__)
 
     def test_assert_at_contenttypes(self):
         from plone.app.contenttypes.interfaces import IDocument
