@@ -104,7 +104,8 @@
   <body metal:use-macro="content">
 
     <metal:bodytext fill-slot="main">
-      <metal:main define-macro="main">
+      <metal:main define-macro="main" 
+        tal:define="linguaplone_installed context/@@atct_migrator_helpers/linguaplone_installed">
         <div tal:replace="structure provider:plone.abovecontenttitle" />
         <h1 class="documentFirstHeading"
             i18n:translate="">Migration control panel</h1>
@@ -126,30 +127,39 @@
             <p i18n:translate="">Depending of the number of archetypes in your portal, it may take a <span class="strong">really</span> long time for the migration to be done.
               Stay calm and be patient.</p>
           </div>
-          <div class="important">
-            <h2 i18n:translate="">Estimation</h2>
-            <p i18n:translate="">You currently have <span class="strong" i18n:name="number_of_objects" tal:content="context/@@atct_migrator_helpers/objects_to_be_migrated">23</span> archetypes objects to be migrated.</p>
-            <p i18n:translate="" tal:define="time context/@@atct_migrator_helpers/estimated_migration_time">The estimated time for the migration is around :
-            <span class="strong">
-              <tal:block i18n:name="hours" content="time/hours">4</tal:block> hours
-              <tal:block i18n:name="minutes" content="time/minutes">45</tal:block> minutes
-              <tal:block i18n:name="seconds" content="time/seconds">23</tal:block> seconds
-            </span>
-            </p>
-          </div>
-          <div id="nothing-to-migrate" style="display: none;">
-            <h2 i18n:translate="">No content to migrate</h2>
-          </div>
-          <div id="migration-options">
-            <h2 i18n:translate="">Migrate contents</h2>
-            <div i18n:translate=""
-              class="documentDescription">
-              <p>You can select which content types you want to migrate and
-                choose to migrate references or not.</p>
+          <tal:block condition="not:linguaplone_installed">
+            <div class="important">
+              <h2 i18n:translate="">Estimation</h2>
+              <p i18n:translate="">You currently have <span class="strong" i18n:name="number_of_objects" tal:content="context/@@atct_migrator_helpers/objects_to_be_migrated">23</span> archetypes objects to be migrated.</p>
+              <p i18n:translate="" tal:define="time context/@@atct_migrator_helpers/estimated_migration_time">The estimated time for the migration is around :
+              <span class="strong">
+                <tal:block i18n:name="hours" content="time/hours">4</tal:block> hours
+                <tal:block i18n:name="minutes" content="time/minutes">45</tal:block> minutes
+                <tal:block i18n:name="seconds" content="time/seconds">23</tal:block> seconds
+              </span>
+              </p>
             </div>
-            <div id="migration-form"
-              tal:content="structure view/contents" />
-          </div>
+            <div id="nothing-to-migrate" style="display: none;">
+              <h2 i18n:translate="">No content to migrate</h2>
+            </div>
+            <div id="migration-options">
+              <h2 i18n:translate="">Migrate contents</h2>
+              <div i18n:translate=""
+                class="documentDescription">
+                <p>You can select which content types you want to migrate and
+                  choose to migrate references or not.</p>
+              </div>
+              <div id="migration-form"
+                tal:content="structure view/contents" />
+            </div>
+          </tal:block>
+          <tal:block condition="linguaplone_installed">
+            <div class="important">
+              <h2 i18n:translate="">Warning</h2>
+              <p i18n:translate="" class="strong">Since you effectively have Products.LinguaPlone installed in your portal, you're not allowed to continue this migration.</p>
+              <p i18n:translate="">Have a look above for more information.</p>
+            </div>
+            </tal:block>
 
         </div>
       </metal:main>
