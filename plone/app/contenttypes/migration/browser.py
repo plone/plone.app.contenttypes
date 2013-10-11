@@ -80,6 +80,14 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
         portal = self.context
+        helpers = getMultiAdapter((portal, self.context),
+                                  name="atct_migrator_helpers")
+        if helpers.linguaplone_installed():
+            msg = 'Warning\n'
+            msg += 'Migration abortet since Products.LinguaPlone is installed'
+            msg += 'See http://github.com/plone/plone.app.contenttypes#migration'
+            msg += 'for more information.'
+            return msg
 
         # switch linkintegrity temp off
         ptool = queryUtility(IPropertiesTool)
