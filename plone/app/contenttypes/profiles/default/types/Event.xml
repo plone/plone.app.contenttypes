@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object name="Event" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- 
+
  <!-- Basic properties -->
  <property name="title" i18n:translate="">Event</property>
  <property name="description" i18n:translate="">Events can be shown in calendars.</property>
@@ -18,13 +18,10 @@
  <property name="allowed_content_types"/>
 
  <!-- Schema, class and security -->
- <property name="klass">plone.dexterity.content.Item</property>
+ <property name="klass">plone.app.contenttypes.content.Event</property>
  <property name="schema"></property>
- <property name="model_source">&lt;model xmlns="http://namespaces.plone.org/supermodel/schema"&gt;
-      &lt;schema&gt;
-      &lt;/schema&gt;
-  &lt;/model&gt;</property>
- <property name="model_file"></property>
+ <property name="model_source"></property>
+ <property name="model_file">plone.app.contenttypes.schema:event.xml</property>
  <property name="add_permission">plone.app.contenttypes.addEvent</property>
 
  <!-- Enabled behaviors -->
