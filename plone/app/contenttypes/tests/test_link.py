@@ -53,7 +53,7 @@ class LinkIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(ILink.providedBy(new_object))
+        self.assertTrue(ILink.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(
@@ -84,7 +84,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
     def test_link_redirect_view(self):
         view = self.link.restrictedTraverse('@@view')
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
+        self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My Link' in view())
         self.assertTrue('This is my link.' in view())
 

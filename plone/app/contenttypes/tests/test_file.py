@@ -55,7 +55,7 @@ class FileIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IFile.providedBy(new_object))
+        self.assertTrue(IFile.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(
@@ -75,7 +75,7 @@ class FileIntegrationTest(unittest.TestCase):
         view = file.restrictedTraverse('@@view')
 
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
+        self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My File' in view())
         self.assertTrue('This is my file.' in view())
 

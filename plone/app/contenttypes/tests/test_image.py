@@ -63,7 +63,7 @@ class ImageIntegrationTest(unittest.TestCase):
         )
         factory = fti.factory
         new_object = createObject(factory)
-        self.failUnless(IImage.providedBy(new_object))
+        self.assertTrue(IImage.providedBy(new_object))
 
     def test_adding(self):
         self.portal.invokeFactory(
@@ -96,7 +96,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
         view = self.image.restrictedTraverse('@@view')
 
         self.assertTrue(view())
-        self.assertEquals(view.request.response.status, 200)
+        self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My Image' in view())
         self.assertTrue('This is my image.' in view())
 
@@ -109,7 +109,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
 #        )
 #
 #        self.assertTrue(view())
-#        self.assertEquals(view.request.response.status, 200)
+#        self.assertEqual(view.request.response.status, 200)
 #        self.assertTrue('image.jpg' in view())
 
 

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from plone.app.contenttypes.migration.migration import restoreReferences
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
-from plone.app.testing import applyProfile
+from plone.event.interfaces import IEventAccessor
 from plone.app.testing import login
+from plone.app.testing import applyProfile
 from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
@@ -114,6 +116,56 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         gsm.unregisterAdapter(required=[IATNewsItem], provided=ISchemaExtender)
 
         return at_newsitem
+
+    def test_event_is_migrated(self):
+        from DateTime import DateTime
+        from plone.app.contenttypes.migration.migration import EventMigrator
+
+        # create an ATEvent
+        self.portal.invokeFactory('Event', 'event')
+        at_event = self.portal['event']
+
+        # Date
+        start = DateTime('2013-01-01')
+        end = DateTime('2013-02-01')
+        at_event.getField('startDate').set(at_event, DateTime('2013-01-01'))
+        at_event.getField('endDate').set(at_event, DateTime('2013-02-01'))
+
+        # Contact
+        at_event.getField('contactPhone').set(at_event, '123456789')
+        at_event.getField('contactEmail').set(at_event, 'dummy@email.com')
+        at_event.getField('contactName').set(at_event, 'Name')
+
+        # URL
+        at_event.getField('eventUrl').set(at_event, 'http://www.plone.org')
+
+        # Attendees
+        at_event.getField('attendees').set(at_event, ('You', 'Me'))
+
+        # Text
+        at_event.setText('Tütensuppe')
+        at_text = safe_unicode(at_event.getRawText())
+        at_event.setContentType('chemical/x-gaussian-checkpoint')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_event, EventMigrator)
+        migrator.migrate()
+
+        # assertions
+        dx_event = self.portal['event']
+        dx_acc = IEventAccessor(dx_event)
+        self.assertEqual('%s+00:00' % start.asdatetime().isoformat(),
+                         dx_acc.start.isoformat())
+        self.assertEqual('%s+00:00' % end.asdatetime().isoformat(),
+                         dx_acc.end.isoformat())
+        self.assertEqual('123456789', dx_acc.contact_phone)
+        self.assertEqual('dummy@email.com', dx_acc.contact_email)
+        self.assertEqual('Name', dx_acc.contact_name)
+        self.assertEqual('http://www.plone.org', dx_acc.event_url)
+        self.assertEqual(('You', 'Me'), dx_acc.attendees)
+        self.assertEqual(dx_acc.text, at_text)
+        self.assertEquals('Item', dx_event.__class__.__name__)
 
     def test_assert_at_contenttypes(self):
         from plone.app.contenttypes.interfaces import IDocument
@@ -489,6 +541,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(dx_newsitem.text.mimeType,
                          'chemical/x-gaussian-checkpoint')
 
+
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
         from plone.app.contenttypes.interfaces import IFolder
@@ -601,7 +654,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                              'Vocabulary %s does not exist' % name)
 
         vocabulary = factory(self.portal)
-        self.assertEquals((), tuple(vocabulary))
+        self.assertEqual((), tuple(vocabulary))
 
     def test_migration_atctypes_vocabulary_result(self):
         from Products.ATContentTypes.content.document import ATDocument
@@ -622,15 +675,15 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         vocabulary = factory(self.portal)
 
-        self.assertEquals(
+        self.assertEqual(
             5,
             len(vocabulary),
             'Expect 5 entries in vocab because there are 5 diffrent types')
 
         # Result format
         docs = [term for term in vocabulary if term.token == 'Document'][0]
-        self.assertEquals('Document', docs.value)
-        self.assertEquals('Document (2)', docs.title)
+        self.assertEqual('Document', docs.value)
+        self.assertEqual('Document (2)', docs.title)
 
     def test_migration_extendedtypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.extendedtypes'
@@ -639,9 +692,11 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                              'Vocabulary %s does not exist' % name)
 
         vocabulary = factory(self.portal)
-        self.assertEquals((), tuple(vocabulary))
+        self.assertEqual((), tuple(vocabulary))
 
     def test_migration_extendedtypes_vocabulary_result(self):
+        from archetypes.schemaextender.extender import CACHE_ENABLED
+        from archetypes.schemaextender.extender import CACHE_KEY
         from archetypes.schemaextender.field import ExtensionField
         from archetypes.schemaextender.interfaces import ISchemaExtender
         from Products.Archetypes import atapi
@@ -651,8 +706,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from zope.interface import classImplements
         from zope.interface import implements
         from zope.interface import Interface
-
-        SCHEMA_EXTENDER_CACHE_KEY = '__archetypes_schemaextender_cache'
 
         name = 'plone.app.contenttypes.migration.extendedtypes'
         factory = getUtility(IVocabularyFactory, name)
@@ -682,15 +735,16 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         provideAdapter(DummySchemaExtender, name=u"dummy.extender")
 
         # Clear cache
-        delattr(self.request, SCHEMA_EXTENDER_CACHE_KEY)
+        if CACHE_ENABLED:
+            delattr(self.request, CACHE_KEY)
         self.assertIn('dummy', doc.Schema()._names)
 
         vocabulary = factory(self.portal)
 
-        self.assertEquals(1, len(vocabulary), 'Expect one entry')
+        self.assertEqual(1, len(vocabulary), 'Expect one entry')
 
-        self.assertEquals("Document (1) - extended fields: 'dummy'",
-                          tuple(vocabulary)[0].title)
+        self.assertEqual("Document (1) - extended fields: 'dummy'",
+                         tuple(vocabulary)[0].title)
 
     def test_migrate_function(self):
         from plone.app.contenttypes.migration.migration import migrate
@@ -715,6 +769,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             migrate_newsitems,
             migrate_blobnewsitems,
             migrate_folders,
+            migrate_events,
         )
 
         # create all content types
@@ -728,6 +783,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.portal.invokeFactory('News Item', 'newsitem')
         self.createATCTBlobNewsItem('blobnewsitem')
         self.portal.invokeFactory('Folder', 'folder')
+        self.portal.invokeFactory('Event', 'event')
 
         # migrate all
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -741,6 +797,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         migrate_newsitems(self.portal)
         migrate_blobnewsitems(self.portal)
         migrate_folders(self.portal)
+        migrate_events(self.portal)
 
         # assertions
         cat = self.catalog
@@ -749,4 +806,4 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         dx_contents = cat(object_provides='plone.dexterity'
                           '.interfaces.IDexterityContent')
         self.assertEqual(len(at_contents), 0)
-        self.assertEqual(len(dx_contents), 10)
+        self.assertEqual(len(dx_contents), 11)

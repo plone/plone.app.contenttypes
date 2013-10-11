@@ -59,7 +59,7 @@
     name="RSS"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
-    template="templates/rss.pt"
+    template="templates/rss.pt.xml"
     />
 
   <!-- COLLECTION MENU ITEMS -->

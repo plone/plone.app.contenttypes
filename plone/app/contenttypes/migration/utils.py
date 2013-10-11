@@ -9,6 +9,7 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+from Products.ATContentTypes.interfaces.event import IATEvent
 from plone.app.blob.interfaces import IATBlobImage
 from plone.app.blob.interfaces import IATBlobFile
 
@@ -60,6 +61,11 @@ ATCT_LIST = {
     "Link": {
         'iface': IATLink,
         'migrator': migration.migrate_links,
+        'extended_fields': [],
+    },
+    "Event": {
+        'iface': IATEvent,
+        'migrator': migration.migrate_events,
         'extended_fields': [],
     },
     "BlobImage": {

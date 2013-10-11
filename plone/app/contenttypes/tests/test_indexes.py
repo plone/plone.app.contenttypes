@@ -60,7 +60,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText="document",
         ))
         self.assertEqual(len(brains), 1)
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getPath(),
             '/plone/folder/document'
         )
@@ -72,7 +72,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText="My title",
         ))
         self.assertEqual(len(brains), 1)
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getPath(),
             '/plone/folder/document'
         )
@@ -84,7 +84,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText="My description",
         ))
         self.assertEqual(len(brains), 1)
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getPath(),
             '/plone/folder/document'
         )
@@ -98,7 +98,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText="My description",
         ))
         self.assertEqual(len(brains), 1)
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getPath(),
             '/plone/folder/folder'
         )
@@ -107,7 +107,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText="Carpeta",
         ))
         self.assertEqual(len(brains), 1)
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getPath(),
             '/plone/folder/folder'
         )
@@ -119,7 +119,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText="plone",
         ))
         self.assertEqual(len(brains), 1)
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getPath(),
             '/plone/folder/link'
         )
@@ -141,11 +141,11 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText=u'Lorem ipsum',
         ))
         self.assertEqual(len(brains), 2)
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getPath(),
             '/plone/folder/news_item'
         )
-        self.assertEquals(
+        self.assertEqual(
             brains[1].getPath(),
             '/plone/folder/document'
         )
@@ -200,7 +200,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         brains = self.catalog.searchResults(dict(
             path="/plone/folder/document",
         ))
-        self.assertEquals(
+        self.assertEqual(
             brains[0].Title,
             "My title"
         )
@@ -211,7 +211,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         brains = self.catalog.searchResults(dict(
             path="/plone/folder/document",
         ))
-        self.assertEquals(
+        self.assertEqual(
             brains[0].Description,
             "My description"
         )
@@ -222,7 +222,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         brains = self.catalog.searchResults(dict(
             path="/plone/folder/link",
         ))
-        self.assertEquals(
+        self.assertEqual(
             brains[0].getRemoteUrl,
             "http://www.plone.org/"
         )
@@ -239,7 +239,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         ))
 
         # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
-        self.assertEquals(
+        self.assertEqual(
             self.portal.getObjSize(None, primary_field_info.value.size),
             brains[0].getObjSize,
         )
@@ -260,7 +260,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         ))
 
         # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
-        self.assertEquals(
+        self.assertEqual(
             self.portal.getObjSize(None, primary_field_info.value.size),
             brains[0].getObjSize,
         )
@@ -276,7 +276,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             path="/plone/folder/image",
         ))
 
-        self.assertEquals('image.png', brains[0].getIcon)
+        self.assertEqual('image.png', brains[0].getIcon)
 
     def test_geticon_file(self):
         from plone.namedfile.file import NamedBlobFile
@@ -293,4 +293,4 @@ class CatalogIntegrationTest(unittest.TestCase):
             path="/plone/folder/file",
         ))
 
-        self.assertEquals('pdf.png', brains[0].getIcon)
+        self.assertEqual('pdf.png', brains[0].getIcon)
