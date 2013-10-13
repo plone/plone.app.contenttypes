@@ -12,6 +12,7 @@ from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from z3c.form import form, field, button
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
 from zope.component import queryUtility
 from zope.component import getMultiAdapter
@@ -231,6 +232,16 @@ class ATCTMigratorForm(form.Form):
     def updateActions(self):
         super(ATCTMigratorForm, self).updateActions()
         self.actions['migrate'].addClass("btn-danger")
+
+    def updateWidgets(self):
+        """ Overload this to hide empty widget """
+        form.Form.updateWidgets(self)
+        for title, widget in self.widgets.items():
+            if title not in ('content_types', 'extended_content'):
+                continue
+            if not len(widget.items):
+                # the vocabulary is empty, we hide the widget
+                widget.mode = HIDDEN_MODE
 
 
 ATCTMigrator = wrap_form(
