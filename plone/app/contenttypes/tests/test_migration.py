@@ -606,9 +606,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         dx_doc3_related = [x.to_object for x in dx_doc3.relatedItems]
         self.assertEqual(dx_doc3_related, [dx_doc1])
 
-        # assert multi references, order is not restored
+        # assert multi references, order is restored
         dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
-        self.assertEqual(dx_doc2_related, [dx_doc1, at_newsitem, dx_doc3])
+        self.assertEqual(dx_doc2_related, [at_newsitem, dx_doc3, dx_doc1])
 
     def test_stats(self):
         from plone.app.contenttypes.migration.migration import DocumentMigrator

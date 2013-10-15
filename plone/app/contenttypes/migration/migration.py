@@ -50,8 +50,7 @@ def refs(obj):
             to_id = intids.getId(to_obj)
             obj.relatedItems.append(RelationValue(to_id))
             out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
-        # keep the _relatedItems to restore the order
-        # del obj._relatedItems
+        del obj._relatedItems
 
     except AttributeError:
         pass
@@ -96,6 +95,17 @@ def backrefs(portal, obj):
     return out
 
 
+def order(obj):
+    out = ''
+    relatedItemsOrder = obj._relatedItemsOrder
+    uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
+    key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
+    obj.relatedItems = sorted(obj.relatedItems, key=key)
+    out += str('%s ordered.' % obj)
+    del obj._relatedItemsOrder
+    return out
+
+
 def restoreReferences(portal):
     """ iterate over all Dexterity Objs and restore as Dexterity Reference. """
     out = ''
@@ -112,45 +122,46 @@ def restoreReferences(portal):
         out += refs(obj)
         # backrefs
         out += backrefs(portal, obj)
+        #order
+        out += order(obj)
 
-    return out
-
-
-def restoreReferencesOrder(portal):
-    """ In obj._relatedItems is the correct order of references. Let's
-        replace the ATReference (UID) by the new Dexterity Refeŕence.
-        Then we have a list with ordered Refs and can replace
-        obj.relatedItems."""
-    out = ''
-    catalog = getToolByName(portal, "portal_catalog")
-    results = catalog.searchResults(
-        object_provides=IDexterityContent.__identifier__)
-    # Iteration on all dexterity objects
-    for brain in results:
-        obj = brain.getObject()
-        if not getattr(obj, '_relatedItems', None):
-            continue
-        # In obj._relatedItems we have the right order.
-        atRelItems = obj._relatedItems
-        # Replace the AT Ref by the Dex. Ref
-        for i in atRelItems:
-            for rel in obj.relatedItems:
-                if rel.to_object.UID() == i:
-                    atRelItems[atRelItems.index(i)] = rel
-                    break
-        obj.relatedItems = atRelItems
-        del obj._relatedItems
-        out += str('%s ordered.' % obj)
     return out
 
 
 class ReferenceMigrator(object):
+
+    def beforeChange_relatedItemsOrder(self):
+        """ Store Archetype relations as target uids on the old archetype
+            object to restore the order later.
+            Because all relations to deleted objects will be lost, we iterate
+            over all backref objects and store the relations of the backref
+            object in advance.
+        """
+        # Relations UIDs:
+        if not hasattr(self.old, "_relatedItemsOrder"):
+            relatedItems = self.old.getRelatedItems()
+            relatedItemsOrder = [item.UID() for item in relatedItems]
+            self.old._relatedItemsOrder = PersistentList(relatedItemsOrder)
+
+        # Backrefs Relations UIDs:
+        reference_cat = getToolByName(self.old, REFERENCE_CATALOG)
+        backrefs = reference_cat.getBackReferences(self.old,
+                                                   relationship="relatesTo")
+        backref_objects = map(lambda x: x.getSourceObject(), backrefs)
+        for obj in backref_objects:
+            if obj.portal_type != self.src_portal_type:
+                continue
+            if not hasattr(obj, "_relUids"):
+                relatedItems = obj.getRelatedItems()
+                relatedItemsOrder = [item.UID() for item in relatedItems]
+                obj._relatedItemsOrder = PersistentList(relatedItemsOrder)
 
     def migrate_relatedItems(self):
         """ Store Archetype relations as target uids on the dexterity object
             for later restore. Backrelations are saved as well because all
             relation to deleted objects would be lost.
         """
+
         # Relations:
         relItems = self.old.getRelatedItems()
         relUids = [item.UID() for item in relItems]
@@ -158,9 +169,13 @@ class ReferenceMigrator(object):
 
         # Backrefs:
         reference_catalog = getToolByName(self.old, REFERENCE_CATALOG)
+
         backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
             self.old, relationship="relatesTo")]
         self.new._backrefs = backrefs
+
+        # Order:
+        self.new._relatedItemsOrder = self.old._relatedItemsOrder
 
 
 class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
@@ -431,6 +446,7 @@ class EventMigrator(ATCTContentMigrator):
         acc.contact_email = old_contactemail  # IEventContact
         acc.contact_phone = old_contactphone  # IEventContact
         acc.text = old_richtext.raw
+
 
 def migrate_events(portal):
     return migrate(portal, EventMigrator)
