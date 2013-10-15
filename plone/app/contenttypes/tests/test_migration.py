@@ -3,7 +3,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
-from plone.app.contenttypes.migration.migration import restoreReferences
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 from plone.event.interfaces import IEventAccessor
@@ -541,7 +540,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(dx_newsitem.text.mimeType,
                          'chemical/x-gaussian-checkpoint')
 
-
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
         from plone.app.contenttypes.interfaces import IFolder
@@ -567,63 +565,50 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_child in dx_folder.contentValues())
 
     def test_relations_are_migrated(self):
-        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import (
+            restoreReferences,
+            migrate_documents,
+        )
 
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
         addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
 
-        # create three ATDocument
+        # create ATDocuments
         self.portal.invokeFactory('Document', 'doc1')
         at_doc1 = self.portal['doc1']
         self.portal.invokeFactory('Document', 'doc2')
         at_doc2 = self.portal['doc2']
         self.portal.invokeFactory('Document', 'doc3')
         at_doc3 = self.portal['doc3']
-        self.portal.invokeFactory('Document', 'doc4')
-        at_doc4 = self.portal['doc4']
+        self.portal.invokeFactory('News Item', 'newsitem')
+        at_newsitem = self.portal['newsitem']
 
         # relate them
-        at_doc1.setRelatedItems([at_doc2.UID()])
-        at_doc2.setRelatedItems([at_doc1.UID(), at_doc3.UID(), at_doc4.UID()])
-        at_doc3.setRelatedItems(at_doc1.UID())
+        at_doc1.setRelatedItems([at_doc2])
+        at_doc2.setRelatedItems([at_newsitem, at_doc3, at_doc1])
+        at_doc3.setRelatedItems(at_doc1)
 
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrator = self.get_migrator(at_doc1, DocumentMigrator)
-        migrator.migrate()
-        migrator = self.get_migrator(at_doc2, DocumentMigrator)
-        migrator.migrate()
-        migrator = self.get_migrator(at_doc3, DocumentMigrator)
-        migrator.migrate()
-        migrator = self.get_migrator(at_doc4, DocumentMigrator)
-        migrator.migrate()
+        migrate_documents(self.portal)
         dx_doc1 = self.portal['doc1']
         dx_doc2 = self.portal['doc2']
         dx_doc3 = self.portal['doc3']
-        dx_doc4 = self.portal['doc4']
+
         # migrate references
         restoreReferences(self.portal)
-        # migrate references order
-        #restoreReferencesOrder(self.portal)
 
-        # assertions references
-        self.assertEqual(len(dx_doc1.relatedItems), 1)
-        self.assertEqual(len(dx_doc2.relatedItems), 3)
-        self.assertEqual(len(dx_doc3.relatedItems), 1)
-        self.assertEqual(len(dx_doc4.relatedItems), 0)
-
+        # assert single references
         dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
         self.assertEqual(dx_doc1_related, [dx_doc2])
-
-        dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
-        self.assertEqual(dx_doc2_related, [dx_doc1, dx_doc3, dx_doc4])
 
         dx_doc3_related = [x.to_object for x in dx_doc3.relatedItems]
         self.assertEqual(dx_doc3_related, [dx_doc1])
 
-        dx_doc4_related = [x.to_object for x in dx_doc4.relatedItems]
-        self.assertEqual(dx_doc4_related, [])
+        # assert multi references, order is not restored
+        dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
+        self.assertEqual(dx_doc2_related, [dx_doc1, at_newsitem, dx_doc3])
 
     def test_stats(self):
         from plone.app.contenttypes.migration.migration import DocumentMigrator
