@@ -4,6 +4,9 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- Fix migration restoreReferencesOrder removes references
+  [joka]
+
 - Improved test coverage for test_migration
   [joka]
 
