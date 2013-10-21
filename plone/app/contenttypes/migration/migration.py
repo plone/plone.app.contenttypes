@@ -432,5 +432,6 @@ class EventMigrator(ATCTContentMigrator):
         acc.contact_phone = old_contactphone  # IEventContact
         acc.text = old_richtext.raw
 
+
 def migrate_events(portal):
     return migrate(portal, EventMigrator)

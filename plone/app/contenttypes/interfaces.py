@@ -90,6 +90,7 @@ class INewsItem(Interface):
     """
     """
 
+
 class IEvent(Interface):
     """
     """

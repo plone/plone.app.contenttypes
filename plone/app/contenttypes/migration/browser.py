@@ -86,8 +86,9 @@ class MigrateFromATContentTypes(BrowserView):
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
             msg = 'Warning\n'
-            msg += 'Migration abortet since Products.LinguaPlone is installed'
-            msg += 'See http://github.com/plone/plone.app.contenttypes#migration'
+            msg += 'Migration aborted since Products.LinguaPlone is '
+            msg += 'installed. See '
+            msg += 'http://github.com/plone/plone.app.contenttypes#migration '
             msg += 'for more information.'
             return msg
 
@@ -124,7 +125,7 @@ class MigrateFromATContentTypes(BrowserView):
             enable_link_integrity_checks=link_integrity
         )
         endtime = datetime.now()
-        duration = (endtime-starttime).seconds
+        duration = (endtime - starttime).seconds
         if not from_form:
             if not_migrated:
                 msg = ("The following were not migrated as they "
