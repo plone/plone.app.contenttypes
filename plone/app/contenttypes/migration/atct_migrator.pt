@@ -81,8 +81,8 @@
   <body metal:use-macro="content">
 
     <metal:bodytext fill-slot="main">
-      <metal:main define-macro="main" 
-        tal:define="linguaplone_installed context/@@atct_migrator_helpers/linguaplone_installed; 
+      <metal:main define-macro="main"
+        tal:define="linguaplone_installed context/@@atct_migrator_helpers/linguaplone_installed;
                     object_number context/@@atct_migrator_helpers/objects_to_be_migrated">
         <div tal:replace="structure provider:plone.abovecontenttitle" />
         <h1 class="documentFirstHeading"
