@@ -33,7 +33,7 @@ class Collection(Item):
         #return tool.getMetadataDisplay(exclude)
 
     def results(self, batch=True, b_start=0, b_size=None,
-                sort_on=None, limit=None):
+                sort_on=None, limit=None, brains=False):
         querybuilder = QueryBuilder(self, self.REQUEST)
         sort_order = 'reverse' if self.sort_reversed else 'ascending'
         if not b_size:
@@ -45,7 +45,7 @@ class Collection(Item):
         return querybuilder(
             query=self.query, batch=batch, b_start=b_start, b_size=b_size,
             sort_on=sort_on, sort_order=sort_order,
-            limit=limit
+            limit=limit, brains=brains
         )
 
     def selectedViewFields(self):
