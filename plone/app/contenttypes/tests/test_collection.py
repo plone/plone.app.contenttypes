@@ -190,7 +190,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             'v': 'Image',
         }]
         # set the query and publish the collection
-        collection.setQuery(query)
+        collection.query = query
         workflow = portal.portal_workflow
         workflow.doActionFor(collection, "publish")
         commit()
@@ -288,8 +288,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             'v': 'Folder',
         }]
         collection = portal['collection']
-        collection.setQuery(query)
         wrapped = ICollection_behavior(collection)
+        wrapped.query = query
         imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
         # The current implementation for getFoldersAndImages will return
         # another_image under subfolder and also under folder
@@ -324,8 +324,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             'v': 'Image',
         }]
         collection = portal['collection']
-        collection.setQuery(query)
         wrapped = ICollection_behavior(collection)
+        wrapped.query = query
         imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
         self.assertTrue(imagecount == 2)
 
