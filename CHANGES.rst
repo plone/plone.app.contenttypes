@@ -4,6 +4,9 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- Change Collection to use a behavior.  Issue #65.
+  [maurits, kaselis]
+
 - Improved test coverage for test_migration
   [joka]
 

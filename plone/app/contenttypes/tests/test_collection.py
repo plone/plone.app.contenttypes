@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import time
-
 from Acquisition import aq_inner
+from DateTime import DateTime
 
 import unittest2 as unittest
 
@@ -22,6 +21,7 @@ from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, \
     setRoles, login, logout
 
 from plone.app.contenttypes.interfaces import ICollection
+from plone.app.contenttypes.behaviors.collection import ICollection as ICollection_behavior
 
 query = [{
     'i': 'Title',
@@ -100,7 +100,7 @@ class PloneAppCollectionIntegrationTest(unittest.TestCase):
         fti = queryUtility(IDexterityFTI,
                            name='Collection')
         schema = fti.lookupSchema()
-        self.assertEqual(ICollection, schema)
+        self.assertEqual(schema.getName(), 'plone_0_Collection')
 
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
@@ -226,20 +226,29 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
                              sort_reversed=True,
                              )
 
+        now = DateTime()
         # News Item 1
         portal.invokeFactory(id='newsitem1',
                              type_name='News Item')
-        time.sleep(2)
-        # News Item 1
+        item1 = portal.newsitem1
+        item1.creation_date = now - 2
+        item1.reindexObject()
+        # News Item 2
         portal.invokeFactory(id='newsitem2',
                              type_name='News Item')
-        time.sleep(2)
-        # News Item 1
+        item2 = portal.newsitem2
+        item2.creation_date = now - 1
+        item2.reindexObject()
+        # News Item 3
         portal.invokeFactory(id='newsitem3',
                              type_name='News Item')
+        item3 = portal.newsitem3
+        item3.creation_date = now
+        item3.reindexObject()
 
         collection = portal['collection']
-        results = collection.results(batch=False)
+        wrapped = ICollection_behavior(collection)
+        results = wrapped.results(batch=False)
         ritem0 = results[0]
         ritem1 = results[1]
         ritem2 = results[2]
@@ -280,7 +289,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         }]
         collection = portal['collection']
         collection.setQuery(query)
-        imagecount = collection.getFoldersAndImages()['total_number_of_images']
+        wrapped = ICollection_behavior(collection)
+        imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
         # The current implementation for getFoldersAndImages will return
         # another_image under subfolder and also under folder
         self.assertTrue(imagecount == 3)
@@ -315,7 +325,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         }]
         collection = portal['collection']
         collection.setQuery(query)
-        imagecount = collection.getFoldersAndImages()['total_number_of_images']
+        wrapped = ICollection_behavior(collection)
+        imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
         self.assertTrue(imagecount == 2)
 
 
@@ -341,7 +352,7 @@ class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
     def test_search_result(self):
         view = self.collection.restrictedTraverse('@@edit')
         html = view()
-        self.assertTrue('form-widgets-query' in html)
+        self.assertTrue('form-widgets-ICollection-query' in html)
         self.assertTrue('No results were found.' in html)
         #from plone.app.contentlisting.interfaces import IContentListing
         #self.assertTrue(IContentListing.providedBy(view.accessor()))

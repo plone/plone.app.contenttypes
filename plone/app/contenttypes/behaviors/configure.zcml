@@ -33,4 +33,12 @@
     marker=".tableofcontents.ITableOfContents"
     />
 
+  <plone:behavior
+    title="Collection"
+    description="Adds collection behavior"
+    provides=".collection.ICollection"
+    factory=".collection.Collection"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+
 </configure>

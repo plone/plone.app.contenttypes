@@ -10,7 +10,7 @@
 
 <metal:content-core fill-slot="content-core">
 <metal:main_macro define-macro="content-core"
-     tal:define="data context/getFoldersAndImages;
+     tal:define="data view/getFoldersAndImages;
                 total_number_of_images data/total_number_of_images;
                 site_properties context/portal_properties/site_properties;
                 use_view_action site_properties/typesUseViewActionInListings|python:();">

@@ -10,7 +10,7 @@
       <pubDate tal:content="python: context.created().HTML4()">Fri, 05 Mar 2010 10:41:04 +0100</pubDate>
       <generator>Plone</generator>
       <description tal:content="context/Description">Free web building tutorials</description>
-      <item tal:repeat="obj context/results">
+      <item tal:repeat="obj view/results">
         <title tal:content="obj/Title">RSS Tutorial</title>
         <link tal:content="obj/getURL">http://www.w3schools.com/rss</link>
         <description tal:content="obj/Description">New RSS tutorial on W3Schools</description>
