@@ -42,6 +42,10 @@
     marker=".collection.ISyndicatableCollection"
     />
 
+  <utility
+      component=".collection.MetaDataFieldsVocabularyFactory"
+      name="plone.app.contenttypes.metadatafields" />
+
   <adapter factory=".collection.CollectionFeed"
            for=".collection.ISyndicatableCollection" />
 

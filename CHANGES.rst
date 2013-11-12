@@ -4,6 +4,10 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- Add customViewFields to the Collection behavior.  This was available
+  on old collections too.
+  [maurits, kaselis]
+
 - Change Collection to use a behavior.  Issue #65.
   [maurits, kaselis]
 

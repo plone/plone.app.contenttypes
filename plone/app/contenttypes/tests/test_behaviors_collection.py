@@ -32,9 +32,9 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.request = self.layer['request']
         self.portal_url = self.portal.absolute_url()
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        fti = DexterityFTI('collectiondocument')
-        self.portal.portal_types._setObject('collectiondocument', fti)
-        fti.klass = 'plone.dexterity.content.Item'
+        fti = DexterityFTI('collectioncontainer')
+        self.portal.portal_types._setObject('collectioncontainer', fti)
+        fti.klass = 'plone.dexterity.content.Container'
         fti.behaviors = (
             'plone.app.contenttypes.behaviors.collection.ICollection',
         )
@@ -44,11 +44,17 @@ class DocumentFunctionalTest(unittest.TestCase):
         from plone.app.contenttypes.behaviors.collection import ICollection
         alsoProvides(self.request, ICollection)
         self.portal.invokeFactory(
-            'collectiondocument',
-            id='collectiondoc',
-            title=u'Document with a collection',
+            'collectioncontainer',
+            id='collectioncontainer',
+            title=u'Container with a collection',
+            customViewFields=['Title', 'portal_type'],
+            query=query,
         )
-        self.portal.collectiondoc.query=query
+        self.portal.invokeFactory(
+            'Document',
+            id='doc',
+            title=u'Collection Test Page',
+        )
 
     def _get_browser(self):
         # Need to commit transaction, otherwise the browser does not
@@ -65,13 +71,37 @@ class DocumentFunctionalTest(unittest.TestCase):
         )
         return browser
 
+    def test_collection_view(self):
+        browser = self._get_browser()
+        browser.open(self.portal_url + '/collectioncontainer/view')
+        # search results start here:
+        start = browser.contents.find('search-results')
+        # The test string should be within the search results.
+        self.assertTrue('Collection Test Page' in browser.contents[start:start+1000])
+
+    def test_tabular_view(self):
+        browser = self._get_browser()
+        browser.open(self.portal_url + '/collectioncontainer/tabular_view')
+        # search from here:
+        start = browser.contents.find('content-core')
+        # The test string should be within the search results.
+        self.assertTrue('Collection Test Page' in browser.contents[start:start+1000])
+
     def test_collection_in_edit_form(self):
         browser = self._get_browser()
-        browser.open(self.portal_url + '/collectiondoc/edit')
+        browser.open(self.portal_url + '/collectioncontainer/edit')
         self.assertTrue('Query' in browser.contents)
         control = browser.getControl(
             name='form.widgets.ICollection.query.v:records')
         self.assertTrue(control.value, 'Collection Test Page')
+        # The customViewFields field is a 'double' control, with a
+        # 'from' and 'to' list.
+        from_control = browser.getControl(
+            name='form.widgets.ICollection.customViewFields.from')
+        self.assertEqual(from_control.value, [])
+        self.assertTrue('Title' not in from_control.options)
+        self.assertTrue('portal_type' not in from_control.options)
+        self.assertTrue('Description' in from_control.options)
 
 
 def test_suite():

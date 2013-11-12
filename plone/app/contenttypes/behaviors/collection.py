@@ -10,9 +10,26 @@ from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
 from zope import schema
-from zope.component import adapts
+from zope.component import adapts, getUtility
 from zope.interface import alsoProvides, implements
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
 from plone.app.contenttypes import _
+
+
+class MetaDataFieldsVocabulary(object):
+
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        cat = getToolByName(context, 'portal_catalog')
+        items = [
+            SimpleTerm(column, column, column)
+            for column in cat.schema()
+        ]
+        return SimpleVocabulary(items)
+
+MetaDataFieldsVocabularyFactory = MetaDataFieldsVocabulary()
 
 
 class ICollection(model.Schema):
@@ -53,11 +70,15 @@ class ICollection(model.Schema):
         default=30,
     )
 
-    #customViewFields = schema.Choice(
-    #    title=_(u'label_sort_on', default=u'sortable_title'),
-    #    description=_(u"Sort the collection on this index"),
-    #    required=False,
-    #    )
+    customViewFields = schema.List(
+        title=_(u'Table Columns'),
+        description=_(u"Select which fields to display when "
+                      u"'Tabular view' is selected in the display menu."),
+        default=['Title', 'Creator', 'Type', 'ModificationDate'],
+        value_type=schema.Choice(
+            vocabulary='plone.app.contenttypes.metadatafields'),
+        required=False,
+        )
 
 
 alsoProvides(ICollection, IFormFieldProvider)
@@ -117,6 +138,20 @@ class Collection(object):
         ))
         return _mapping
 
+    def selectedViewFields(self):
+        """Returns a list of all metadata fields from the catalog that were
+           selected.
+
+        The template expects a tuple/list of (id, title) of the field.
+
+        """
+        _mapping = {}
+        vocab = getUtility(IVocabularyFactory,
+                           name='plone.app.contenttypes.metadatafields')
+        for field in vocab(self.context):
+            _mapping[field.value] = (field.value, field.title)
+        return [_mapping[field] for field in self.customViewFields]
+
     # Getters and setters for our fields.
 
     def _set_sort_reversed(self, value):
@@ -158,6 +193,14 @@ class Collection(object):
         return getattr(self.context, 'query', None)
 
     query = property(_get_query, _set_query)
+
+    def _set_customViewFields(self, value):
+        self.context.customViewFields = value
+
+    def _get_customViewFields(self):
+        return getattr(self.context, 'customViewFields', [])
+
+    customViewFields = property(_get_customViewFields, _set_customViewFields)
 
 
 class CollectionFeed(BaseCollectionFeed):

@@ -19,25 +19,22 @@ from zope.interface import implements
 class Collection(Item):
     implements(ICollection)
 
-    #security.declareProtected(View, 'listMetaDataFields')
+    # BBB
+
     def listMetaDataFields(self, exclude=True):
         """Return a list of all metadata fields from portal_catalog.
+
+        This is no longer used.  We use a vocabulary instead.
         """
         return []
-        #tool = getToolByName(self, ATCT_TOOLNAME)
-        #return tool.getMetadataDisplay(exclude)
 
     def selectedViewFields(self):
         """Returns a list of all metadata fields from the catalog that were
            selected.
         """
-        return []
-        #_mapping = {}
-        #for field in self.listMetaDataFields().items():
-        #    _mapping[field[0]] = field
-        #return [_mapping[field] for field in self.customViewFields]
-
-    # BBB
+        from plone.app.contenttypes.behaviors.collection import ICollection as \
+            ICollection_behavior
+        return ICollection_behavior(self).selectedViewFields()
 
     def setQuery(self, query):
         self.query = query

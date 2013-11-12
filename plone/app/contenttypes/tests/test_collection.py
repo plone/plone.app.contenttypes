@@ -25,7 +25,7 @@ from plone.app.contenttypes.behaviors.collection import ICollection as ICollecti
 
 query = [{
     'i': 'Title',
-    'o': 'plone.app.querystring.operation.string.is',
+    'o': 'plone.app.querystring.operation.string.contains',
     'v': 'Collection Test Page',
 }]
 
@@ -55,14 +55,17 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.portal.invokeFactory('Collection', 'collection')
         self.collection = self.portal['collection']
 
-    def test_listMetaDataFields(self):
+    def test_bbb_listMetaDataFields(self):
         self.assertEqual(self.collection.listMetaDataFields(), [])
 
     def test_results(self):
         pass
 
-    def test_selectedViewFields(self):
+    def test_bbb_selectedViewFields(self):
         self.assertEqual(self.collection.selectedViewFields(), [])
+        self.collection.customViewFields = ['Title', 'Description']
+        self.assertEqual(self.collection.selectedViewFields(),
+                         [('Title', 'Title'), ('Description', 'Description')])
 
     def test_getFoldersAndImages(self):
         pass
@@ -162,10 +165,10 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-#    def test_tabular_view(self):
-#        view = self.collection.restrictedTraverse('tabular_view')
-#        self.assertTrue(view())
-#        self.assertEqual(view.request.response.status, 200)
+    def test_tabular_view(self):
+        view = self.collection.restrictedTraverse('tabular_view')
+        self.assertTrue(view())
+        self.assertEqual(view.request.response.status, 200)
 
     def test_thumbnail_view(self):
         view = self.collection.restrictedTraverse('thumbnail_view')

@@ -19,9 +19,7 @@ class CollectionView(BrowserView):
     def selectedViewFields(self):
         """Returns a list of all metadata fields from the catalog that were
            selected.
-
-        Note: this is supported by plone.app.collection, but not yet
-        in plone.app.contenttypes.  See the commented out
-        customViewFields field.
         """
-        return []
+        context = aq_inner(self.context)
+        wrapped = ICollection(context)
+        return wrapped.selectedViewFields()

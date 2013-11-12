@@ -48,7 +48,7 @@
   <browser:page
     name="tabular_view"
     permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
     template="templates/tabular_view.pt"
     />
