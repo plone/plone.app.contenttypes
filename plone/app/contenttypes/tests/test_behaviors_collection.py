@@ -77,7 +77,8 @@ class DocumentFunctionalTest(unittest.TestCase):
         # search results start here:
         start = browser.contents.find('search-results')
         # The test string should be within the search results.
-        self.assertTrue('Collection Test Page' in browser.contents[start:start+1000])
+        self.assertTrue('Collection Test Page' in
+                        browser.contents[start:start + 1000])
 
     def test_tabular_view(self):
         browser = self._get_browser()
@@ -85,7 +86,8 @@ class DocumentFunctionalTest(unittest.TestCase):
         # search from here:
         start = browser.contents.find('content-core')
         # The test string should be within the search results.
-        self.assertTrue('Collection Test Page' in browser.contents[start:start+1000])
+        self.assertTrue('Collection Test Page' in
+                        browser.contents[start:start + 1000])
 
     def test_collection_in_edit_form(self):
         browser = self._get_browser()

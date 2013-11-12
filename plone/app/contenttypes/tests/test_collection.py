@@ -21,7 +21,8 @@ from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, \
     setRoles, login, logout
 
 from plone.app.contenttypes.interfaces import ICollection
-from plone.app.contenttypes.behaviors.collection import ICollection as ICollection_behavior
+from plone.app.contenttypes.behaviors.collection import ICollection as \
+    ICollection_behavior
 
 query = [{
     'i': 'Title',

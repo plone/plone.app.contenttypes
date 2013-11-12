@@ -32,8 +32,8 @@ class Collection(Item):
         """Returns a list of all metadata fields from the catalog that were
            selected.
         """
-        from plone.app.contenttypes.behaviors.collection import ICollection as \
-            ICollection_behavior
+        from plone.app.contenttypes.behaviors.collection import \
+            ICollection as ICollection_behavior
         return ICollection_behavior(self).selectedViewFields()
 
     def setQuery(self, query):

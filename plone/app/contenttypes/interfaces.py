@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.supermodel import model
-
 from zope.interface import Interface
-from zope import schema
-from plone.app.contenttypes import _
 
 
 class IPloneAppContenttypesLayer(Interface):
