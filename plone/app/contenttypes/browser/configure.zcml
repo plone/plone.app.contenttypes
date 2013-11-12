@@ -61,14 +61,6 @@
     template="templates/thumbnail_view.pt"
     />
 
-  <browser:page
-    name="RSS"
-    permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
-    class=".collection.CollectionView"
-    template="templates/rss.pt.xml"
-    />
-
   <!-- COLLECTION MENU ITEMS -->
 
   <browser:menuItems

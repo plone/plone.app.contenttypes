@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.browser.syndication.adapters import CollectionFeed \
+    as BaseCollectionFeed
+from Products.CMFPlone.interfaces.syndication import IFeed
+from Products.CMFPlone.interfaces.syndication import ISyndicatable
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.querystring.querybuilder import QueryBuilder
 from plone.autoform.interfaces import IFormFieldProvider
@@ -8,7 +12,6 @@ from plone.supermodel import model
 from zope import schema
 from zope.component import adapts
 from zope.interface import alsoProvides, implements
-
 from plone.app.contenttypes import _
 
 
@@ -58,6 +61,12 @@ class ICollection(model.Schema):
 
 
 alsoProvides(ICollection, IFormFieldProvider)
+alsoProvides(ICollection, ISyndicatable)
+
+
+class ISyndicatableCollection(ISyndicatable):
+    """Marker interface for syndicatable collections.
+    """
 
 
 class Collection(object):
@@ -149,3 +158,10 @@ class Collection(object):
         return getattr(self.context, 'query', None)
 
     query = property(_get_query, _set_query)
+
+
+class CollectionFeed(BaseCollectionFeed):
+    implements(IFeed)
+
+    def _brains(self):
+        return ICollection(self.context).results(batch=False)[:self.limit]

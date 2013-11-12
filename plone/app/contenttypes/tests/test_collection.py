@@ -83,6 +83,10 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.collection.setSort_reversed(True)
         self.assertEqual(self.collection.sort_reversed, True)
 
+    def test_syndicatable(self):
+        from Products.CMFPlone.interfaces.syndication import ISyndicatable
+        self.assertTrue(ISyndicatable.providedBy(self.collection))
+
 
 class PloneAppCollectionIntegrationTest(unittest.TestCase):
 

@@ -39,6 +39,10 @@
     provides=".collection.ICollection"
     factory=".collection.Collection"
     for="plone.dexterity.interfaces.IDexterityContent"
+    marker=".collection.ISyndicatableCollection"
     />
+
+  <adapter factory=".collection.CollectionFeed"
+           for=".collection.ISyndicatableCollection" />
 
 </configure>
