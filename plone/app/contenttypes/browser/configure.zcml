@@ -56,7 +56,7 @@
   <browser:page
     name="thumbnail_view"
     permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
     template="templates/thumbnail_view.pt"
     />

@@ -121,6 +121,7 @@ class Collection(object):
         portal_atct = getToolByName(self.context, 'portal_atct')
         image_types = getattr(portal_atct, 'image_types', [])
 
+        filtered_results = []
         for item in results:
             item_path = item.getPath()
             if item.isPrincipiaFolderish:
@@ -131,11 +132,15 @@ class Collection(object):
                 _mapping['images'][item_path] = IContentListing(catalog(query))
             elif item.portal_type in image_types:
                 _mapping['images'][item_path] = [item, ]
+            else:
+                continue
+            filtered_results.append(item)
 
         _mapping['total_number_of_images'] = sum(map(
             len,
             _mapping['images'].values()
         ))
+        _mapping['results'] = filtered_results
         return _mapping
 
     def selectedViewFields(self):

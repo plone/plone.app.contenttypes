@@ -30,7 +30,7 @@
          tal:define="item_path item/getPath;
                      item_type item/portal_type;
                      is_album python:item_type=='Folder';
-                     images_album python:data['images'][item_path];
+                     images_album python:data['images'].get(item_path, []);
                      number_of_images python:len(images_album);
                      item_title item/Title;
                      item_url item/getURL;
