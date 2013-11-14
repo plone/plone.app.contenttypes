@@ -43,3 +43,21 @@ def update_fti(context):
         name='News Item'
     )
     fti.model_file = "plone.app.contenttypes.schema:news_item.xml"
+
+
+def enable_collection_behavior(context):
+    """Enable collection behavior on Collection.
+    """
+    # Document
+    fti = queryUtility(
+        IDexterityFTI,
+        name='Collection'
+    )
+    behavior = 'plone.app.contenttypes.behaviors.collection.ICollection'
+    if behavior in fti.behaviors:
+        return
+    new = list(fti.behaviors)
+    new.append(behavior)
+    fti.behaviors = tuple(new)
+    if fti.schema == 'plone.app.contenttypes.interfaces.ICollection':
+        fti.schema = None
