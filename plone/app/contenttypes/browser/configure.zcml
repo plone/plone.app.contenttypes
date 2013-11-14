@@ -11,12 +11,13 @@
       file="stylesheets/collection.css" />
 
 
-  <!-- COLLECTION VIEWS -->
+  <!-- VIEWS FOR COLLECTION ITEM -->
 
   <browser:page
     name="view"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
+    class=".collection.CollectionView"
     template="templates/standard_view.pt"
     />
 
@@ -24,42 +25,54 @@
     name="standard_view"
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
+    class=".collection.CollectionView"
+    template="templates/standard_view.pt"
+    />
+
+  <!-- VIEWS FOR ANYTHING WITH THE COLLECTION BEHAVIOR.
+
+       Note that these ignore other fields, but integrators should
+       create other themplates if they want that.  Or improve the
+       query view widget.  -->
+
+  <browser:page
+    name="collection_view"
+    permission="zope2.View"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
+    class=".collection.CollectionView"
     template="templates/standard_view.pt"
     />
 
   <browser:page
     name="summary_view"
     permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
+    class=".collection.CollectionView"
     template="templates/summary_view.pt"
     />
 
   <browser:page
     name="all_content"
     permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
+    class=".collection.CollectionView"
     template="templates/all_content.pt"
     />
 
   <browser:page
     name="tabular_view"
     permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
+    class=".collection.CollectionView"
     template="templates/tabular_view.pt"
     />
 
   <browser:page
     name="thumbnail_view"
     permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
+    class=".collection.CollectionView"
     template="templates/thumbnail_view.pt"
-    />
-
-  <browser:page
-    name="RSS"
-    permission="zope2.View"
-    for="plone.app.contenttypes.interfaces.ICollection"
-    template="templates/rss.pt.xml"
     />
 
   <!-- COLLECTION MENU ITEMS -->

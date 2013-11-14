@@ -23,7 +23,7 @@
 
         <metal:listingmacro define-macro="listing">
         <tal:results define="b_start python:request.get('b_start', 0);
-                             batch python:context.results(b_start=b_start);
+                             batch python:view.results(b_start=b_start);
                              site_properties context/portal_properties/site_properties;
                              use_view_action site_properties/typesUseViewActionInListings|python:();
                              isAnon context/@@plone_portal_state/anonymous;

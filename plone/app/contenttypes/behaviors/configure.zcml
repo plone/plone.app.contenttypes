@@ -33,4 +33,20 @@
     marker=".tableofcontents.ITableOfContents"
     />
 
+  <plone:behavior
+    title="Collection"
+    description="Adds collection behavior"
+    provides=".collection.ICollection"
+    factory=".collection.Collection"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    marker=".collection.ISyndicatableCollection"
+    />
+
+  <utility
+      component=".collection.MetaDataFieldsVocabularyFactory"
+      name="plone.app.contenttypes.metadatafields" />
+
+  <adapter factory=".collection.CollectionFeed"
+           for=".collection.ISyndicatableCollection" />
+
 </configure>

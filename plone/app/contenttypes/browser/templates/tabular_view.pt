@@ -10,7 +10,7 @@
 
     <div metal:fill-slot="content-core"
          tal:define="b_start python:request.get('b_start', 0);
-                     batch python:context.results(b_start=b_start);">
+                     batch python:view.results(b_start=b_start);">
 
          <div metal:define-macro="text-field-view"
               id="parent-fieldname-text" class="stx"
@@ -30,7 +30,7 @@
         <table class="listing" summary="Content listing"
             i18n:attributes="summary"
             tal:condition="batch"
-            tal:define="fields context/selectedViewFields;
+            tal:define="fields view/selectedViewFields;
                         pas_member context/@@pas_member">
             <thead>
                 <tr>

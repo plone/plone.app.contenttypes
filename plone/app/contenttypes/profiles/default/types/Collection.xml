@@ -11,11 +11,11 @@
   <property name="filter_content_types">False</property>
   <property name="allowed_content_types" />
   <property name="allow_discussion">False</property>
-  <property name="schema">plone.app.contenttypes.interfaces.ICollection</property>
   <property name="klass">plone.app.contenttypes.content.Collection</property>
   <property name="add_permission">plone.app.contenttypes.addCollection</property>
   <property name="behaviors">
     <element value="plone.app.content.interfaces.INameFromTitle"/>
+    <element value="plone.app.contenttypes.behaviors.collection.ICollection"/>
     <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
     <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
     <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
