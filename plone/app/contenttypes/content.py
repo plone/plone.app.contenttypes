@@ -49,9 +49,15 @@ class Collection(Item):
         self.sort_reversed = sort_reversed
 
     def queryCatalog(self, batch=True, b_start=0, b_size=30, sort_on=None):
-        return self.results(
-            batch, b_start, b_size, sort_on=sort_on
-        )
+        from plone.app.contenttypes.behaviors.collection import \
+            ICollection as ICollection_behavior
+        return ICollection_behavior(self).results(
+            batch, b_start, b_size, sort_on=sort_on)
+
+    def results(self, **kwargs):
+        from plone.app.contenttypes.behaviors.collection import \
+            ICollection as ICollection_behavior
+        return ICollection_behavior(self).results(**kwargs)
 
 
 class Document(Item):
