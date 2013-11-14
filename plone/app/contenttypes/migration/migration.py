@@ -20,6 +20,7 @@ from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEventAccessor
+from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from z3c.relationfield import RelationValue
@@ -395,8 +396,7 @@ def migrate_collections(portal):
 
 
 class EventMigrator(ATCTContentMigrator):
-    """
-    """
+    """Migrate both Products.ContentTypes & plone.app.event.at Events"""
 
     src_portal_type = 'Event'
     src_meta_type = 'ATEvent'
@@ -404,7 +404,7 @@ class EventMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        # super(EventMigrator, self).migrate_schema_fields()
+        from plone.app.event.dx.behaviors import IEventSummary
 
         old_start = self.old.getField('startDate').get(self.old)
         old_end = self.old.getField('endDate').get(self.old)
@@ -421,18 +421,26 @@ class EventMigrator(ATCTContentMigrator):
             raw_text = ''
         old_richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
                                      outputMimeType='text/x-html-safe')
+        if self.old.getField('timezone'):
+            old_timezone = self.old.getField('timezone').get(self.old)
+        else:
+            old_timezone = default_timezone(fallback='UTC')
 
         acc = IEventAccessor(self.new)
         acc.start = old_start.asdatetime()  # IEventBasic
         acc.end = old_end.asdatetime()  # IEventBasic
-        acc.timezone = 'UTC'  # IEventBasic
+        acc.timezone = old_timezone  # IEventBasic
         acc.location = old_location  # IEventLocation
         acc.attendees = old_attendees  # IEventAttendees
         acc.event_url = old_eventurl  # IEventContact
         acc.contact_name = old_contactname  # IEventContact
         acc.contact_email = old_contactemail  # IEventContact
         acc.contact_phone = old_contactphone  # IEventContact
-        acc.text = old_richtext.raw
+        # Copy the entire richtext object, not just it's representation
+        IEventSummary(self.new).text = old_richtext
+
+        # Trigger ObjectModified, so timezones can be fixed up.
+        notify(ObjectModifiedEvent(self.new))
 
 
 class DXEventMigrator(CMFItemMigrator):

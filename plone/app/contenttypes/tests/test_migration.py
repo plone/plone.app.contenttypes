@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from plone.app.contenttypes.testing import \
@@ -116,19 +115,21 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         return at_newsitem
 
-    def test_event_is_migrated(self):
+    def test_patct_event_is_migrated(self):
+        """Can we migrate a Products.ATContentTypes event?"""
         from DateTime import DateTime
         from plone.app.contenttypes.migration.migration import EventMigrator
+        from plone.app.event.dx.behaviors import IEventSummary
 
         # create an ATEvent
         self.portal.invokeFactory('Event', 'event')
         at_event = self.portal['event']
 
         # Date
-        start = DateTime('2013-01-01')
-        end = DateTime('2013-02-01')
-        at_event.getField('startDate').set(at_event, DateTime('2013-01-01'))
-        at_event.getField('endDate').set(at_event, DateTime('2013-02-01'))
+        at_event.getField('startDate') \
+                .set(at_event, DateTime('2013-02-03 12:00'))
+        at_event.getField('endDate') \
+                .set(at_event, DateTime('2013-04-05 13:00'))
 
         # Contact
         at_event.getField('contactPhone').set(at_event, '123456789')
@@ -143,28 +144,122 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # Text
         at_event.setText('Tütensuppe')
-        at_text = safe_unicode(at_event.getRawText())
-        at_event.setContentType('chemical/x-gaussian-checkpoint')
+        at_event.setContentType('text/plain')
 
+        oldTZ = os.environ.get('TZ', None)
+        os.environ['TZ'] = 'Asia/Tbilisi'
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_event, EventMigrator)
         migrator.migrate()
+        if oldTZ:
+            os.environ['TZ'] = oldTZ
+        else:
+            del os.environ['TZ']
 
         # assertions
         dx_event = self.portal['event']
         dx_acc = IEventAccessor(dx_event)
-        self.assertEqual('%s+00:00' % start.asdatetime().isoformat(),
-                         dx_acc.start.isoformat())
-        self.assertEqual('%s+00:00' % end.asdatetime().isoformat(),
-                         dx_acc.end.isoformat())
+        self.assertEqual(
+            "<class 'Products.ATContentTypes.content.event.ATEvent'>",
+            str(at_event.__class__),
+        )
+        self.assertEqual(
+            "<class 'plone.app.contenttypes.content.Event'>",
+            str(dx_event.__class__),
+        )
+        self.assertEqual(2013, dx_acc.start.year)
+        self.assertEqual(02, dx_acc.start.month)
+        self.assertEqual(03, dx_acc.start.day)
+        self.assertEqual(12, dx_acc.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(dx_acc.start.tzinfo))
+        self.assertEqual(2013, dx_acc.end.year)
+        self.assertEqual(04, dx_acc.end.month)
+        self.assertEqual(05, dx_acc.end.day)
+        self.assertEqual(13, dx_acc.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(dx_acc.end.tzinfo))
+        self.assertEqual(u'Asia/Tbilisi', dx_acc.timezone)
         self.assertEqual('123456789', dx_acc.contact_phone)
         self.assertEqual('dummy@email.com', dx_acc.contact_email)
         self.assertEqual('Name', dx_acc.contact_name)
         self.assertEqual('http://www.plone.org', dx_acc.event_url)
         self.assertEqual(('You', 'Me'), dx_acc.attendees)
-        self.assertEqual(dx_acc.text, at_text)
         self.assertEquals('Event', dx_event.__class__.__name__)
+        self.assertEqual(u'<p>T\xfctensuppe</p>', dx_acc.text)
+        self.assertEqual(u'Tütensuppe', IEventSummary(dx_event).text.raw)
+
+    def test_pae_atevent_is_migrated(self):
+        """Can we migrate a plone.app.event AT event?"""
+        from DateTime import DateTime
+        from plone.testing import z2
+        from plone.app.testing import applyProfile
+        from plone.app.contenttypes.migration.migration import EventMigrator
+        from plone.app.event.dx.behaviors import IEventSummary
+
+        # Enable plone.app.event.at
+        z2.installProduct(self.layer['app'], 'plone.app.event.at')
+        applyProfile(self.portal, 'plone.app.event.at:default')
+
+        self.portal.invokeFactory('Event', 'pae-at-event')
+        old_event = self.portal['pae-at-event']
+
+        # Date
+        old_event.getField('startDate') \
+                 .set(old_event, DateTime('2013-01-01 12:00'))
+        old_event.getField('endDate') \
+                 .set(old_event, DateTime('2013-02-01 13:00'))
+        old_event.getField('wholeDay').set(old_event, False)
+        old_event.getField('timezone').set(old_event, 'Asia/Tbilisi')
+
+        # Contact
+        old_event.getField('contactPhone').set(old_event, '123456789')
+        old_event.getField('contactEmail').set(old_event, 'dummy@email.com')
+        old_event.getField('contactName').set(old_event, 'Name')
+
+        # URL
+        old_event.getField('eventUrl').set(old_event, 'http://www.plone.org')
+
+        # Attendees
+        old_event.getField('attendees').set(old_event, ('You', 'Me'))
+
+        # Text
+        old_event.setText('Tütensuppe')
+        old_event.setContentType('text/plain')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(old_event, EventMigrator)
+        migrator.migrate()
+
+        # Compare new and old events
+        new_event = self.portal['pae-at-event']
+        new_event_acc = IEventAccessor(new_event)
+        self.assertEqual(
+            "<class 'plone.app.event.at.content.ATEvent'>",
+            str(old_event.__class__),
+        )
+        self.assertEqual(
+            "<class 'plone.app.contenttypes.content.Event'>",
+            str(new_event.__class__),
+        )
+        self.assertEqual('Event', new_event.portal_type)
+        self.assertEqual(2013, new_event_acc.start.year)
+        self.assertEqual(01, new_event_acc.start.month)
+        self.assertEqual(01, new_event_acc.start.day)
+        self.assertEqual(12, new_event_acc.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event_acc.start.tzinfo))
+        self.assertEqual(2013, new_event_acc.end.year)
+        self.assertEqual(02, new_event_acc.end.month)
+        self.assertEqual(01, new_event_acc.end.day)
+        self.assertEqual(13, new_event_acc.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event_acc.end.tzinfo))
+        self.assertEqual(u'Asia/Tbilisi', new_event_acc.timezone)
+        self.assertEqual(u'Name', new_event_acc.contact_name)
+        self.assertEqual(u'dummy@email.com', new_event_acc.contact_email)
+        self.assertEqual(u'123456789', new_event_acc.contact_phone)
+        self.assertEqual(u'http://www.plone.org', new_event_acc.event_url)
+        self.assertEqual(u'<p>T\xfctensuppe</p>', new_event_acc.text)
+        self.assertEqual(u'Tütensuppe', IEventSummary(new_event).text.raw)
 
     def test_pae_dxevent_is_migrated(self):
         from datetime import datetime
