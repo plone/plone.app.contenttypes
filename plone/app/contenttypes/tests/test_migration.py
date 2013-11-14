@@ -166,6 +166,62 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(dx_acc.text, at_text)
         self.assertEquals('Event', dx_event.__class__.__name__)
 
+    def test_pae_dxevent_is_migrated(self):
+        from datetime import datetime
+        from plone.app.contenttypes.migration.migration import DXEventMigrator
+        from plone.app.textfield.value import RichTextValue
+        from plone.app.event.dx.behaviors import IEventSummary
+
+        # Enable plone.app.event.dx
+        from plone.app.testing import applyProfile
+        applyProfile(self.portal, 'plone.app.event.dx:default')
+
+        old_event = self.portal[self.portal.invokeFactory(
+            'plone.app.event.dx.event',
+            'dx-event',
+            start=datetime(2011, 11, 11, 11, 0),
+            end=datetime(2011, 11, 11, 12, 0),
+            timezone="Asia/Tbilisi",
+            whole_day=False,
+        )]
+        old_event_acc = IEventAccessor(old_event)
+        old_event_acc.contact_name = 'George'
+        old_event_acc.contact_email = 'me@geor.ge'
+        old_event_acc.contact_phone = '+99512345'
+        old_event_acc.event_url = 'http://geor.ge/event'
+        old_event_acc.text = RichTextValue(
+            raw='Woo, yeah',
+            mimeType='text/plain',
+            outputMimeType='text/x-html-safe'
+        )
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(old_event, DXEventMigrator)
+        migrator.migrate()
+
+        # Compare new and old events
+        new_event = self.portal['dx-event']
+        new_event_acc = IEventAccessor(new_event)
+        self.assertEqual('Event', new_event.portal_type)
+        self.assertEqual(2011, new_event_acc.start.year)
+        self.assertEqual(11, new_event_acc.start.month)
+        self.assertEqual(11, new_event_acc.start.day)
+        self.assertEqual(11, new_event_acc.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event_acc.start.tzinfo))
+        self.assertEqual(2011, new_event_acc.end.year)
+        self.assertEqual(11, new_event_acc.end.month)
+        self.assertEqual(11, new_event_acc.end.day)
+        self.assertEqual(12, new_event_acc.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event_acc.end.tzinfo))
+        self.assertEqual(u'Asia/Tbilisi', new_event_acc.timezone)
+        self.assertEqual(u'George', new_event_acc.contact_name)
+        self.assertEqual(u'me@geor.ge', new_event_acc.contact_email)
+        self.assertEqual(u'+99512345', new_event_acc.contact_phone)
+        self.assertEqual(u'http://geor.ge/event', new_event_acc.event_url)
+        self.assertEqual(u'<p>Woo, yeah</p>', new_event_acc.text)
+        self.assertEqual('Woo, yeah', IEventSummary(new_event).text.raw)
+
     def test_assert_at_contenttypes(self):
         from plone.app.contenttypes.interfaces import IDocument
         self.portal.invokeFactory('Document', 'document')

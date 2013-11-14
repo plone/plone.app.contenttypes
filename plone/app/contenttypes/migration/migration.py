@@ -24,7 +24,9 @@ from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from z3c.relationfield import RelationValue
 from zope.component import getUtility
+from zope.event import notify
 from zope.intid.interfaces import IIntIds
+from zope.lifecycleevent import ObjectModifiedEvent
 
 
 def migrate(portal, migrator):
@@ -431,6 +433,36 @@ class EventMigrator(ATCTContentMigrator):
         acc.contact_email = old_contactemail  # IEventContact
         acc.contact_phone = old_contactphone  # IEventContact
         acc.text = old_richtext.raw
+
+
+class DXEventMigrator(CMFItemMigrator):
+    """Migrator for plone.app.event.dx events"""
+    #TODO: ReferenceMigrator?
+
+    src_portal_type = 'plone.app.event.dx.event'
+    src_meta_type = None
+    dst_portal_type = 'Event'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        from plone.app.event.dx.behaviors import IEventSummary
+
+        oldacc = IEventAccessor(self.old)
+        newacc = IEventAccessor(self.new)
+        newacc.start = oldacc.start
+        newacc.end = oldacc.end
+        newacc.timezone = oldacc.timezone
+        newacc.location = oldacc.location
+        newacc.attendees = oldacc.attendees
+        newacc.event_url = oldacc.event_url
+        newacc.contact_name = oldacc.contact_name
+        newacc.contact_email = oldacc.contact_email
+        newacc.contact_phone = oldacc.contact_phone
+        # Copy the entire richtext object, not just it's representation
+        IEventSummary(self.new).text = IEventSummary(self.old).text
+
+        # Trigger ObjectModified, so timezones can be fixed up.
+        notify(ObjectModifiedEvent(self.new))
 
 
 def migrate_events(portal):
