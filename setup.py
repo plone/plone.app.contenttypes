@@ -38,7 +38,6 @@ setup(name='plone.app.contenttypes',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
           'plone.app.relationfield',
           'plone.app.widgets',
-          'plone.formwidget.querystring',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
       ],
