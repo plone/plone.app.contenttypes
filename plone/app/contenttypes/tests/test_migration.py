@@ -298,6 +298,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         # Compare new and old events
         new_event = self.portal['dx-event']
         new_event_acc = IEventAccessor(new_event)
+        self.assertEqual(False, old_event.exclude_from_nav)
         self.assertEqual('Event', new_event.portal_type)
         self.assertEqual(2011, new_event_acc.start.year)
         self.assertEqual(11, new_event_acc.start.month)
@@ -316,6 +317,34 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'http://geor.ge/event', new_event_acc.event_url)
         self.assertEqual(u'<p>Woo, yeah</p>', new_event_acc.text)
         self.assertEqual('Woo, yeah', IEventSummary(new_event).text.raw)
+        self.assertEqual(False, new_event.exclude_from_nav)
+
+    def test_dx_excl_from_nav_is_migrated(self):
+        from datetime import datetime
+        from plone.app.contenttypes.migration.migration import DXEventMigrator
+
+        # Enable plone.app.event.dx
+        from plone.app.testing import applyProfile
+        applyProfile(self.portal, 'plone.app.event.dx:default')
+
+        old_event = self.portal[self.portal.invokeFactory(
+            'plone.app.event.dx.event',
+            'dx-event',
+            start=datetime(2011, 11, 11, 11, 0),
+            end=datetime(2011, 11, 11, 12, 0),
+            timezone="GMT",
+            whole_day=False,
+            exclude_from_nav=True,
+        )]
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(old_event, DXEventMigrator)
+        migrator.migrate()
+
+        new_event = self.portal['dx-event']
+        self.assertEqual(True, old_event.exclude_from_nav)
+        self.assertEqual(True, new_event.exclude_from_nav)
 
     def test_assert_at_contenttypes(self):
         from plone.app.contenttypes.interfaces import IDocument

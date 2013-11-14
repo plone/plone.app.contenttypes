@@ -180,6 +180,14 @@ class ATCTContentMigrator(ATCTBaseMigrator,
     """
 
 
+class DXContentMigrator(CMFItemMigrator):
+    """Base for contentish DX
+    """
+
+    def migrate_atctmetadata(self):
+        self.new.exclude_from_nav = self.old.exclude_from_nav
+
+
 class ATCTFolderMigrator(ATCTBaseMigrator,
                          CMFFolderMigrator,
                          ReferenceMigrator):
@@ -443,9 +451,8 @@ class EventMigrator(ATCTContentMigrator):
         notify(ObjectModifiedEvent(self.new))
 
 
-class DXEventMigrator(CMFItemMigrator):
+class DXEventMigrator(DXContentMigrator):
     """Migrator for plone.app.event.dx events"""
-    #TODO: ReferenceMigrator?
 
     src_portal_type = 'plone.app.event.dx.event'
     src_meta_type = None
