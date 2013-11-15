@@ -451,6 +451,42 @@ class EventMigrator(ATCTContentMigrator):
         notify(ObjectModifiedEvent(self.new))
 
 
+class DXOldEventMigrator(DXContentMigrator):
+    """Migrator for 1.0 plone.app.contenttypes DX events"""
+
+    src_portal_type = 'Event'
+    src_meta_type = 'Dexterity Item'
+    dst_portal_type = 'Event'
+    dst_meta_type = None  # not used
+
+    def migrate(self):
+        # Only migrate items using old schema
+        if hasattr(self.old, 'start_date'):
+            DXContentMigrator.migrate(self)
+
+    def migrate_schema_fields(self):
+        from plone.app.event.dx.behaviors import IEventSummary
+
+        newacc = IEventAccessor(self.new)
+        newacc.location = self.old.location
+        newacc.start = self.old.start_date
+        newacc.end = self.old.end_date
+        if self.old.start_date.tzinfo:
+            newacc.timezone = str(self.old.start_date.tzinfo)
+        else:
+            newacc.timezone = default_timezone(fallback='UTC')
+        newacc.attendees = self.old.attendees
+        newacc.event_url = self.old.event_url
+        newacc.contact_name = self.old.contact_name
+        newacc.contact_email = self.old.contact_email
+        newacc.contact_phone = self.old.contact_phone
+        # Copy the entire richtext object, not just it's representation
+        IEventSummary(self.new).text = self.old.text
+
+        # Trigger ObjectModified, so timezones can be fixed up.
+        notify(ObjectModifiedEvent(self.new))
+
+
 class DXEventMigrator(DXContentMigrator):
     """Migrator for plone.app.event.dx events"""
 
@@ -481,5 +517,6 @@ class DXEventMigrator(DXContentMigrator):
 
 
 def migrate_events(portal):
+    migrate(portal, DXOldEventMigrator)
     migrate(portal, EventMigrator)
     migrate(portal, DXEventMigrator)

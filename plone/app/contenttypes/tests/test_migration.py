@@ -318,6 +318,64 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual('Woo, yeah', IEventSummary(new_event).text.raw)
         self.assertEqual(False, new_event.exclude_from_nav)
 
+    def test_pact_1_0_dxevent_is_migrated(self):
+        from datetime import datetime
+        from pytz import timezone
+        from plone.app.contenttypes.migration.migration import migrate_events
+        from plone.app.textfield.value import RichTextValue
+        from plone.app.event.dx.behaviors import IEventSummary
+
+        # Create a current object, but populate as if it was 1.0
+        applyProfile(self.portal, 'plone.app.contenttypes.tests:1_0_x')
+        old_event = self.portal[self.portal.invokeFactory(
+            'Event',
+            'dx-event',
+            location='Newbraska',
+            start_date=datetime(2019, 04, 02, 15, 20,
+                                tzinfo=timezone('Asia/Tbilisi')),
+            end_date=datetime(2019, 04, 02, 16, 20,
+                              tzinfo=timezone('Asia/Tbilisi')),
+            attendees='Me & You',
+            event_url='http://woo.com',
+            contact_name='Frank',
+            contact_email='me@fra.nk',
+            contact_phone='+4412345',
+        )]
+        old_event.text = RichTextValue(
+            raw=u'Awesüme',
+            mimeType='text/plain',
+            outputMimeType='text/x-html-safe'
+        )
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrate_events(self.portal)
+
+        # Compare new and old events
+        new_event = self.portal['dx-event']
+        new_event_acc = IEventAccessor(new_event)
+        self.assertEqual(False, old_event.exclude_from_nav)
+        self.assertEqual('Event', new_event.portal_type)
+        self.assertEqual(2019, new_event_acc.start.year)
+        self.assertEqual(04, new_event_acc.start.month)
+        self.assertEqual(02, new_event_acc.start.day)
+        self.assertEqual(15, new_event_acc.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event_acc.start.tzinfo))
+        self.assertEqual(2019, new_event_acc.end.year)
+        self.assertEqual(04, new_event_acc.end.month)
+        self.assertEqual(02, new_event_acc.end.day)
+        self.assertEqual(16, new_event_acc.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event_acc.end.tzinfo))
+        self.assertEqual(u'Asia/Tbilisi', new_event_acc.timezone)
+        self.assertEqual(u'Frank', new_event_acc.contact_name)
+        self.assertEqual(u'Newbraska', new_event_acc.location)
+        self.assertEqual(u'me@fra.nk', new_event_acc.contact_email)
+        self.assertEqual(u'+4412345', new_event_acc.contact_phone)
+        self.assertEqual(u'http://woo.com', new_event_acc.event_url)
+        self.assertEqual(u'<p>Awesüme</p>', new_event_acc.text)
+        self.assertEqual(u'Awesüme', IEventSummary(new_event).text.raw)
+        self.assertEqual(False, new_event.exclude_from_nav)
+
     def test_dx_excl_from_nav_is_migrated(self):
         from datetime import datetime
         from plone.app.contenttypes.migration.migration import DXEventMigrator
