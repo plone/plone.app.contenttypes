@@ -455,7 +455,7 @@ class DXEventMigrator(DXContentMigrator):
     """Migrator for plone.app.event.dx events"""
 
     src_portal_type = 'plone.app.event.dx.event'
-    src_meta_type = None
+    src_meta_type = 'Dexterity Item'
     dst_portal_type = 'Event'
     dst_meta_type = None  # not used
 
@@ -481,4 +481,5 @@ class DXEventMigrator(DXContentMigrator):
 
 
 def migrate_events(portal):
-    return migrate(portal, EventMigrator)
+    migrate(portal, EventMigrator)
+    migrate(portal, DXEventMigrator)

@@ -118,7 +118,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_patct_event_is_migrated(self):
         """Can we migrate a Products.ATContentTypes event?"""
         from DateTime import DateTime
-        from plone.app.contenttypes.migration.migration import EventMigrator
+        from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.event.dx.behaviors import IEventSummary
 
         # create an ATEvent
@@ -148,10 +148,11 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         oldTZ = os.environ.get('TZ', None)
         os.environ['TZ'] = 'Asia/Tbilisi'
+
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrator = self.get_migrator(at_event, EventMigrator)
-        migrator.migrate()
+        migrate_events(self.portal)
+
         if oldTZ:
             os.environ['TZ'] = oldTZ
         else:
@@ -193,7 +194,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from DateTime import DateTime
         from plone.testing import z2
         from plone.app.testing import applyProfile
-        from plone.app.contenttypes.migration.migration import EventMigrator
+        from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.event.dx.behaviors import IEventSummary
 
         # Enable plone.app.event.at
@@ -228,8 +229,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrator = self.get_migrator(old_event, EventMigrator)
-        migrator.migrate()
+        migrate_events(self.portal)
 
         # Compare new and old events
         new_event = self.portal['pae-at-event']
@@ -263,7 +263,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_pae_dxevent_is_migrated(self):
         from datetime import datetime
-        from plone.app.contenttypes.migration.migration import DXEventMigrator
+        from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.textfield.value import RichTextValue
         from plone.app.event.dx.behaviors import IEventSummary
 
@@ -292,8 +292,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrator = self.get_migrator(old_event, DXEventMigrator)
-        migrator.migrate()
+        migrate_events(self.portal)
 
         # Compare new and old events
         new_event = self.portal['dx-event']
