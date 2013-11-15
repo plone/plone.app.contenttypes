@@ -118,7 +118,7 @@ class Collection(object):
         results = self.results(batch=False)
 
         _mapping = {'results': results, 'images': {}}
-        portal_atct = getToolByName(self.context, 'portal_atct')
+        portal_atct = getToolByName(self.context, 'portal_atct', None)
         image_types = getattr(portal_atct, 'image_types', [])
 
         filtered_results = []
