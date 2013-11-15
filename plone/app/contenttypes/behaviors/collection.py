@@ -119,7 +119,7 @@ class Collection(object):
 
         _mapping = {'results': results, 'images': {}}
         portal_atct = getToolByName(self.context, 'portal_atct', None)
-        image_types = getattr(portal_atct, 'image_types', [])
+        image_types = getattr(portal_atct, 'image_types', ['Image'])
 
         filtered_results = []
         for item in results:
