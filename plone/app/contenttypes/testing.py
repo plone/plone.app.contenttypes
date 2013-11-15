@@ -82,6 +82,12 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
             plone.app.contenttypes,
             context=configurationContext
         )
+        import plone.app.contenttypes.tests
+        xmlconfig.file(
+            'configure.zcml',
+            plone.app.contenttypes.tests,
+            context=configurationContext
+        )
 
     def tearDownZope(self, app):
         try:
