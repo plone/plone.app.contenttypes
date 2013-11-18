@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.migration.migration import DXOldEventMigrator
 from plone.app.contenttypes.migration.migration import migrate
-from plone.app.upgrade.utils import loadMigrationProfile
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 
@@ -65,7 +64,5 @@ def enable_collection_behavior(context):
         fti.schema = None
 
 
-def migrate_to_pa_event(context):
-    loadMigrationProfile(context, 'profile-plone.app.event:default')
-    portal = context.getParentNode()
+def migrate_to_pa_event(portal):
     migrate(portal, DXOldEventMigrator)
