@@ -20,7 +20,6 @@ Changelog
 
 - Change Collection to use a behavior.  Issue #65.
   [maurits, kaselis]
->>>>>>> master
 
 - Improved test coverage for test_migration
   [joka]
