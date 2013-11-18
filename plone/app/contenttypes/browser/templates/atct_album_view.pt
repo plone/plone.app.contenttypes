@@ -14,20 +14,16 @@
                  otherContents result/others;
                  Batch python:modules['Products.CMFPlone'].Batch;
                  b_start python:request.get('b_start', 0);
-                 kssClassesView context/@@kss_field_decorator_view;
-                 getKssClasses nocall:kssClassesView/getKssClassesInlineEditable;
                  templateId template/getId;
                  batch python:Batch(images, 12, int(b_start), orphan=1)">
 
     <div metal:define-macro="text-field-view"
          id="parent-fieldname-text" class="stx"
-         tal:define="kss_class python:getKssClasses('text',
-                     templateId=templateId, macro='text-field-view');
-                     has_text exists:context/aq_explicit/getText;
+         tal:define="has_text exists:context/aq_explicit/getText;
                      text python:has_text and here.getText() or ''"
          tal:condition="text"
          tal:attributes="class python: here.Format() in ('text/structured',
-                                               'text/x-rst', ) and 'stx' + kss_class or 'plain' + kss_class">
+                                               'text/x-rst', ) and 'stx' or 'plain'">
         <div metal:define-slot="inside" tal:replace="structure text">The body</div>
     </div>
 

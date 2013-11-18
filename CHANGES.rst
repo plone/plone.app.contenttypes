@@ -7,6 +7,21 @@ Changelog
 - Fix migration restoreReferencesOrder removes references
   [joka]
 
+- Enable summary_view and all_content views for content types that
+  have the collection behavior enabled.  Define collection_view for
+  those types so you can view the results.  These simply show the
+  results.  The normal view of such a type will just show all fields
+  in the usual dexterity way.
+  [maurits, kaselis]
+
+- Add customViewFields to the Collection behavior.  This was available
+  on old collections too.
+  [maurits, kaselis]
+
+- Change Collection to use a behavior.  Issue #65.
+  [maurits, kaselis]
+>>>>>>> master
+
 - Improved test coverage for test_migration
   [joka]
 

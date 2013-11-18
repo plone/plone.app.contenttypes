@@ -51,7 +51,7 @@ I set the collection's relative location criterion to
     Select From List  xpath=//select[@name="addindex"]  Location
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
     Select From List  xpath=//select[@class='queryoperator']  Relative path
-    Input Text  xpath=//input[@name='form.widgets.query.v:records']  ${criterion}
+    Input Text  xpath=//input[@name='form.widgets.ICollection.query.v:records']  ${criterion}
     Click Button  Save
     Wait until page contains  Changes saved
 
@@ -62,7 +62,7 @@ I set the collection's absolute location criterion to
     Select From List  xpath=//select[@name="addindex"]  Location
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
     Select From List  xpath=//select[@class='queryoperator']  Absolute path
-    Input Text  xpath=//input[@name='form.widgets.query.v:records']  ${criterion}
+    Input Text  xpath=//input[@name='form.widgets.ICollection.query.v:records']  ${criterion}
     Click Button  Save
     Wait until page contains  Changes saved
 

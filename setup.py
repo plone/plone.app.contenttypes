@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0'
+version = '1.1.dev0'
 
 long_description = open("README.rst").read() + "\n" + \
     open("CHANGES.rst").read()
@@ -14,7 +14,6 @@ setup(name='plone.app.contenttypes',
       classifiers=[
           "Development Status :: 4 - Beta",
           "Framework :: Plone",
-          "Framework :: Plone :: 4.0",
           "Framework :: Plone :: 4.1",
           "Framework :: Plone :: 4.2",
           "Framework :: Plone :: 4.3",

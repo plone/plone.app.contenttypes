@@ -42,6 +42,6 @@ I set the collection's creator criterion to
     Select From List  xpath=//select[@name="addindex"]  Creator
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
     Select From List  xpath=//select[@class='queryoperator']  Is
-    Input Text  name=form.widgets.query.v:records  ${criterion}
+    Input Text  name=form.widgets.ICollection.query.v:records  ${criterion}
     Click Button  Save
     Wait until page contains  Changes saved

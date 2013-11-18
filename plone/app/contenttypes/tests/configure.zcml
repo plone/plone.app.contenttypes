@@ -1,0 +1,20 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:zcml="http://namespaces.zope.org/zcml"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:i18n="http://namespaces.zope.org/i18n"
+           xmlns:gs="http://namespaces.zope.org/genericsetup"
+           xmlns:cmf="http://namespaces.zope.org/cmf"
+           xmlns:plone="http://namespaces.plone.org/plone"
+           i18n_domain="plone.app.contenttypes">
+
+  <includeDependencies package="." />
+
+  <gs:registerProfile
+    name="1_0_x"
+    title="Register old 1.0.x types"
+    directory="profiles/1_0_x"
+    description="This provides some of the older types for unit testing"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+</configure>
