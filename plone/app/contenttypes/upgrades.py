@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.migration.migration import DXOldEventMigrator
-from plone.app.contenttypes.migration.migration import migrate
 from plone.dexterity.interfaces import IDexterityFTI
+
 from zope.component import queryUtility
 
 
@@ -62,7 +61,3 @@ def enable_collection_behavior(context):
     fti.behaviors = tuple(new)
     if fti.schema == 'plone.app.contenttypes.interfaces.ICollection':
         fti.schema = None
-
-
-def migrate_to_pa_event(portal):
-    migrate(portal, DXOldEventMigrator)

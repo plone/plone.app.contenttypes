@@ -20,13 +20,4 @@
       handler=".upgrades.enable_collection_behavior"
       />
 
-  <genericsetup:upgradeStep
-      source="1001"
-      destination="1100"
-      title="Update from old dx events to plone.app.event types"
-      description=""
-      profile="plone.app.contenttypes:default"
-      handler=".upgrades.migrate_to_pa_event"
-      />
-
 </configure>
