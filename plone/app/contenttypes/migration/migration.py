@@ -139,6 +139,7 @@ class ReferenceMigrator(object):
             Because all relations to deleted objects will be lost, we iterate
             over all backref objects and store the relations of the backref
             object in advance.
+            This is automatically called by Products.contentmigration.
         """
         # Relations UIDs:
         if not hasattr(self.old, "_relatedItemsOrder"):
@@ -529,7 +530,6 @@ class DXEventMigrator(DXContentMigrator):
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))
-
 
 
 def migrate_events(portal):
