@@ -324,9 +324,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.textfield.value import RichTextValue
         from plone.app.event.dx.behaviors import IEventSummary
+        from plone.app.contenttypes.tests.oldtypes import create1_0EventType
 
         # Create a 1.0 Event object
-        applyProfile(self.portal, 'plone.app.contenttypes.tests:1_0_x')
+        create1_0EventType(self.portal)
         old_event = self.portal[self.portal.invokeFactory(
             'Event',
             'dx-event',
