@@ -8,7 +8,6 @@
            i18n_domain="plone.app.contenttypes">
 
   <includeDependencies package="." />
-  <include package="plone.app.dexterity" />
 
   <gs:registerProfile
     name="default"
