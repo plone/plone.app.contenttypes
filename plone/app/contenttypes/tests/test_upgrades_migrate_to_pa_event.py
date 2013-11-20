@@ -62,7 +62,7 @@ class MigrateEventContentTypesTest(unittest.TestCase):
             location='Newbraska',
             start_date=start_date,
             end_date=end_date,
-            attendees='Me & You',
+            attendees='Me\r\nYou',
             event_url='http://woo.com',
             contact_name='Frank',
             contact_email='me@fra.nk',
@@ -81,6 +81,8 @@ class MigrateEventContentTypesTest(unittest.TestCase):
                 obj.id,
                 [acc.start.year, acc.start.month, acc.start.day],
                 [acc.end.year, acc.end.month, acc.end.day],
+                acc.location,
+                acc.attendees
             ]
 
         # Create some 1.0 Event objects
@@ -88,13 +90,13 @@ class MigrateEventContentTypesTest(unittest.TestCase):
         self.portal.invokeFactory('Folder', 'event-folder')
         self.createOldEvent(
             self.portal, 'eventa',
-            datetime(2012, 1, 1, 15, 20),
-            datetime(2015, 9, 2, 16, 20),
+            start_date=datetime(2012, 1, 1, 15, 20),
+            end_date=datetime(2015, 9, 2, 16, 20),
         )
         self.createOldEvent(
             self.portal['event-folder'], 'eventb',
-            datetime(2013, 3, 3, 15, 20),
-            datetime(2019, 5, 6, 16, 20),
+            start_date=datetime(2013, 3, 3, 15, 20),
+            end_date=datetime(2019, 5, 6, 16, 20),
         )
 
         # IEventAccessor? What's that?
@@ -107,9 +109,11 @@ class MigrateEventContentTypesTest(unittest.TestCase):
         # Should be able to use IEventAccessor on events now
         self.assertEqual(
             getNewEventDetail(self.portal['eventa']),
-            ['eventa', [2012, 1, 1], [2015, 9, 2]],
+            ['eventa', [2012, 1, 1], [2015, 9, 2],
+             u'Newbraska', ('Me', 'You')],
         )
         self.assertEqual(
             getNewEventDetail(self.portal['event-folder']['eventb']),
-            ['eventb', [2013, 3, 3], [2019, 5, 6]],
+            ['eventb', [2013, 3, 3], [2019, 5, 6],
+             u'Newbraska', ('Me', 'You')],
         )

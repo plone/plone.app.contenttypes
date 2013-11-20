@@ -16,9 +16,12 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from persistent.list import PersistentList
+from plone.app.contenttypes.interfaces import IEvent
+from plone.app.event.dx.behaviors import IEventSummary
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from plone.event.interfaces import IEvent as IPEEvent
 from plone.event.interfaces import IEventAccessor
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
@@ -428,8 +431,6 @@ class EventMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        from plone.app.event.dx.behaviors import IEventSummary
-
         old_start = self.old.getField('startDate').get(self.old)
         old_end = self.old.getField('endDate').get(self.old)
         old_location = self.old.getField('location').get(self.old)
@@ -476,28 +477,33 @@ class DXOldEventMigrator(DXContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate(self):
-        # Only migrate items using old schema
-        if hasattr(self.old, 'start_date'):
+        # Only migrate items using old Schema
+        if IEvent.providedBy(self.old) and hasattr(self.old, 'start_date'):
             DXContentMigrator.migrate(self)
 
     def migrate_schema_fields(self):
-        from plone.app.event.dx.behaviors import IEventSummary
-
         newacc = IEventAccessor(self.new)
-        newacc.location = self.old.location
         newacc.start = self.old.start_date
         newacc.end = self.old.end_date
         if self.old.start_date.tzinfo:
             newacc.timezone = str(self.old.start_date.tzinfo)
         else:
             newacc.timezone = default_timezone(fallback='UTC')
-        newacc.attendees = self.old.attendees
-        newacc.event_url = self.old.event_url
-        newacc.contact_name = self.old.contact_name
-        newacc.contact_email = self.old.contact_email
-        newacc.contact_phone = self.old.contact_phone
-        # Copy the entire richtext object, not just it's representation
-        IEventSummary(self.new).text = self.old.text
+        if hasattr(self.old, 'location'):
+            newacc.location = self.old.location
+        if hasattr(self.old, 'attendees'):
+            newacc.attendees = tuple(self.old.attendees.splitlines())
+        if hasattr(self.old, 'event_url'):
+            newacc.event_url = self.old.event_url
+        if hasattr(self.old, 'contact_name'):
+            newacc.contact_name = self.old.contact_name
+        if hasattr(self.old, 'contact_email'):
+            newacc.contact_email = self.old.contact_email
+        if hasattr(self.old, 'contact_phone'):
+            newacc.contact_phone = self.old.contact_phone
+        if hasattr(self.old, 'text'):
+            # Copy the entire richtext object, not just it's representation
+            IEventSummary(self.new).text = self.old.text
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))
@@ -512,8 +518,6 @@ class DXEventMigrator(DXContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        from plone.app.event.dx.behaviors import IEventSummary
-
         oldacc = IEventAccessor(self.old)
         newacc = IEventAccessor(self.new)
         newacc.start = oldacc.start
