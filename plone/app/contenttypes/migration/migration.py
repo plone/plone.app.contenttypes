@@ -21,7 +21,6 @@ from plone.app.event.dx.behaviors import IEventSummary
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
-from plone.event.interfaces import IEvent as IPEEvent
 from plone.event.interfaces import IEventAccessor
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
