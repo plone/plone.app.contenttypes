@@ -4,6 +4,10 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- Collection: get ``querybuilderresults`` view instead of using the
+  ``QueryBuilder`` class directly.
+  [maurits]
+
 - Fix migration restoreReferencesOrder removes references
   [joka]
 
