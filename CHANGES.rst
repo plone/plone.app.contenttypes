@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.1 (unreleased)
-----------------
+1.1a1 (2013-11-22)
+------------------
 
 - Collection: get ``querybuilderresults`` view instead of using the
   ``QueryBuilder`` class directly.
