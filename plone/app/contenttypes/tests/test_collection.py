@@ -361,7 +361,6 @@ class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
         view = self.collection.restrictedTraverse('@@edit')
         html = view()
         self.assertTrue('form-widgets-ICollection-query' in html)
-        self.assertTrue('No results were found.' in html)
         #from plone.app.contentlisting.interfaces import IContentListing
         #self.assertTrue(IContentListing.providedBy(view.accessor()))
         #self.assertTrue(getattr(accessor(), "actual_result_count"))
