@@ -5,12 +5,11 @@ from Products.CMFPlone.browser.syndication.adapters import CollectionFeed \
 from Products.CMFPlone.interfaces.syndication import IFeed
 from Products.CMFPlone.interfaces.syndication import ISyndicatable
 from plone.app.contentlisting.interfaces import IContentListing
-from plone.app.querystring.querybuilder import QueryBuilder
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
 from zope import schema
-from zope.component import adapts, getUtility
+from zope.component import adapts, getMultiAdapter, getUtility
 from zope.interface import alsoProvides, implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
@@ -99,7 +98,8 @@ class Collection(object):
 
     def results(self, batch=True, b_start=0, b_size=None,
                 sort_on=None, limit=None, brains=False):
-        querybuilder = QueryBuilder(self.context, self.context.REQUEST)
+        querybuilder = getMultiAdapter((self.context, self.context.REQUEST),
+                                       name='querybuilderresults')
         sort_order = 'reverse' if self.sort_reversed else 'ascending'
         if not b_size:
             b_size = self.item_count
@@ -118,8 +118,8 @@ class Collection(object):
         results = self.results(batch=False)
 
         _mapping = {'results': results, 'images': {}}
-        portal_atct = getToolByName(self.context, 'portal_atct')
-        image_types = getattr(portal_atct, 'image_types', [])
+        portal_atct = getToolByName(self.context, 'portal_atct', None)
+        image_types = getattr(portal_atct, 'image_types', ['Image'])
 
         filtered_results = []
         for item in results:

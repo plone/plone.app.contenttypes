@@ -122,8 +122,12 @@ Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlon
 Migrating from old versions of plone.app.contenttypes
 -----------------------------------------------------
 
-Before version 1.0a2 the content-items did not implement marker-interfaces. They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
+Before version 1.0a2 the content-items did not implement marker-interfaces.  They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
 
+Since plone.app.contenttypes 1.1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
+
+1) First run the default profile (``plone.app.contenttypes:default``) and
+2) Then run the upgrade steps.
 
 
 Migrating default-content that was extended with archetypes.schemaextender

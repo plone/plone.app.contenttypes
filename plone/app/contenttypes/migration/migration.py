@@ -16,15 +16,20 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from persistent.list import PersistentList
+from plone.app.contenttypes.interfaces import IEvent
+from plone.app.event.dx.behaviors import IEventSummary
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEventAccessor
+from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from z3c.relationfield import RelationValue
 from zope.component import getUtility
+from zope.event import notify
 from zope.intid.interfaces import IIntIds
+from zope.lifecycleevent import ObjectModifiedEvent
 
 
 def migrate(portal, migrator):
@@ -50,8 +55,7 @@ def refs(obj):
             to_id = intids.getId(to_obj)
             obj.relatedItems.append(RelationValue(to_id))
             out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
-        # keep the _relatedItems to restore the order
-        # del obj._relatedItems
+        del obj._relatedItems
 
     except AttributeError:
         pass
@@ -96,6 +100,17 @@ def backrefs(portal, obj):
     return out
 
 
+def order(obj):
+    out = ''
+    relatedItemsOrder = obj._relatedItemsOrder
+    uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
+    key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
+    obj.relatedItems = sorted(obj.relatedItems, key=key)
+    out += str('%s ordered.' % obj)
+    del obj._relatedItemsOrder
+    return out
+
+
 def restoreReferences(portal):
     """ iterate over all Dexterity Objs and restore as Dexterity Reference. """
     out = ''
@@ -112,45 +127,47 @@ def restoreReferences(portal):
         out += refs(obj)
         # backrefs
         out += backrefs(portal, obj)
+        #order
+        out += order(obj)
 
-    return out
-
-
-def restoreReferencesOrder(portal):
-    """ In obj._relatedItems is the correct order of references. Let's
-        replace the ATReference (UID) by the new Dexterity Refeŕence.
-        Then we have a list with ordered Refs and can replace
-        obj.relatedItems."""
-    out = ''
-    catalog = getToolByName(portal, "portal_catalog")
-    results = catalog.searchResults(
-        object_provides=IDexterityContent.__identifier__)
-    # Iteration on all dexterity objects
-    for brain in results:
-        obj = brain.getObject()
-        if not getattr(obj, '_relatedItems', None):
-            continue
-        # In obj._relatedItems we have the right order.
-        atRelItems = obj._relatedItems
-        # Replace the AT Ref by the Dex. Ref
-        for i in atRelItems:
-            for rel in obj.relatedItems:
-                if rel.to_object.UID() == i:
-                    atRelItems[atRelItems.index(i)] = rel
-                    break
-        obj.relatedItems = atRelItems
-        del obj._relatedItems
-        out += str('%s ordered.' % obj)
     return out
 
 
 class ReferenceMigrator(object):
+
+    def beforeChange_relatedItemsOrder(self):
+        """ Store Archetype relations as target uids on the old archetype
+            object to restore the order later.
+            Because all relations to deleted objects will be lost, we iterate
+            over all backref objects and store the relations of the backref
+            object in advance.
+            This is automatically called by Products.contentmigration.
+        """
+        # Relations UIDs:
+        if not hasattr(self.old, "_relatedItemsOrder"):
+            relatedItems = self.old.getRelatedItems()
+            relatedItemsOrder = [item.UID() for item in relatedItems]
+            self.old._relatedItemsOrder = PersistentList(relatedItemsOrder)
+
+        # Backrefs Relations UIDs:
+        reference_cat = getToolByName(self.old, REFERENCE_CATALOG)
+        backrefs = reference_cat.getBackReferences(self.old,
+                                                   relationship="relatesTo")
+        backref_objects = map(lambda x: x.getSourceObject(), backrefs)
+        for obj in backref_objects:
+            if obj.portal_type != self.src_portal_type:
+                continue
+            if not hasattr(obj, "_relUids"):
+                relatedItems = obj.getRelatedItems()
+                relatedItemsOrder = [item.UID() for item in relatedItems]
+                obj._relatedItemsOrder = PersistentList(relatedItemsOrder)
 
     def migrate_relatedItems(self):
         """ Store Archetype relations as target uids on the dexterity object
             for later restore. Backrelations are saved as well because all
             relation to deleted objects would be lost.
         """
+
         # Relations:
         relItems = self.old.getRelatedItems()
         relUids = [item.UID() for item in relItems]
@@ -158,9 +175,13 @@ class ReferenceMigrator(object):
 
         # Backrefs:
         reference_catalog = getToolByName(self.old, REFERENCE_CATALOG)
+
         backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
             self.old, relationship="relatesTo")]
         self.new._backrefs = backrefs
+
+        # Order:
+        self.new._relatedItemsOrder = self.old._relatedItemsOrder
 
 
 class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
@@ -175,6 +196,14 @@ class ATCTContentMigrator(ATCTBaseMigrator,
                           ReferenceMigrator):
     """Base for contentish ATCT
     """
+
+
+class DXContentMigrator(CMFItemMigrator):
+    """Base for contentish DX
+    """
+
+    def migrate_atctmetadata(self):
+        self.new.exclude_from_nav = self.old.exclude_from_nav
 
 
 class ATCTFolderMigrator(ATCTBaseMigrator,
@@ -393,8 +422,7 @@ def migrate_collections(portal):
 
 
 class EventMigrator(ATCTContentMigrator):
-    """
-    """
+    """Migrate both Products.ContentTypes & plone.app.event.at Events"""
 
     src_portal_type = 'Event'
     src_meta_type = 'ATEvent'
@@ -402,8 +430,6 @@ class EventMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        # super(EventMigrator, self).migrate_schema_fields()
-
         old_start = self.old.getField('startDate').get(self.old)
         old_end = self.old.getField('endDate').get(self.old)
         old_location = self.old.getField('location').get(self.old)
@@ -419,19 +445,97 @@ class EventMigrator(ATCTContentMigrator):
             raw_text = ''
         old_richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
                                      outputMimeType='text/x-html-safe')
+        if self.old.getField('timezone'):
+            old_timezone = self.old.getField('timezone').get(self.old)
+        else:
+            old_timezone = default_timezone(fallback='UTC')
 
         acc = IEventAccessor(self.new)
         acc.start = old_start.asdatetime()  # IEventBasic
         acc.end = old_end.asdatetime()  # IEventBasic
-        acc.timezone = 'UTC'  # IEventBasic
+        acc.timezone = old_timezone  # IEventBasic
         acc.location = old_location  # IEventLocation
         acc.attendees = old_attendees  # IEventAttendees
         acc.event_url = old_eventurl  # IEventContact
         acc.contact_name = old_contactname  # IEventContact
         acc.contact_email = old_contactemail  # IEventContact
         acc.contact_phone = old_contactphone  # IEventContact
-        acc.text = old_richtext.raw
+        # Copy the entire richtext object, not just it's representation
+        IEventSummary(self.new).text = old_richtext
+
+        # Trigger ObjectModified, so timezones can be fixed up.
+        notify(ObjectModifiedEvent(self.new))
+
+
+class DXOldEventMigrator(DXContentMigrator):
+    """Migrator for 1.0 plone.app.contenttypes DX events"""
+
+    src_portal_type = 'Event'
+    src_meta_type = 'Dexterity Item'
+    dst_portal_type = 'Event'
+    dst_meta_type = None  # not used
+
+    def migrate(self):
+        # Only migrate items using old Schema
+        if IEvent.providedBy(self.old) and hasattr(self.old, 'start_date'):
+            DXContentMigrator.migrate(self)
+
+    def migrate_schema_fields(self):
+        newacc = IEventAccessor(self.new)
+        newacc.start = self.old.start_date
+        newacc.end = self.old.end_date
+        if self.old.start_date.tzinfo:
+            newacc.timezone = str(self.old.start_date.tzinfo)
+        else:
+            newacc.timezone = default_timezone(fallback='UTC')
+        if hasattr(self.old, 'location'):
+            newacc.location = self.old.location
+        if hasattr(self.old, 'attendees'):
+            newacc.attendees = tuple(self.old.attendees.splitlines())
+        if hasattr(self.old, 'event_url'):
+            newacc.event_url = self.old.event_url
+        if hasattr(self.old, 'contact_name'):
+            newacc.contact_name = self.old.contact_name
+        if hasattr(self.old, 'contact_email'):
+            newacc.contact_email = self.old.contact_email
+        if hasattr(self.old, 'contact_phone'):
+            newacc.contact_phone = self.old.contact_phone
+        if hasattr(self.old, 'text'):
+            # Copy the entire richtext object, not just it's representation
+            IEventSummary(self.new).text = self.old.text
+
+        # Trigger ObjectModified, so timezones can be fixed up.
+        notify(ObjectModifiedEvent(self.new))
+
+
+class DXEventMigrator(DXContentMigrator):
+    """Migrator for plone.app.event.dx events"""
+
+    src_portal_type = 'plone.app.event.dx.event'
+    src_meta_type = 'Dexterity Item'
+    dst_portal_type = 'Event'
+    dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        oldacc = IEventAccessor(self.old)
+        newacc = IEventAccessor(self.new)
+        newacc.start = oldacc.start
+        newacc.end = oldacc.end
+        newacc.timezone = oldacc.timezone
+        newacc.location = oldacc.location
+        newacc.attendees = oldacc.attendees
+        newacc.event_url = oldacc.event_url
+        newacc.contact_name = oldacc.contact_name
+        newacc.contact_email = oldacc.contact_email
+        newacc.contact_phone = oldacc.contact_phone
+        # Copy the entire richtext object, not just it's representation
+        IEventSummary(self.new).text = IEventSummary(self.old).text
+
+        # Trigger ObjectModified, so timezones can be fixed up.
+        notify(ObjectModifiedEvent(self.new))
 
 
 def migrate_events(portal):
-    return migrate(portal, EventMigrator)
+    migrate(portal, DXOldEventMigrator)
+    migrate(portal, EventMigrator)
+    migrate(portal, DXEventMigrator)

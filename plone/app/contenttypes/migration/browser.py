@@ -118,7 +118,6 @@ class MigrateFromATContentTypes(BrowserView):
 
         if migrate_references:
             migration.restoreReferences(portal)
-            migration.restoreReferencesOrder(portal)
 
         # switch linkintegrity back to what it was before migrating
         site_props.manage_changeProperties(
