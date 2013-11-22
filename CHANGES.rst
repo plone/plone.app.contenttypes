@@ -10,6 +10,12 @@ Changelog
 1.1a1 (2013-11-22)
 ------------------
 
+- Event content migration for Products.ATContentTypes ATEvent,
+  plone.app.event's ATEvent and Dexterity example type and
+  plone.app.contenttypes 1.0 Event to plone.app.contenttypes 1.1
+  Event based on plone.app.event's Dexterity behaviors.
+  [lentinj]
+
 - Collection: get ``querybuilderresults`` view instead of using the
   ``QueryBuilder`` class directly.
   [maurits]
