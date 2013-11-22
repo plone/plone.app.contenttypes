@@ -4,6 +4,7 @@ from plone.app.contenttypes.migration.migration import migrate
 from plone.app.upgrade.utils import loadMigrationProfile
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
+from zope.component.hooks import getSite
 
 
 def update_fti(context):
@@ -72,5 +73,5 @@ def migrate_to_pa_event(context):
         'profile-plone.app.contenttypes:default',
         'typeinfo',
     )
-    portal = context.getParentNode()
+    portal = getSite()
     migrate(portal, DXOldEventMigrator)
