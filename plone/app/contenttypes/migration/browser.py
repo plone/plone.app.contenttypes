@@ -209,8 +209,8 @@ class ATCTMigratorForm(form.Form):
         if errors:
             return
 
-        content_types = data['content_types']
-        content_types.extend(data['extended_content'])
+        content_types = data['content_types'] or []
+        content_types.extend(data['extended_content'] or [])
 
         migration_view = getMultiAdapter(
             (context, self.request),
