@@ -82,7 +82,7 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
         portal = self.context
-        helpers = getMultiAdapter((portal, self.context),
+        helpers = getMultiAdapter((portal, self.request),
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
             msg = 'Warning\n'
