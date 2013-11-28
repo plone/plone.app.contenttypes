@@ -103,6 +103,10 @@ def backrefs(portal, obj):
 
 def order(obj):
     out = ''
+    if not hasattr(obj, '_relatedItemsOrder'):
+        # Nothing to do
+        return out
+
     relatedItemsOrder = obj._relatedItemsOrder
     uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
     key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
