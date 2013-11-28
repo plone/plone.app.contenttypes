@@ -484,10 +484,10 @@ class DXOldEventMigrator(DXContentMigrator):
         newacc = IEventAccessor(self.new)
         newacc.start = self.old.start_date
         newacc.end = self.old.end_date
-        if self.old.start_date.tzinfo:
-            newacc.timezone = str(self.old.start_date.tzinfo)
-        else:
-            newacc.timezone = default_timezone(fallback='UTC')
+        newacc.timezone = str(self.old.start_date.tzinfo) \
+            if self.old.start_date.tzinfo \
+            else default_timezone(fallback='UTC')
+
         if hasattr(self.old, 'location'):
             newacc.location = self.old.location
         if hasattr(self.old, 'attendees'):
