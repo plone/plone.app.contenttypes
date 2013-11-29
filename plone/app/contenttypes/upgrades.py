@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.migration.migration import DXOldEventMigrator
-from plone.app.contenttypes.migration.migration import migrate
+from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
+from plone.app.contenttypes.migration.dxmigration import migrate
 from plone.app.upgrade.utils import loadMigrationProfile
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
