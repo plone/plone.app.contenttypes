@@ -68,7 +68,3 @@ class DocumentFunctionalTest(unittest.TestCase):
         # Submit form
         self.browser.getControl('Save').click()
         self.assertTrue('<dl id="document-toc"' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

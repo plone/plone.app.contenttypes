@@ -134,7 +134,3 @@ class EventFunctionalTest(unittest.TestCase):
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
         self.assertTrue('2013-01-01' in self.browser.contents)
         self.assertTrue('2013-01-12' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

@@ -78,7 +78,3 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.assertTrue('image.jpg' in self.browser.contents)
 
         self.assertTrue('<div class="leadImage">' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

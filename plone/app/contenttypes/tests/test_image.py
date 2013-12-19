@@ -165,7 +165,3 @@ class ImageFunctionalTest(unittest.TestCase):
         )
         self.assertTrue('My image' in self.browser.contents)
         self.assertTrue('Back to site' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

@@ -157,7 +157,3 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.odt/view'))
         self.assertTrue('application.png' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

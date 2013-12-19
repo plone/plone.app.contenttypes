@@ -64,7 +64,3 @@ class RSSViewTest(unittest.TestCase):
         view = self.collection.restrictedTraverse('@@RSS')
         result = self.assertIsValidRSS(view())
         self.assertTrue("Collection Test Page" in etree.tostring(result))
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

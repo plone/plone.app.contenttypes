@@ -121,7 +121,3 @@ class LinkFunctionalTest(unittest.TestCase):
         self.assertTrue(self.browser.url.endswith('my-link/view'))
         self.assertTrue('My link' in self.browser.contents)
         self.assertTrue('This is my link' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
