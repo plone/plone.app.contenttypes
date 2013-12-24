@@ -107,8 +107,32 @@ class Collection(object):
             sort_on = self.sort_on
         if not limit:
             limit = self.limit
+
+        # Make a copy of the query to avoid modifying it
+        query = list(self.query) if self.query else []
+
+        # Handle INavigationRoot awareness as follows:
+        # - If query already contains a criteria for the index "path", then we
+        #   do nothing, since plone.app.querybuilder takes care of this
+        #   already. (See the code of _path and _relativePath inside
+        #   p.a.querystring.queryparser to understand).
+        # - If query does not contain any criteria using the index "path", then
+        #   add a criteria to match everything under the path "/" (which will
+        #   be converted to the actual navigation root path by
+        #   p.a.querystring).
+        has_path_criteria = any(
+            (criteria['i'] == 'path')
+            for criteria in query
+        )
+        if not has_path_criteria:
+            query.append({
+                'i': 'path',
+                'o': 'plone.app.querystring.operation.string.path',
+                'v': '/',
+            })
+
         return querybuilder(
-            query=self.query, batch=batch, b_start=b_start, b_size=b_size,
+            query=query, batch=batch, b_start=b_start, b_size=b_size,
             sort_on=sort_on, sort_order=sort_order,
             limit=limit, brains=brains
         )

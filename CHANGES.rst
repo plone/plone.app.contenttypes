@@ -4,7 +4,8 @@ Changelog
 1.1a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Make the collection behavior aware of INavigationRoot. Fixes #98
+  [rafaelbco]
 
 
 1.1a1 (2013-11-22)
