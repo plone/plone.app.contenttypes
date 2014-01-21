@@ -4,6 +4,9 @@ Changelog
 1.1a2 (unreleased)
 ------------------
 
+- Only attempt transforming files if valid content type
+  [vangheem]
+
 - Make the collection behavior aware of INavigationRoot. Fixes #98
   [rafaelbco]
 

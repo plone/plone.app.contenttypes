@@ -58,6 +58,9 @@ def SearchableText_file(obj):
         return SearchableText(obj)
     mimetype = primary_field.value.contentType
     transforms = getToolByName(obj, 'portal_transforms')
+    if transforms._findPath(mimetype, 'text/plain') is None:
+        # check if there is a valid transform available first
+        return SearchableText(obj)
     value = str(primary_field.value.data)
     filename = primary_field.value.filename
     try:
