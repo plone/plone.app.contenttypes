@@ -202,7 +202,7 @@ Contributors
 * Peter Holzer <hpeter@agitator.com>
 * Patrick Gerken <gerken@starzel.de>
 * Steffen Lindner
-* Daniel Widerin
+* Daniel Widerin <daniel@widerin.net>
 * Jens Klein <jens@bluedynamics.com>
 * Joscha Krutzki <joka@jokasis.de>
 * Mathias Leimgruber <m.leimgruber@4teamwork.ch>
