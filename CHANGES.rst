@@ -10,6 +10,10 @@ Changelog
 - Make the collection behavior aware of INavigationRoot. Fixes #98
   [rafaelbco]
 
+- Use unique URL provided by ``plone.app.imaging`` to show the large version
+  of a news item's lead image. This allows use of a stronger caching policy.
+  [rafaelbco]
+
 
 1.1a1 (2013-11-22)
 ------------------
