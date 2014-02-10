@@ -41,7 +41,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
         )
         alsoProvides(self.request, IPloneAppContenttypesLayer)
         alsoProvides(self.request, IPloneFormLayer)
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_schema(self):
         fti = queryUtility(

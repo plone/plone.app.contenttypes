@@ -26,7 +26,7 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.portal_url = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
         fti = DexterityFTI('tocdocument')
         self.portal.portal_types._setObject('tocdocument', fti)
         fti.klass = 'plone.dexterity.content.Item'
