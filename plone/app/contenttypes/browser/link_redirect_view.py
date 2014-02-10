@@ -4,6 +4,8 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from Products.CMFCore.utils import getToolByName
 
+from ..utils import replace_link_variables_by_paths
+
 
 class LinkRedirectView(BrowserView):
 
@@ -26,36 +28,29 @@ class LinkRedirectView(BrowserView):
         can_edit = mtool.checkPermission('Modify portal content', context)
 
         if redirect_links and not can_edit:
-            if context.remoteUrl.startswith('.'):
-                # we just need to adapt ../relative/links, /absolute/ones work
-                # anyway -> this requires relative links to start with ./ or
-                # ../
-                context_state = context.restrictedTraverse(
-                    '@@plone_context_state'
-                )
-                return context.REQUEST.RESPONSE.redirect(
-                    context_state.canonical_object_url() +
-                    '/' +
-                    context.remoteUrl
-                )
-            else:
-                portal_state = context.restrictedTraverse(
-                    "@@plone_portal_state"
-                )
-                if "${navigation_root_url}" in context.remoteUrl:
-                    navigation_root_url = portal_state.navigation_root_url()
-                    url = context.remoteUrl.replace(
-                        "${navigation_root_url}",
-                        navigation_root_url
-                    )
-                elif "${portal_url}" in context.remoteUrl:
-                    portal_url = portal_state.portal_url()
-                    url = context.remoteUrl.replace(
-                        "${portal_url}",
-                        portal_url
-                    )
-                else:
-                    url = context.remoteUrl
-                return context.REQUEST.RESPONSE.redirect(url)
+            return self.request.RESPONSE.redirect(self.absolute_target_url())
         else:
             return self.index()
+
+    def absolute_target_url(self):
+        """Compute the absolute target URL."""
+        if self.context.remoteUrl.startswith('.'):
+            # we just need to adapt ../relative/links, /absolute/ones work
+            # anyway -> this requires relative links to start with ./ or
+            # ../
+            context_state = self.context.restrictedTraverse(
+                '@@plone_context_state'
+            )
+            url = '/'.join([
+                context_state.canonical_object_url(),
+                self.context.remoteUrl
+            ])
+        else:
+            url = replace_link_variables_by_paths(
+                self.context,
+                self.context.remoteUrl
+            )
+            if not (url.startswith('http://') or url.startswith('https://')):
+                url = self.request.physicalPathToURL(url)
+
+        return url

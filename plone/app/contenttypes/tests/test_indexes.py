@@ -227,6 +227,22 @@ class CatalogIntegrationTest(unittest.TestCase):
             "http://www.plone.org/"
         )
 
+    def test_get_remote_url_in_metadata_variables_replaced(self):
+        """Link URL must be in catalog with the variables
+        ${navigation_root_url} and ${portal_url} replaced by the corresponding
+        paths. Otherwise the navigation portlet will show an wrong URL for the
+        link object. (See issue #110)
+        """
+        self.link.remoteUrl = '${navigation_root_url}/my-item'
+        self.link.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            path="/plone/folder/link",
+        ))
+        self.assertEqual(
+            brains[0].getRemoteUrl,
+            "/plone/my-item"
+        )
+
     def test_getobjsize_image(self):
         from .test_image import dummy_image
 

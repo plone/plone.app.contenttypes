@@ -14,6 +14,9 @@ Changelog
   of a news item's lead image. This allows use of a stronger caching policy.
   [rafaelbco]
 
+- Fix #110: URL for Link object is wrong on the navigation portlet if it
+  contains variables
+  [rafaelbco]
 
 1.1a1 (2013-11-22)
 ------------------

@@ -11,6 +11,8 @@ from plone.app.contenttypes.interfaces import (
     IDocument, INewsItem, ILink, IImage, IFile, IFolder
 )
 
+from .utils import replace_link_variables_by_paths
+
 logger = getLogger(__name__)
 
 FALLBACK_CONTENTTYPE = 'application/octet-stream'
@@ -91,7 +93,7 @@ def SearchableText_folder(obj):
 
 @indexer(ILink)
 def getRemoteUrl(obj):
-    return obj.remoteUrl
+    return replace_link_variables_by_paths(obj, obj.remoteUrl)
 
 
 @indexer(IImage)
