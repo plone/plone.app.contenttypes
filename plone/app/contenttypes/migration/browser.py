@@ -29,8 +29,9 @@ from plone.app.contenttypes.content import (
     NewsItem,
 )
 
-# average time to migrate one archetype object, in milliseconds
-ONE_OBJECT_MIGRATION_TIME = 255
+# Average time to migrate one archetype object, in milliseconds.
+# This very much depends on the size of the object and system-speed
+ONE_OBJECT_MIGRATION_TIME = 500
 
 
 class FixBaseClasses(BrowserView):
