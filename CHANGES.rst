@@ -4,6 +4,10 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+- Remove DL's from portal message templates.
+  https://github.com/plone/Products.CMFPlone/issues/153
+  [khink]
+
 - Collection: get ``querybuilderresults`` view instead of using the
   ``QueryBuilder`` class directly.
   [maurits]
