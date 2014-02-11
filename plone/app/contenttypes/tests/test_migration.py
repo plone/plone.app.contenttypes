@@ -13,6 +13,7 @@ from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
 
 import os.path
+import time
 import unittest2 as unittest
 
 
@@ -777,6 +778,70 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(dx_newsitem.text.raw, u'Tütensuppe')
         self.assertEqual(dx_newsitem.text.mimeType,
                          'chemical/x-gaussian-checkpoint')
+
+    def test_modifield_date_is_unchanged(self):
+        from plone.app.contenttypes.migration.migration import (
+            restoreReferences,
+            migrate_documents,
+            migrate_folders
+        )
+
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+
+        # create folders
+        self.portal.invokeFactory('Folder', 'folder1')
+        at_folder1 = self.portal['folder1']
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+        self.portal.invokeFactory('Folder', 'folder3')
+        at_folder3 = self.portal['folder3']
+
+        # create ATDocuments
+        at_folder1.invokeFactory('Document', 'doc1')
+        at_doc1 = at_folder1['doc1']
+        at_folder2.invokeFactory('Document', 'doc2')
+        at_doc2 = at_folder2['doc2']
+        self.portal.invokeFactory('Document', 'doc3')
+        at_doc3 = self.portal['doc3']
+        at_folder1.invokeFactory('News Item', 'newsitem')
+        # at_newsitem = at_folder1['newsitem']
+
+        time.sleep(0.1)
+
+        # relate them
+        #at_doc1.setRelatedItems([at_doc2])
+        #at_doc2.setRelatedItems([at_newsitem, at_doc3, at_doc1])
+        #at_doc3.setRelatedItems(at_doc1)
+        #at_folder1.setRelatedItems([at_doc2])
+        #at_folder2.setRelatedItems([at_doc1])
+
+        # migrate content
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrate_folders(self.portal)
+        migrate_documents(self.portal)
+        dx_folder1 = self.portal['folder1']
+        dx_folder2 = self.portal['folder2']
+        dx_folder3 = self.portal['folder3']
+
+        dx_doc1 = dx_folder1['doc1']
+        dx_doc2 = dx_folder2['doc2']
+        dx_doc3 = self.portal['doc3']
+
+        # migrate references
+        #restoreReferences(self.portal)
+
+        self.assertTrue(at_folder1 is not dx_folder1)
+        self.assertTrue(at_folder2 is not dx_folder2)
+
+        # assert ModificationDates
+        self.assertNotEqual(at_folder1.ModificationDate(), dx_folder1.ModificationDate())
+        self.assertNotEqual(at_folder2.ModificationDate(), dx_folder2.ModificationDate())
+        self.assertEqual(at_folder3.ModificationDate(), dx_folder3.ModificationDate())
+        self.assertEqual(at_doc1.ModificationDate(), dx_doc1.ModificationDate())
+        self.assertEqual(at_doc2.ModificationDate(), dx_doc2.ModificationDate())
+        self.assertEqual(at_doc3.ModificationDate(), dx_doc3.ModificationDate())
 
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
