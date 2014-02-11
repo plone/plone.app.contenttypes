@@ -806,32 +806,45 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from plone.app.contenttypes.migration.migration import (
             restoreReferences,
             migrate_documents,
+            migrate_folders
         )
 
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
         addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
 
+        # create folders
+        self.portal.invokeFactory('Folder', 'folder1')
+        at_folder1 = self.portal['folder1']
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+
         # create ATDocuments
-        self.portal.invokeFactory('Document', 'doc1')
-        at_doc1 = self.portal['doc1']
-        self.portal.invokeFactory('Document', 'doc2')
-        at_doc2 = self.portal['doc2']
+        at_folder1.invokeFactory('Document', 'doc1')
+        at_doc1 = at_folder1['doc1']
+        at_folder2.invokeFactory('Document', 'doc2')
+        at_doc2 = at_folder2['doc2']
         self.portal.invokeFactory('Document', 'doc3')
         at_doc3 = self.portal['doc3']
-        self.portal.invokeFactory('News Item', 'newsitem')
-        at_newsitem = self.portal['newsitem']
+        at_folder1.invokeFactory('News Item', 'newsitem')
+        at_newsitem = at_folder1['newsitem']
 
         # relate them
         at_doc1.setRelatedItems([at_doc2])
         at_doc2.setRelatedItems([at_newsitem, at_doc3, at_doc1])
         at_doc3.setRelatedItems(at_doc1)
+        at_folder1.setRelatedItems([at_doc2])
+        at_folder2.setRelatedItems([at_doc1])
 
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate_documents(self.portal)
-        dx_doc1 = self.portal['doc1']
-        dx_doc2 = self.portal['doc2']
+        migrate_folders(self.portal)
+        dx_folder1 = self.portal['folder1']
+        dx_folder2 = self.portal['folder2']
+
+        dx_doc1 = dx_folder1['doc1']
+        dx_doc2 = dx_folder2['doc2']
         dx_doc3 = self.portal['doc3']
 
         # migrate references
@@ -843,6 +856,12 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         dx_doc3_related = [x.to_object for x in dx_doc3.relatedItems]
         self.assertEqual(dx_doc3_related, [dx_doc1])
+
+        dx_folder1_related = [x.to_object for x in dx_folder1.relatedItems]
+        self.assertEqual(dx_folder1_related, [dx_doc2])
+
+        dx_folder2_related = [x.to_object for x in dx_folder2.relatedItems]
+        self.assertEqual(dx_folder2_related, [dx_doc1])
 
         # assert multi references, order is restored
         dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
