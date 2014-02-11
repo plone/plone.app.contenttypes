@@ -27,7 +27,7 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.portal_url = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
         fti = DexterityFTI('leadimagedocument')
         self.portal.portal_types._setObject('leadimagedocument', fti)
         fti.klass = 'plone.dexterity.content.Item'
@@ -78,7 +78,3 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.assertTrue('image.jpg' in self.browser.contents)
 
         self.assertTrue('<div class="leadImage">' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

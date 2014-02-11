@@ -32,7 +32,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_schema(self):
         fti = queryUtility(
@@ -116,7 +116,3 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.assertTrue('My document' in self.browser.contents)
         self.assertTrue('This is my document' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

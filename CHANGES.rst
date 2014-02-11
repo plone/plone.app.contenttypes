@@ -1,8 +1,31 @@
 Changelog
 =========
 
-1.1 (unreleased)
-----------------
+1.1a2 (unreleased)
+------------------
+
+- Only attempt transforming files if valid content type
+  [vangheem]
+
+- Make the collection behavior aware of INavigationRoot. Fixes #98
+  [rafaelbco]
+
+- Use unique URL provided by ``plone.app.imaging`` to show the large version
+  of a news item's lead image. This allows use of a stronger caching policy.
+  [rafaelbco]
+
+- Fix #110: URL for Link object is wrong on the navigation portlet if it
+  contains variables
+  [rafaelbco]
+
+1.1a1 (2013-11-22)
+------------------
+
+- Event content migration for Products.ATContentTypes ATEvent,
+  plone.app.event's ATEvent and Dexterity example type and
+  plone.app.contenttypes 1.0 Event to plone.app.contenttypes 1.1
+  Event based on plone.app.event's Dexterity behaviors.
+  [lentinj]
 
 - Collection: get ``querybuilderresults`` view instead of using the
   ``QueryBuilder`` class directly.

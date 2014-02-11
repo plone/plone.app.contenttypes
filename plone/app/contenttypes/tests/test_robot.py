@@ -3,14 +3,11 @@ from plone.testing import layered
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_ROBOT_TESTING
 )
+from plone.app.testing import ROBOT_TEST_LEVEL
+
 import os
 import robotsuite
 import unittest
-
-UNIT_TEST_LEVEL = 1
-INTEGRATION_TEST_LEVEL = 2
-FUNCTIONAL_TEST_LEVEL = 3
-ROBOT_TEST_LEVEL = 5
 
 
 def test_suite():

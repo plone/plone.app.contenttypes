@@ -11,6 +11,8 @@ from plone.app.contenttypes.interfaces import (
     IDocument, INewsItem, ILink, IImage, IFile, IFolder
 )
 
+from .utils import replace_link_variables_by_paths
+
 logger = getLogger(__name__)
 
 FALLBACK_CONTENTTYPE = 'application/octet-stream'
@@ -58,6 +60,9 @@ def SearchableText_file(obj):
         return SearchableText(obj)
     mimetype = primary_field.value.contentType
     transforms = getToolByName(obj, 'portal_transforms')
+    if transforms._findPath(mimetype, 'text/plain') is None:
+        # check if there is a valid transform available first
+        return SearchableText(obj)
     value = str(primary_field.value.data)
     filename = primary_field.value.filename
     try:
@@ -88,7 +93,7 @@ def SearchableText_folder(obj):
 
 @indexer(ILink)
 def getRemoteUrl(obj):
-    return obj.remoteUrl
+    return replace_link_variables_by_paths(obj, obj.remoteUrl)
 
 
 @indexer(IImage)

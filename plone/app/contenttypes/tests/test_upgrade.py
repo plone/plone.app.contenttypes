@@ -131,7 +131,3 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             fti.model_file,
             'plone.app.contenttypes.schema:news_item.xml'
         )
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

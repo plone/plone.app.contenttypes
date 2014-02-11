@@ -29,8 +29,9 @@ from plone.app.contenttypes.content import (
     NewsItem,
 )
 
-# average time to migrate one archetype object, in milliseconds
-ONE_OBJECT_MIGRATION_TIME = 255
+# Average time to migrate one archetype object, in milliseconds.
+# This very much depends on the size of the object and system-speed
+ONE_OBJECT_MIGRATION_TIME = 500
 
 
 class FixBaseClasses(BrowserView):
@@ -82,7 +83,7 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
         portal = self.context
-        helpers = getMultiAdapter((portal, self.context),
+        helpers = getMultiAdapter((portal, self.request),
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
             msg = 'Warning\n'
@@ -209,8 +210,8 @@ class ATCTMigratorForm(form.Form):
         if errors:
             return
 
-        content_types = data['content_types']
-        content_types.extend(data['extended_content'])
+        content_types = data['content_types'] or []
+        content_types.extend(data['extended_content'] or [])
 
         migration_view = getMultiAdapter(
             (context, self.request),

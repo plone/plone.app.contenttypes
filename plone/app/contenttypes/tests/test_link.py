@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
 
+from Products.CMFCore.utils import getToolByName
+
 from zope.interface import alsoProvides
 from zope.component import createObject
 from zope.component import queryUtility
+from zope.component import getMultiAdapter
+from zope.event import notify
+from zope.traversing.interfaces import BeforeTraverseEvent
 
 from plone.dexterity.interfaces import IDexterityFTI
 
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
+from plone.app.testing import logout
 from plone.testing.z2 import Browser
 
 from plone.app.contenttypes.interfaces import ILink
@@ -30,7 +36,7 @@ class LinkIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_schema(self):
         fti = queryUtility(
@@ -71,6 +77,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        self.response = self.request.response
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.portal.invokeFactory('Link', 'link')
         link = self.portal['link']
@@ -81,6 +88,10 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.request.set('ACTUAL_URL', link.absolute_url())
         alsoProvides(self.request, IPloneFormLayer)
 
+        # setup manually the correct browserlayer, see:
+        # https://dev.plone.org/ticket/11673
+        notify(BeforeTraverseEvent(self.portal, self.request))
+
     def test_link_redirect_view(self):
         view = self.link.restrictedTraverse('@@view')
         self.assertTrue(view())
@@ -88,9 +99,79 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.assertTrue('My Link' in view())
         self.assertTrue('This is my link.' in view())
 
-    # XXX: ToDo: We have to write tests to properly test the
-    # link_redirect_view. It seems such tests never existed in
-    # ATContentTypes.
+    def test_link_redirect_view_external_url(self):
+        self.link.remoteUrl = 'http://www.plone.org'
+        self._publish(self.link)
+        view = self._get_link_redirect_view(self.link)
+
+        # As manager: do not redirect
+        self.assertTrue(view())
+        self.assertEqual(self.response.status, 200)
+
+        # As anonymous: redirect
+        logout()
+        self.assertTrue(view())
+        self._assert_redirect('http://www.plone.org')
+
+    def test_link_redirect_view_absolute_path(self):
+        self.link.remoteUrl = '/plone/my-folder/my-item'
+        self._publish(self.link)
+        view = self._get_link_redirect_view(self.link)
+
+        # As manager: do not redirect
+        self.assertTrue(view())
+        self.assertEqual(self.response.status, 200)
+
+        # As anonymous: redirect
+        logout()
+        self.assertTrue(view())
+        self._assert_redirect('http://nohost/plone/my-folder/my-item')
+
+    def test_link_redirect_view_relative_path(self):
+        self.link.remoteUrl = '../my-item'
+        self._publish(self.link)
+        view = self._get_link_redirect_view(self.link)
+
+        # As manager: do not redirect
+        self.assertTrue(view())
+        self.assertEqual(self.response.status, 200)
+
+        # As anonymous: redirect
+        logout()
+        self.assertTrue(view())
+        # The following URL will be redirected to:
+        # "http://nohost/plone/my-item"
+        self._assert_redirect('http://nohost/plone/link/../my-item')
+
+    def test_link_redirect_view_path_with_variable(self):
+        self.link.remoteUrl = '${navigation_root_url}/my-folder/my-item'
+        self._publish(self.link)
+        view = self._get_link_redirect_view(self.link)
+
+        # As manager: do not redirect
+        self.assertTrue(view())
+        self.assertEqual(self.response.status, 200)
+
+        # As anonymous: redirect
+        logout()
+        self.assertTrue(view())
+        self._assert_redirect('http://nohost/plone/my-folder/my-item')
+
+        # Should give the same result with ${portal_url}
+        self.link.remoteUrl = '${portal_url}/my-folder/my-item'
+        self.assertTrue(view())
+        self._assert_redirect('http://nohost/plone/my-folder/my-item')
+
+    def _publish(self, obj):
+        portal_workflow = getToolByName(self.portal, "portal_workflow")
+        portal_workflow.doActionFor(obj, 'publish')
+
+    def _assert_redirect(self, url):
+        self.assertEqual(self.response.status, 302)
+        self.assertEqual(self.response.headers['location'], url)
+
+    def _get_link_redirect_view(self, obj):
+        return getMultiAdapter((obj, self.request), name='link_redirect_view')
 
 
 class LinkFunctionalTest(unittest.TestCase):
@@ -121,7 +202,3 @@ class LinkFunctionalTest(unittest.TestCase):
         self.assertTrue(self.browser.url.endswith('my-link/view'))
         self.assertTrue('My link' in self.browser.contents)
         self.assertTrue('This is my link' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
