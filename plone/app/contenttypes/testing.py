@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.event.testing import PAEvent_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
@@ -10,8 +11,18 @@ from plone.app.testing import setRoles
 from plone.app.testing import login
 from plone.testing import z2
 from zope.configuration import xmlconfig
+from zope.interface import alsoProvides
 
 import pkg_resources
+
+
+def set_browserlayer(request):
+    """Set the BrowserLayer for the request.
+
+    We have to set the browserlayer manually, since importing the profile alone
+    doesn't do it in tests.
+    """
+    alsoProvides(request, IPloneAppContenttypesLayer)
 
 
 class PloneAppContenttypes(PloneSandboxLayer):
