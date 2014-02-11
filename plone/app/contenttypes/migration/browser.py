@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from datetime import datetime
@@ -98,6 +99,12 @@ class MigrateFromATContentTypes(BrowserView):
         site_props = getattr(ptool, 'site_properties', None)
         link_integrity = site_props.getProperty('enable_link_integrity_checks',
                                                 False)
+
+        # patch notifyModified to prevent setModificationDate()
+        old_notifyModified = DefaultDublinCoreImpl.notifyModified
+        patched_notifyModified = lambda *args: None
+        DefaultDublinCoreImpl.notifyModified = patched_notifyModified
+
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
 
         not_migrated = []
@@ -124,6 +131,9 @@ class MigrateFromATContentTypes(BrowserView):
         site_props.manage_changeProperties(
             enable_link_integrity_checks=link_integrity
         )
+
+        DefaultDublinCoreImpl.notifyModified = old_notifyModified
+
         endtime = datetime.now()
         duration = (endtime - starttime).seconds
         if not from_form:

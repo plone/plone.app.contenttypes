@@ -4,6 +4,9 @@ Changelog
 1.1a2 (unreleased)
 ------------------
 
+- Fix #62: Keep ModificationDate during migration.
+  [pbauer]
+
 - Only attempt transforming files if valid content type
   [vangheem]
 
