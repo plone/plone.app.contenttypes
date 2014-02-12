@@ -807,7 +807,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_newsitem = at_folder1['newsitem']
 
         # be 100% sure the migration-date is after the creation-date
-        time.sleep(0.1)
+        time.sleep(0.5)
 
         # relate them
         at_doc1.setRelatedItems([at_doc2])
@@ -815,6 +815,13 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_doc3.setRelatedItems(at_doc1)
         at_folder1.setRelatedItems([at_doc2])
         at_folder2.setRelatedItems([at_doc1])
+
+        at_folder1_date = at_folder1.ModificationDate()
+        at_folder2_date = at_folder2.ModificationDate()
+        at_folder3_date = at_folder3.ModificationDate()
+        at_doc1_date = at_doc1.ModificationDate()
+        at_doc2_date = at_doc2.ModificationDate()
+        at_doc3_date = at_doc3.ModificationDate()
 
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -844,30 +851,12 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_folder2 is not dx_folder2)
 
         # assert ModificationDates
-        self.assertEqual(
-            at_folder1.ModificationDate(),
-            dx_folder1.ModificationDate()
-        )
-        self.assertEqual(
-            at_folder2.ModificationDate(),
-            dx_folder2.ModificationDate()
-        )
-        self.assertEqual(
-            at_folder3.ModificationDate(),
-            dx_folder3.ModificationDate()
-        )
-        self.assertEqual(
-            at_doc1.ModificationDate(),
-            dx_doc1.ModificationDate()
-        )
-        self.assertEqual(
-            at_doc2.ModificationDate(),
-            dx_doc2.ModificationDate()
-        )
-        self.assertEqual(
-            at_doc3.ModificationDate(),
-            dx_doc3.ModificationDate()
-        )
+        self.assertEqual(at_folder1_date, dx_folder1.ModificationDate())
+        self.assertEqual(at_folder2_date, dx_folder2.ModificationDate())
+        self.assertEqual(at_folder3_date, dx_folder3.ModificationDate())
+        self.assertEqual(at_doc1_date, dx_doc1.ModificationDate())
+        self.assertEqual(at_doc2_date, dx_doc2.ModificationDate())
+        self.assertEqual(at_doc3_date, dx_doc3.ModificationDate())
 
         # assert single references
         dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
