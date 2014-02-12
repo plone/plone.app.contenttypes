@@ -46,7 +46,7 @@ setup(name='plone.app.contenttypes',
               'archetypes.schemaextender',
               'lxml',
               'plone.app.robotframework',
-              'plone.app.testing[robot]>=4.2.4',
+              'plone.app.testing[robot]>=4.2.4',  # we need ROBOT_TEST_LEVEL
               'Products.ATContentTypes',
               'Products.contentmigration',
           ],

@@ -26,6 +26,15 @@ from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.interface import implements
 
+import pkg_resources
+
+try:
+    pkg_resources.get_distribution('plone.multilingualbehavior')
+except pkg_resources.DistributionNotFound:
+    HAS_MULTILINGUAL = False
+else:
+    HAS_MULTILINGUAL = True
+
 try:
     DEXTERITY_WITH_CONSTRAINS = True
     from plone.app.dexterity.behaviors import constrains
@@ -390,3 +399,25 @@ def _delete_at_example_content(portal):
                 return
         # None of the default content is dexterity and has been modified.
         portal.manage_delObjects(to_delete)
+
+
+def setupVarious(context):
+    if context.readDataFile('plone.app.contenttypes_default.txt') is None:
+        return
+    portal = context.getSite()
+    enable_multilingual_behavior(portal)
+
+
+def enable_multilingual_behavior(portal):
+    if not HAS_MULTILINGUAL:
+        return
+    types_tool = portal.portal_types
+    all_ftis = types_tool.listTypeInfo()
+    dx_ftis = [x for x in all_ftis if getattr(x, 'behaviors', False)]
+    for fti in dx_ftis:
+        behaviors = [i for i in fti.behaviors]
+        behaviors.extend([
+            'plone.multilingualbehavior.interfaces.IDexterityTranslatable',
+        ])
+        behaviors = tuple(set(behaviors))
+        fti._updateProperty('behaviors', behaviors)
