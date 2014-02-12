@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from datetime import datetime
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
@@ -15,8 +15,8 @@ from z3c.form import form, field, button
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
-from zope.component import queryUtility
 from zope.component import getMultiAdapter
+from zope.component import queryUtility
 from zope.interface import Interface
 
 # Schema Extender allowed interfaces
@@ -101,9 +101,12 @@ class MigrateFromATContentTypes(BrowserView):
                                                 False)
 
         # patch notifyModified to prevent setModificationDate()
-        old_notifyModified = DefaultDublinCoreImpl.notifyModified
-        patched_notifyModified = lambda *args: None
-        DefaultDublinCoreImpl.notifyModified = patched_notifyModified
+        # notifyModified lives in plone.dexterity but
+        # older versions used notifyModified from
+        # Products.CMFDefault.DublinCore.DefaultDublinCoreImpl
+        patch = lambda *args: None
+        old_notifyModified = getattr(DexterityContent, 'notifyModified', None)
+        DexterityContent.notifyModified = patch
 
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
 
@@ -132,7 +135,11 @@ class MigrateFromATContentTypes(BrowserView):
             enable_link_integrity_checks=link_integrity
         )
 
-        DefaultDublinCoreImpl.notifyModified = old_notifyModified
+        # reset notifyModified to old state
+        if old_notifyModified is None:
+            del DexterityContent.notifyModified
+        else:
+            DexterityContent.notifyModified = old_notifyModified
 
         endtime = datetime.now()
         duration = (endtime - starttime).seconds
