@@ -6,6 +6,7 @@ from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.event.interfaces import IEventAccessor
+from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.testing import login
 from plone.app.testing import applyProfile
 from zope.component import getMultiAdapter
@@ -1146,3 +1147,28 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                           '.interfaces.IDexterityContent')
         self.assertEqual(len(at_contents), 0)
         self.assertEqual(len(dx_contents), 11)
+
+    def test_warning_for_uneditable_content(self):
+        set_browserlayer(self.request)
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.app.contenttypes.interfaces import IDocument
+        self.portal.invokeFactory('Document', 'document')
+        self.portal.invokeFactory('News Item', 'newsitem')
+        at_document = self.portal['document']
+        at_newsitem = self.portal['newsitem']
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        at_document_view = at_document.restrictedTraverse('')
+        self.assertTrue(
+            'http://nohost/plone/@@atct_migrator' in at_document_view()
+        )
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+        dx_document = self.portal['document']
+        self.assertTrue(IDocument.providedBy(dx_document))
+        dx_document_view = dx_document.restrictedTraverse('@@view')
+        self.assertFalse('alert-box' in dx_document_view())
+        at_newsitem_view = at_newsitem.restrictedTraverse('')
+        self.assertTrue('alert-box' in at_newsitem_view())
+        self.assertTrue(
+            'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
+        )
