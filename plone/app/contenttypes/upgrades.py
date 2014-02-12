@@ -75,3 +75,11 @@ def migrate_to_pa_event(context):
     )
     portal = getSite()
     migrate(portal, DXOldEventMigrator)
+
+
+def migrate_to_richtext(context):
+    # add RichText behaviors:
+    context.runImportStepFromProfile(
+        'profile-plone.app.contenttypes:default',
+        'typeinfo',
+    )
