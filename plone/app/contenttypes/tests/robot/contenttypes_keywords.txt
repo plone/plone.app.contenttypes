@@ -1,3 +1,5 @@
+Variables  plone/app/contenttypes/tests/robot/variables.py
+
 *** Keywords ***
 
 Suite Setup
@@ -35,9 +37,9 @@ Create Event
     Input text  name=form.widgets.start_date-year  2013
     Input text  name=form.widgets.end_date-day  10
     Input text  name=form.widgets.end_date-year  2013
-    
+
     Click Button  Save
-    Page Should Contain  Item created 
+    Page Should Contain  Item created
 
 Create News Item
     [Arguments]  ${title}
@@ -46,7 +48,7 @@ Create News Item
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
 
-    Page Should Contain  Item created 
+    Page Should Contain  Item created
 
 Create Link
     [Arguments]  ${title}
@@ -56,7 +58,7 @@ Create Link
     Input text  name=form.widgets.remoteUrl  http://plone.org
     Click Button  Save
 
-    Page Should Contain  Item created 
+    Page Should Contain  Item created
 
 Create Collection
     [Arguments]  ${title}
@@ -65,7 +67,7 @@ Create Collection
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
 
-    Page Should Contain  Item created 
+    Page Should Contain  Item created
 
 Create Folder
     [Arguments]  ${title}
@@ -74,7 +76,7 @@ Create Folder
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
 
-    Page Should Contain  Item created 
+    Page Should Contain  Item created
 
 Create Document
     [Arguments]  ${title}
@@ -83,15 +85,15 @@ Create Document
     Input text  name=form.widgets.IDublinCore.title  ${title}
     Click Button  Save
 
-    Page Should Contain  Item created 
+    Page Should Contain  Item created
 
 Create Image
     [Arguments]  ${title}
     Go to  ${test-folder}/++add++Image
 
-    Input text  name=form.widgets.title  ${title} 
+    Input text  name=form.widgets.title  ${title}
     Choose File  name=form.widgets.image  ${PATH_TO_TEST_FILES}/image.jpg
     Click Button  Save
 
-    Page Should Contain  Item created 
-    Page Should Contain  Click to view full-size image 
+    Page Should Contain  Item created
+    Page Should Contain  Click to view full-size image
