@@ -241,6 +241,15 @@
     allowed_interface="plone.app.contenttypes.browser.utils.IUtils"
     />
 
+  <browser:viewlet
+    name="archetypes_warning_viewlet"
+    for="Products.Archetypes.interfaces.base.IBaseObject"
+    manager="plone.app.layout.viewlets.interfaces.IAboveContent"
+    class=".viewlets.ATWarningViewlet"
+    template="templates/archetypes_warning_viewlet.pt"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ModifyPortalContent" />
+
   <!-- Query string widget -->
   <adapter factory=".widgets.QueryStringFieldWidget" />
 
