@@ -20,9 +20,9 @@ class ATWarningViewlet(ViewletBase):
 
     def update(self):
         self.available = False
-        self.context = aq_inner(self.context)
         if not HAS_ARCHETYPES:
             return
+        self.context = aq_inner(self.context)
         if not IBaseObject.providedBy(self.context):
             return
         context_fti = self.context.getTypeInfo()

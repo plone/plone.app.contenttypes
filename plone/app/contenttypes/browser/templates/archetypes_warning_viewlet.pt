@@ -1,4 +1,5 @@
-<dl class="portalMessage alert-box secondary warning">
+<dl class="portalMessage alert-box secondary warning"
+    i18n:domain="plone">
     <dt i18n:translate="">Warning</dt>
     <dd>
         <tal:manager tal:condition="not:view/can_migrate">
