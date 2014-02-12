@@ -1,20 +1,20 @@
 *** Settings ***
 
-Variables  plone/app/testing/interfaces.py
-Variables  plone/app/contenttypes/tests/robot/variables.py
-
-Library  Selenium2Library  timeout=${SELENIUM_TIMEOUT}  implicit_wait=${SELENIUM_IMPLICIT_WAIT}
-
+Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
-Suite Setup  Suite Setup
-Suite Teardown  Suite Teardown
+Variables  plone/app/contenttypes/tests/robot/variables.py
 
+Test Setup  Run keywords  Open test browser
+Test Teardown  Close all browsers
 
-*** Test Cases ***
+*** Variables ***
+
+*** Test cases ***
 
 Scenario: Test Folderlisting
-    Given a Folder  Test-Folder
+    Given I am logged in as site owner
+      And a Folder  Test-Folder
       And a File  Test-File
       And a Image  Test-Image
       And a Collection  Test-Collection
@@ -22,7 +22,7 @@ Scenario: Test Folderlisting
       And a Link  Test-Link
       And a News Item  Test-News
       And a Document  Test-Document
-     When I Go to  ${TEST_FOLDER}/folder_contents
+     When I Go to  ${PLONE_URL}/folder_contents
      Then Page Should Contain  Test-Folder
       And Page Should Contain  Test-File
       And Page Should Contain  Test-Image

@@ -1,20 +1,18 @@
 *** Settings ***
 
-Variables  plone/app/testing/interfaces.py
-Variables  plone/app/contenttypes/tests/robot/variables.py
-
-Library  Selenium2Library  timeout=${SELENIUM_TIMEOUT}  implicit_wait=${SELENIUM_IMPLICIT_WAIT}
-
+Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
-Suite Setup  Suite Setup
-Suite Teardown  Suite Teardown
+Test Setup  Run keywords  Open test browser
+Test Teardown  Close all browsers
 
+*** Variables ***
 
-*** Test Cases ***
+*** Test cases ***
 
 Test Short name (id) Criterion
-    Given a document  First Document
+    Given I am logged in as site owner
+      And a document  First Document
       And a document  Second Document
       And a collection  My Collection
      When I set the collection short name (id) criterion to  first-document

@@ -1,17 +1,14 @@
 *** Settings ***
 
-Variables  plone/app/testing/interfaces.py
-Variables  plone/app/contenttypes/tests/robot/variables.py
-
-Library  Selenium2Library  timeout=${SELENIUM_TIMEOUT}  implicit_wait=${SELENIUM_IMPLICIT_WAIT}
-
+Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
-Suite Setup  Suite Setup
-Suite Teardown  Suite Teardown
+Test Setup  Run keywords  Open test browser
+Test Teardown  Close all browsers
 
+*** Variables ***
 
-*** Test Cases ***
+*** Test cases ***
 
 Scenario: Test Creator Criterion
     Given a site owner document  Site Owner Document
@@ -26,6 +23,7 @@ Scenario: Test Creator Criterion
 
 a site owner document
     [Arguments]  ${title}
+    Log in as site owner
     a document  ${title}
 
 a test user document

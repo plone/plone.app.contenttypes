@@ -1,47 +1,9 @@
+Variables  plone/app/contenttypes/tests/robot/variables.py
+
 *** Keywords ***
 
-# ----------------------------------------------------------------------------
-# Suite
-# ----------------------------------------------------------------------------
-
-Suite Setup
-  Open browser  ${PLONE_URL}  browser=${BROWSER}  remote_url=${REMOTE_URL}  desired_capabilities=${DESIRED_CAPABILITIES}
+I am logged in as site owner
   Log in as site owner
-
-Suite Teardown
-  Close All Browsers
-
-
-# ----------------------------------------------------------------------------
-# Login/Logout
-# ----------------------------------------------------------------------------
-
-Log in
-  [Arguments]  ${userid}  ${password}
-  [Documentation]  Log in to the site as ${userid} using ${password}. There
-  ...  is no guarantee of where in the site you are once this is
-  ...  done. (You are responsible for knowing where you are and
-  ...  where you want to be)
-  Go to  ${PLONE_URL}/login_form
-  Page should contain element  __ac_name
-  Page should contain element  __ac_password
-  Page should contain button  Log in
-  Input text  __ac_name  ${userid}
-  Input text  __ac_password  ${password}
-  Click Button  Log in
-
-Log in as site owner
-  [Documentation]  Log in as the SITE_OWNER provided by plone.app.testing,
-  ...  with all the rights and privileges of that user.
-  Log in  ${SITE_OWNER_NAME}  ${SITE_OWNER_PASSWORD}
-
-Log in as test user
-  Log in  ${TEST_USER_NAME}  ${TEST_USER_PASSWORD}
-
-Log out
-  Go to  ${PLONE_URL}/logout
-  Page should contain  logged out
-
 
 # ----------------------------------------------------------------------------
 # Content
@@ -49,7 +11,7 @@ Log out
 
 a collection
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++Collection
+  Go to  ${PLONE_URL}/++add++Collection
   Wait until page contains  Add Collection
   Input text  name=form.widgets.IDublinCore.title  ${title}
   Click Button  Save
@@ -57,7 +19,7 @@ a collection
 
 a document
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++Document
+  Go to  ${PLONE_URL}/++add++Document
   Wait until page contains  Add Page
   Input text  name=form.widgets.IDublinCore.title  ${title}
   Click Button  Save
@@ -65,7 +27,7 @@ a document
 
 a event
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++Event
+  Go to  ${PLONE_URL}/++add++Event
   Wait until page contains  Add Event
   Input text  name=form.widgets.IDublinCore.title  ${title}
   Click Button  Save
@@ -73,7 +35,7 @@ a event
 
 a file
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++File
+  Go to  ${PLONE_URL}/++add++File
   Wait until page contains  Add File
   Input text  name=form.widgets.title  ${title}
   Choose File  name=form.widgets.file  ${PATH_TO_TEST_FILES}/file.pdf
@@ -82,7 +44,7 @@ a file
 
 a folder
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++Folder
+  Go to  ${PLONE_URL}/++add++Folder
   Wait until page contains  Add Folder
   Input text  name=form.widgets.IDublinCore.title  ${title}
   Click Button  Save
@@ -90,7 +52,7 @@ a folder
 
 a image
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++Image
+  Go to  ${PLONE_URL}/++add++Image
   Wait until page contains  Add Image
   Input text  name=form.widgets.title  ${title}
   Choose File  name=form.widgets.image  ${PATH_TO_TEST_FILES}/image.png
@@ -99,7 +61,7 @@ a image
 
 a link
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++Link
+  Go to  ${PLONE_URL}/++add++Link
   Wait until page contains  Add Link
   Input text  name=form.widgets.IDublinCore.title  ${title}
   Click Button  Save
@@ -107,7 +69,7 @@ a link
 
 a news item
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/++add++News Item
+  Go to  ${PLONE_URL}/++add++News Item
   Wait until page contains  Add News Item
   Input text  name=form.widgets.IDublinCore.title  ${title}
   fill in metadata
@@ -130,12 +92,12 @@ the content area should not contain
 
 the collection should contain
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/my-collection
+  Go to  ${PLONE_URL}/my-collection
   The content area should contain  ${title}
 
 the collection should not contain
   [Arguments]  ${title}
-  Go to  ${TEST_FOLDER}/my-collection
+  Go to  ${PLONE_URL}/my-collection
   The content area should not contain  ${title}
 
 fill in metadata

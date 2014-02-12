@@ -4,15 +4,18 @@ from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+from plone.app.contenttypes.testing import set_browserlayer
 from plone.event.interfaces import IEventAccessor
 from plone.app.testing import login
 from plone.app.testing import applyProfile
+from zope.component import getMultiAdapter
 from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
 
 import os.path
+import time
 import unittest2 as unittest
 
 
@@ -777,6 +780,111 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(dx_newsitem.text.raw, u'Tütensuppe')
         self.assertEqual(dx_newsitem.text.mimeType,
                          'chemical/x-gaussian-checkpoint')
+
+    def test_modifield_date_is_unchanged(self):
+        set_browserlayer(self.request)
+
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+
+        # create folders
+        self.portal.invokeFactory('Folder', 'folder1')
+        at_folder1 = self.portal['folder1']
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+        self.portal.invokeFactory('Folder', 'folder3')
+        at_folder3 = self.portal['folder3']
+
+        # create ATDocuments
+        at_folder1.invokeFactory('Document', 'doc1')
+        at_doc1 = at_folder1['doc1']
+        at_folder2.invokeFactory('Document', 'doc2')
+        at_doc2 = at_folder2['doc2']
+        self.portal.invokeFactory('Document', 'doc3')
+        at_doc3 = self.portal['doc3']
+        at_folder1.invokeFactory('News Item', 'newsitem')
+        at_newsitem = at_folder1['newsitem']
+
+        # be 100% sure the migration-date is after the creation-date
+        time.sleep(0.1)
+
+        # relate them
+        at_doc1.setRelatedItems([at_doc2])
+        at_doc2.setRelatedItems([at_newsitem, at_doc3, at_doc1])
+        at_doc3.setRelatedItems(at_doc1)
+        at_folder1.setRelatedItems([at_doc2])
+        at_folder2.setRelatedItems([at_doc1])
+
+        # migrate content
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+
+        # we use the migration-view instead of calling the migratons by hand
+        # to make sure the patch for notifyModified is used.
+        migration_view = getMultiAdapter(
+            (self.portal, self.request),
+            name=u'migrate_from_atct'
+        )
+        migration_view(
+            content_types=['Document', 'Folder'],
+            migrate_schemaextended_content=True,
+            migrate_references=True,
+            from_form=False,
+        )
+
+        dx_folder1 = self.portal['folder1']
+        dx_folder2 = self.portal['folder2']
+        dx_folder3 = self.portal['folder3']
+
+        dx_doc1 = dx_folder1['doc1']
+        dx_doc2 = dx_folder2['doc2']
+        dx_doc3 = self.portal['doc3']
+
+        self.assertTrue(at_folder1 is not dx_folder1)
+        self.assertTrue(at_folder2 is not dx_folder2)
+
+        # assert ModificationDates
+        self.assertEqual(
+            at_folder1.ModificationDate(),
+            dx_folder1.ModificationDate()
+        )
+        self.assertEqual(
+            at_folder2.ModificationDate(),
+            dx_folder2.ModificationDate()
+        )
+        self.assertEqual(
+            at_folder3.ModificationDate(),
+            dx_folder3.ModificationDate()
+        )
+        self.assertEqual(
+            at_doc1.ModificationDate(),
+            dx_doc1.ModificationDate()
+        )
+        self.assertEqual(
+            at_doc2.ModificationDate(),
+            dx_doc2.ModificationDate()
+        )
+        self.assertEqual(
+            at_doc3.ModificationDate(),
+            dx_doc3.ModificationDate()
+        )
+
+        # assert single references
+        dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
+        self.assertEqual(dx_doc1_related, [dx_doc2])
+
+        dx_doc3_related = [x.to_object for x in dx_doc3.relatedItems]
+        self.assertEqual(dx_doc3_related, [dx_doc1])
+
+        dx_folder1_related = [x.to_object for x in dx_folder1.relatedItems]
+        self.assertEqual(dx_folder1_related, [dx_doc2])
+
+        dx_folder2_related = [x.to_object for x in dx_folder2.relatedItems]
+        self.assertEqual(dx_folder2_related, [dx_doc1])
+
+        # assert multi references, order is restored
+        dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
+        self.assertEqual(dx_doc2_related, [at_newsitem, dx_doc3, dx_doc1])
 
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
