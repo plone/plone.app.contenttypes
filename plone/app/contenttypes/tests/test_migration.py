@@ -807,7 +807,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_newsitem = at_folder1['newsitem']
 
         # be 100% sure the migration-date is after the creation-date
-        time.sleep(0.5)
+        time.sleep(0.1)
 
         # relate them
         at_doc1.setRelatedItems([at_doc2])
