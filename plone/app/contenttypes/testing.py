@@ -12,6 +12,7 @@ from plone.testing import z2
 from zope.configuration import xmlconfig
 
 import pkg_resources
+from .tests.robot.variables import TEST_FOLDER_ID
 
 
 class PloneAppContenttypes(PloneSandboxLayer):
@@ -45,7 +46,7 @@ class PloneAppContenttypes(PloneSandboxLayer):
         setRoles(portal, TEST_USER_ID, ['Manager'])
         portal.invokeFactory(
             "Folder",
-            id="robot-test-folder",
+            id=TEST_FOLDER_ID,
             title=u"Test Folder"
         )
 
