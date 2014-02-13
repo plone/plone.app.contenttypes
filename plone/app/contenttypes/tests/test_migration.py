@@ -1198,3 +1198,18 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(
             'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
         )
+
+    def test_migrate_members_standard_view(self):
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        self.portal.invokeFactory('Folder', 'Members')
+        members = self.portal['Members']
+        # dummy for Script(Python) Object
+        members.invokeFactory('Document', 'index_html')
+        from plone.app.contenttypes.migration.browser import \
+            MigrateFromATContentTypes as MigrationView
+        migrationview = MigrationView(self.portal, None)
+        self.assertIsNotNone(members.get('index_html', None))
+        migrationview.migrateMembers()
+        self.assertIsNone(members.get('index_html', None))
+        self.assertEqual(members.getLayout(), 'member-search')
+        import pdb; pdb.set_trace()

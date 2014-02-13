@@ -77,6 +77,7 @@ class FixBaseClasses(BrowserView):
 
 
 class MigrateFromATContentTypes(BrowserView):
+
     """ Migrate the default-types (except event and topic).
     This view can be called directly and it will migrate all content
     provided they were not schema-extended.
@@ -140,6 +141,9 @@ class MigrateFromATContentTypes(BrowserView):
         # switch on setModificationDate on changes
         self.resetNotifyModified()
 
+        # migrate Members folder to new default view
+        self.migrateMembers()
+
         endtime = datetime.now()
         duration = (endtime - starttime).seconds
         if not from_form:
@@ -198,6 +202,16 @@ class MigrateFromATContentTypes(BrowserView):
             else:
                 klass.notifyModified = klass.old_notifyModified
             del klass.old_notifyModified
+
+    def migrateMembers(self):
+        for brain in self.context.portal_catalog(portal_type='Folder', id='Members'):
+            members = brain.getObject()
+            if members.get('index_html', None):
+                del members['index_html']
+                member_search_layout = u'member-search'
+                if member_search_layout in [layout for layout, name \
+                    in members.getAvailableLayouts()]:
+                    members.setLayout("member-search")
 
 
 class IATCTMigratorForm(Interface):
