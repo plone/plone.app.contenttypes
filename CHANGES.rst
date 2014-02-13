@@ -4,6 +4,15 @@ Changelog
 1.1a2 (unreleased)
 ------------------
 
+- Add a richtext-behavior and use it in for all types.
+  [amleczko]
+
+- Improve migration-results page (Fix #67)
+  [pbauer]
+
+- Show a warning and hide the edit-link for uneditable content
+  [pbauer]
+
 - Fix #62: Keep ModificationDate during migration.
   [pbauer]
 
