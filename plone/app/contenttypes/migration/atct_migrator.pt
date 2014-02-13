@@ -126,7 +126,9 @@
                     choose to migrate references or not.</p>
                 </div>
                 <div id="migration-form"
-                  tal:content="structure view/contents" />
+                     tal:content="structure view/contents">
+                     This is the real migration form
+                </div>
               </div>
             </tal:block>
             <tal:block condition="linguaplone_installed">

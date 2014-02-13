@@ -58,7 +58,7 @@
           outline: 0px none;
           box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15) inset, 0px 1px 2px rgba(0, 0, 0, 0.05);
       }
-      #migration-form {
+      #migration-form , #content-core{
           border: 1px solid #DDDDDD;
           border-radius: 10px 10px 10px 10px;
           font-size: 110%;
@@ -73,6 +73,16 @@
       #migration-options {
         margin-top: 3em;
       }
+      table td {
+        border: 1px solid #ccc;
+      }
+      table td, table th  {
+        padding: 0.2em 0.5em 0.2em;
+      }
+      table th {
+        text-align: center;
+        font-weight: normal;
+      }
     </style>
 
   </metal:block>
@@ -80,23 +90,57 @@
   <body metal:use-macro="content">
 
     <metal:bodytext fill-slot="main">
-      <metal:main define-macro="main">
+      <metal:main define-macro="main"
+                  tal:define="results view/results">
+        <tal:success tal:condition="results">
         <h1 class="documentFirstHeading"
-            i18n:translate="">Migration results</h1>
+            i18n:translate="">Congratulations! You migrated from Archetypes to Dexterity.</h1>
 
-        <div id="content-core"
-             tal:define="results view/results">
+        <div id="content-core">
           <p>The migration finished within <span tal:replace="results/duration">20</span> seconds</p>
-          <h3>Before</h3>
-          <p tal:repeat="stat results/before">
-            <span tal:content="stat"/>
-          </p>
-          <h3>After</h3>
-          <p tal:repeat="stat results/after">
-            <span tal:content="stat"/>
-          </p>
+
+          <h3>Migrated Content</h3>
+          <table>
+            <tr>
+              <th>Old Type</th>
+              <th>New Type</th>
+              <th>Items</th>
+            </tr>
+            <tal:block tal:repeat="ct results/content_types">
+              <tr>
+                <td tal:content="python:results['migrated_types'][ct]['old_meta_type']"></td>
+                <td tal:content="python:results['migrated_types'][ct]['new_type_name']"></td>
+                <td tal:content="python:results['migrated_types'][ct]['amount_migrated']"></td>
+              </tr>
+            </tal:block>
+          </table>
+
+          <h3>Content before Migration</h3>
+          <table>
+            <tr>
+              <th>Type</th>
+              <th>Items</th>
+            </tr>
+            <tr tal:repeat="ct python:sorted(results['before'].keys())">
+              <td tal:content="ct"></td>
+              <td tal:content="python:results['before'][ct]"></td>
+            </tr>
+          </table>
+
+          <h3>Content after Migration</h3>
+          <table>
+            <tr>
+              <th>Type</th>
+              <th>Items</th>
+            </tr>
+            <tr tal:repeat="ct python:sorted(results['after'].keys())">
+              <td tal:content="ct"></td>
+              <td tal:content="python:results['after'][ct]"></td>
+            </tr>
+          </table>
 
         </div>
+        </tal:success>
 
         <div class="links">
           <a href="atct_migrator"
@@ -108,6 +152,7 @@
             <span i18n:translate="">Back to Plone</span>
           </a>
         </div>
+
 
       </metal:main>
     </metal:bodytext>
