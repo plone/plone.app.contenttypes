@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.1.dev0'
+version = '1.1a2.dev0'
 
 long_description = open("README.rst").read() + "\n" + \
     open("CHANGES.rst").read()
@@ -46,7 +46,7 @@ setup(name='plone.app.contenttypes',
               'archetypes.schemaextender',
               'lxml',
               'plone.app.robotframework',
-              'plone.app.testing[robot]',
+              'plone.app.testing[robot]>=4.2.4',  # we need ROBOT_TEST_LEVEL
               'Products.ATContentTypes',
               'Products.contentmigration',
           ],

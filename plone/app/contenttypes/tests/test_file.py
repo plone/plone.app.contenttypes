@@ -32,7 +32,7 @@ class FileIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_schema(self):
         fti = queryUtility(
@@ -157,7 +157,3 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.odt/view'))
         self.assertTrue('application.png' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

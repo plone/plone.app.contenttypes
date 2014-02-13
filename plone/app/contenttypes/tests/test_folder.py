@@ -28,7 +28,7 @@ class FolderIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_schema(self):
         fti = queryUtility(
@@ -137,7 +137,3 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.browser.open(self.folder_url + '/atct_album_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

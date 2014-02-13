@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from datetime import datetime
@@ -29,8 +30,9 @@ from plone.app.contenttypes.content import (
     NewsItem,
 )
 
-# average time to migrate one archetype object, in milliseconds
-ONE_OBJECT_MIGRATION_TIME = 255
+# Average time to migrate one archetype object, in milliseconds.
+# This very much depends on the size of the object and system-speed
+ONE_OBJECT_MIGRATION_TIME = 500
 
 
 class FixBaseClasses(BrowserView):
@@ -82,7 +84,7 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
         portal = self.context
-        helpers = getMultiAdapter((portal, self.context),
+        helpers = getMultiAdapter((portal, self.request),
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
             msg = 'Warning\n'
@@ -97,6 +99,12 @@ class MigrateFromATContentTypes(BrowserView):
         site_props = getattr(ptool, 'site_properties', None)
         link_integrity = site_props.getProperty('enable_link_integrity_checks',
                                                 False)
+
+        # patch notifyModified to prevent setModificationDate()
+        old_notifyModified = DefaultDublinCoreImpl.notifyModified
+        patched_notifyModified = lambda *args: None
+        DefaultDublinCoreImpl.notifyModified = patched_notifyModified
+
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
 
         not_migrated = []
@@ -123,6 +131,9 @@ class MigrateFromATContentTypes(BrowserView):
         site_props.manage_changeProperties(
             enable_link_integrity_checks=link_integrity
         )
+
+        DefaultDublinCoreImpl.notifyModified = old_notifyModified
+
         endtime = datetime.now()
         duration = (endtime - starttime).seconds
         if not from_form:
@@ -209,8 +220,8 @@ class ATCTMigratorForm(form.Form):
         if errors:
             return
 
-        content_types = data['content_types']
-        content_types.extend(data['extended_content'])
+        content_types = data['content_types'] or []
+        content_types.extend(data['extended_content'] or [])
 
         migration_view = getMultiAdapter(
             (context, self.request),
@@ -263,7 +274,7 @@ class ATCTMigratorHelpers(BrowserView):
         """ Return the estimated migration time """
         total_time = self.objects_to_be_migrated() * ONE_OBJECT_MIGRATION_TIME
         hours, remainder = divmod(total_time / 1000, 3600)
-        minutes, seconds = divmod(remainder, 6000)
+        minutes, seconds = divmod(remainder, 60)
         return {
             'hours': hours,
             'minutes': minutes,

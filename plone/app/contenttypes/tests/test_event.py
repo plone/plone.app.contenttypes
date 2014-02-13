@@ -27,7 +27,7 @@ class EventIntegrationTest(unittest.TestCase):
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.request['LANGUAGE'] = 'en'
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_schema(self):
         fti = queryUtility(
@@ -122,7 +122,3 @@ class EventFunctionalTest(unittest.TestCase):
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
         self.assertTrue('2013-01-01' in self.browser.contents)
         self.assertTrue('2013-01-12' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

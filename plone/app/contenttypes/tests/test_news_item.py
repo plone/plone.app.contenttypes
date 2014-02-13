@@ -41,7 +41,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
         )
         alsoProvides(self.request, IPloneAppContenttypesLayer)
         alsoProvides(self.request, IPloneFormLayer)
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
 
     def test_schema(self):
         fti = queryUtility(
@@ -136,7 +136,7 @@ class NewsItemFunctionalTest(unittest.TestCase):
             .value = "My news item"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my news item."
-        self.browser.getControl(name='form.widgets.text')\
+        self.browser.getControl(name='form.widgets.IRichText.text')\
             .value = "Lorem Ipsum"
         self.browser.getControl('Save').click()
 
@@ -144,7 +144,3 @@ class NewsItemFunctionalTest(unittest.TestCase):
         self.assertTrue('My news item' in self.browser.contents)
         self.assertTrue('This is my news item' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

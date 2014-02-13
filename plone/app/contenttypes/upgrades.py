@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.migration.migration import DXOldEventMigrator
-from plone.app.contenttypes.migration.migration import migrate
-from plone.app.upgrade.utils import loadMigrationProfile
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
-from zope.component.hooks import getSite
 
 
 def update_fti(context):
@@ -66,12 +62,9 @@ def enable_collection_behavior(context):
         fti.schema = None
 
 
-def migrate_to_pa_event(context):
-    loadMigrationProfile(context, 'profile-plone.app.event:default')
-    # Re-import types to get newest Event type
+def migrate_to_richtext(context):
+    # add RichText behaviors:
     context.runImportStepFromProfile(
         'profile-plone.app.contenttypes:default',
         'typeinfo',
     )
-    portal = getSite()
-    migrate(portal, DXOldEventMigrator)

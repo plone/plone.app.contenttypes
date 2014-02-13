@@ -14,14 +14,14 @@ def get_terms(context, counter, ext_dict, show_extended):
     for k, v in counter.iteritems():
         if not show_extended:
             if k not in ext_dict:
-                display = "{0} ({1})".format(context.translate(_(k)), v)
+                display = u"{0} ({1})".format(context.translate(_(k)), v)
                 term = SimpleVocabulary.createTerm(k, k, display)
                 results.append(term)
         else:
             if k in ext_dict:
                 ext = str(ext_dict[k]['fields']).\
                     replace("[", "").replace("]", "")
-                display = "{0} ({1}) - extended fields: {2}".\
+                display = u"{0} ({1}) - extended fields: {2}".\
                     format(context.translate(_(k)), v, ext)
                 term = SimpleVocabulary.createTerm(k, k, display)
                 results.append(term)

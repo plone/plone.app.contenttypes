@@ -43,7 +43,3 @@ class PloneAppContenttypesSetupTest(unittest.TestCase):
         stylesheets_ids = cssreg.getResourceIds()
         self.assertTrue(
             '++resource++collection.css' in stylesheets_ids)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

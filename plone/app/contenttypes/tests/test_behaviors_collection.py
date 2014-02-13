@@ -100,7 +100,3 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.assertTrue('Title' not in from_control.options)
         self.assertTrue('portal_type' not in from_control.options)
         self.assertTrue('Description' in from_control.options)
-
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)

@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-from logging import getLogger
-
+from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
 from ZODB.POSException import ConflictError
-
+from logging import getLogger
+from plone.app.contenttypes.interfaces import IDocument
+from plone.app.contenttypes.interfaces import IFile
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IImage
+from plone.app.contenttypes.interfaces import ILink
+from plone.app.contenttypes.interfaces import INewsItem
 from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
-
-from plone.app.contenttypes.interfaces import (
-    IDocument, INewsItem, ILink, IImage, IFile, IFolder
-)
 
 logger = getLogger(__name__)
 
@@ -31,9 +33,9 @@ def _unicode_save_string_concat(*args):
 
 def SearchableText(obj, text=False):
     return u" ".join((
-        obj.id,
-        obj.title or u"",
-        obj.description or u"",
+        safe_unicode(obj.id),
+        safe_unicode(obj.title) or u"",
+        safe_unicode(obj.description) or u"",
     ))
 
 
@@ -58,6 +60,9 @@ def SearchableText_file(obj):
         return SearchableText(obj)
     mimetype = primary_field.value.contentType
     transforms = getToolByName(obj, 'portal_transforms')
+    if transforms._findPath(mimetype, 'text/plain') is None:
+        # check if there is a valid transform available first
+        return SearchableText(obj)
     value = str(primary_field.value.data)
     filename = primary_field.value.filename
     try:
@@ -88,7 +93,7 @@ def SearchableText_folder(obj):
 
 @indexer(ILink)
 def getRemoteUrl(obj):
-    return obj.remoteUrl
+    return replace_link_variables_by_paths(obj, obj.remoteUrl)
 
 
 @indexer(IImage)

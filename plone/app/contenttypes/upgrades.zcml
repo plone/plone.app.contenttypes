@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup">
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
 
   <genericsetup:upgradeStep
       source="*"
@@ -20,13 +21,25 @@
       handler=".upgrades.enable_collection_behavior"
       />
 
+  <!-- We still need Archetypes to use Products.contentmigrator -->
+  <configure zcml:condition="installed Products.Archetypes">
   <genericsetup:upgradeStep
       source="1001"
       destination="1100"
       title="Update from old dx events to plone.app.event types"
       description=""
       profile="plone.app.contenttypes:default"
-      handler=".upgrades.migrate_to_pa_event"
+      handler=".migration.dxmigration.migrate_to_pa_event"
+      />
+  </configure>
+
+  <genericsetup:upgradeStep
+      source="1100"
+      destination="1101"
+      title="Update to new RichText behavior"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.migrate_to_richtext"
       />
 
 </configure>

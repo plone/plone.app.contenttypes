@@ -183,7 +183,7 @@ Differences to Products.ATContentTypes
 - The functionality to transform (rotate and flip) images has been removed.
 - There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
 - The link on the image of the newsitem triggers an overlay
-- the link-type has the additional functionality to use the variable ``${navigation_root_url}`` and ``${portal_url}``.
+- The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
 
 
 
@@ -202,7 +202,7 @@ Contributors
 * Peter Holzer <hpeter@agitator.com>
 * Patrick Gerken <gerken@starzel.de>
 * Steffen Lindner
-* Daniel Widerin
+* Daniel Widerin <daniel@widerin.net>
 * Jens Klein <jens@bluedynamics.com>
 * Joscha Krutzki <joka@jokasis.de>
 * Mathias Leimgruber <m.leimgruber@4teamwork.ch>

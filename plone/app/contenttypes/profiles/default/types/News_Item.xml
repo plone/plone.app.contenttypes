@@ -21,6 +21,7 @@
  <property name="klass">plone.app.contenttypes.content.NewsItem</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
+  <element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>
   <element value="plone.app.content.interfaces.INameFromTitle"/>
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
   <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
@@ -28,9 +29,6 @@
   <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
   <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
  </property>
- <property name="schema"></property>
- <property name="model_source"></property>
- <property name="model_file">plone.app.contenttypes.schema:news_item.xml</property>
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="@@edit"/>
  <alias from="sharing" to="@@sharing"/>
