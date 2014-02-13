@@ -1193,7 +1193,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
         )
 
-    def test_migration_results_page(self):
+    def test_aaa_migration_results_page(self):
         """We create dx-types with the same portal_type as other contenttypes
         before migration to make sure the stats are correct.
         """
