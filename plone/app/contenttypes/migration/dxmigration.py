@@ -4,6 +4,7 @@ from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from plone.app.contenttypes.interfaces import IEvent
 from plone.app.event.dx.behaviors import IEventSummary
 from plone.event.interfaces import IEventAccessor
+from zope.component.hooks import getSite
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
 from plone.event.utils import default_timezone
@@ -22,6 +23,18 @@ class ContentMigrator(CMFItemMigrator):
 
     def migrate_atctmetadata(self):
         self.new.exclude_from_nav = self.old.exclude_from_nav
+
+
+def migrate_to_pa_event(context):
+    # Install plone.app.event
+    context.runAllImportStepsFromProfile('profile-plone.app.event:default')
+    # Re-import types to get newest Event type
+    context.runImportStepFromProfile(
+        'profile-plone.app.contenttypes:default',
+        'typeinfo',
+    )
+    portal = getSite()
+    migrate(portal, DXOldEventMigrator)
 
 
 class DXOldEventMigrator(ContentMigrator):

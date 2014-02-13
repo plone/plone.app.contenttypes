@@ -1,20 +1,18 @@
 *** Settings ***
 
-Variables  plone/app/testing/interfaces.py
-Variables  plone/app/contenttypes/tests/robot/variables.py
-
-Library  Selenium2Library  timeout=${SELENIUM_TIMEOUT}  implicit_wait=${SELENIUM_IMPLICIT_WAIT}
-
+Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
-Suite Setup  Suite Setup
-Suite Teardown  Suite Teardown
+Test Setup  Run keywords  Open test browser
+Test Teardown  Close all browsers
 
+*** Variables ***
 
-*** Test Cases ***
+*** Test cases ***
 
 Scenario: Test Review state Criterion
-    Given a published document  Published Document
+    Given I am logged in as site owner
+      And a published document  Published Document
       And a private document  Private Document
       And a collection  My Collection
      When I set the collection's review state criterion to  private
