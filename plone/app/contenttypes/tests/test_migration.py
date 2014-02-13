@@ -784,12 +784,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_modifield_date_is_unchanged(self):
         set_browserlayer(self.request)
 
-        # from plone.app.contenttypes.migration.migration import (
-        #     restoreReferences,
-        #     migrate_documents,
-        #     migrate_folders
-        # )
-
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
         addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
@@ -1003,15 +997,15 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrationview = MigrationView(self.portal, None)
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "[('ATDocument', 2)]")
+        self.assertEqual(str(stats), "{'ATDocument': 2}")
         migrator = self.get_migrator(at_doc1, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "[('ATDocument', 1), ('Document', 1)]")
+        self.assertEqual(str(stats), "{'Document': 1, 'ATDocument': 1}")
         migrator = self.get_migrator(at_doc2, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "[('Document', 2)]")
+        self.assertEqual(str(stats), "{'Document': 2}")
 
     def test_migration_atctypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.atctypes'
@@ -1198,3 +1192,71 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(
             'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
         )
+
+    def test_aaa_migration_results_page(self):
+        """We create dx-types with the same portal_type as other contenttypes
+        before migration to make sure the stats are correct.
+        """
+        set_browserlayer(self.request)
+        from plone.app.contenttypes.interfaces import IDocument
+        from plone.app.contenttypes.interfaces import ICollection
+
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+
+        # create folders
+        self.portal.invokeFactory('Folder', 'folder1')
+        at_folder1 = self.portal['folder1']
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+
+        # create ATDocuments
+        at_folder1.invokeFactory('Document', 'doc1')
+        at_doc1 = at_folder1['doc1']
+        at_folder2.invokeFactory('Document', 'doc2')
+        at_doc2 = at_folder2['doc2']
+
+        # create AT-based collections
+        self.portal.invokeFactory('Collection', 'col1')
+        at_col1 = self.portal['col1']
+
+        # migrate content
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+
+        # create dx-content that will not be migrated
+        at_folder1.invokeFactory('Document', 'dx_doc')
+        dx_doc = at_folder1['dx_doc']
+        self.assertTrue(IDocument.providedBy(dx_doc))
+
+        # create dexterity-based collections
+        self.portal.invokeFactory('Collection', 'dx_col')
+        dx_col = self.portal['dx_col']
+        self.assertTrue(ICollection.providedBy(dx_col))
+
+        migration_view = getMultiAdapter(
+            (self.portal, self.request),
+            name=u'migrate_from_atct'
+        )
+
+        results = migration_view(
+            from_form=True,
+        )
+
+        dx_folder1 = self.portal['folder1']
+        dx_folder2 = self.portal['folder2']
+        dx_doc1 = dx_folder1['doc1']
+        dx_doc2 = dx_folder2['doc2']
+        dx_col1 = self.portal['col1']
+
+        self.assertTrue(at_folder1 is not dx_folder1)
+        self.assertTrue(at_folder2 is not dx_folder2)
+        self.assertTrue(at_doc1 is not dx_doc1)
+        self.assertTrue(at_doc2 is not dx_doc2)
+        self.assertTrue(at_col1 is not dx_col1)
+
+        # test the stats
+        stats = results['migrated_types']
+        self.assertEqual(stats['Document']['amount_migrated'], 2)
+        self.assertEqual(stats['Folder']['amount_migrated'], 2)
+        self.assertEqual(stats['Collection']['amount_migrated'], 1)
