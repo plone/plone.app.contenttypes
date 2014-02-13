@@ -6,7 +6,6 @@ from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.event.interfaces import IEventAccessor
-from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.testing import login
 from plone.app.testing import applyProfile
 from zope.component import getMultiAdapter
@@ -785,6 +784,12 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_modifield_date_is_unchanged(self):
         set_browserlayer(self.request)
 
+        # from plone.app.contenttypes.migration.migration import (
+        #     restoreReferences,
+        #     migrate_documents,
+        #     migrate_folders
+        # )
+
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
         addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
@@ -796,6 +801,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_folder2 = self.portal['folder2']
         self.portal.invokeFactory('Folder', 'folder3')
         at_folder3 = self.portal['folder3']
+        at_folder2.invokeFactory('Folder', 'folder4')
+        at_folder4 = at_folder2['folder4']
 
         # create ATDocuments
         at_folder1.invokeFactory('Document', 'doc1')
@@ -804,15 +811,17 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_doc2 = at_folder2['doc2']
         self.portal.invokeFactory('Document', 'doc3')
         at_doc3 = self.portal['doc3']
-        at_folder1.invokeFactory('News Item', 'newsitem')
-        at_newsitem = at_folder1['newsitem']
+        at_folder2.invokeFactory('News Item', 'newsitem1')
+        at_newsitem1 = at_folder2['newsitem1']
+        at_folder4.invokeFactory('News Item', 'newsitem2')
+        at_newsitem2 = at_folder4['newsitem2']
 
         # be 100% sure the migration-date is after the creation-date
         time.sleep(0.1)
 
         # relate them
         at_doc1.setRelatedItems([at_doc2])
-        at_doc2.setRelatedItems([at_newsitem, at_doc3, at_doc1])
+        at_doc2.setRelatedItems([at_newsitem1, at_doc3, at_doc1])
         at_doc3.setRelatedItems(at_doc1)
         at_folder1.setRelatedItems([at_doc2])
         at_folder2.setRelatedItems([at_doc1])
@@ -820,9 +829,12 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_folder1_date = at_folder1.ModificationDate()
         at_folder2_date = at_folder2.ModificationDate()
         at_folder3_date = at_folder3.ModificationDate()
+        at_folder4_date = at_folder4.ModificationDate()
         at_doc1_date = at_doc1.ModificationDate()
         at_doc2_date = at_doc2.ModificationDate()
         at_doc3_date = at_doc3.ModificationDate()
+        at_newsitem1_date = at_newsitem1.ModificationDate()
+        at_newsitem2_date = at_newsitem2.ModificationDate()
 
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -833,8 +845,18 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             (self.portal, self.request),
             name=u'migrate_from_atct'
         )
+
+        # We call migration twice to make sure documents are migrated first.
+        # This would result in changed modification-dates on the folders
+        # unless this is patched in the migration-view.
         migration_view(
-            content_types=['Document', 'Folder'],
+            content_types=['Document'],
+            migrate_schemaextended_content=True,
+            migrate_references=True,
+            from_form=False,
+        )
+        migration_view(
+            content_types=['Folder'],
             migrate_schemaextended_content=True,
             migrate_references=True,
             from_form=False,
@@ -843,6 +865,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         dx_folder1 = self.portal['folder1']
         dx_folder2 = self.portal['folder2']
         dx_folder3 = self.portal['folder3']
+        dx_folder4 = dx_folder2['folder4']
 
         dx_doc1 = dx_folder1['doc1']
         dx_doc2 = dx_folder2['doc2']
@@ -855,9 +878,12 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(at_folder1_date, dx_folder1.ModificationDate())
         self.assertEqual(at_folder2_date, dx_folder2.ModificationDate())
         self.assertEqual(at_folder3_date, dx_folder3.ModificationDate())
+        self.assertEqual(at_folder4_date, dx_folder4.ModificationDate())
         self.assertEqual(at_doc1_date, dx_doc1.ModificationDate())
         self.assertEqual(at_doc2_date, dx_doc2.ModificationDate())
         self.assertEqual(at_doc3_date, dx_doc3.ModificationDate())
+        self.assertEqual(at_newsitem1_date, at_newsitem1.ModificationDate())
+        self.assertEqual(at_newsitem2_date, at_newsitem2.ModificationDate())
 
         # assert single references
         dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
@@ -874,7 +900,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # assert multi references, order is restored
         dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
-        self.assertEqual(dx_doc2_related, [at_newsitem, dx_doc3, dx_doc1])
+        self.assertEqual(dx_doc2_related, [at_newsitem1, dx_doc3, dx_doc1])
 
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator

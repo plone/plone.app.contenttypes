@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from datetime import datetime
@@ -29,6 +31,12 @@ from plone.app.contenttypes.content import (
     Link,
     NewsItem,
 )
+
+PATCH_NOTIFY = [
+    DexterityContent,
+    DefaultDublinCoreImpl,
+    ExtensibleMetadata
+]
 
 # Average time to migrate one archetype object, in milliseconds.
 # This very much depends on the size of the object and system-speed
@@ -99,16 +107,10 @@ class MigrateFromATContentTypes(BrowserView):
         site_props = getattr(ptool, 'site_properties', None)
         link_integrity = site_props.getProperty('enable_link_integrity_checks',
                                                 False)
-
-        # patch notifyModified to prevent setModificationDate()
-        # notifyModified lives in plone.dexterity but
-        # older versions used notifyModified from
-        # Products.CMFDefault.DublinCore.DefaultDublinCoreImpl
-        patch = lambda *args: None
-        old_notifyModified = getattr(DexterityContent, 'notifyModified', None)
-        DexterityContent.notifyModified = patch
-
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
+
+        # switch of setModificationDate on changes
+        self.patchNotifyModified()
 
         not_migrated = []
 
@@ -135,11 +137,8 @@ class MigrateFromATContentTypes(BrowserView):
             enable_link_integrity_checks=link_integrity
         )
 
-        # reset notifyModified to old state
-        if old_notifyModified is None:
-            del DexterityContent.notifyModified
-        else:
-            DexterityContent.notifyModified = old_notifyModified
+        # switch on setModificationDate on changes
+        self.resetNotifyModified()
 
         endtime = datetime.now()
         duration = (endtime - starttime).seconds
@@ -175,6 +174,30 @@ class MigrateFromATContentTypes(BrowserView):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return sorted(results.items())
+
+    def patchNotifyModified(self):
+        """Patch notifyModified to prevent setModificationDate() on changes
+
+        notifyModified lives in several places and is also used on folders
+        when their content changes.
+        So when we migrate Documents before Folders the folders
+        ModifiedDate gets changed.
+        """
+        patch = lambda *args: None
+        for klass in PATCH_NOTIFY:
+            old_notifyModified = getattr(klass, 'notifyModified', None)
+            klass.notifyModified = patch
+            klass.old_notifyModified = old_notifyModified
+
+    def resetNotifyModified(self):
+        """reset notifyModified to old state"""
+
+        for klass in PATCH_NOTIFY:
+            if klass.old_notifyModified is None:
+                del klass.notifyModified
+            else:
+                klass.notifyModified = klass.old_notifyModified
+            del klass.old_notifyModified
 
 
 class IATCTMigratorForm(Interface):
