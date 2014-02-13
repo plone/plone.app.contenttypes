@@ -42,6 +42,15 @@
     marker=".collection.ISyndicatableCollection"
     />
 
+  <plone:behavior
+    title="RichText"
+    description="Adds richtext behavior"
+    provides=".richtext.IRichText"
+    factory=".richtext.RichText"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    marker=".richtext.IRichText"
+    />
+
   <utility
       component=".collection.MetaDataFieldsVocabularyFactory"
       name="plone.app.contenttypes.metadatafields" />

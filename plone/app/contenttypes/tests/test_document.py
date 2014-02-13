@@ -109,7 +109,7 @@ class DocumentFunctionalTest(unittest.TestCase):
             .value = "My document"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my document."
-        self.browser.getControl(name='form.widgets.text')\
+        self.browser.getControl(name='form.widgets.IRichText.text')\
             .value = "Lorem Ipsum"
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-document/view'))
