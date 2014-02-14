@@ -126,3 +126,21 @@ fill date field
   Select from list  css=div[data-fieldname="${fieldid}"] .picker__select--month  ${month}
   Select from list  css=div[data-fieldname="${fieldid}"] select.picker__select--year  ${year}
   Click Element  xpath=//div[@data-fieldname="${fieldid}"]//div[contains(@class, 'picker__day')][contains(text(), "${day}")]
+
+I set the criteria ${type} in row ${number} to the option '${label}'
+  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
+  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
+  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
+  Wait until page contains Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+  Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+
+I set the criteria ${type} in row ${number} to the options '${label}'
+  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
+  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
+  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
+  Wait until page contains Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+  Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+
+I set the criteria ${type} in row ${number} to the text '${label}'
+  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
+  Input text  css=${criteria_row} .querystring-criteria-value input  ${label}\t
