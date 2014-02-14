@@ -327,9 +327,12 @@ def configure_members_folder(portal, target_language):
         container.reindexObject()
         _publish(container)
 
-        # set member search as default layout to Members Area
-        container_layout = 'member-search'
-        container.setLayout(container_layout)
+        # add index_html to Members area
+        if 'index_html' not in container:
+            container._setObject('index_html', PythonScript('index_html'))
+            index_html = getattr(container, 'index_html')
+            index_html.write(member_indexhtml)
+            index_html.ZPythonScript_setTitle('User Search')
 
         # Block all right column portlets by default
         manager = queryUtility(IPortletManager, name='plone.rightcolumn')

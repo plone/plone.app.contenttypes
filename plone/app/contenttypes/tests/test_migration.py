@@ -1194,21 +1194,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
         )
 
-    def test_migrate_members_default_layout(self):
-        applyProfile(self.portal, 'plone.app.contenttypes:default')
-        self.portal.invokeFactory('Folder', 'Members')
-        members = self.portal['Members']
-        # dummy for Script(Python) Object
-        members.invokeFactory('Document', 'index_html')
-        from plone.app.contenttypes.migration.browser import \
-            MigrateFromATContentTypes as MigrationView
-        migrationview = MigrationView(self.portal, None)
-        self.assertIsNotNone(members.get('index_html', None))
-        new_layout = 'folder_tabular_view'  # for example
-        migrationview.migrateMembersDefaultView(new_layout)
-        self.assertIsNone(members.get('index_html', None))
-        self.assertEqual(members.getLayout(), new_layout)
-
     def test_aaa_migration_results_page(self):
         """We create dx-types with the same portal_type as other contenttypes
         before migration to make sure the stats are correct.
