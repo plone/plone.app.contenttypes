@@ -4,8 +4,11 @@ Changelog
 1.1a2 (unreleased)
 ------------------
 
+- Improve documentation.
+  [pbauer]
+
 - Add a richtext-behavior and use it in for all types.
-  [amleczko]
+  [amleczko, pysailor]
 
 - Improve the migration-results page (Fix #67).
   [pbauer]
