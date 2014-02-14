@@ -16,7 +16,6 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from persistent.list import PersistentList
-from plone.app.event.dx.behaviors import IEventSummary
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
@@ -458,7 +457,7 @@ class EventMigrator(ATCTContentMigrator):
         acc.contact_email = old_contactemail  # IEventContact
         acc.contact_phone = old_contactphone  # IEventContact
         # Copy the entire richtext object, not just it's representation
-        IEventSummary(self.new).text = old_richtext
+        acc.text = old_richtext
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))
