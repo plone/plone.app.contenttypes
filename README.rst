@@ -233,3 +233,4 @@ Contributors
 * Maurits van Rees <maurits@vanrees.org>
 * David Glick <david@glicksoftware.com>
 * Kees Hink <keeshink@gmail.com>
+* Roman KOzlovskyi <krzroman@gmail.com>
