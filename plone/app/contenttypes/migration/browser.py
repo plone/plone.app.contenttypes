@@ -93,6 +93,7 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
         portal = self.context
+        catalog = portal.portal_catalog
         helpers = getMultiAdapter((portal, self.request),
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
@@ -114,6 +115,7 @@ class MigrateFromATContentTypes(BrowserView):
         self.patchNotifyModified()
 
         not_migrated = []
+        migrated_types = {}
 
         for (k, v) in ATCT_LIST.items():
             if content_types != "all" and k not in content_types:
@@ -124,8 +126,18 @@ class MigrateFromATContentTypes(BrowserView):
                     and not migrate_schemaextended_content:
                 not_migrated.append(k)
                 continue
+            amount_to_be_migrated = len(catalog(
+                object_provides=v['iface'].__identifier__,
+                meta_type=v['old_meta_type'])
+            )
             # call the migrator
             v['migrator'](portal)
+
+            # some data for the results-page
+            migrated_types[k] = {}
+            migrated_types[k]['amount_migrated'] = amount_to_be_migrated
+            migrated_types[k]['old_meta_type'] = v['old_meta_type']
+            migrated_types[k]['new_type_name'] = v['new_type_name']
 
         # if there are blobnewsitems we just migrate them silently.
         migration.migrate_blobnewsitems(portal)
@@ -168,7 +180,9 @@ class MigrateFromATContentTypes(BrowserView):
             stats = {
                 'duration': duration,
                 'before': stats_before,
-                'after': self.stats()
+                'after': self.stats(),
+                'content_types': content_types,
+                'migrated_types': migrated_types,
             }
             return stats
 
@@ -177,7 +191,7 @@ class MigrateFromATContentTypes(BrowserView):
         for brain in self.context.portal_catalog():
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
-        return sorted(results.items())
+        return results
 
     def patchNotifyModified(self):
         """Patch notifyModified to prevent setModificationDate() on changes
@@ -338,4 +352,7 @@ class ATCTMigratorResults(BrowserView):
         sdm = self.context.session_data_manager
         session = sdm.getSessionData(create=True)
         results = session.get("atct_migrator_results", None)
+        if not results:
+            return False
+        # results['atct_list'] = ATCT_LIST
         return results

@@ -136,7 +136,7 @@ class NewsItemFunctionalTest(unittest.TestCase):
             .value = "My news item"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my news item."
-        self.browser.getControl(name='form.widgets.text')\
+        self.browser.getControl(name='form.widgets.IRichText.text')\
             .value = "Lorem Ipsum"
         self.browser.getControl('Save').click()
 
