@@ -1,7 +1,6 @@
-<dl class="portalMessage alert-box secondary warning"
+<div class="portalMessage alert-box secondary warning"
     i18n:domain="plone">
-    <dt i18n:translate="">Warning</dt>
-    <dd>
+    <strong i18n:translate="">Warning</strong>
         <tal:manager tal:condition="not:view/can_migrate">
             <span i18n:translate="">You can't edit this content. Ask your administrator to migrate to Dexterity!</span>
         </tal:manager>
@@ -12,8 +11,7 @@
                 </a>
             </span>
         </tal:manager>
-    </dd>
-</dl>
+</div>
 
 <style type="text/css">
 #contentview-edit {display: None;}
