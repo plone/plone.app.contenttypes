@@ -7,9 +7,7 @@ Introduction
 
 plone.app.contenttypes offers default content types for Plone based on Dexterity. This package replaces ``Products.ATContenttypes`` and will provide the default-types in Plone 5.
 
-**Warning: plone.app.contenttypes can be used on a new site without problems. Using it on a site with existing content requires migrating the sites content and is only recommended if you know what you're doing! Please see the chapter "Migration"**
-
-It contains the same types as default Plone does:
+It contains the following types:
 
 * Folder
 * Document
@@ -22,10 +20,11 @@ It contains the same types as default Plone does:
 
 The main difference from a users perspective is that these types are extendable through-the-web. This means you can add or remove fields and behaviors using the control-panel "Dexterity Content Types" (``/@@dexterity-types``).
 
-The aim is to mimick the old default-types as closely as possible, not to change the content-creation experience for editors.
+The aim is to mimick the default-types as closely as possible.
 
 plone.app.contenttypes has been merged into the Plone 5.0 branch and will be shipped with the next Plone release: https://dev.plone.org/ticket/12344
 
+**Warning: Using plone.app.contenttypes on a site with existing content requires migrating the sites content. Please see the chapter "Migration". It can be used on a new site without problems.**
 
 Compatability
 =============
@@ -45,6 +44,21 @@ Add this line in the eggs section of your ``buildout.cfg``::
 If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement::
 
     ``plone.app.contenttypes ['atrefs']``
+
+
+Installation as a dependency from another product
+-------------------------------------------------
+
+If you want to add plone.app.contenttypes as a dependency from another products use the profile ``plone-content`` in your ``metadata.xml`` to have Plone populate a new site with DX-based default-content. ::
+
+    <metadata>
+      <version>1</version>
+        <dependencies>
+            <dependency>profile-plone.app.contenttypes:plone-content</dependency>
+        </dependencies>
+    </metadata>
+
+If you use the profile ``default`` then the default-content in new sites will still be Archetypes-based. You'll then have to migrate that content using the migration-form ``@@atct_migrator`` or delete it by hand.
 
 
 What happens to existing content?
@@ -77,24 +91,20 @@ Any content you created based on plone.app.contenttypes will not be editable unt
 Migration
 =========
 
-**Warning: Migrations are in an early stage and might break your site in some cases! Please read this thoroughly!**
-
-To migrate your content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
+To migrate your existing content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
 
 plone.app.contenttypes includes migrations for the following use-cases:
 
 * from default Archetypes-based types to plone.app.contenttypes
 * from older versions of plone.app.contenttypes to current versions
-
-Migrations that will be will come in future version:
-
 * from old plone.app.contenttypes-event to DX-plone.app.event
 * from AT-plone.app.event to DX-plone.app.event
 * from atct ATEvent to DX-plone.app.event
-* from ATTopic to DX-plone.app.collections
 * from AT-plone.app.collection to DX-plone.app.collections
 
-There is a working migration from atct ATEvent to AT-plone.app.event in the plone.app.event package implemented as an upgrade step.
+Migrations that will be will come in future version:
+
+* from ATTopic to DX-plone.app.collections
 
 For migrations to work you need at least ``Products.contentmigration = 2.1.3`` (part of Plone since Plone 4.2.5) and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
 
@@ -149,7 +159,9 @@ Dependencies
 
 * ``plone.app.dexterity``. Dexterity is shipped with Plone 4.3.x. Version pins for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`.
 
-* ``plone.app.collection``.
+* ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the RRS-functionalisty in Plone because plone.app.contenttypes 1.1a2 uses behaviors for the Richtext-Fields.
+
+* ``plone.app.event``.
 
 Toubleshooting
 ==============
@@ -180,6 +192,7 @@ Differences to Products.ATContentTypes
 ======================================
 
 - The image of the News Item is not a field on the contenttype but a behavior that can add a image to any contenttypes (similar to http://pypi.python.org/pypi/collective.contentleadimage)
+- All richtext-fields are also provided by a reuseable behavior.
 - The functionality to transform (rotate and flip) images has been removed.
 - There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
 - The link on the image of the newsitem triggers an overlay
@@ -201,9 +214,22 @@ Contributors
 * Timo Stollenwerk <contact@timostollenwerk.net>
 * Peter Holzer <hpeter@agitator.com>
 * Patrick Gerken <gerken@starzel.de>
-* Steffen Lindner
+* Steffen Lindner <lindner@starzel.de>
 * Daniel Widerin <daniel@widerin.net>
 * Jens Klein <jens@bluedynamics.com>
 * Joscha Krutzki <joka@jokasis.de>
 * Mathias Leimgruber <m.leimgruber@4teamwork.ch>
 * Matthias Broquet <mbroquet@atreal.fr>
+* Wolfgang Thomas <thomas@syslab.com>
+* Bo Simonsen <bo@geekworld.dk>
+* Andrew Mleczko <andrew@mleczko.net>
+* Roel Bruggink <roel@jaroel.nl>
+* Carsten Senger <senger@rehfisch.de>
+* Rafael Oliveira <rafaelbco@gmail.com>
+* Martin Opstad Reistadbakk <martin@blaastolen.com>
+* Nathan Van Gheem <vangheem@gmail.com>
+* Johannes Raggam <raggam-nl@adm.at>
+* Jamie Lentin <jm@lentin.co.uk>
+* Maurits van Rees <maurits@vanrees.org>
+* David Glick <david@glicksoftware.com>
+* Kees Hink <keeshink@gmail.com>

@@ -795,6 +795,8 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_folder2 = self.portal['folder2']
         self.portal.invokeFactory('Folder', 'folder3')
         at_folder3 = self.portal['folder3']
+        at_folder2.invokeFactory('Folder', 'folder4')
+        at_folder4 = at_folder2['folder4']
 
         # create ATDocuments
         at_folder1.invokeFactory('Document', 'doc1')
@@ -803,18 +805,30 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         at_doc2 = at_folder2['doc2']
         self.portal.invokeFactory('Document', 'doc3')
         at_doc3 = self.portal['doc3']
-        at_folder1.invokeFactory('News Item', 'newsitem')
-        at_newsitem = at_folder1['newsitem']
+        at_folder2.invokeFactory('News Item', 'newsitem1')
+        at_newsitem1 = at_folder2['newsitem1']
+        at_folder4.invokeFactory('News Item', 'newsitem2')
+        at_newsitem2 = at_folder4['newsitem2']
 
         # be 100% sure the migration-date is after the creation-date
         time.sleep(0.1)
 
         # relate them
         at_doc1.setRelatedItems([at_doc2])
-        at_doc2.setRelatedItems([at_newsitem, at_doc3, at_doc1])
+        at_doc2.setRelatedItems([at_newsitem1, at_doc3, at_doc1])
         at_doc3.setRelatedItems(at_doc1)
         at_folder1.setRelatedItems([at_doc2])
         at_folder2.setRelatedItems([at_doc1])
+
+        at_folder1_date = at_folder1.ModificationDate()
+        at_folder2_date = at_folder2.ModificationDate()
+        at_folder3_date = at_folder3.ModificationDate()
+        at_folder4_date = at_folder4.ModificationDate()
+        at_doc1_date = at_doc1.ModificationDate()
+        at_doc2_date = at_doc2.ModificationDate()
+        at_doc3_date = at_doc3.ModificationDate()
+        at_newsitem1_date = at_newsitem1.ModificationDate()
+        at_newsitem2_date = at_newsitem2.ModificationDate()
 
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -825,8 +839,18 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             (self.portal, self.request),
             name=u'migrate_from_atct'
         )
+
+        # We call migration twice to make sure documents are migrated first.
+        # This would result in changed modification-dates on the folders
+        # unless this is patched in the migration-view.
         migration_view(
-            content_types=['Document', 'Folder'],
+            content_types=['Document'],
+            migrate_schemaextended_content=True,
+            migrate_references=True,
+            from_form=False,
+        )
+        migration_view(
+            content_types=['Folder'],
             migrate_schemaextended_content=True,
             migrate_references=True,
             from_form=False,
@@ -835,6 +859,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         dx_folder1 = self.portal['folder1']
         dx_folder2 = self.portal['folder2']
         dx_folder3 = self.portal['folder3']
+        dx_folder4 = dx_folder2['folder4']
 
         dx_doc1 = dx_folder1['doc1']
         dx_doc2 = dx_folder2['doc2']
@@ -844,30 +869,15 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_folder2 is not dx_folder2)
 
         # assert ModificationDates
-        self.assertEqual(
-            at_folder1.ModificationDate(),
-            dx_folder1.ModificationDate()
-        )
-        self.assertEqual(
-            at_folder2.ModificationDate(),
-            dx_folder2.ModificationDate()
-        )
-        self.assertEqual(
-            at_folder3.ModificationDate(),
-            dx_folder3.ModificationDate()
-        )
-        self.assertEqual(
-            at_doc1.ModificationDate(),
-            dx_doc1.ModificationDate()
-        )
-        self.assertEqual(
-            at_doc2.ModificationDate(),
-            dx_doc2.ModificationDate()
-        )
-        self.assertEqual(
-            at_doc3.ModificationDate(),
-            dx_doc3.ModificationDate()
-        )
+        self.assertEqual(at_folder1_date, dx_folder1.ModificationDate())
+        self.assertEqual(at_folder2_date, dx_folder2.ModificationDate())
+        self.assertEqual(at_folder3_date, dx_folder3.ModificationDate())
+        self.assertEqual(at_folder4_date, dx_folder4.ModificationDate())
+        self.assertEqual(at_doc1_date, dx_doc1.ModificationDate())
+        self.assertEqual(at_doc2_date, dx_doc2.ModificationDate())
+        self.assertEqual(at_doc3_date, dx_doc3.ModificationDate())
+        self.assertEqual(at_newsitem1_date, at_newsitem1.ModificationDate())
+        self.assertEqual(at_newsitem2_date, at_newsitem2.ModificationDate())
 
         # assert single references
         dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
@@ -884,7 +894,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # assert multi references, order is restored
         dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
-        self.assertEqual(dx_doc2_related, [at_newsitem, dx_doc3, dx_doc1])
+        self.assertEqual(dx_doc2_related, [at_newsitem1, dx_doc3, dx_doc1])
 
     def test_folder_is_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
@@ -987,15 +997,15 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrationview = MigrationView(self.portal, None)
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "[('ATDocument', 2)]")
+        self.assertEqual(str(stats), "{'ATDocument': 2}")
         migrator = self.get_migrator(at_doc1, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "[('ATDocument', 1), ('Document', 1)]")
+        self.assertEqual(str(stats), "{'Document': 1, 'ATDocument': 1}")
         migrator = self.get_migrator(at_doc2, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "[('Document', 2)]")
+        self.assertEqual(str(stats), "{'Document': 2}")
 
     def test_migration_atctypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.atctypes'
@@ -1157,3 +1167,96 @@ class MigrateToATContentTypesTest(unittest.TestCase):
                           '.interfaces.IDexterityContent')
         self.assertEqual(len(at_contents), 0)
         self.assertEqual(len(dx_contents), 11)
+
+    def test_warning_for_uneditable_content(self):
+        set_browserlayer(self.request)
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.app.contenttypes.interfaces import IDocument
+        self.portal.invokeFactory('Document', 'document')
+        self.portal.invokeFactory('News Item', 'newsitem')
+        at_document = self.portal['document']
+        at_newsitem = self.portal['newsitem']
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        at_document_view = at_document.restrictedTraverse('')
+        self.assertTrue(
+            'http://nohost/plone/@@atct_migrator' in at_document_view()
+        )
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+        dx_document = self.portal['document']
+        self.assertTrue(IDocument.providedBy(dx_document))
+        dx_document_view = dx_document.restrictedTraverse('@@view')
+        self.assertFalse('alert-box' in dx_document_view())
+        at_newsitem_view = at_newsitem.restrictedTraverse('')
+        self.assertTrue('alert-box' in at_newsitem_view())
+        self.assertTrue(
+            'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
+        )
+
+    def test_aaa_migration_results_page(self):
+        """We create dx-types with the same portal_type as other contenttypes
+        before migration to make sure the stats are correct.
+        """
+        set_browserlayer(self.request)
+        from plone.app.contenttypes.interfaces import IDocument
+        from plone.app.contenttypes.interfaces import ICollection
+
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+
+        # create folders
+        self.portal.invokeFactory('Folder', 'folder1')
+        at_folder1 = self.portal['folder1']
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+
+        # create ATDocuments
+        at_folder1.invokeFactory('Document', 'doc1')
+        at_doc1 = at_folder1['doc1']
+        at_folder2.invokeFactory('Document', 'doc2')
+        at_doc2 = at_folder2['doc2']
+
+        # create AT-based collections
+        self.portal.invokeFactory('Collection', 'col1')
+        at_col1 = self.portal['col1']
+
+        # migrate content
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+
+        # create dx-content that will not be migrated
+        at_folder1.invokeFactory('Document', 'dx_doc')
+        dx_doc = at_folder1['dx_doc']
+        self.assertTrue(IDocument.providedBy(dx_doc))
+
+        # create dexterity-based collections
+        self.portal.invokeFactory('Collection', 'dx_col')
+        dx_col = self.portal['dx_col']
+        self.assertTrue(ICollection.providedBy(dx_col))
+
+        migration_view = getMultiAdapter(
+            (self.portal, self.request),
+            name=u'migrate_from_atct'
+        )
+
+        results = migration_view(
+            from_form=True,
+        )
+
+        dx_folder1 = self.portal['folder1']
+        dx_folder2 = self.portal['folder2']
+        dx_doc1 = dx_folder1['doc1']
+        dx_doc2 = dx_folder2['doc2']
+        dx_col1 = self.portal['col1']
+
+        self.assertTrue(at_folder1 is not dx_folder1)
+        self.assertTrue(at_folder2 is not dx_folder2)
+        self.assertTrue(at_doc1 is not dx_doc1)
+        self.assertTrue(at_doc2 is not dx_doc2)
+        self.assertTrue(at_col1 is not dx_col1)
+
+        # test the stats
+        stats = results['migrated_types']
+        self.assertEqual(stats['Document']['amount_migrated'], 2)
+        self.assertEqual(stats['Folder']['amount_migrated'], 2)
+        self.assertEqual(stats['Collection']['amount_migrated'], 1)

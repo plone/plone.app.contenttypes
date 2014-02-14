@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
@@ -8,6 +9,7 @@ from datetime import datetime
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
@@ -15,8 +17,8 @@ from z3c.form import form, field, button
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
-from zope.component import queryUtility
 from zope.component import getMultiAdapter
+from zope.component import queryUtility
 from zope.interface import Interface
 
 # Schema Extender allowed interfaces
@@ -29,6 +31,12 @@ from plone.app.contenttypes.content import (
     Link,
     NewsItem,
 )
+
+PATCH_NOTIFY = [
+    DexterityContent,
+    DefaultDublinCoreImpl,
+    ExtensibleMetadata
+]
 
 # Average time to migrate one archetype object, in milliseconds.
 # This very much depends on the size of the object and system-speed
@@ -84,6 +92,7 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
         portal = self.context
+        catalog = portal.portal_catalog
         helpers = getMultiAdapter((portal, self.request),
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
@@ -99,15 +108,13 @@ class MigrateFromATContentTypes(BrowserView):
         site_props = getattr(ptool, 'site_properties', None)
         link_integrity = site_props.getProperty('enable_link_integrity_checks',
                                                 False)
-
-        # patch notifyModified to prevent setModificationDate()
-        old_notifyModified = DefaultDublinCoreImpl.notifyModified
-        patched_notifyModified = lambda *args: None
-        DefaultDublinCoreImpl.notifyModified = patched_notifyModified
-
         site_props.manage_changeProperties(enable_link_integrity_checks=False)
 
+        # switch of setModificationDate on changes
+        self.patchNotifyModified()
+
         not_migrated = []
+        migrated_types = {}
 
         for (k, v) in ATCT_LIST.items():
             if content_types != "all" and k not in content_types:
@@ -118,8 +125,18 @@ class MigrateFromATContentTypes(BrowserView):
                     and not migrate_schemaextended_content:
                 not_migrated.append(k)
                 continue
+            amount_to_be_migrated = len(catalog(
+                object_provides=v['iface'].__identifier__,
+                meta_type=v['old_meta_type'])
+            )
             # call the migrator
             v['migrator'](portal)
+
+            # some data for the results-page
+            migrated_types[k] = {}
+            migrated_types[k]['amount_migrated'] = amount_to_be_migrated
+            migrated_types[k]['old_meta_type'] = v['old_meta_type']
+            migrated_types[k]['new_type_name'] = v['new_type_name']
 
         # if there are blobnewsitems we just migrate them silently.
         migration.migrate_blobnewsitems(portal)
@@ -132,7 +149,8 @@ class MigrateFromATContentTypes(BrowserView):
             enable_link_integrity_checks=link_integrity
         )
 
-        DefaultDublinCoreImpl.notifyModified = old_notifyModified
+        # switch on setModificationDate on changes
+        self.resetNotifyModified()
 
         endtime = datetime.now()
         duration = (endtime - starttime).seconds
@@ -158,7 +176,9 @@ class MigrateFromATContentTypes(BrowserView):
             stats = {
                 'duration': duration,
                 'before': stats_before,
-                'after': self.stats()
+                'after': self.stats(),
+                'content_types': content_types,
+                'migrated_types': migrated_types,
             }
             return stats
 
@@ -167,7 +187,31 @@ class MigrateFromATContentTypes(BrowserView):
         for brain in self.context.portal_catalog():
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
-        return sorted(results.items())
+        return results
+
+    def patchNotifyModified(self):
+        """Patch notifyModified to prevent setModificationDate() on changes
+
+        notifyModified lives in several places and is also used on folders
+        when their content changes.
+        So when we migrate Documents before Folders the folders
+        ModifiedDate gets changed.
+        """
+        patch = lambda *args: None
+        for klass in PATCH_NOTIFY:
+            old_notifyModified = getattr(klass, 'notifyModified', None)
+            klass.notifyModified = patch
+            klass.old_notifyModified = old_notifyModified
+
+    def resetNotifyModified(self):
+        """reset notifyModified to old state"""
+
+        for klass in PATCH_NOTIFY:
+            if klass.old_notifyModified is None:
+                del klass.notifyModified
+            else:
+                klass.notifyModified = klass.old_notifyModified
+            del klass.old_notifyModified
 
 
 class IATCTMigratorForm(Interface):
@@ -295,4 +339,7 @@ class ATCTMigratorResults(BrowserView):
         sdm = self.context.session_data_manager
         session = sdm.getSessionData(create=True)
         results = session.get("atct_migrator_results", None)
+        if not results:
+            return False
+        # results['atct_list'] = ATCT_LIST
         return results
