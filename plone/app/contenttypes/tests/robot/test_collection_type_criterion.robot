@@ -24,7 +24,7 @@ Test Short name (id) Criterion
 
 I set the collection's type criterion to
     [Arguments]  ${criterion}
-    Click Link  Edit
+    Click Edit In Edit Bar
     Wait Until Page Contains Element  xpath=//select[@name="addindex"]
     Select From List  xpath=//select[@name="addindex"]  Type
 
