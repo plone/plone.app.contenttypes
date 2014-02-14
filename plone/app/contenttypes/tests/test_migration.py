@@ -260,7 +260,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'dummy@email.com', new_event_acc.contact_email)
         self.assertEqual(u'123456789', new_event_acc.contact_phone)
         self.assertEqual(u'http://www.plone.org', new_event_acc.event_url)
-        self.assertEqual(u'<p>T\xfctensuppe</p>', new_event_acc.text)
+        self.assertEqual(u'<p>T\xfctensuppe</p>', new_event.text.output)
         self.assertEqual(u'Tütensuppe', new_event.text.raw)
 
     def test_pae_dxevent_is_migrated(self):
@@ -319,7 +319,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'me@geor.ge', new_event_acc.contact_email)
         self.assertEqual(u'+99512345', new_event_acc.contact_phone)
         self.assertEqual(u'http://geor.ge/event', new_event_acc.event_url)
-        self.assertEqual(u'<p>Woo, yeah</p>', new_event_acc.text)
+        self.assertEqual(u'<p>Woo, yeah</p>', new_event.text.output)
         self.assertEqual('Woo, yeah', new_event.text.raw)
         self.assertEqual(False, new_event.exclude_from_nav)
 
@@ -377,7 +377,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'me@fra.nk', new_event_acc.contact_email)
         self.assertEqual(u'+4412345', new_event_acc.contact_phone)
         self.assertEqual(u'http://woo.com', new_event_acc.event_url)
-        self.assertEqual(u'<p>Awesüme</p>', new_event_acc.text)
+        self.assertEqual(u'<p>Awesüme</p>', new_event.text.output)
         self.assertEqual(u'Awesüme', new_event.text.raw)
         self.assertEqual(False, new_event.exclude_from_nav)
 

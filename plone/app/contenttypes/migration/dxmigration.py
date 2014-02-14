@@ -72,7 +72,7 @@ class DXOldEventMigrator(ContentMigrator):
             newacc.contact_phone = self.old.contact_phone
         if hasattr(self.old, 'text'):
             # Copy the entire richtext object, not just it's representation
-            newacc.text = self.old.text
+            self.new.text = self.old.text
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))
@@ -104,7 +104,7 @@ class DXEventMigrator(ContentMigrator):
         annotations = IAnnotations(self.old)
         old_text = annotations.get(
             'plone.app.event.dx.behaviors.IEventSummary.text', None)
-        newacc.text = old_text
+        self.new.text = old_text
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))

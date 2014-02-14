@@ -457,7 +457,7 @@ class EventMigrator(ATCTContentMigrator):
         acc.contact_email = old_contactemail  # IEventContact
         acc.contact_phone = old_contactphone  # IEventContact
         # Copy the entire richtext object, not just it's representation
-        acc.text = old_richtext
+        self.new.text = old_richtext
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))
