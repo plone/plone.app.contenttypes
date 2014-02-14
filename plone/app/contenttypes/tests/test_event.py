@@ -106,7 +106,7 @@ class EventFunctionalTest(unittest.TestCase):
             name='form.widgets.IDublinCore.description'
         ).value = "This is my event."
         self.browser.getControl(
-            name='form.widgets.IEventSummary.text'
+            name='form.widgets.IRichText.text'
         ).value = "Lorem Ipsum"
         self.browser.getControl(
             name='form.widgets.IEventBasic.start'

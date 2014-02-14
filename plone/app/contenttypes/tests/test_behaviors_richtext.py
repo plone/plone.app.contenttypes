@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 import unittest2 as unittest
 
 from Products.CMFCore.utils import getToolByName
-from plone.app.dexterity.testing import DEXTERITY_INTEGRATION_TESTING
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
@@ -9,6 +9,8 @@ from plone.testing.z2 import Browser
 from plone.dexterity.fti import DexterityFTI
 
 from plone.app.contenttypes.behaviors.richtext import IRichText
+from plone.app.contenttypes.testing import \
+    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
 
 class RichTextBase:
@@ -26,7 +28,7 @@ class RichTextBase:
 class RichTextBehaviorTests(RichTextBase, unittest.TestCase):
     """ basic use cases and tests for richtext behavior"""
 
-    layer = DEXTERITY_INTEGRATION_TESTING
+    layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     _behaviors = (
         'plone.app.contenttypes.behaviors.richtext.IRichText',)
@@ -55,6 +57,9 @@ class RichTextBehaviorTests(RichTextBase, unittest.TestCase):
     def test_richtext_in_edit_form(self):
         self.browser.open(self.portal_url + '/doc1/edit')
         self.assertTrue('pat-tinymce' in self.browser.contents)
+
+    def test_richtext_behavior(self):
+        IRichText.providedBy(self.portal.doc1)
 
 
 def test_suite():
