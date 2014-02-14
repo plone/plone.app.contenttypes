@@ -47,7 +47,7 @@ a folder '${folder-id}' with a document '${document-title}'
 
 I set the collection's relative location criterion to
     [Arguments]  ${criterion}
-    Click Link  Edit
+    Click Edit In Edit Bar
     Wait Until Page Contains Element  xpath=//select[@name="addindex"]
     Select From List  xpath=//select[@name="addindex"]  Location
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
@@ -58,7 +58,7 @@ I set the collection's relative location criterion to
 
 I set the collection's absolute location criterion to
     [Arguments]  ${criterion}
-    Click Link  Edit
+    Click Edit In Edit Bar
     Wait Until Page Contains Element  xpath=//select[@name="addindex"]
     Select From List  xpath=//select[@name="addindex"]  Location
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']

@@ -40,7 +40,8 @@ class ICollection(model.Schema):
                       u"The list of results will be dynamically updated"),
         value_type=schema.Dict(value_type=schema.Field(),
                                key_type=schema.TextLine()),
-        required=False
+        required=False,
+        missing_value=''
     )
 
     sort_on = schema.TextLine(
