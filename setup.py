@@ -36,6 +36,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.contentmenu',
           'plone.app.event [dexterity]',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
+          'plone.dexterity>=2.2.1',  # behaviors can provide primaryfields
           'plone.app.relationfield',
           'plone.app.widgets',
           'plone.namedfile [blobs]',
