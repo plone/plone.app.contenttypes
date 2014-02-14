@@ -25,7 +25,7 @@ Scenario: Test Review state Criterion
 a published document
     [Arguments]  ${title}
     a document  ${title}
-    Click link  css=dl#plone-contentmenu-workflow dt.actionMenuHeader a
+    Click link  css=#plone-contentmenu-workflow a.actionMenuHeader
     Click Link  workflow-transition-publish
 
 a private document
@@ -34,7 +34,7 @@ a private document
 
 I set the collection's review state criterion to
     [Arguments]  ${criterion}
-    Click Edit In Edit Bar
+    Click Edit
     Wait Until Page Contains Element  xpath=//select[@name="addindex"]
     Select From List  xpath=//select[@name="addindex"]  Review state
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']

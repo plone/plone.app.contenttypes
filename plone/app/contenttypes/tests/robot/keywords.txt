@@ -122,7 +122,7 @@ fill date field
   [Arguments]  ${fieldid}  ${year}=2012  ${month}=January  ${day}=10
   [Documentation]  Fill in the specified date field (such as effective/expiration date in the "dates" metadata tab) with the specified date.
   ...  Month must be specified by name.
-  Click Link  xpath=//div[@data-fieldname="${fieldid}"]//a[contains(@class,"caltrigger")]
-  Select from list  id=calmonth  ${month}
-  Select from list  id=calyear  ${year}
-  Click Link  xpath=//div[@class='calweek']//a[contains(text(), "${day}")]
+  Click Element  xpath=//div[@data-fieldname="${fieldid}"]//input[contains(@class,"pattern-pickadate-date")]
+  Select from list  css=div[data-fieldname="${fieldid}"] .picker__select--month  ${month}
+  Select from list  css=div[data-fieldname="${fieldid}"] select.picker__select--year  ${year}
+  Click Element  xpath=//div[@data-fieldname="${fieldid}"]//div[contains(@class, 'picker__day')][contains(text(), "${day}")]

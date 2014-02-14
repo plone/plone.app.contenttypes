@@ -24,7 +24,7 @@ Test Short name (id) Criterion
 
 I set the collection short name (id) criterion to
     [Arguments]  ${criterion}
-    Click Edit In Edit Bar
+    Click Edit
     Wait Until Page Contains Element  xpath=//select[@name="addindex"]
     Select From List  xpath=//select[@name="addindex"]  Short name (id)
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
