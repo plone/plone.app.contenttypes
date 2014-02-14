@@ -35,7 +35,7 @@ a test user document
 
 I set the collection's creator criterion to
     [Arguments]  ${criterion}
-    Click Edit In Edit Bar
+    Click Edit
     Wait Until Page Contains Element  xpath=//select[@name="addindex"]
     Select From List  xpath=//select[@name="addindex"]  Creator
     Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
