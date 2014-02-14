@@ -1199,7 +1199,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
         )
 
-    def test_migrate_members_standard_view(self):
+    def test_migrate_members_default_layout(self):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.portal.invokeFactory('Folder', 'Members')
         members = self.portal['Members']
@@ -1209,7 +1209,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             MigrateFromATContentTypes as MigrationView
         migrationview = MigrationView(self.portal, None)
         self.assertIsNotNone(members.get('index_html', None))
-        migrationview.migrateMembers()
+        new_layout = 'folder_tabular_view'  # for example
+        migrationview.migrateMembersDefaultView(new_layout)
         self.assertIsNone(members.get('index_html', None))
-        self.assertEqual(members.getLayout(), 'member-search')
-        import pdb; pdb.set_trace()
+        self.assertEqual(members.getLayout(), new_layout)
