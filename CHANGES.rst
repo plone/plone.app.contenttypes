@@ -7,16 +7,16 @@ Changelog
 - Add a richtext-behavior and use it in for all types.
   [amleczko]
 
-- Improve migration-results page (Fix #67)
+- Improve the migration-results page (Fix #67).
   [pbauer]
 
-- Show a warning and hide the edit-link for uneditable content
+- For uneditable content show a warning and hide the edit-link.
   [pbauer]
 
-- Fix #62: Keep ModificationDate during migration.
+- Keep all modification-date during migration (Fix #62).
   [pbauer]
 
-- Only attempt transforming files if valid content type
+- Only attempt transforming files if valid content type.
   [vangheem]
 
 - Make the collection behavior aware of INavigationRoot. Fixes #98
@@ -26,8 +26,8 @@ Changelog
   of a news item's lead image. This allows use of a stronger caching policy.
   [rafaelbco]
 
-- Fix #110: URL for Link object is wrong on the navigation portlet if it
-  contains variables
+- Fix URL for Link object on the navigation portlet if it
+  contains variables (Fix #110).
   [rafaelbco]
 
 1.1a1 (2013-11-22)
@@ -296,4 +296,5 @@ Changelog
 1.0a1 (unreleased)
 ------------------
 
-- Initial release.
+- Initial implementation.
+  [pbauer, timo, pumazi, agitator]
