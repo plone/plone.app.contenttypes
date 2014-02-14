@@ -142,7 +142,7 @@ class MigrateFromATContentTypes(BrowserView):
         self.resetNotifyModified()
 
         # migrate Members folder to new default view
-        self.migrateMembers()
+        self.migrateMembersDefaultView('member-search')
 
         endtime = datetime.now()
         duration = (endtime - starttime).seconds
@@ -203,15 +203,14 @@ class MigrateFromATContentTypes(BrowserView):
                 klass.notifyModified = klass.old_notifyModified
             del klass.old_notifyModified
 
-    def migrateMembers(self):
+    def migrateMembersDefaultView(self, new_layout):
         for brain in self.context.portal_catalog(portal_type='Folder', id='Members'):
             members = brain.getObject()
             if members.get('index_html', None):
                 del members['index_html']
-                member_search_layout = u'member-search'
-                if member_search_layout in [layout for layout, name \
+                if new_layout in [layout for layout, name \
                     in members.getAvailableLayouts()]:
-                    members.setLayout("member-search")
+                    members.setLayout(new_layout)
 
 
 class IATCTMigratorForm(Interface):
