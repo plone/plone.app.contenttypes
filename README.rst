@@ -142,11 +142,11 @@ Custom content will not be changed by plone.app.contenttypes and should continue
 Dependencies
 ============
 
-* ``plone.app.dexterity``. Dexterity is shipped with Plone 4.3.x. Version pins for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`.
+* ``plone.app.dexterity>=2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pins for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`_.
 
-* ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the RRS-functionalisty in Plone because plone.app.contenttypes 1.1a2 uses behaviors for the Richtext-Fields.
+* ``plone.dexterity>=2.2.1``. Olders version of plone.dexterity break the rss-views in Plone because since version 1.1b1 plone.app.contenttypes uses behaviors for the richtext-fields.
 
-* ``plone.app.event``.
+* ``plone.app.event>=1.1b1``. This provides the behaviors used for the event-type.
 
 Toubleshooting
 ==============
@@ -184,12 +184,16 @@ How to override widgets
 
 To override the default keywords-widgets with a nicer widget you can use the package ``collective.z3cform.widgets``.
 
-Add ``collective.z3cform.widgets`` to your ``buildout`` and in your own package register the override in your ``configure.zcml``::
+Add ``collective.z3cform.widgets`` to your ``buildout`` and in your own package register the override in your ``configure.zcml``:
+
+.. code:: xml
 
     <adapter factory=".subjects.SubjectsFieldWidget" />
 
 
-Then add a file ``subjects.py``::
+Then add a file ``subjects.py``
+
+.. code:: python
 
     # -*- coding: UTF-8 -*-
     from collective.z3cform.widgets.token_input_widget import TokenInputFieldWidget
@@ -225,7 +229,9 @@ The types (Document, News Item, Folder, Event) have no schemata but only use beh
 Installation as a dependency from another product
 -------------------------------------------------
 
-If you want to add plone.app.contenttypes as a dependency from another products use the profile ``plone-content`` in your ``metadata.xml`` to have Plone populate a new site with DX-based default-content. ::
+If you want to add plone.app.contenttypes as a dependency from another products use the profile ``plone-content`` in your ``metadata.xml`` to have Plone populate a new site with DX-based default-content.
+
+.. code:: xml
 
     <metadata>
       <version>1</version>
@@ -244,7 +250,9 @@ You have several options:
 
 1. Extend the types through-the-web by adding new fields or behaviors in the types-controlpanel ``/@@dexterity-types``.
 
-2. Extend the types with a custom type-profile that extends the existing profile. Here is an example that enables the image-behavior for Folders in ``[yourpackage]/profiles/default/types/Folder.xml``::
+2. Extend the types with a custom type-profile that extends the existing profile. Here is an example that enables the image-behavior for Folders in ``[yourpackage]/profiles/default/types/Folder.xml``:
+
+   .. code:: xml
 
     <?xml version="1.0"?>
     <object name="Folder" meta_type="Dexterity FTI">
@@ -253,7 +261,9 @@ You have several options:
      </property>
     </object>
 
-   You will also have to add the type to your ``[yourpackage]/profiles/default/types.xml``::
+   You will also have to add the type to your ``[yourpackage]/profiles/default/types.xml``.
+
+   .. code:: xml
 
     <?xml version="1.0"?>
     <object name="portal_types" meta_type="Plone Types Tool">
