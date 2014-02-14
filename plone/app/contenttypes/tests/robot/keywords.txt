@@ -5,6 +5,9 @@ Variables  plone/app/contenttypes/tests/robot/variables.py
 I am logged in as site owner
   Log in as site owner
 
+Click Edit
+  Click Link  xpath=//a[contains(., "Edit")]
+
 # ----------------------------------------------------------------------------
 # Content
 # ----------------------------------------------------------------------------
