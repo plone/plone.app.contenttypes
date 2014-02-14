@@ -2,8 +2,8 @@
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from plone.app.contenttypes.interfaces import IEvent
-from plone.app.event.dx.behaviors import IEventSummary
 from plone.event.interfaces import IEventAccessor
+from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import getSite
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.event import notify
@@ -72,7 +72,7 @@ class DXOldEventMigrator(ContentMigrator):
             newacc.contact_phone = self.old.contact_phone
         if hasattr(self.old, 'text'):
             # Copy the entire richtext object, not just it's representation
-            IEventSummary(self.new).text = self.old.text
+            newacc.text = self.old.text
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))
@@ -98,8 +98,13 @@ class DXEventMigrator(ContentMigrator):
         newacc.contact_name = oldacc.contact_name
         newacc.contact_email = oldacc.contact_email
         newacc.contact_phone = oldacc.contact_phone
+        # The old behavior for the rich text field does not exist an more.
+        # Look up the old value directly from the Annotation storage
         # Copy the entire richtext object, not just it's representation
-        IEventSummary(self.new).text = IEventSummary(self.old).text
+        annotations = IAnnotations(self.old)
+        old_text = annotations.get(
+            'plone.app.event.dx.behaviors.IEventSummary.text', None)
+        newacc.text = old_text
 
         # Trigger ObjectModified, so timezones can be fixed up.
         notify(ObjectModifiedEvent(self.new))

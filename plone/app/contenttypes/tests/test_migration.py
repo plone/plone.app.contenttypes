@@ -8,6 +8,7 @@ from plone.app.contenttypes.testing import set_browserlayer
 from plone.event.interfaces import IEventAccessor
 from plone.app.testing import login
 from plone.app.testing import applyProfile
+from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getSiteManager
 from zope.component import getUtility
@@ -122,7 +123,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         """Can we migrate a Products.ATContentTypes event?"""
         from DateTime import DateTime
         from plone.app.contenttypes.migration.migration import migrate_events
-        from plone.app.event.dx.behaviors import IEventSummary
 
         # create an ATEvent
         self.portal.invokeFactory('Event', 'event')
@@ -190,7 +190,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(('You', 'Me'), dx_acc.attendees)
         self.assertEquals('Event', dx_event.__class__.__name__)
         self.assertEqual(u'<p>T\xfctensuppe</p>', dx_acc.text)
-        self.assertEqual(u'Tütensuppe', IEventSummary(dx_event).text.raw)
+        self.assertEqual(u'Tütensuppe', dx_event.text.raw)
 
     def test_pae_atevent_is_migrated(self):
         """Can we migrate a plone.app.event AT event?"""
@@ -198,7 +198,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from plone.testing import z2
         from plone.app.testing import applyProfile
         from plone.app.contenttypes.migration.migration import migrate_events
-        from plone.app.event.dx.behaviors import IEventSummary
 
         # Enable plone.app.event.at
         z2.installProduct(self.layer['app'], 'plone.app.event.at')
@@ -262,13 +261,12 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'123456789', new_event_acc.contact_phone)
         self.assertEqual(u'http://www.plone.org', new_event_acc.event_url)
         self.assertEqual(u'<p>T\xfctensuppe</p>', new_event_acc.text)
-        self.assertEqual(u'Tütensuppe', IEventSummary(new_event).text.raw)
+        self.assertEqual(u'Tütensuppe', new_event.text.raw)
 
     def test_pae_dxevent_is_migrated(self):
         from datetime import datetime
         from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.textfield.value import RichTextValue
-        from plone.app.event.dx.behaviors import IEventSummary
 
         # Enable plone.app.event.dx
         from plone.app.testing import applyProfile
@@ -287,11 +285,15 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         old_event_acc.contact_email = 'me@geor.ge'
         old_event_acc.contact_phone = '+99512345'
         old_event_acc.event_url = 'http://geor.ge/event'
-        old_event_acc.text = RichTextValue(
+        # We need to manually place the value of the "text" field into
+        # annotation storage
+        richtext = RichTextValue(
             raw='Woo, yeah',
             mimeType='text/plain',
             outputMimeType='text/x-html-safe'
         )
+        ann = IAnnotations(old_event)
+        ann['plone.app.event.dx.behaviors.IEventSummary.text'] = richtext
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -318,7 +320,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'+99512345', new_event_acc.contact_phone)
         self.assertEqual(u'http://geor.ge/event', new_event_acc.event_url)
         self.assertEqual(u'<p>Woo, yeah</p>', new_event_acc.text)
-        self.assertEqual('Woo, yeah', IEventSummary(new_event).text.raw)
+        self.assertEqual('Woo, yeah', new_event.text.raw)
         self.assertEqual(False, new_event.exclude_from_nav)
 
     def test_pact_1_0_dxevent_is_migrated(self):
@@ -326,7 +328,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from pytz import timezone
         from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.textfield.value import RichTextValue
-        from plone.app.event.dx.behaviors import IEventSummary
         from plone.app.contenttypes.tests.oldtypes import create1_0EventType
 
         # Create a 1.0 Event object
@@ -377,7 +378,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'+4412345', new_event_acc.contact_phone)
         self.assertEqual(u'http://woo.com', new_event_acc.event_url)
         self.assertEqual(u'<p>Awesüme</p>', new_event_acc.text)
-        self.assertEqual(u'Awesüme', IEventSummary(new_event).text.raw)
+        self.assertEqual(u'Awesüme', new_event.text.raw)
         self.assertEqual(False, new_event.exclude_from_nav)
 
     def test_dx_excl_from_nav_is_migrated(self):
