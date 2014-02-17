@@ -4,6 +4,12 @@ Changelog
 1.1a2 (unreleased)
 ------------------
 
+- Add tests for collections and collection-migrations.
+  [pbauer]
+
+- Removed Plone 4.2 compatibility.
+  [pbauer]
+
 - Add migration of at-collections to the new collection-behavior.
   [pbauer]
 
