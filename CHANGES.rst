@@ -4,7 +4,13 @@ Changelog
 1.1a2 (unreleased)
 ------------------
 
-- Improve documentation.
+- Add migration of at-collections to the new collection-behavior.
+  [pbauer]
+
+- Display richtext in collection-views.
+  [pbauer]
+
+- Reorganize and improve documentation.
   [pbauer]
 
 - Add a richtext-behavior and use it in for all types.

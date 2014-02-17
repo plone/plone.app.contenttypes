@@ -7,7 +7,6 @@ only in the setuptools extra_requiers [migrate_atct]. Importing this
 module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
 '''
-
 from Products.ATContentTypes.interfaces.interfaces import IATContentType
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
@@ -16,6 +15,9 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from persistent.list import PersistentList
+from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
+from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
@@ -28,8 +30,6 @@ from zope.component import getUtility
 from zope.event import notify
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import ObjectModifiedEvent
-
-from .dxmigration import DXOldEventMigrator, DXEventMigrator
 
 
 def migrate(portal, migrator):
@@ -406,11 +406,26 @@ def migrate_folders(portal):
 
 
 class CollectionMigrator(DocumentMigrator):
+    """Migrator for at-based collections provided by plone.app.collection
+    to
+    """
 
     src_portal_type = 'Collection'
     src_meta_type = 'Collection'
     dst_portal_type = 'Collection'
     dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        # migrate the richtext
+        super(CollectionMigrator, self).migrate_schema_fields()
+
+        # migrate the rest of the schema into the behavior
+        wrapped = ICollection(self.new)
+        wrapped.query = self.old.query
+        wrapped.sort_on = self.old.sort_on
+        wrapped.sort_reversed = self.old.sort_reversed
+        wrapped.limit = self.old.limit
+        wrapped.customViewFields = self.old.customViewFields
 
 
 def migrate_collections(portal):
