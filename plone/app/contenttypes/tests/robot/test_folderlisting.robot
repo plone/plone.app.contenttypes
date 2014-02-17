@@ -12,13 +12,14 @@ Test Teardown  Close all browsers
 
 *** Test cases ***
 
+# XXX: This test needs to be refactored. The test should use robot content
+# keywords and is way too long.
 Scenario: Test Folderlisting
     Given I am logged in as site owner
       And a Folder  Test-Folder
       And a File  Test-File
       And a Image  Test-Image
       And a Collection  Test-Collection
-      And a Event  Test-Event
       And a Link  Test-Link
       And a News Item  Test-News
       And a Document  Test-Document
@@ -27,7 +28,6 @@ Scenario: Test Folderlisting
       And Page Should Contain  Test-File
       And Page Should Contain  Test-Image
       And Page Should Contain  Test-Collection
-      And Page Should Contain  Test-Event
       And Page Should Contain  Test-Link
       And Page Should Contain  Test-News
       And Page Should Contain  Test-Document
