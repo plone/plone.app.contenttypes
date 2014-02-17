@@ -270,7 +270,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # Enable plone.app.event.dx
         from plone.app.testing import applyProfile
-        applyProfile(self.portal, 'plone.app.event.dx:default')
+        applyProfile(self.portal, 'plone.app.event:testing')
 
         old_event = self.portal[self.portal.invokeFactory(
             'plone.app.event.dx.event',
@@ -387,7 +387,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # Enable plone.app.event.dx
         from plone.app.testing import applyProfile
-        applyProfile(self.portal, 'plone.app.event.dx:default')
+        applyProfile(self.portal, 'plone.app.event:testing')
 
         old_event = self.portal[self.portal.invokeFactory(
             'plone.app.event.dx.event',
