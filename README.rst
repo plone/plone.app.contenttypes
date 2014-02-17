@@ -30,7 +30,9 @@ plone.app.contenttypes has been merged into the Plone 5.0 branch and will be shi
 Compatability
 =============
 
-plone.app.contenttypes works with Plone 4.1+
+plone.app.contenttypes is tested with Plone 4.3 and the upcoming Plone 5.0.
+
+Version 1.0 and earlier should run with Plone 4.1+ but do not provide the full functionality.
 
 
 Installation
@@ -86,11 +88,11 @@ Any content you created based on plone.app.contenttypes will not be editable unt
 Dependencies
 ------------
 
-* ``plone.app.dexterity>=2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pins for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`_.
+* ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`_.
 
-* ``plone.dexterity>=2.2.1``. Olders version of plone.dexterity break the rss-views in Plone because since version 1.1b1 plone.app.contenttypes uses behaviors for the richtext-fields.
+* ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the rss-views because plone.app.contenttypes uses behaviors for the richtext-fields.
 
-* ``plone.app.event>=1.1b1``. This provides the behaviors used for the event-type.
+* ``plone.app.event >= 1.1b1``. This provides the behaviors used for the event-type.
 
 * ``plone.app.portlets >= 2.5a1``. In older version the event-portlet will not work with the new event-type.
 
@@ -143,7 +145,7 @@ Migrations that might come in a future version:
 
 * from ATTopic to Collections
 
-Please note that you will loose all old versions of migrated content.
+Please note that migrating versions of content is not supported. Only the current state of items is migrated without any content- or workflow-history.
 
 
 Migrating content that is translated with LinguaPlone
