@@ -88,8 +88,7 @@
         <h1 class="documentFirstHeading"
             i18n:translate="">Migration control panel</h1>
         <div class="documentDescription"
-            i18n:translate="">In this control panel you can migrate
-            Archetypes content types to respective Dexterity content types.</div>
+            i18n:translate="">Migrate Archetypes content types to respective Dexterity content types.</div>
         <div tal:replace="structure provider:plone.abovecontentbody" />
 
         <div id="content-core">
@@ -100,7 +99,7 @@
             <p i18n:translate="">Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlone to <a href="http://pypi.python.org/pypi/plone.app.multilingual">plone.app.multilingual</a>. The migration from Products.LinguaPlone to plone.app.multilingual should happen before the migration from Archetypes to plone.app.contenttypes. For details on the migration see the <a href="http://pypi.python.org/pypi/plone.app.multilingual#linguaplone-migration">documentation</a></p>
             <h3 i18n:translate="">Migrating default-content that was extended with archetypes.schemaextender</h3>
             <p i18n:translate="">The migration should warn you if any of your types are extended with <a href="https://pypi.python.org/pypi/archetypes.schemaextender">archetypes.schemaextender</a>. You can still migrate this content but the data contained in these fields will be lost.
-            To migrate the data you need a custom migration for your types and dexterity-behaviors for the functionality provided by the schemaextenders.</p>
+            If you need to keep the data in these fields you need to write a custom migration for your types and dexterity-behaviors for the data stored in the extended fields.</p>
             <h3 i18n:translate="">Note about how long it might take</h3>
             <p i18n:translate="">Depending of the number of archetypes in your portal, it may take a <span class="strong">really</span> long time for the migration to be done.
               Stay calm and be patient.</p>
