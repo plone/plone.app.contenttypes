@@ -107,7 +107,6 @@ These are the version-pinns for Plone 4.3.2:
     plone.dexterity = 2.2.1
     plone.app.dexterity = 2.0.11
     plone.schemaeditor = 1.3.5
-    plone.app.event = 1.1b1
     plone.app.portlets = 2.5a1
 
 
