@@ -113,34 +113,37 @@ Migration
 
 To migrate your existing content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
 
-plone.app.contenttypes includes migrations for the following use-cases:
-
-* from default Archetypes-based types to plone.app.contenttypes
-* from older versions of plone.app.contenttypes to current versions
-* from old plone.app.contenttypes-event to DX-plone.app.event
-* from AT-plone.app.event to DX-plone.app.event
-* from atct ATEvent to DX-plone.app.event
-* from AT-plone.app.collection to DX-plone.app.collections
-
-Migrations that will be will come in future version:
-
-* from ATTopic to DX-plone.app.collections
-
 For migrations to work you need at least ``Products.contentmigration = 2.1.3`` (part of Plone since Plone 4.2.5) and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
 
 
 Migrating Archetypes-based content to plone.app.contenttypes
 ------------------------------------------------------------
 
-plone.app.contenttypes can migrate the following types:
+plone.app.contenttypes can migrate the following default types:
 
-* Folder
 * Document
-* News item
+* Event
 * File
+* Folder
 * Image
 * Link
+* News Item
 * Collection
+
+The following non-default types will also be migrated:
+
+* The AT-based Event-type provided by plone.app.event
+* The DX-based Event-type provided by plone.app.event
+* The Event-type provided by plone.app.contenttypes until version 1.0
+* News Items with blobs (provoded by https://github.com/plone/plone.app.blob/pull/2)
+* Files and Images without blobs
+* AT-based collection provided by plone.app.collection
+
+Migrations that might come in a future version:
+
+* from ATTopic to Collections
+
+Please note that you will loose all old versions of migrated content.
 
 
 Migrating content that is translated with LinguaPlone
