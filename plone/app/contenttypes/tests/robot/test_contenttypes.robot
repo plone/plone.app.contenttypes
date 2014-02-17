@@ -38,3 +38,4 @@ Scenario: Test Folderlisting
 I go to
     [Arguments]  ${location}
     Go to  ${location}
+    Wait until page contains  Test-Document
