@@ -109,23 +109,11 @@ class EventFunctionalTest(unittest.TestCase):
             name='form.widgets.IRichText.text'
         ).value = "Lorem Ipsum"
         self.browser.getControl(
-            name='form.widgets.IEventBasic.start-day'
-        ).value = ['1']
+            name='form.widgets.IEventBasic.start'
+        ).value = '2013-01-01'
         self.browser.getControl(
-            name='form.widgets.IEventBasic.start-month'
-        ).value = ['1']
-        self.browser.getControl(
-            name='form.widgets.IEventBasic.start-year'
-        ).value = ['2013']
-        self.browser.getControl(
-            name='form.widgets.IEventBasic.end-day'
-        ).value = ['12']
-        self.browser.getControl(
-            name='form.widgets.IEventBasic.end-month'
-        ).value = ['1']
-        self.browser.getControl(
-            name='form.widgets.IEventBasic.end-year'
-        ).value = ['2013']
+            name='form.widgets.IEventBasic.end'
+        ).value = '2013-01-12'
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-event/view'))

@@ -35,11 +35,11 @@ a test user document
 
 I set the collection's creator criterion to
     [Arguments]  ${criterion}
-    Click Link  Edit
-    Wait Until Page Contains Element  xpath=//select[@name="addindex"]
-    Select From List  xpath=//select[@name="addindex"]  Creator
-    Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
-    Select From List  xpath=//select[@class='queryoperator']  Is
-    Input Text  name=form.widgets.ICollection.query.v:records  ${criterion}
+    Click Edit
+
+    I set the criteria index in row 1 to the option 'Creator'
+    I set the criteria operator in row 1 to the option 'Is'
+    I set the criteria value in row 1 to the text '${criterion}'
+
     Click Button  Save
     Wait until page contains  Changes saved

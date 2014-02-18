@@ -60,3 +60,11 @@ def enable_collection_behavior(context):
     fti.behaviors = tuple(new)
     if fti.schema == 'plone.app.contenttypes.interfaces.ICollection':
         fti.schema = None
+
+
+def migrate_to_richtext(context):
+    # add RichText behaviors:
+    context.runImportStepFromProfile(
+        'profile-plone.app.contenttypes:default',
+        'typeinfo',
+    )

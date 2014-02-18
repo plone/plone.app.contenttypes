@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import unittest2 as unittest
 
 from plone.app.testing import SITE_OWNER_NAME
@@ -74,11 +75,7 @@ class DocumentFunctionalTest(unittest.TestCase):
     def test_collection_view(self):
         browser = self._get_browser()
         browser.open(self.portal_url + '/collectioncontainer/view')
-        # search results start here:
-        start = browser.contents.find('search-results')
-        # The test string should be within the search results.
-        self.assertTrue('Collection Test Page' in
-                        browser.contents[start:start + 1000])
+        self.assertTrue('"v": "Collection Test Page"' in browser.contents)
 
     def test_tabular_view(self):
         browser = self._get_browser()
@@ -92,10 +89,9 @@ class DocumentFunctionalTest(unittest.TestCase):
     def test_collection_in_edit_form(self):
         browser = self._get_browser()
         browser.open(self.portal_url + '/collectioncontainer/edit')
-        self.assertTrue('Query' in browser.contents)
-        control = browser.getControl(
-            name='form.widgets.ICollection.query.v:records')
-        self.assertTrue(control.value, 'Collection Test Page')
+        control = browser.getControl(name='form.widgets.ICollection.query')
+        self.assertTrue(json.loads(control.value)[0]['v'],
+                        'Collection Test Page')
         # The customViewFields field is a 'double' control, with a
         # 'from' and 'to' list.
         from_control = browser.getControl(

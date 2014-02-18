@@ -54,6 +54,10 @@ class RichTextBehaviorTests(RichTextBase, unittest.TestCase):
             'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
+    def test_richtext_in_edit_form(self):
+        self.browser.open(self.portal_url + '/doc1/edit')
+        self.assertTrue('pat-tinymce' in self.browser.contents)
+
     def test_richtext_behavior(self):
         IRichText.providedBy(self.portal.doc1)
 

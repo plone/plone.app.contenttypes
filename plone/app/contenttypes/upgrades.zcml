@@ -33,4 +33,13 @@
       />
   </configure>
 
+  <genericsetup:upgradeStep
+      source="1100"
+      destination="1101"
+      title="Update to new RichText behavior"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.migrate_to_richtext"
+      />
+
 </configure>

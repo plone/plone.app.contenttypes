@@ -5,6 +5,9 @@ Variables  plone/app/contenttypes/tests/robot/variables.py
 I am logged in as site owner
   Log in as site owner
 
+Click Edit
+  Click Link  xpath=//a[contains(., "Edit")]
+
 # ----------------------------------------------------------------------------
 # Content
 # ----------------------------------------------------------------------------
@@ -119,7 +122,25 @@ fill date field
   [Arguments]  ${fieldid}  ${year}=2012  ${month}=January  ${day}=10
   [Documentation]  Fill in the specified date field (such as effective/expiration date in the "dates" metadata tab) with the specified date.
   ...  Month must be specified by name.
-  Click Link  xpath=//div[@data-fieldname="${fieldid}"]//a[contains(@class,"caltrigger")]
-  Select from list  id=calmonth  ${month}
-  Select from list  id=calyear  ${year}
-  Click Link  xpath=//div[@class='calweek']//a[contains(text(), "${day}")]
+  Click Element  xpath=//div[@data-fieldname="${fieldid}"]//input[contains(@class,"pattern-pickadate-date")]
+  Select from list  css=div[data-fieldname="${fieldid}"] .picker__select--month  ${month}
+  Select from list  css=div[data-fieldname="${fieldid}"] select.picker__select--year  ${year}
+  Click Element  xpath=//div[@data-fieldname="${fieldid}"]//div[contains(@class, 'picker__day')][contains(text(), "${day}")]
+
+I set the criteria ${type} in row ${number} to the option '${label}'
+  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
+  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
+  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
+  Wait until page contains Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+  Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+
+I set the criteria ${type} in row ${number} to the options '${label}'
+  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
+  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
+  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
+  Wait until page contains Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+  Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+
+I set the criteria ${type} in row ${number} to the text '${label}'
+  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
+  Input text  css=${criteria_row} .querystring-criteria-value input  ${label}\t
