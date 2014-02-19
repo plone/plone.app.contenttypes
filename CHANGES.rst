@@ -45,6 +45,7 @@ Changelog
   contains variables (Fix #110).
   [rafaelbco]
 
+
 1.1a1 (2013-11-22)
 ------------------
 
