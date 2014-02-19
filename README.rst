@@ -1,9 +1,20 @@
 .. contents::
 
+.. image:: https://travis-ci.org/plone/plone.app.contenttypes.png?branch=master
+    :target: http://travis-ci.org/plone/plone.app.contenttypes
+
+.. image:: https://coveralls.io/repos/plone/plone.app.contenttypes/badge.png?branch=master
+    :target: https://coveralls.io/r/plone/plone.app.contenttypes
+
+.. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
+        :target: https://crate.io/packages/plone.app.contenttypes
+
+.. image:: https://pypip.in/v/plone.app.contenttypes/badge.png
+        :target: https://crate.io/packages/plone.app.contenttypes
+
 Introduction
 ============
 
-.. image:: http://jenkins.plone.org/job/plone.app.contenttypes/badge/icon
 
 plone.app.contenttypes offers default content types for Plone based on Dexterity. This package replaces ``Products.ATContenttypes`` and will provide the default-types in Plone 5.
 
