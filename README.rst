@@ -27,12 +27,14 @@ plone.app.contenttypes has been merged into the Plone 5.0 branch and will be shi
 **Warning: Using plone.app.contenttypes on a site with existing content requires migrating the sites content. Please see the chapter "Migration". It can be used on a new site without problems.**
 
 
-Compatability
+Compatibility
 =============
 
-plone.app.contenttypes is tested with Plone 4.3 and the upcoming Plone 5.0.
+Version 1.1b1 is tested with Plone 4.3.x. The versions 1.1.x will stay compatible with Plone 4.3.x.
 
-Version 1.0 and earlier should run with Plone 4.1+ but do not provide the full functionality.
+For support of Plone 4.1 and 4.2 please use version 1.0.x. Please note that they do not provide the full functionality.
+
+The future versions 1.2.x will be compatible with Plone 5 only and add support for plone.app.widgets
 
 
 Installation
@@ -359,6 +361,14 @@ When you try to install plone.app.contenttypes in a existing site you might get 
     ValueError: undefined property 'schema'
 
 Before installing plone.app.contenttypes you have to reinstall plone.app.collection to update collections to the version that uses Dexterity.
+
+
+Branches
+========
+
+The master-branch supports Plone 5 only. From this 1.2.x-releases will be cut.
+
+The 1.1.x-branch supports Plone 4.3.x. From this 1.1.x-releases will be cut.
 
 
 License
