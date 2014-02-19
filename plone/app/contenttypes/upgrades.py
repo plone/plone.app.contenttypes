@@ -47,7 +47,6 @@ def update_fti(context):
 def enable_collection_behavior(context):
     """Enable collection behavior on Collection.
     """
-    # Document
     fti = queryUtility(
         IDexterityFTI,
         name='Collection'
@@ -55,8 +54,16 @@ def enable_collection_behavior(context):
     behavior = 'plone.app.contenttypes.behaviors.collection.ICollection'
     if behavior in fti.behaviors:
         return
-    new = list(fti.behaviors)
-    new.append(behavior)
-    fti.behaviors = tuple(new)
-    if fti.schema == 'plone.app.contenttypes.interfaces.ICollection':
-        fti.schema = None
+    behaviors = list(fti.behaviors)
+    behaviors.append(behavior)
+    behaviors = tuple(behaviors)
+    fti._updateProperty('behaviors', behaviors)
+
+
+def migrate_to_richtext(context):
+    """update fti's to add RichText behaviors and remove old text-fields"""
+
+    context.runImportStepFromProfile(
+        'profile-plone.app.contenttypes:default',
+        'typeinfo',
+    )
