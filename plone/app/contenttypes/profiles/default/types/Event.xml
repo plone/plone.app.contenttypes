@@ -20,6 +20,8 @@
  <!-- Schema, class and security -->
  <property name="klass">plone.app.contenttypes.content.Event</property>
  <property name="schema"></property>
+ <property name="model_source"></property>
+ <property name="model_file">plone.app.contenttypes.schema:event.xml</property>
  <property name="add_permission">plone.app.contenttypes.addEvent</property>
 
  <!-- Enabled behaviors -->

@@ -11,8 +11,11 @@
   <property name="filter_content_types">False</property>
   <property name="allowed_content_types" />
   <property name="allow_discussion">False</property>
-  <property name="klass">plone.app.contenttypes.content.Collection</property>
   <property name="add_permission">plone.app.contenttypes.addCollection</property>
+  <property name="klass">plone.app.contenttypes.content.Collection</property>
+  <property name="schema"></property>
+  <property name="model_source"></property>
+  <property name="model_file">plone.app.contenttypes.schema:collection.xml</property>
   <property name="behaviors">
     <element value="plone.app.content.interfaces.INameFromTitle"/>
     <element value="plone.app.contenttypes.behaviors.collection.ICollection"/>
