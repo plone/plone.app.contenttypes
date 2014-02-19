@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1a2 (unreleased)
+1.1b1 (2014-02-19)
 ------------------
 
 - Add tests for collections and collection-migrations.
