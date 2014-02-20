@@ -53,9 +53,11 @@ Add this line in the eggs section of your ``buildout.cfg``::
         ...
         plone.app.contenttypes
 
-If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement::
+If you have a Plone site with mixed Archetypes and Dexterity content use the extra requirement ``atrefs``.::
 
-    ``plone.app.contenttypes ['atrefs']``
+    ``plone.app.contenttypes [atrefs]``
+
+This also installs the package `plone.app.referenceablebehavior <https://pypi.python.org/pypi/plone.app.referenceablebehavior>`_. You will have to enable the behavior ``plone.app.referenceablebehavior.referenceable.IReferenceable`` for all types that need to be referenced by Archetypes-content.
 
 
 What happens to existing content?
