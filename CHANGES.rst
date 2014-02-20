@@ -4,7 +4,19 @@ Changelog
 1.1b2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix viewlet warning about ineditable content (fixes #130)
+  [pbauer]
+
+- Reintroduce the removed schema-files and add upgrade-step to migrate to
+  behavior-driven richtext-fields (fixes #127)
+  [pbauer]
+
+- Delete Archetypes Member-folder before creating new default-content
+  (fixes #128)
+  [pbauer]
+
+- Remove outdated summary-behavior from event (fixes #129)
+  [pbauer]
 
 
 1.1b1 (2014-02-19)
