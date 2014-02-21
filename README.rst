@@ -1,7 +1,7 @@
 .. contents::
 
-.. image:: https://travis-ci.org/plone/plone.app.contenttypes.png?branch=master
-    :target: http://travis-ci.org/plone/plone.app.contenttypes
+.. image:: http://jenkins.plone.org/job/kgs-plone.app.contenttypes-plone-5.0-python-2.7/badge/icon
+    :target: http://jenkins.plone.org/job/kgs-plone.app.contenttypes-plone-5.0-python-2.7/
 
 .. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
     :target: https://crate.io/packages/plone.app.contenttypes
