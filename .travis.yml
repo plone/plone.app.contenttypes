@@ -16,10 +16,10 @@ before_script:
 script: 
   - bin/test -s plone.app.contenttypes
 #  - bin/code-analysis
-#after_success:
-#  - bin/createcoverage run bin/test
-#  - pip install -q coveralls
-#  - coveralls
+after_success:
+  - bin/createcoverage run bin/test
+  - pip install -q coveralls
+  - coveralls
 after_failure:
   - bin/csslint --version
   - bin/jshint --version
