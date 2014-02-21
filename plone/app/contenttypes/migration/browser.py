@@ -77,6 +77,7 @@ class FixBaseClasses(BrowserView):
 
 
 class MigrateFromATContentTypes(BrowserView):
+
     """ Migrate the default-types (except event and topic).
     This view can be called directly and it will migrate all content
     provided they were not schema-extended.
