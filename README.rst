@@ -47,17 +47,23 @@ The future versions 1.2.x will be compatible with Plone 5 only and add support f
 Installation
 ============
 
-Add this line in the eggs section of your ``buildout.cfg``::
+Add this line in the eggs section of your ``buildout.cfg``
+
+.. code:: ini
 
     eggs =
         ...
         plone.app.contenttypes
 
-If you have a Plone site with mixed Archetypes and Dexterity content use the extra requirement ``atrefs``.::
+If you have a Plone site with mixed Archetypes and Dexterity content use the extra requirement ``atrefs``.
 
-    ``plone.app.contenttypes [atrefs]``
+.. code:: ini
 
-This also installs the package `plone.app.referenceablebehavior <https://pypi.python.org/pypi/plone.app.referenceablebehavior>`_. You will have to enable the behavior ``plone.app.referenceablebehavior.referenceable.IReferenceable`` for all types that need to be referenced by Archetypes-content.
+    eggs =
+        ...
+        plone.app.contenttypes [atrefs]
+
+This will also install the package `plone.app.referenceablebehavior <https://pypi.python.org/pypi/plone.app.referenceablebehavior>`_ that allows you to reference dexterity-based content from archetypes-based content. You will have to enable the behavior ``plone.app.referenceablebehavior.referenceable.IReferenceable`` for all types that need to be referenced by Archetypes-content.
 
 
 What happens to existing content?
