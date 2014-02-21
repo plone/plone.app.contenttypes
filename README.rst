@@ -6,6 +6,9 @@ Introduction
 .. image:: https://travis-ci.org/plone/plone.app.contenttypes.png?branch=1.1.x
     :target: https://travis-ci.org/plone/plone.app.contenttypes
 
+.. image:: https://coveralls.io/repos/plone/plone.app.contenttypes/badge.png?branch=1.1.x
+    :target: https://coveralls.io/r/plone/plone.app.contenttypes
+
 .. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
     :target: https://crate.io/packages/plone.app.contenttypes
 
