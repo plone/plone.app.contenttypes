@@ -107,7 +107,18 @@ Dependencies
 
 * ``plone.app.portlets >= 2.5a1``. In older version the event-portlet will not work with the new event-type.
 
-These are the version-pinns for Plone 4.3.2:
+These are the version-pinns for Plone 4.3.3:
+
+.. code:: ini
+
+    [buildout]
+    versions = versions
+
+    [versions]
+    plone.app.event = 1.1b1
+    plone.app.portlets = 2.5a1
+
+Plone-versions before 4.3.3 need to pinn more packages:
 
 .. code:: ini
 
@@ -171,9 +182,9 @@ Migrating from old versions of plone.app.contenttypes
 
 Before version 1.0a2 the content-items did not implement marker-interfaces.  They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
 
-Since plone.app.contenttypes 1.1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
+Since plone.app.contenttypes 1.1a1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
 
-1) First run the default profile (``plone.app.contenttypes:default``) and
+1) First run the default profile (``plone.app.contenttypes:default``) or reinstall plone.app.contenttypes
 2) Then run the upgrade steps.
 
 
@@ -352,16 +363,18 @@ Differences to Products.ATContentTypes
 - There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
 - The link on the image of the newsitem triggers an overlay
 - The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
-- The keywords-widget is nit implemented and ootb is only a lines-widget. See the section on widgets.
+- The keywords-widget is not implemented and is replaced by a simple lines-widget unless you override it or use plone.app.widgets. Please see the section on widgets.
 
 
 Toubleshooting
 ==============
 
+Please report issues in the bugtracker at https://github.com/plone/plone.app.contenttypes/issues.
+
 ValueError on installing
 ------------------------
 
-When you try to install plone.app.contenttypes in a existing site you might get the following error::
+When you try to install plone.app.contenttypes < 1.1a1 in a existing site you might get the following error::
 
       (...)
       Module Products.GenericSetup.utils, line 509, in _importBody
