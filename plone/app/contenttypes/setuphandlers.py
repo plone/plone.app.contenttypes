@@ -3,11 +3,9 @@ from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import bodyfinder
-from Products.CMFPlone.Portal import member_indexhtml
 from Products.CMFPlone.interfaces import INonInstallable
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
-from Products.PythonScripts.PythonScript import PythonScript
 from datetime import timedelta
 from plone.app.textfield.value import RichTextValue
 from plone.dexterity.fti import IDexterityFTI
@@ -328,8 +326,7 @@ def configure_members_folder(portal, target_language):
         _publish(container)
 
         # set member search as default layout to Members Area
-        container_layout = 'member-search'
-        container.setLayout(container_layout)
+        container.setLayout('@@member-search')
 
         # Block all right column portlets by default
         manager = queryUtility(IPortletManager, name='plone.rightcolumn')
