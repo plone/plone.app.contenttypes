@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1b2 (unreleased)
+1.1b2 (2014-02-21)
 ------------------
 
 - Fix viewlet warning about ineditable content (fixes #130)
