@@ -1,7 +1,25 @@
 Changelog
 =========
 
-1.1a2 (unreleased)
+1.1b2 (unreleased)
+------------------
+
+- Fix viewlet warning about ineditable content (fixes #130)
+  [pbauer]
+
+- Reintroduce the removed schema-files and add upgrade-step to migrate to
+  behavior-driven richtext-fields (fixes #127)
+  [pbauer]
+
+- Delete Archetypes Member-folder before creating new default-content
+  (fixes #128)
+  [pbauer]
+
+- Remove outdated summary-behavior from event (fixes #129)
+  [pbauer]
+
+
+1.1b1 (2014-02-19)
 ------------------
 
 - Add tests for collections and collection-migrations.
@@ -44,6 +62,7 @@ Changelog
 - Fix URL for Link object on the navigation portlet if it
   contains variables (Fix #110).
   [rafaelbco]
+
 
 1.1a1 (2013-11-22)
 ------------------

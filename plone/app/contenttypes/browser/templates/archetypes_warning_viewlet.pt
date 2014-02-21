@@ -1,3 +1,4 @@
+<tal:available condition="view/available">
 <dl class="portalMessage alert-box secondary warning"
     i18n:domain="plone">
     <dt i18n:translate="">Warning</dt>
@@ -18,3 +19,4 @@
 <style type="text/css">
 #contentview-edit {display: None;}
 </style>
+</tal:available>

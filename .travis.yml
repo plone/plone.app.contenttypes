@@ -13,4 +13,14 @@ install:
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-script: bin/test -s plone.app.contenttypes
+script: 
+  - bin/test -s plone.app.contenttypes
+#  - bin/code-analysis
+#after_success:
+#  - bin/createcoverage run bin/test
+#  - pip install -q coveralls
+#  - coveralls
+after_failure:
+  - bin/csslint --version
+  - bin/jshint --version
+

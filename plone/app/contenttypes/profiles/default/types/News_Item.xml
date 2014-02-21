@@ -19,6 +19,9 @@
  <property name="default_view_fallback">False</property>
  <property name="add_permission">plone.app.contenttypes.addNewsItem</property>
  <property name="klass">plone.app.contenttypes.content.NewsItem</property>
+ <property name="schema"></property>
+ <property name="model_source"></property>
+ <property name="model_file">plone.app.contenttypes.schema:news_item.xml</property>
  <property name="behaviors">
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
   <element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>

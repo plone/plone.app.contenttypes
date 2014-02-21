@@ -384,7 +384,7 @@ def _delete_at_example_content(portal):
         ]
         if not [i.id for i in all_content] == expected:
             return
-        to_delete = ['front-page', 'news', 'events']
+        to_delete = ['front-page', 'news', 'events', 'Members']
         for i in to_delete:
             obj = portal[i]
             if IDexterityContent.providedBy(obj):

@@ -3,17 +3,16 @@
 .. image:: https://travis-ci.org/plone/plone.app.contenttypes.png?branch=master
     :target: http://travis-ci.org/plone/plone.app.contenttypes
 
-.. image:: https://coveralls.io/repos/plone/plone.app.contenttypes/badge.png?branch=master
-    :target: https://coveralls.io/r/plone/plone.app.contenttypes
-
 .. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
-        :target: https://crate.io/packages/plone.app.contenttypes
+    :target: https://crate.io/packages/plone.app.contenttypes
 
 .. image:: https://pypip.in/v/plone.app.contenttypes/badge.png
-        :target: https://crate.io/packages/plone.app.contenttypes
+    :target: https://crate.io/packages/plone.app.contenttypes
+
 
 Introduction
 ============
+
 
 
 plone.app.contenttypes offers default content types for Plone based on Dexterity. This package replaces ``Products.ATContenttypes`` and will provide the default-types in Plone 5.
@@ -38,12 +37,14 @@ plone.app.contenttypes has been merged into the Plone 5.0 branch and will be shi
 **Warning: Using plone.app.contenttypes on a site with existing content requires migrating the sites content. Please see the chapter "Migration". It can be used on a new site without problems.**
 
 
-Compatability
+Compatibility
 =============
 
-plone.app.contenttypes is tested with Plone 4.3 and the upcoming Plone 5.0.
+Version 1.1b1 is tested with Plone 4.3.x. The versions 1.1.x will stay compatible with Plone 4.3.x.
 
-Version 1.0 and earlier should run with Plone 4.1+ but do not provide the full functionality.
+For support of Plone 4.1 and 4.2 please use version 1.0.x. Please note that they do not provide the full functionality.
+
+The future versions 1.2.x will be compatible with Plone 5 only and add support for plone.app.widgets
 
 
 Installation
@@ -55,9 +56,11 @@ Add this line in the eggs section of your ``buildout.cfg``::
         ...
         plone.app.contenttypes
 
-If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement::
+If you have a Plone site with mixed Archetypes and Dexterity content use the extra requirement ``atrefs``.::
 
-    ``plone.app.contenttypes ['atrefs']``
+    ``plone.app.contenttypes [atrefs]``
+
+This also installs the package `plone.app.referenceablebehavior <https://pypi.python.org/pypi/plone.app.referenceablebehavior>`_. You will have to enable the behavior ``plone.app.referenceablebehavior.referenceable.IReferenceable`` for all types that need to be referenced by Archetypes-content.
 
 
 What happens to existing content?
@@ -107,7 +110,18 @@ Dependencies
 
 * ``plone.app.portlets >= 2.5a1``. In older version the event-portlet will not work with the new event-type.
 
-These are the version-pinns for Plone 4.3.2:
+These are the version-pinns for Plone 4.3.3:
+
+.. code:: ini
+
+    [buildout]
+    versions = versions
+
+    [versions]
+    plone.app.event = 1.1b1
+    plone.app.portlets = 2.5a1
+
+Plone-versions before 4.3.3 need to pinn more packages:
 
 .. code:: ini
 
@@ -171,9 +185,9 @@ Migrating from old versions of plone.app.contenttypes
 
 Before version 1.0a2 the content-items did not implement marker-interfaces.  They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
 
-Since plone.app.contenttypes 1.1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
+Since plone.app.contenttypes 1.1a1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
 
-1) First run the default profile (``plone.app.contenttypes:default``) and
+1) First run the default profile (``plone.app.contenttypes:default``) or reinstall plone.app.contenttypes
 2) Then run the upgrade steps.
 
 
@@ -352,16 +366,18 @@ Differences to Products.ATContentTypes
 - There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
 - The link on the image of the newsitem triggers an overlay
 - The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
-- The keywords-widget is nit implemented and ootb is only a lines-widget. See the section on widgets.
+- The keywords-widget is not implemented and is replaced by a simple lines-widget unless you override it or use plone.app.widgets. Please see the section on widgets.
 
 
 Toubleshooting
 ==============
 
+Please report issues in the bugtracker at https://github.com/plone/plone.app.contenttypes/issues.
+
 ValueError on installing
 ------------------------
 
-When you try to install plone.app.contenttypes in a existing site you might get the following error::
+When you try to install plone.app.contenttypes < 1.1a1 in a existing site you might get the following error::
 
       (...)
       Module Products.GenericSetup.utils, line 509, in _importBody
@@ -370,6 +386,14 @@ When you try to install plone.app.contenttypes in a existing site you might get 
     ValueError: undefined property 'schema'
 
 Before installing plone.app.contenttypes you have to reinstall plone.app.collection to update collections to the version that uses Dexterity.
+
+
+Branches
+========
+
+The master-branch supports Plone 5 only. From this 1.2.x-releases will be cut.
+
+The 1.1.x-branch supports Plone 4.3.x. From this 1.1.x-releases will be cut.
 
 
 License
