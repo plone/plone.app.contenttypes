@@ -3,11 +3,9 @@ from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.utils import bodyfinder
-from Products.CMFPlone.Portal import member_indexhtml
 from Products.CMFPlone.interfaces import INonInstallable
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
-from Products.PythonScripts.PythonScript import PythonScript
 from datetime import timedelta
 from plone.app.textfield.value import RichTextValue
 from plone.dexterity.fti import IDexterityFTI
@@ -327,12 +325,8 @@ def configure_members_folder(portal, target_language):
         container.reindexObject()
         _publish(container)
 
-        # add index_html to Members area
-        if 'index_html' not in container:
-            container._setObject('index_html', PythonScript('index_html'))
-            index_html = getattr(container, 'index_html')
-            index_html.write(member_indexhtml)
-            index_html.ZPythonScript_setTitle('User Search')
+        # set member search as default layout to Members Area
+        container.setLayout('@@member-search')
 
         # Block all right column portlets by default
         manager = queryUtility(IPortletManager, name='plone.rightcolumn')
@@ -387,7 +381,7 @@ def _delete_at_example_content(portal):
         ]
         if not [i.id for i in all_content] == expected:
             return
-        to_delete = ['front-page', 'news', 'events']
+        to_delete = ['front-page', 'news', 'events', 'Members']
         for i in to_delete:
             obj = portal[i]
             if IDexterityContent.providedBy(obj):

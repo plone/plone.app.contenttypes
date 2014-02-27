@@ -14,7 +14,6 @@ from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
-
 import os.path
 import time
 import unittest2 as unittest
@@ -463,18 +462,28 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_document is not dx_document)
 
     def test_collection_is_migrated(self):
-        from plone.app.contenttypes.migration.migration import\
-            CollectionMigrator
+        from plone.app.contenttypes.migration.migration import \
+            migrate_collections
+        from plone.app.contenttypes.behaviors.collection import \
+            ICollection as ICollectionBehavior
         from plone.app.contenttypes.interfaces import ICollection
-        if 'Collection' in self.portal.portal_types.keys():
-            self.portal.invokeFactory('Collection', 'collection')
-            at_collection = self.portal['collection']
-            applyProfile(self.portal, 'plone.app.contenttypes:default')
-            migrator = self.get_migrator(at_collection, CollectionMigrator)
-            migrator.migrate()
-            dx_collection = self.portal['collection']
-            self.assertTrue(ICollection.providedBy(dx_collection))
-            self.assertTrue(at_collection is not dx_collection)
+        self.portal.invokeFactory('Collection', 'collection')
+        at_collection = self.portal['collection']
+        at_collection.setText("<p>Whopee</p>")
+        query = [{
+            'i': 'Type',
+            'o': 'plone.app.querystring.operation.string.is',
+            'v': 'Document',
+        }]
+        at_collection.setQuery(query)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrate_collections(self.portal)
+        dx_collection = self.portal['collection']
+        self.assertTrue(ICollection.providedBy(dx_collection))
+        self.assertTrue(at_collection is not dx_collection)
+        wrapped = ICollectionBehavior(dx_collection)
+        self.assertEqual(wrapped.query, query)
+        self.assertEqual(dx_collection.text.output, "<p>Whopee</p>")
 
     def test_document_content_is_migrated(self):
         from plone.app.contenttypes.migration.migration import DocumentMigrator

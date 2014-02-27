@@ -23,6 +23,20 @@ class ATWarningViewlet(ViewletBase):
         if not HAS_ARCHETYPES:
             return
         self.context = aq_inner(self.context)
+        replaced_types = [
+            'ATFolder',
+            'ATDocument',
+            'ATFile',
+            'ATImage',
+            'ATNewsItem',
+            'ATLink',
+            'ATEvent',
+            'ATBlobImage',
+            'ATBlobFile',
+            'Collection'
+        ]
+        if self.context.meta_type not in replaced_types:
+            return
         if not IBaseObject.providedBy(self.context):
             return
         context_fti = self.context.getTypeInfo()
