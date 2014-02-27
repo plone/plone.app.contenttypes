@@ -20,6 +20,8 @@
  <!-- Schema, class and security -->
  <property name="klass">plone.app.contenttypes.content.Event</property>
  <property name="schema"></property>
+ <property name="model_source"></property>
+ <property name="model_file">plone.app.contenttypes.schema:event.xml</property>
  <property name="add_permission">plone.app.contenttypes.addEvent</property>
 
  <!-- Enabled behaviors -->
@@ -29,7 +31,6 @@
   <element value="plone.app.event.dx.behaviors.IEventLocation"/>
   <element value="plone.app.event.dx.behaviors.IEventAttendees"/>
   <element value="plone.app.event.dx.behaviors.IEventContact"/>
-  <element value="plone.app.event.dx.behaviors.IEventSummary"/>
   <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
   <element value="plone.app.content.interfaces.INameFromTitle"/>
   <element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>

@@ -84,6 +84,7 @@ class ContentProfileTestCase(unittest.TestCase):
         obj = self.portal['Members']
         self.assertEqual(obj.portal_type, 'Folder')
 
+    @unittest.skip("Replaced by new members-search-form")
     def test_Members__index_html(self):
         # Was the index_html script created?
         obj = self.portal['Members']['index_html']

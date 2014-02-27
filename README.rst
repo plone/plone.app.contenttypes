@@ -1,9 +1,19 @@
 .. contents::
 
+.. image:: http://jenkins.plone.org/job/kgs-plone.app.contenttypes-plone-5.0-python-2.7/badge/icon
+    :target: http://jenkins.plone.org/job/kgs-plone.app.contenttypes-plone-5.0-python-2.7/
+
+.. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
+    :target: https://crate.io/packages/plone.app.contenttypes
+
+.. image:: https://pypip.in/v/plone.app.contenttypes/badge.png
+    :target: https://crate.io/packages/plone.app.contenttypes
+
+
 Introduction
 ============
 
-.. image:: http://jenkins.plone.org/job/plone.app.contenttypes/badge/icon
+
 
 plone.app.contenttypes offers default content types for Plone based on Dexterity. This package replaces ``Products.ATContenttypes`` and will provide the default-types in Plone 5.
 
@@ -26,53 +36,59 @@ plone.app.contenttypes has been merged into the Plone 5.0 branch and will be shi
 
 **Warning: Using plone.app.contenttypes on a site with existing content requires migrating the sites content. Please see the chapter "Migration". It can be used on a new site without problems.**
 
-Compatability
+
+Compatibility
 =============
 
-plone.app.contenttypes works with Plone 4.1+
+Version 1.1b1 is tested with Plone 4.3.x. The versions 1.1.x will stay compatible with Plone 4.3.x.
+
+For support of Plone 4.1 and 4.2 please use version 1.0.x. Please note that they do not provide the full functionality.
+
+The future versions 1.2.x will be compatible with Plone 5 only and add support for plone.app.widgets
 
 
 Installation
 ============
 
-Add this line in the eggs section of your ``buildout.cfg``::
+Add this line in the eggs section of your ``buildout.cfg``
+
+.. code:: ini
 
     eggs =
         ...
         plone.app.contenttypes
 
-If you have a mixed Plone site with Archetypes content and dexterity content use the extra requirement::
+If you have a Plone site with mixed Archetypes and Dexterity content use the extra requirement ``atrefs``.
 
-    ``plone.app.contenttypes ['atrefs']``
+.. code:: ini
 
+    eggs =
+        ...
+        plone.app.contenttypes [atrefs]
 
-Installation as a dependency from another product
--------------------------------------------------
-
-If you want to add plone.app.contenttypes as a dependency from another products use the profile ``plone-content`` in your ``metadata.xml`` to have Plone populate a new site with DX-based default-content. ::
-
-    <metadata>
-      <version>1</version>
-        <dependencies>
-            <dependency>profile-plone.app.contenttypes:plone-content</dependency>
-        </dependencies>
-    </metadata>
-
-If you use the profile ``default`` then the default-content in new sites will still be Archetypes-based. You'll then have to migrate that content using the migration-form ``@@atct_migrator`` or delete it by hand.
+This will also install the package `plone.app.referenceablebehavior <https://pypi.python.org/pypi/plone.app.referenceablebehavior>`_ that allows you to reference dexterity-based content from archetypes-based content. You will have to enable the behavior ``plone.app.referenceablebehavior.referenceable.IReferenceable`` for all types that need to be referenced by Archetypes-content.
 
 
 What happens to existing content?
 ---------------------------------
 
-If you install plone.app.contenttypes on a fresh site (i.e. when no content has been edited or added) the existing default-content will be replaced by dexterity-content to make sure it is still editable.
+If you install plone.app.contenttypes in a existing site all Archetypes-based content of the default types still exists and can be viewed but can't be edited. On installation plone.app.contenttypes removes the type-definitions for the old default-types like this:
 
-If you install plone.app.contenttypes in a existing site all Archetypes-based content of the default Types still exists and can be viewed but can't be edited. On installation plone.app.contenttypes removes the type-definitions for the old default-types like this::
+.. code:: xml
 
     <object name="Document" remove="True" />
 
-To make this content editable egain you need to migrate it to Dexterity (please see the section on migration) or uninstall plone.app.contenttypes.
+They are then replaced by new Definitions:
 
-Archetypes-based content provided by add-ons like Products.PloneFormGen will still work since only the default-types are replaced.
+.. code:: xml
+
+    <object meta_type="Dexterity FTI" name="Document" />
+
+To make the existing content editable again you need to migrate it to Dexterity (please see the section on migration) or uninstall plone.app.contenttypes (see the section on uninstalling).
+
+Archetypes-based content provided by add-ons (e.g. Products.PloneFormGen) will still work since only the default-types are replaced.
+
+If you install plone.app.contenttypes on a fresh site (i.e. when no content has been edited or added) the usual default-content (Events, News, Members...) will be created as dexterity-content.
 
 
 Uninstalling
@@ -88,23 +104,48 @@ To remove plone.app.contenttypes and return full functionality to old content an
 Any content you created based on plone.app.contenttypes will not be editable until you reinstall plone.app.contenttypes.
 
 
+
+Dependencies
+------------
+
+* ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`_.
+
+* ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the rss-views because plone.app.contenttypes uses behaviors for the richtext-fields.
+
+* ``plone.app.event >= 1.1b1``. This provides the behaviors used for the event-type.
+
+* ``plone.app.portlets >= 2.5a1``. In older version the event-portlet will not work with the new event-type.
+
+These are the version-pinns for Plone 4.3.3:
+
+.. code:: ini
+
+    [buildout]
+    versions = versions
+
+    [versions]
+    plone.app.event = 1.1b1
+    plone.app.portlets = 2.5a1
+
+Plone-versions before 4.3.3 need to pinn more packages:
+
+.. code:: ini
+
+    [buildout]
+    versions = versions
+
+    [versions]
+    plone.dexterity = 2.2.1
+    plone.app.dexterity = 2.0.11
+    plone.schemaeditor = 1.3.5
+    plone.app.event = 1.1b1
+    plone.app.portlets = 2.5a1
+
+
 Migration
 =========
 
 To migrate your existing content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
-
-plone.app.contenttypes includes migrations for the following use-cases:
-
-* from default Archetypes-based types to plone.app.contenttypes
-* from older versions of plone.app.contenttypes to current versions
-* from old plone.app.contenttypes-event to DX-plone.app.event
-* from AT-plone.app.event to DX-plone.app.event
-* from atct ATEvent to DX-plone.app.event
-* from AT-plone.app.collection to DX-plone.app.collections
-
-Migrations that will be will come in future version:
-
-* from ATTopic to DX-plone.app.collections
 
 For migrations to work you need at least ``Products.contentmigration = 2.1.3`` (part of Plone since Plone 4.2.5) and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
 
@@ -112,15 +153,31 @@ For migrations to work you need at least ``Products.contentmigration = 2.1.3`` (
 Migrating Archetypes-based content to plone.app.contenttypes
 ------------------------------------------------------------
 
-plone.app.contenttypes can migrate the following types:
+plone.app.contenttypes can migrate the following default types:
 
-* Folder
 * Document
-* News item
+* Event
 * File
+* Folder
 * Image
 * Link
+* News Item
 * Collection
+
+The following non-default types will also be migrated:
+
+* The AT-based Event-type provided by plone.app.event
+* The DX-based Event-type provided by plone.app.event
+* The Event-type provided by plone.app.contenttypes until version 1.0
+* News Items with blobs (provoded by https://github.com/plone/plone.app.blob/pull/2)
+* Files and Images without blobs
+* AT-based collection provided by plone.app.collection
+
+Migrations that might come in a future version:
+
+* from ATTopic to Collections
+
+Please note that migrating versions of content is not supported. Only the current state of items is migrated without any content- or workflow-history.
 
 
 Migrating content that is translated with LinguaPlone
@@ -134,9 +191,9 @@ Migrating from old versions of plone.app.contenttypes
 
 Before version 1.0a2 the content-items did not implement marker-interfaces.  They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
 
-Since plone.app.contenttypes 1.1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
+Since plone.app.contenttypes 1.1a1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
 
-1) First run the default profile (``plone.app.contenttypes:default``) and
+1) First run the default profile (``plone.app.contenttypes:default``) or reinstall plone.app.contenttypes
 2) Then run the upgrade steps.
 
 
@@ -151,41 +208,159 @@ You need to implement a custom migration for your types and dexterity-behaviors 
 Migrating custom content
 ------------------------
 
-Custom content will not be changed by plone.app.contenttypes and should continue to work as expeced. However if you'd like to migrate your content-types to Dexterity (you'll have to create these types in Dexterity first) you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint.
+Custom content-types will not be touched by the migration plone.app.contenttypes and will continue to work as expeced. However if you'd like to migrate your content-types to Dexterity (you'll have to create these types in Dexterity first) you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint.
 
 
-Dependencies
-============
+Widgets
+=======
 
-* ``plone.app.dexterity``. Dexterity is shipped with Plone 4.3.x. Version pins for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`.
+When used in Plone 4.x plone.app.contenttypes uses the default z3c.form widgets. All widgets work as they used to with Archetypes except for the keywords-widget for which a simple linesfield is used.
 
-* ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the RRS-functionalisty in Plone because plone.app.contenttypes 1.1a2 uses behaviors for the Richtext-Fields.
+It is recommended to use ``plone.app.widgets`` to switch to the widgets that will be used in Plone 5.
 
-* ``plone.app.event``.
 
-Toubleshooting
-==============
+How to use with plone.app.widgets
+---------------------------------
 
-ValueError on installing
-------------------------
+TODO
 
-When you try to install plone.app.contenttypes in a existing site you might get the following error::
 
-      (...)
-      Module Products.GenericSetup.utils, line 509, in _importBody
-      Module Products.CMFCore.exportimport.typeinfo, line 60, in _importNode
-      Module Products.GenericSetup.utils, line 730, in _initProperties
-    ValueError: undefined property 'schema'
+How to override widgets
+-----------------------
 
-Before installing plone.app.contenttypes you have to reinstall plone.app.collection to update collections to the version that uses Dexterity.
+To override the default keywords-widgets with a nicer widget you can use the package `collective.z3cform.widgets <https://pypi.python.org/pypi/collective.z3cform.widgets>`_.
+
+Add ``collective.z3cform.widgets`` to your ``buildout`` and in your own package register the override in your ``configure.zcml``:
+
+.. code:: xml
+
+    <adapter factory=".subjects.SubjectsFieldWidget" />
+
+Then add a file ``subjects.py``
+
+.. code:: python
+
+    # -*- coding: UTF-8 -*-
+    from collective.z3cform.widgets.token_input_widget import TokenInputFieldWidget
+    from plone.app.dexterity.behaviors.metadata import ICategorization
+    from plone.app.z3cform.interfaces import IPloneFormLayer
+    from z3c.form.interfaces import IFieldWidget
+    from z3c.form.util import getSpecification
+    from z3c.form.widget import FieldWidget
+    from zope.component import adapter
+    from zope.interface import implementer
+
+
+    @adapter(getSpecification(ICategorization['subjects']), IPloneFormLayer)
+    @implementer(IFieldWidget)
+    def SubjectsFieldWidget(field, request):
+        widget = FieldWidget(field, TokenInputFieldWidget(field, request))
+        return widget
+
+Once you install ``collective.z3cform.widgets`` in the quickinstaller, the new widget will then be used for all types.
 
 
 Information for Addon-Developers
 ================================
 
-The schemata of the types are set in xml-files using ``plone.supermodel``. This allows the types to be editable trough the web.
+Design decicions
+-----------------
 
-If you want to extend these types with code consider using behaviors.
+The schemata for the types File, Image and Link are defined in xml-files using ``plone.supermodel``. This allows the types to be editable trough the web. The types Document, News Item, Folder and Event have no schemata but only use behaviors to provide their fields.
+
+
+Installation as a dependency from another product
+-------------------------------------------------
+
+If you want to add plone.app.contenttypes as a dependency from another products use the profile ``plone-content`` in your ``metadata.xml`` to have Plone populate a new site with DX-based default-content.
+
+.. code:: xml
+
+    <metadata>
+      <version>1</version>
+        <dependencies>
+            <dependency>profile-plone.app.contenttypes:plone-content</dependency>
+        </dependencies>
+    </metadata>
+
+If you use the profile ``default`` then the default-content in new sites will still be Archetypes-based. You'll then have to migrate that content using the migration-form ``@@atct_migrator`` or delete it by hand.
+
+
+Extending the types
+-------------------
+
+You have several options:
+
+1. Extend the types through-the-web by adding new fields or behaviors in the types-controlpanel ``/@@dexterity-types``.
+
+2. Extend the types with a custom type-profile that extends the existing profile with behaviors, or fields.
+
+   You will first have to add the type to your ``[yourpackage]/profiles/default/types.xml``.
+
+   .. code:: xml
+
+    <?xml version="1.0"?>
+    <object name="portal_types" meta_type="Plone Types Tool">
+      <object name="Folder" meta_type="Dexterity FTI" />
+    </object>
+
+   Here is an example that enables the image-behavior for Folders in ``[yourpackage]/profiles/default/types/Folder.xml``:
+
+   .. code:: xml
+
+    <?xml version="1.0"?>
+    <object name="Folder" meta_type="Dexterity FTI">
+     <property name="behaviors" purge="False">
+      <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
+     </property>
+    </object>
+
+   By adding a schema-definition to the profile you can add fields.
+
+   .. code:: xml
+
+    <?xml version="1.0"?>
+    <object name="Folder" meta_type="Dexterity FTI">
+     <property name="model_file">your.package.content:folder.xml</property>
+     <property name="behaviors" purge="False">
+      <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
+     </property>
+    </object>
+
+   Put the schema-xml in ``your/package/content/folder.xml`` (the folder ``content`` needs a ``__init__.py``)
+
+   .. code:: xml
+
+    <model xmlns:security="http://namespaces.plone.org/supermodel/security"
+           xmlns:marshal="http://namespaces.plone.org/supermodel/marshal"
+           xmlns:form="http://namespaces.plone.org/supermodel/form"
+           xmlns="http://namespaces.plone.org/supermodel/schema">
+      <schema>
+        <field name="teaser_title" type="zope.schema.TextLine">
+          <description/>
+          <required>False</required>
+          <title>Teaser title</title>
+        </field>
+        <field name="teaser_subtitle" type="zope.schema.Text">
+          <description/>
+          <required>False</required>
+          <title>Teaser subtitle</title>
+        </field>
+        <field name="teaser_details" type="plone.app.textfield.RichText">
+          <description/>
+          <required>False</required>
+          <title>Teaser details</title>
+        </field>
+      </schema>
+    </model>
+
+For more complex features you should create custom behaviors and/or write your own content-types. For more information on creating custom dexterity-types or custom behaviors to extend these types with read the `dexterity documentation <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/>`_.
+
+
+Reordering fields provided by behaviors
+---------------------------------------
+
+TODO
 
 
 Differences to Products.ATContentTypes
@@ -197,7 +372,34 @@ Differences to Products.ATContentTypes
 - There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
 - The link on the image of the newsitem triggers an overlay
 - The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
+- The keywords-widget is not implemented and is replaced by a simple lines-widget unless you override it or use plone.app.widgets. Please see the section on widgets.
 
+
+Toubleshooting
+==============
+
+Please report issues in the bugtracker at https://github.com/plone/plone.app.contenttypes/issues.
+
+ValueError on installing
+------------------------
+
+When you try to install plone.app.contenttypes < 1.1a1 in a existing site you might get the following error::
+
+      (...)
+      Module Products.GenericSetup.utils, line 509, in _importBody
+      Module Products.CMFCore.exportimport.typeinfo, line 60, in _importNode
+      Module Products.GenericSetup.utils, line 730, in _initProperties
+    ValueError: undefined property 'schema'
+
+Before installing plone.app.contenttypes you have to reinstall plone.app.collection to update collections to the version that uses Dexterity.
+
+
+Branches
+========
+
+The master-branch supports Plone 5 only. From this 1.2.x-releases will be cut.
+
+The 1.1.x-branch supports Plone 4.3.x. From this 1.1.x-releases will be cut.
 
 
 License
@@ -233,3 +435,4 @@ Contributors
 * Maurits van Rees <maurits@vanrees.org>
 * David Glick <david@glicksoftware.com>
 * Kees Hink <keeshink@gmail.com>
+* Roman Kozlovskyi <krzroman@gmail.com>

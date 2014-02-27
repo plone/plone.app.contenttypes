@@ -7,7 +7,6 @@ import unittest2 as unittest
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
-
 from transaction import commit
 
 from plone.dexterity.interfaces import IDexterityFTI
@@ -26,7 +25,8 @@ from plone.app.contenttypes.behaviors.collection import ICollection as \
     ICollection_behavior
 
 from plone.app.layout.navigation.interfaces import INavigationRoot
-
+from plone.app.textfield.value import RichTextValue
+import os.path
 
 query = [{
     'i': 'Title',
@@ -34,19 +34,14 @@ query = [{
     'v': 'Collection Test Page',
 }]
 
-#query = [{
-#    'i': 'SearchableText',
-#    'o': 'plone.app.querystring.operation.string.contains',
-#    'v': 'Autoren'
-#}]
 
-
-def getData(filename):
-    from os.path import dirname, join
-    from plone.app.contenttypes import tests
-    filename = join(dirname(tests.__file__), filename)
-    data = open(filename).read()
-    return data
+def dummy_image():
+    from plone.namedfile.file import NamedBlobImage
+    filename = os.path.join(os.path.dirname(__file__), u'image.png')
+    return NamedBlobImage(
+        data=open(filename, 'r').read(),
+        filename=filename
+    )
 
 
 class PloneAppCollectionClassTest(unittest.TestCase):
@@ -180,16 +175,18 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    @unittest.skip("Needs to be refactored")
+    # @unittest.skip("Needs to be refactored")
     def test_collection_templates(self):
         portal = self.layer['portal']
         login(portal, 'admin')
-        data = getData('image.png')
         # add an image that will be listed by the collection
         portal.invokeFactory("Image",
                              "image",
-                             title="Image example",
-                             image=data)
+                             title="Image example")
+
+        image = self.portal['image']
+        image.image = dummy_image()
+
         # add a collection, so we can add a query to it
         portal.invokeFactory("Collection",
                              "collection",
@@ -201,8 +198,15 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             'o': 'plone.app.querystring.operation.string.is',
             'v': 'Image',
         }]
+        collection.text = RichTextValue(
+            u"Lorem collection ipsum",
+            'text/plain',
+            'text/html'
+        )
+
+        wrapped = ICollection_behavior(collection)
         # set the query and publish the collection
-        collection.query = query
+        wrapped.query = query
         workflow = portal.portal_workflow
         workflow.doActionFor(collection, "publish")
         commit()
@@ -210,16 +214,29 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         # open a browser to see if our image is in the results
         browser = Browser(self.layer['app'])
         browser.handleErrors = False
-        browser.open(collection.absolute_url())
+        url = collection.absolute_url()
+        browser.open(url)
+        self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
+
         # open summary_view template
-        browser.open('%s/summary_view' % collection.absolute_url())
+        browser.open('%s/@@summary_view' % url)
+        self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
-        # open folder_summary_view template
-        browser.open('%s/folder_summary_view' % collection.absolute_url())
+
+        # open all_content template
+        browser.open('%s/@@all_content' % url)
+        self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
+
+        # open tabular_view template
+        browser.open('%s/@@tabular_view' % url)
+        self.assertTrue("Lorem collection ipsum" in browser.contents)
+        self.assertTrue("Image example" in browser.contents)
+
         # open thumbnail_view template
-        browser.open('%s/thumbnail_view' % collection.absolute_url())
+        browser.open('%s/@@thumbnail_view' % url)
+        self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
 
     def test_sorting_1(self):

@@ -47,23 +47,23 @@ a folder '${folder-id}' with a document '${document-title}'
 
 I set the collection's relative location criterion to
     [Arguments]  ${criterion}
-    Click Edit In Edit Bar
-    Wait Until Page Contains Element  xpath=//select[@name="addindex"]
-    Select From List  xpath=//select[@name="addindex"]  Location
-    Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
-    Select From List  xpath=//select[@class='queryoperator']  Relative path
-    Input Text  xpath=//input[@name='form.widgets.ICollection.query.v:records']  ${criterion}
+    Click Edit
+
+    I set the criteria index in row 1 to the option 'Location'
+    I set the criteria operator in row 1 to the option 'Relative path'
+    I set the criteria value in row 1 to the text '${criterion}'
+    
     Click Button  Save
     Wait until page contains  Changes saved
 
 I set the collection's absolute location criterion to
     [Arguments]  ${criterion}
-    Click Edit In Edit Bar
-    Wait Until Page Contains Element  xpath=//select[@name="addindex"]
-    Select From List  xpath=//select[@name="addindex"]  Location
-    Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
-    Select From List  xpath=//select[@class='queryoperator']  Absolute path
-    Input Text  xpath=//input[@name='form.widgets.ICollection.query.v:records']  ${criterion}
+    Click Edit
+
+    I set the criteria index in row 1 to the option 'Location'
+    I set the criteria operator in row 1 to the option 'Absolute path'
+    I set the criteria value in row 1 to the text '${criterion}'
+    
+    Sleep  1
     Click Button  Save
     Wait until page contains  Changes saved
-

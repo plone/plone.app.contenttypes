@@ -1,11 +1,50 @@
 Changelog
 =========
 
-1.1a2 (unreleased)
+1.2a2 (unreleased)
 ------------------
 
+- Nothing changed yet.
+
+
+1.2a1 (2014-02-22)
+------------------
+
+- Fix viewlet warning about ineditable content (fixes #130)
+  [pbauer]
+
+- Reintroduce the removed schema-files and add upgrade-step to migrate to
+  behavior-driven richtext-fields (fixes #127)
+  [pbauer]
+
+- Delete Archetypes Member-folder before creating new default-content
+  (fixes #128)
+  [pbauer]
+
+- Remove outdated summary-behavior from event (fixes #129)
+  [pbauer]
+
+
+1.1b1 (2014-02-19)
+------------------
+
+- Add tests for collections and collection-migrations.
+  [pbauer]
+
+- Removed Plone 4.2 compatibility.
+  [pbauer]
+
+- Add migration of at-collections to the new collection-behavior.
+  [pbauer]
+
+- Display richtext in collection-views.
+  [pbauer]
+
+- Reorganize and improve documentation.
+  [pbauer]
+
 - Add a richtext-behavior and use it in for all types.
-  [amleczko]
+  [amleczko, pysailor]
 
 - Improve the migration-results page (Fix #67).
   [pbauer]
@@ -29,6 +68,7 @@ Changelog
 - Fix URL for Link object on the navigation portlet if it
   contains variables (Fix #110).
   [rafaelbco]
+
 
 1.1a1 (2013-11-22)
 ------------------

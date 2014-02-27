@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.1a2.dev0'
+version = '1.2a2.dev0'
 
 long_description = open("README.rst").read() + "\n" + \
     open("CHANGES.rst").read()
@@ -14,8 +14,6 @@ setup(name='plone.app.contenttypes',
       classifiers=[
           "Development Status :: 4 - Beta",
           "Framework :: Plone",
-          "Framework :: Plone :: 4.1",
-          "Framework :: Plone :: 4.2",
           "Framework :: Plone :: 4.3",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.6",
@@ -36,6 +34,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.contentmenu',
           'plone.app.event [dexterity]',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
+          'plone.dexterity>=2.2.1',  # behaviors can provide primaryfields
           'plone.app.relationfield',
           'plone.app.widgets',
           'plone.namedfile [blobs]',
