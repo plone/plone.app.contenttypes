@@ -6,6 +6,11 @@
     xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="plone.app.contenttypes">
 
+  <browser:resource
+      name="pac_migrator.css"
+      file="migrator.css"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"/>
+
   <browser:page
     name="fix_base_classes"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"

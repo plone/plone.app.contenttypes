@@ -146,6 +146,6 @@ def _checkForExtenderInterfaces(interface):
         [a for a in sm.registeredAdapters() if interface in a.required]
     for adapter in registrations:
         if adapter.provided in extender_interfaces:
-            fields = adapter.factory(None).fields
+            fields = getattr(adapter.factory(None), 'fields', [])
             return [field.getName() for field in fields]
     return []

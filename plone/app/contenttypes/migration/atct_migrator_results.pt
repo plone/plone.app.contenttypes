@@ -1,162 +1,85 @@
-<!-- Stupid trick to remove useles thinks from the page ;) -->
-<tal:page
-  tal:define="ajax_load python:request.set('ajax_load', True);
-      ajax_include_head python:request.set('ajax_include_head', True)">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       lang="en"
       metal:use-macro="context/main_template/macros/master"
-      tal:define="ajax_load python:True"
       i18n:domain="plone">
-  <metal:block fill-slot="top_slot"
-      tal:define="dummy python:request.set('disable_border',1);
 
-          disable_column_two python:request.set('disable_plone.rightcolumn',1);
-          disable_column_two python:request.set('disable_plone.leftcolumn',1);
-          portal_state context/@@plone_portal_state;
-          portal_url portal_state/portal_url">
+<metal:block fill-slot="top_slot"
+    tal:define="dummy python:request.set('disable_border', 1);
+                disable_column_two python:request.set('disable_plone.rightcolumn', 1);
+                disable_column_two python:request.set('disable_plone.leftcolumn', 1);
+                portal_state context/@@plone_portal_state;
+                portal_url portal_state/portal_url">
+  <link rel="stylesheet" type="text/css" href="" media="screen" tal:attributes="href string:${portal_url}/++resource++pac_migrator.css">
+</metal:block>
 
-    <style type="text/css">
-      div.important {
-        padding: .9em 1.2em;
-        border-radius: 10px;
-        font-size: 100%;
-      }
-      .btn-danger {
-        background-color: #DA4F49;
-        background-image: linear-gradient(to bottom, #EE5F5B, #BD362F);
-        background-repeat: repeat-x;
-        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-        color: #FFFFFF;
-        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-        border-radius: 4px 4px 4px 4px;
-        border-style: solid;
-        border-width: 1px;
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);    cursor: pointer;
-        display: inline-block;
-        font-size: 14px;
-        line-height: 20px;
-        margin-bottom: 0;
-        padding: 4px 12px;
-        text-align: center;
-        vertical-align: middle;
-      }
+<body>
 
-      .btn-danger:hover, .btn-danger:focus,
-      .btn-danger:active, .btn-danger.active {
-          color: rgb(255, 255, 255);
-          background-color: rgb(189, 54, 47);
-          text-decoration: none;
-          background-position: 0px -15px;
-          transition: background-position 0.1s linear 0s;
-      }
+<metal:custom_title fill-slot="content-title">
+  <h1 class="documentFirstHeading" i18n:translate="">Congratulations! You migrated from Archetypes to Dexterity.</h1>
+</metal:custom_title>
 
-      .btn-danger:active {
-          background-image: none;
-          outline: 0px none;
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15) inset, 0px 1px 2px rgba(0, 0, 0, 0.05);
-      }
-      #migration-form , #content-core{
-          border: 1px solid #DDDDDD;
-          border-radius: 10px 10px 10px 10px;
-          font-size: 110%;
-          margin-bottom: 1em;
-          padding: 1em 1.5em;
-      }
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core"
+    tal:define="results view/results">
 
-      #migration-form .formControls {
-        margin-left: 0;
-        margin-top: 4em;
-      }
-      #migration-options {
-        margin-top: 3em;
-      }
-      table td {
-        border: 1px solid #ccc;
-      }
-      table td, table th  {
-        padding: 0.2em 0.5em 0.2em;
-      }
-      table th {
-        text-align: center;
-        font-weight: normal;
-      }
-    </style>
+  <tal:success tal:condition="results">
+    <p>The migration finished within <span tal:replace="results/duration">20</span> seconds</p>
 
-  </metal:block>
+    <h3>Migrated Content</h3>
+    <table>
+    <tr>
+      <th>Old Type</th>
+      <th>New Type</th>
+      <th>Items</th>
+    </tr>
+    <tal:block tal:repeat="ct results/content_types">
+    <tr>
+      <td tal:content="python:results['migrated_types'][ct]['old_meta_type']"></td>
+      <td tal:content="python:results['migrated_types'][ct]['new_type_name']"></td>
+      <td tal:content="python:results['migrated_types'][ct]['amount_migrated']"></td>
+    </tr>
+    </tal:block>
+    </table>
 
-  <body metal:use-macro="content">
+    <h3>Content before Migration</h3>
+    <table>
+    <tr>
+      <th>Type</th>
+      <th>Items</th>
+    </tr>
+    <tr tal:repeat="ct python:sorted(results['before'].keys())">
+      <td tal:content="ct"></td>
+      <td tal:content="python:results['before'][ct]"></td>
+    </tr>
+    </table>
 
-    <metal:bodytext fill-slot="main">
-      <metal:main define-macro="main"
-                  tal:define="results view/results">
-        <tal:success tal:condition="results">
-        <h1 class="documentFirstHeading"
-            i18n:translate="">Congratulations! You migrated from Archetypes to Dexterity.</h1>
+    <h3>Content after Migration</h3>
+    <table>
+    <tr>
+      <th>Type</th>
+      <th>Items</th>
+    </tr>
+    <tr tal:repeat="ct python:sorted(results['after'].keys())">
+      <td tal:content="ct"></td>
+      <td tal:content="python:results['after'][ct]"></td>
+    </tr>
+    </table>
+  </tal:success>
 
-        <div id="content-core">
-          <p>The migration finished within <span tal:replace="results/duration">20</span> seconds</p>
+  <div class="links">
+    <a href="atct_migrator" tal:attributes="href string:${portal_url}/@@atct_migrator">
+      <span i18n:translate="">Back to the Migration-Form</span>
+    </a>
+    <br/>
+    <a href="" tal:attributes="href portal_url">
+      <span i18n:translate="">Back to Plone</span>
+    </a>
+  </div>
 
-          <h3>Migrated Content</h3>
-          <table>
-            <tr>
-              <th>Old Type</th>
-              <th>New Type</th>
-              <th>Items</th>
-            </tr>
-            <tal:block tal:repeat="ct results/content_types">
-              <tr>
-                <td tal:content="python:results['migrated_types'][ct]['old_meta_type']"></td>
-                <td tal:content="python:results['migrated_types'][ct]['new_type_name']"></td>
-                <td tal:content="python:results['migrated_types'][ct]['amount_migrated']"></td>
-              </tr>
-            </tal:block>
-          </table>
-
-          <h3>Content before Migration</h3>
-          <table>
-            <tr>
-              <th>Type</th>
-              <th>Items</th>
-            </tr>
-            <tr tal:repeat="ct python:sorted(results['before'].keys())">
-              <td tal:content="ct"></td>
-              <td tal:content="python:results['before'][ct]"></td>
-            </tr>
-          </table>
-
-          <h3>Content after Migration</h3>
-          <table>
-            <tr>
-              <th>Type</th>
-              <th>Items</th>
-            </tr>
-            <tr tal:repeat="ct python:sorted(results['after'].keys())">
-              <td tal:content="ct"></td>
-              <td tal:content="python:results['after'][ct]"></td>
-            </tr>
-          </table>
-
-        </div>
-        </tal:success>
-
-        <div class="links">
-          <a href="atct_migrator"
-             tal:attributes="href string:${portal_url}/@@atct_migrator">
-            <span i18n:translate="">Back to the Migration-Form</span>
-          </a><br/>
-          <a href=""
-             tal:attributes="href portal_url">
-            <span i18n:translate="">Back to Plone</span>
-          </a>
-        </div>
-
-
-      </metal:main>
-    </metal:bodytext>
-  </body>
+</metal:block>
+</metal:content-core>
+</body>
 </html>
-
-</tal:page>
