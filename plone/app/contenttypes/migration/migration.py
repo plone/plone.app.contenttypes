@@ -31,6 +31,9 @@ from zope.event import notify
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import ObjectModifiedEvent
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def migrate(portal, migrator):
     """return a CatalogWalker instance in order
@@ -190,6 +193,13 @@ class ReferenceMigrator(object):
 
 class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
 
+    def __init__(self, *args, **kwargs):
+        super(ATCTBaseMigrator, self).__init__(*args, **kwargs)
+        logger.info(
+            "Migrating object %s" %
+            '/'.join(self.old.getPhysicalPath())
+        )
+
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
         self.new.exclude_from_nav = field.get(self.old)
@@ -251,20 +261,12 @@ def migrate_files(portal):
     return migrate(portal, FileMigrator)
 
 
-class BlobFileMigrator(ATCTContentMigrator):
+class BlobFileMigrator(FileMigrator):
 
     src_portal_type = 'File'
     src_meta_type = 'ATBlob'
     dst_portal_type = 'File'
     dst_meta_type = None  # not used
-
-    def migrate_schema_fields(self):
-        old_file = self.old.getField('file').get(self.old)
-        filename = safe_unicode(old_file.filename)
-        namedblobfile = NamedBlobFile(contentType=old_file.content_type,
-                                      data=old_file.data,
-                                      filename=filename)
-        self.new.file = namedblobfile
 
 
 def migrate_blobfiles(portal):
@@ -292,22 +294,12 @@ def migrate_images(portal):
     return migrate(portal, ImageMigrator)
 
 
-class BlobImageMigrator(ATCTContentMigrator):
+class BlobImageMigrator(ImageMigrator):
 
     src_portal_type = 'Image'
     src_meta_type = 'ATBlob'
     dst_portal_type = 'Image'
     dst_meta_type = None  # not used
-
-    def migrate_schema_fields(self):
-
-        old_image = self.old.getField('image').get(self.old)
-        if old_image == '':
-            return
-        filename = safe_unicode(old_image.filename)
-        namedblobimage = NamedBlobImage(data=old_image.data,
-                                        filename=filename)
-        self.new.image = namedblobimage
 
 
 def migrate_blobimages(portal):
@@ -360,7 +352,7 @@ def migrate_newsitems(portal):
     return migrate(portal, NewsItemMigrator)
 
 
-class BlobNewsItemMigrator(DocumentMigrator):
+class BlobNewsItemMigrator(NewsItemMigrator):
     """ Migrator for NewsItems with blobs based on the implementation in
         https://github.com/plone/plone.app.blob/pull/2
     """
@@ -369,24 +361,6 @@ class BlobNewsItemMigrator(DocumentMigrator):
     src_meta_type = 'ATBlobContent'
     dst_portal_type = 'News Item'
     dst_meta_type = None  # not used
-
-    def migrate_schema_fields(self):
-        # migrate the text
-        super(BlobNewsItemMigrator, self).migrate_schema_fields()
-
-        # migrate the rest of the Schema
-        old_image = self.old.getField('image').get(self.old)
-        if old_image == '':
-            return
-        filename = safe_unicode(old_image.filename)
-        old_image_data = old_image.data
-        if safe_hasattr(old_image_data, 'data'):
-            old_image_data = old_image_data.data
-        namedblobimage = NamedBlobImage(data=old_image_data,
-                                        filename=filename)
-        self.new.image = namedblobimage
-        self.new.image_caption = safe_unicode(
-            self.old.getField('imageCaption').get(self.old))
 
 
 def migrate_blobnewsitems(portal):

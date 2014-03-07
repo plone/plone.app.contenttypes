@@ -21,6 +21,9 @@ from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import Interface
 
+import logging
+logger = logging.getLogger(__name__)
+
 # Schema Extender allowed interfaces
 
 from plone.app.contenttypes.content import (
@@ -77,8 +80,7 @@ class FixBaseClasses(BrowserView):
 
 
 class MigrateFromATContentTypes(BrowserView):
-
-    """ Migrate the default-types (except event and topic).
+    """Migrate the default-types (except event and topic).
     This view can be called directly and it will migrate all content
     provided they were not schema-extended.
     This is also called by the migration-form below with some variables.
@@ -129,6 +131,11 @@ class MigrateFromATContentTypes(BrowserView):
             amount_to_be_migrated = len(catalog(
                 object_provides=v['iface'].__identifier__,
                 meta_type=v['old_meta_type'])
+            )
+            # TODO: num objects is 0 for BlobFile and BlobImage
+            logger.info(
+                "Migrating %s objects of type %s" %
+                (amount_to_be_migrated, k)
             )
             # call the migrator
             v['migrator'](portal)
@@ -327,7 +334,8 @@ class ATCTMigratorHelpers(BrowserView):
         }
 
     def linguaplone_installed(self):
-        """ Is Products.LinguaPlone installed ? """
+        """Is Products.LinguaPlone installed?
+        """
         pq = getToolByName(self.context, 'portal_quickinstaller')
         return pq.isProductInstalled('LinguaPlone')
 
