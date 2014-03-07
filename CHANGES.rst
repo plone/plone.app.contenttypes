@@ -4,7 +4,12 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add logging messages to content migrator for more verbosity on what's
+  happening while running the migration.
+  [thet]
+
+- Fix @@atct_migrator and @@atct_migrator_results templates work within Plone3.
+  [thet]
 
 
 1.2a1 (2014-02-22)
