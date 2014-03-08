@@ -47,7 +47,7 @@ setup(name='plone.app.contenttypes',
               'plone.app.robotframework',
               'plone.app.testing[robot]>=4.2.4',  # we need ROBOT_TEST_LEVEL
               'Products.ATContentTypes',
-              'Products.contentmigration>=2.1.8',
+              'Products.contentmigration>=2.1.8.dev0',
           ],
           'atrefs': [
               'plone.app.referenceablebehavior',
