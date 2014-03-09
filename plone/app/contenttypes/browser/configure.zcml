@@ -215,6 +215,16 @@
     />
 
   <browser:page
+    name="image_view_fullscreen"
+    for="plone.app.contenttypes.behaviors.leadimage.ILeadImage"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="templates/image_view_fullscreen.pt"
+    permission="zope2.View"
+    menu="plone_displayviews"
+    title="View Image Fullscreen"
+    />
+
+  <browser:page
     name="link_redirect_view"
     for="plone.app.contenttypes.interfaces.ILink"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
