@@ -6,7 +6,7 @@ Changelog
 
 - Add a ICustomMigrator interface to the migration framework, which can be used
   to register custom migrator adapters. This can be useful to add custom
-  migrators to more than one or all content types, for example for
+  migrators to more than one or all content types. For example for
   schemaextenders, which are registered on a interface, which is provided by
   several content types.
   [thet]
