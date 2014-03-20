@@ -4,6 +4,11 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Register folderish views not for plone.app.contenttypes' IFolder but for
+  plone.dexterity's IDexterityContainer. Now, these views can be used on any
+  folderish Dexterity content.
+  [thet]
+
 - Add a ICustomMigrator interface to the migration framework, which can be used
   to register custom migrator adapters. This can be useful to add custom
   migrators to more than one or all content types. For example for

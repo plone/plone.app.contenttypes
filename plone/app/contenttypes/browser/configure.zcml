@@ -125,7 +125,7 @@
 
   <browser:page
     name="folder_listing"
-    for="plone.app.contenttypes.interfaces.IFolder"
+    for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="templates/folder_listing.pt"
     permission="zope2.View"
@@ -145,7 +145,7 @@
 
   <browser:page
     name="folder_full_view"
-    for="plone.app.contenttypes.interfaces.IFolder"
+    for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="templates/folder_full_view.pt"
     permission="zope2.View"
@@ -155,7 +155,7 @@
 
   <browser:page
     name="folder_summary_view"
-    for="plone.app.contenttypes.interfaces.IFolder"
+    for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="templates/folder_summary_view.pt"
     permission="zope2.View"
@@ -175,7 +175,7 @@
 
   <browser:page
     name="folder_tabular_view"
-    for="plone.app.contenttypes.interfaces.IFolder"
+    for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     template="templates/folder_tabular_view.pt"
     permission="zope2.View"
@@ -185,7 +185,7 @@
 
   <browser:page
     name="atct_album_view"
-    for="plone.app.contenttypes.interfaces.IFolder"
+    for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
     class=".album_view.AlbumView"
     template="templates/atct_album_view.pt"
