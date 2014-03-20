@@ -4,6 +4,12 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- In the migration framework, fix queries for Archetype objects, where only
+  interfaces are used to skip brains with no or Dexterity meta_type. In some
+  cases Dexterity and Archetype objects might provide the same marker
+  interfaces.
+  [thet]
+
 - Add logging messages to content migrator for more verbosity on what's
   happening while running the migration.
   [thet]

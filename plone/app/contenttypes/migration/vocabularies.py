@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from zope.interface import implements
-from zope.schema.vocabulary import SimpleVocabulary
-from zope.schema.interfaces import IVocabularyFactory
-
+from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from zope.interface import implements
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleVocabulary
 from .. import _
 
 
@@ -40,6 +40,9 @@ def count(brains):
                 pt = "BlobImage"
         if not counter.get(pt):
             counter[pt] = 0
+        if not i.meta_type or 'dexterity' in i.meta_type.lower():
+            # There might be DX types with same iface and meta_type than AT
+            continue
         counter[pt] += 1
     return counter
 
@@ -63,9 +66,9 @@ def results(context, show_extended=False):
 
         elif not show_extended and not is_extended:
             ifaces.append(iface)
+
     catalog = getToolByName(context, "portal_catalog")
     brains = catalog.search({'object_provides': ifaces})
-
     counter = count(brains)
 
     return SimpleVocabulary(get_terms(context,

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Products.Archetypes.interfaces import IBaseObject
 from Products.ATContentTypes.interfaces.document import IATDocument
 from Products.ATContentTypes.interfaces.event import IATEvent
 from Products.ATContentTypes.interfaces.file import IATFile
@@ -119,8 +120,11 @@ def _compareSchemata(interface):
     portal = getSite()
     pc = portal.portal_catalog
     brains = pc(object_provides=interface.__identifier__)
-    if brains:
-        obj = brains[0].getObject()
+    for brain in brains:
+        if not brain.meta_type or 'dexterity' in brain.meta_type.lower():
+            # There might be DX types with same iface and meta_type than AT
+            continue
+        obj = brain.getObject()
         real_fields = set(obj.Schema()._names)
         orig_fields = set(obj.schema._names)
         diff = [i for i in real_fields.difference(orig_fields)]
