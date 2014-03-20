@@ -4,6 +4,13 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Add a ICustomMigrator interface to the migration framework, which can be used
+  to register custom migrator adapters. This can be useful to add custom
+  migrators to more than one or all content types, for example for
+  schemaextenders, which are registered on a interface, which is provided by
+  several content types.
+  [thet]
+
 - In the migration framework, fix queries for Archetype objects, where only
   interfaces are used to skip brains with no or Dexterity meta_type. In some
   cases Dexterity and Archetype objects might provide the same marker

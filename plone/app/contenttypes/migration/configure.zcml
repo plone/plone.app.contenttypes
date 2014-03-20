@@ -63,4 +63,6 @@
       name="plone.app.contenttypes.migration.extendedtypes"
       provides="zope.schema.interfaces.IVocabularyFactory" />
 
+  <adapter name="nullmigrator" factory=".migration.BaseCustomMigator"/>
+
 </configure>
