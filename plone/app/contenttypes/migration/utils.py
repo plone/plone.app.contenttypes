@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.interfaces import IBaseObject
 from Products.ATContentTypes.interfaces.document import IATDocument
 from Products.ATContentTypes.interfaces.event import IATEvent
 from Products.ATContentTypes.interfaces.file import IATFile
