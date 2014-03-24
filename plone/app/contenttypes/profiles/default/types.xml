@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <object meta_type="Plone Types Tool" name="portal_types">
- <property name="title">Controls the available content types in your portal</property>
 
  <!-- We remove old ATContentTypes if they exist.
       Instances of these types can still be looked at since the
