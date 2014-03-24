@@ -4,6 +4,11 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Do a better check, if LinguaPlone is installed, based on the presence of the
+  "LinguaPlone" browser layer. Asking the quick installer tool might claim it's
+  installed, where it's not.
+  [thet]
+
 - Register folderish views not for plone.app.contenttypes' IFolder but for
   plone.dexterity's IDexterityContainer. Now, these views can be used on any
   folderish Dexterity content.
@@ -26,7 +31,8 @@ Changelog
   happening while running the migration.
   [thet]
 
-- Fix @@atct_migrator and @@atct_migrator_results templates work within Plone3.
+- Use Plone 4 based @@atct_migrator and @@atct_migrator_results template
+  structure.
   [thet]
 
 
