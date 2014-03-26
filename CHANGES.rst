@@ -11,9 +11,6 @@ Changelog
 - Fix @@atct_migrator and @@atct_migrator_results templates work within Plone3.
   [thet]
 
-- ``ROBOT_TEST_LEVEL`` was introduced in ``plone.app.testing>=5.0a1``.
-  [saily]
-
 
 1.2a1 (2014-02-22)
 ------------------
