@@ -422,6 +422,10 @@ class FolderMigrator(ATCTFolderMigrator):
     dst_portal_type = 'Folder'
     dst_meta_type = None  # not used
 
+    def beforeChange_migrate_layout(self):
+        if self.old.getLayout() == 'atct_album_view':
+            self.old.setLayout('folder_album_view')
+
 
 def migrate_folders(portal):
     return migrate(portal, FolderMigrator)

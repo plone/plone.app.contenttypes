@@ -42,4 +42,13 @@
       handler=".upgrades.migrate_to_richtext"
       />
 
+  <genericsetup:upgradeStep
+      source="1101"
+      destination="1102"
+      title="Update album_view"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.migrate_album_view"
+      />
+
 </configure>

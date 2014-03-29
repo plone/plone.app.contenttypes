@@ -8,7 +8,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 class AlbumView(BrowserView):
 
-    template = ViewPageTemplateFile('templates/atct_album_view.pt')
+    template = ViewPageTemplateFile('templates/folder_album_view.pt')
 
     def getAlbumContent(self,
                         container=None,

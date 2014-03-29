@@ -911,12 +911,14 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         from plone.app.contenttypes.interfaces import IFolder
         self.portal.invokeFactory('Folder', 'folder')
         at_folder = self.portal['folder']
+        at_folder.setLayout('atct_album_view')
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_folder, FolderMigrator)
         migrator.migrate()
         dx_folder = self.portal['folder']
         self.assertTrue(IFolder.providedBy(dx_folder))
         self.assertTrue(at_folder is not dx_folder)
+        self.assertEqual(dx_folder.getLayout(), 'folder_album_view')
 
     def test_folder_children_are_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
