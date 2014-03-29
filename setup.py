@@ -1,9 +1,17 @@
 from setuptools import setup, find_packages
 
+import os
+
 version = '1.2a2.dev0'
 
-long_description = open("README.rst").read() + "\n" + \
-    open("CHANGES.rst").read()
+
+def read(*rnames):
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+
+long_description = \
+    read('docs', 'README.rst') + \
+    read('docs', 'CHANGELOG.rst') + \
+    read('docs', 'LICENSE.rst')
 
 setup(name='plone.app.contenttypes',
       version=version,
