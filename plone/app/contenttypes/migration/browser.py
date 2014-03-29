@@ -9,6 +9,7 @@ from datetime import datetime
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.z3cform.layout import wrap_form
@@ -336,8 +337,8 @@ class ATCTMigratorHelpers(BrowserView):
     def linguaplone_installed(self):
         """Is Products.LinguaPlone installed?
         """
-        pq = getToolByName(self.context, 'portal_quickinstaller')
-        return pq.isProductInstalled('LinguaPlone')
+        existing = queryUtility(ILocalBrowserLayerType, name='LinguaPlone')
+        return bool(existing)
 
 
 class ATCTMigratorResults(BrowserView):

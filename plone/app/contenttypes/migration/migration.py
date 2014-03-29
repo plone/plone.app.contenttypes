@@ -26,10 +26,15 @@ from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from z3c.relationfield import RelationValue
+from zope.component import adapter
+from zope.component import getAdapters
 from zope.component import getUtility
 from zope.event import notify
+from zope.interface import Interface
+from zope.interface import implementer
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import ObjectModifiedEvent
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -191,10 +196,39 @@ class ReferenceMigrator(object):
         self.new._relatedItemsOrder = self.old._relatedItemsOrder
 
 
-class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
+class ICustomMigrator(Interface):
+    """Adapter implementer interface for custom migrators.
+    Please note that you have to register named adapters in order to be able to
+    register multiple adapters to the same adaptee.
+    """
+    def migrate(old, new):
+        """Start the custom migraton.
+        :param old: The old content object.
+        :param new: The new content object.
+        """
+
+
+@implementer(ICustomMigrator)
+@adapter(Interface)
+class BaseCustomMigator(object):
+    """Base custom migration class. Does nothing.
+
+    You can use this as base class for your custom migrator adapters.
+    You might register it to some specific orginal content interface.
+    """
+    def __init__(self, context):
+        self.context = context
+
+    def migrate(self, old, new):
+        return
+
+
+class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
+    """Base for contentish ATCT
+    """
 
     def __init__(self, *args, **kwargs):
-        super(ATCTBaseMigrator, self).__init__(*args, **kwargs)
+        super(ATCTContentMigrator, self).__init__(*args, **kwargs)
         logger.info(
             "Migrating object %s" %
             '/'.join(self.old.getPhysicalPath())
@@ -204,19 +238,33 @@ class ATCTBaseMigrator(CMFItemMigrator, ReferenceMigrator):
         field = self.old.getField('excludeFromNav')
         self.new.exclude_from_nav = field.get(self.old)
 
+    def migrate_custom(self):
+        """Get all ICustomMigrator registered migrators and run the migration.
+        """
+        for _, migrator in getAdapters((self.old, ), ICustomMigrator):
+            migrator.migrate(self.old, self.new)
 
-class ATCTContentMigrator(ATCTBaseMigrator,
-                          CMFItemMigrator,
-                          ReferenceMigrator):
-    """Base for contentish ATCT
-    """
 
-
-class ATCTFolderMigrator(ATCTBaseMigrator,
-                         CMFFolderMigrator,
-                         ReferenceMigrator):
+class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
     """Base for folderish ATCT
     """
+
+    def __init__(self, *args, **kwargs):
+        super(ATCTFolderMigrator, self).__init__(*args, **kwargs)
+        logger.info(
+            "Migrating object %s" %
+            '/'.join(self.old.getPhysicalPath())
+        )
+
+    def migrate_atctmetadata(self):
+        field = self.old.getField('excludeFromNav')
+        self.new.exclude_from_nav = field.get(self.old)
+
+    def migrate_custom(self):
+        """Get all ICustomMigrator registered migrators and run the migration.
+        """
+        for _, migrator in getAdapters((self.old, ), ICustomMigrator):
+            migrator.migrate(self.old, self.new)
 
 
 class DocumentMigrator(ATCTContentMigrator):
