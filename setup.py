@@ -10,8 +10,7 @@ def read(*rnames):
 
 long_description = \
     read('docs', 'README.rst') + \
-    read('docs', 'CHANGELOG.rst') + \
-    read('docs', 'LICENSE.rst')
+    read('docs', 'CHANGES.rst')
 
 setup(name='plone.app.contenttypes',
       version=version,
