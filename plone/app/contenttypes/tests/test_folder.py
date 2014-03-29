@@ -133,7 +133,7 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
 
-    def test_atct_album_view(self):
-        self.browser.open(self.folder_url + '/atct_album_view')
+    def test_folder_album_view(self):
+        self.browser.open(self.folder_url + '/folder_album_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)

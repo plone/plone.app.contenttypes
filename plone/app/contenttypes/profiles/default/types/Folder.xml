@@ -17,7 +17,7 @@
   <element value="folder_summary_view"/>
   <element value="folder_full_view"/>
   <element value="folder_tabular_view"/>
-  <element value="atct_album_view"/>
+  <element value="folder_album_view"/>
   <element value="folder_listing"/>
  </property>
  <property name="default_view_fallback">False</property>

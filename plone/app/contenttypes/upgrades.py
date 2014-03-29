@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Products.CMFCore.utils import getToolByName
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 
@@ -67,3 +68,20 @@ def migrate_to_richtext(context):
         'profile-plone.app.contenttypes:default',
         'typeinfo',
     )
+
+
+def migrate_album_view(context):
+    """Migrate Folders name view"""
+
+    # allow folder_album_view for the types
+    context.runImportStepFromProfile(
+        'profile-plone.app.contenttypes:default',
+        'typeinfo',
+    )
+    catalog = getToolByName(context, 'portal_catalog')
+    search = catalog.unrestrictedSearchResults
+    for brain in search(portal_type='Folder'):
+        obj = brain.getObject()
+        current = context.getLayout()
+        if current == 'atct_album_view':
+            obj.setLayout('folder_album_view')
