@@ -78,6 +78,7 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         z2.installProduct(app, 'Products.Archetypes')
         z2.installProduct(app, 'Products.ATContentTypes')
         z2.installProduct(app, 'plone.app.blob')
+
         # prepare installing plone.app.collection
         try:
             pkg_resources.get_distribution('plone.app.collection')
@@ -111,6 +112,9 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         profiles = [x['id'] for x in portal.portal_setup.listProfileInfo()]
         if 'Products.ATContentTypes:default' in profiles:
             applyProfile(portal, 'Products.ATContentTypes:default')
+
+        # enable old Topic
+        portal.portal_types.Topic.global_allow = True
 
         # install plone.app.collections manually if profile is available
         # (this is only needed for Plone >= 5)
