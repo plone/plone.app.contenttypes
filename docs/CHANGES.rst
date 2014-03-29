@@ -4,6 +4,9 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Rename atct_album_view to folder_album_view.
+  [pbauer]
+
 - Do a better check, if LinguaPlone is installed, based on the presence of the
   "LinguaPlone" browser layer. Asking the quick installer tool might claim it's
   installed, where it's not.
