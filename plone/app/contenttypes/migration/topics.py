@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import logging
-
 from DateTime import DateTime
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces._content import IFolderish
+from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.archetypes import InplaceATFolderMigrator
 from Products.contentmigration.archetypes import InplaceATItemMigrator
 from Products.contentmigration.walker import CustomQueryWalker
@@ -11,6 +9,8 @@ from plone.app.querystring.interfaces import IQuerystringRegistryReader
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 from zope.dottedname.resolve import resolve
+
+import logging
 
 logger = logging.getLogger('plone.app.collection')
 prefix = "plone.app.querystring"
@@ -413,7 +413,6 @@ class ATSimpleIntCriterionConverter(CriterionConverter):
 
     def get_operation(self, value, index, criterion):
         # Get dotted operation method.
-        import pdb;pdb.set_trace()
         direction = value.get('range')
         if not direction:
             code = 'is'
