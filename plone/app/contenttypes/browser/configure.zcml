@@ -190,6 +190,16 @@
     class=".album_view.AlbumView"
     template="templates/folder_album_view.pt"
     permission="zope2.View"
+    />
+
+  <!-- BBB -->
+  <browser:page
+    name="atct_album_view"
+    for="plone.dexterity.interfaces.IDexterityContainer"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".album_view.AlbumView"
+    template="templates/folder_album_view.pt"
+    permission="zope2.View"
     menu="plone_displayviews"
     title="Album"
     />

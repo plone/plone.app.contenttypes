@@ -268,6 +268,7 @@ class ATCTMigratorForm(form.Form):
     fields['content_types'].widgetFactory = CheckBoxFieldWidget
     fields['extended_content'].widgetFactory = CheckBoxFieldWidget
     ignoreContext = True
+    enableCSRFProtection = True
 
     @button.buttonAndHandler(u'Migrate', name='migrate')
     def handle_migrate(self, action):
@@ -359,30 +360,41 @@ class ATCTMigratorResults(BrowserView):
         return results
 
 
-class PACInstaller(BrowserView):
-    """Install p.a.c and redirect to migration-form"""
+class PACInstaller(form.Form):
+    """Install p.a.c and redirect to migration-form."""
 
-    def __call__(self):
-        # TODO: This should be a simple z3c-form
+    fields = field.Fields()
+    template = ViewPageTemplateFile('pac_installer.pt')
+    enableCSRFProtection = True
+
+    @property
+    def pac_installable(self):
         qi = getToolByName(self.context, "portal_quickinstaller")
         pac_installed = qi.isProductInstalled('plone.app.contenttypes')
         pac_installable = qi.isProductInstallable('plone.app.contenttypes')
+        return pac_installable and not pac_installed
+
+    @property
+    def pac_installed(self):
+        qi = getToolByName(self.context, "portal_quickinstaller")
+        return qi.isProductInstalled('plone.app.contenttypes')
+
+    @button.buttonAndHandler(_(u'Install'), name='install')
+    def handle_install(self, action):
         messages = IStatusMessage(self.request)
         url = self.context.absolute_url()
-        # FIXME: How do I protect this the right® way?
-        from plone.protect.interfaces import IDisableCSRFProtection
-        from zope.interface import alsoProvides
-        alsoProvides(self.request, IDisableCSRFProtection)
-        if pac_installable and not pac_installed:
-            fail = qi.installProduct(
-                'plone.app.contenttypes',
-                profile='plone.app.contenttypes:default'
-            )
-            if fail:
-                messages.addStatusMessage(fail, type='error')
-            else:
-                url = url + "/@@atct_migrator"
-        elif not pac_installable:
-            msg = _(u'Dexterity Types are not installable. Talk to your admin')
-            messages.addStatusMessage(msg, type='error')
+        qi = getToolByName(self.context, "portal_quickinstaller")
+        fail = qi.installProduct(
+            'plone.app.contenttypes',
+            profile='plone.app.contenttypes:default'
+        )
+        if fail:
+            messages.addStatusMessage(fail, type='error')
+        else:
+            url = url + "/@@atct_migrator"
         self.request.response.redirect(url)
+
+    @button.buttonAndHandler(
+        _(u'label_cancel', default=u'Cancel'), name='cancel')
+    def handle_cancel(self, action):
+        self.request.response.redirect(self.context.absolute_url())

@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+    <metal:block fill-slot="top_slot"
+                 tal:define="dummy python:request.set('disable_border',1)" />
+
+    <body>
+
+        <metal:main fill-slot="main">
+
+            <tal:installable tal:condition="view/pac_installable">
+                <h1 class="documentFirstHeading"
+                    i18n:translate="">
+                    Install decterity-based default-type and proceed to migration-form?
+                </h1>
+                <div id="content-core">
+                    <form metal:use-macro="context/@@ploneform-macros/titlelessform" />
+                </div>
+            </tal:installable>
+
+            <tal:installable tal:condition="view/pac_installed">
+                <h1>
+                    Plone.app.contenttypes is already installed
+                </h1>
+                <p>
+                    <a href="@@atct_migrator">Proceed to migrating your content to dexterity.</a>
+                </p>
+            </tal:installable>
+
+        </metal:main>
+    </body>
+</html>
