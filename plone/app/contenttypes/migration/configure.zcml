@@ -43,7 +43,6 @@
     permission="cmf.ManagePortal"
     />
 
-
   <browser:page
     name="atct_migrator_results"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
@@ -51,6 +50,13 @@
     layer="..interfaces.IPloneAppContenttypesLayer"
     permission="cmf.ManagePortal"
     template="atct_migrator_results.pt"
+    />
+
+  <browser:page
+    name="pac_installer"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".browser.PACInstaller"
+    permission="cmf.ManagePortal"
     />
 
   <utility

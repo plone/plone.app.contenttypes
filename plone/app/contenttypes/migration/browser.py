@@ -3,8 +3,10 @@ from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
+from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
@@ -14,7 +16,9 @@ from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
-from z3c.form import form, field, button
+from z3c.form import button
+from z3c.form import field
+from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
@@ -353,3 +357,32 @@ class ATCTMigratorResults(BrowserView):
             return False
         # results['atct_list'] = ATCT_LIST
         return results
+
+
+class PACInstaller(BrowserView):
+    """Install p.a.c and redirect to migration-form"""
+
+    def __call__(self):
+        # TODO: This should be a simple z3c-form
+        qi = getToolByName(self.context, "portal_quickinstaller")
+        pac_installed = qi.isProductInstalled('plone.app.contenttypes')
+        pac_installable = qi.isProductInstallable('plone.app.contenttypes')
+        messages = IStatusMessage(self.request)
+        url = self.context.absolute_url()
+        # FIXME: How do I protect this the right® way?
+        from plone.protect.interfaces import IDisableCSRFProtection
+        from zope.interface import alsoProvides
+        alsoProvides(self.request, IDisableCSRFProtection)
+        if pac_installable and not pac_installed:
+            fail = qi.installProduct(
+                'plone.app.contenttypes',
+                profile='plone.app.contenttypes:default'
+            )
+            if fail:
+                messages.addStatusMessage(fail, type='error')
+            else:
+                url = url + "/@@atct_migrator"
+        elif not pac_installable:
+            msg = _(u'Dexterity Types are not installable. Talk to your admin')
+            messages.addStatusMessage(msg, type='error')
+        self.request.response.redirect(url)
