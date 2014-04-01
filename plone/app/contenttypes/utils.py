@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
 
+DEFAULT_TYPES = [
+    'Collection',
+    'Document',
+    'Event',
+    'File',
+    'Folder',
+    'Image',
+    'Link',
+    'News Item',
+]
+
 
 def replace_link_variables_by_paths(context, url):
     """Take an `url` and replace the variables "${navigation_root_url}" and
