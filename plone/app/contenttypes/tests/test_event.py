@@ -114,9 +114,11 @@ class EventFunctionalTest(unittest.TestCase):
         self.browser.getControl(
             name='form.widgets.IEventBasic.end'
         ).value = '2013-01-12'
+        self.browser.getControl(name='form.widgets.IShortName.id')\
+            .value = "my-special-event"
         self.browser.getControl('Save').click()
 
-        self.assertTrue(self.browser.url.endswith('my-event/view'))
+        self.assertTrue(self.browser.url.endswith('my-special-event/view'))
         self.assertTrue('My event' in self.browser.contents)
         self.assertTrue('This is my event' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
