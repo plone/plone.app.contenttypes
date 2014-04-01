@@ -4,5 +4,6 @@
               handler="plone.app.contenttypes.setuphandlers.importContent"
               title="plone.app.contenttypes base content-types">
     plone.app.contenttypes plone-content installation step.
+    <dependency step="typeinfo" />
  </import-step>
 </import-steps>
