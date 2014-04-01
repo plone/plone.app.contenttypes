@@ -10,11 +10,11 @@ from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
+from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.interfaces import IDexterityFTI
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from z3c.form import button
@@ -143,7 +143,7 @@ class MigrateFromATContentTypes(BrowserView):
                 "Migrating %s objects of type %s" %
                 (amount_to_be_migrated, k)
             )
-            self.installTypeIfNeeded(v['new_type_name'])
+            installTypeIfNeeded(v['new_type_name'])
             # call the migrator
             v['migrator'](portal)
 
@@ -227,20 +227,6 @@ class MigrateFromATContentTypes(BrowserView):
             else:
                 klass.notifyModified = klass.old_notifyModified
             del klass.old_notifyModified
-
-    def installTypeIfNeeded(self, type_name):
-        """Make sure the dexterity-fti is already installed.
-        If not we run a step that only installs the migrated types fti
-        """
-        tt = getToolByName(self.context, 'portal_types')
-        fti = tt.getTypeInfo(type_name)
-        if IDexterityFTI.providedBy(fti):
-            return
-        ps = getToolByName(self.context, 'portal_setup')
-        profile_name = type_name.lower().replace('_', '')
-        ps.runAllImportStepsFromProfile(
-            'profile-plone.app.contenttypes:%s' % profile_name
-        )
 
 
 class IATCTMigratorForm(Interface):
@@ -401,16 +387,6 @@ class PACInstaller(form.Form):
         This way the AT-fti's are still valid.
         """
         url = self.context.absolute_url()
-        # setup = getToolByName(self.context, "portal_setup")
-        # steps = _import_step_registry.listSteps()
-        # steps.remove(u'typeinfo')
-        # profile = 'profile-plone.app.contenttypes:default'
-        # for step in steps:
-        #     setup.runImportStepFromProfile(profile,
-        #                                    step,
-        #                                    run_dependencies=False,
-        #                                    purge_old=False)
-
         qi = getToolByName(self.context, "portal_quickinstaller")
         fail = qi.installProduct(
             'plone.app.contenttypes',
@@ -420,8 +396,27 @@ class PACInstaller(form.Form):
             messages = IStatusMessage(self.request)
             messages.addStatusMessage(fail, type='error')
             self.request.response.redirect(url)
+        # For types without any instances we want to instantly
+        # replace the AT-FTI's with DX-FTI's.
+        self.installTypesWithoutItems()
+
         url = url + '/@@atct_migrator'
         self.request.response.redirect(url)
+
+    def installTypesWithoutItems(self):
+        catalog = getToolByName(self.context, "portal_catalog")
+        for types_name in [
+            'Event',
+            'Collection',
+            'Document',
+            'File',
+            'Folder',
+            'Image',
+            'Link',
+            'News Item',
+        ]:
+            if not catalog.unrestrictedSearchResults(portal_type=types_name):
+                installTypeIfNeeded(types_name)
 
     @button.buttonAndHandler(
         _(u'label_cancel', default=u'Cancel'), name='cancel')
