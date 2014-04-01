@@ -14,6 +14,7 @@ from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from z3c.form import button
@@ -142,6 +143,7 @@ class MigrateFromATContentTypes(BrowserView):
                 "Migrating %s objects of type %s" %
                 (amount_to_be_migrated, k)
             )
+            self.installTypeIfNeeded(v['new_type_name'])
             # call the migrator
             v['migrator'](portal)
 
@@ -225,6 +227,20 @@ class MigrateFromATContentTypes(BrowserView):
             else:
                 klass.notifyModified = klass.old_notifyModified
             del klass.old_notifyModified
+
+    def installTypeIfNeeded(self, type_name):
+        """Make sure the dexterity-fti is already installed.
+        If not we run a step that only installs the migrated types fti
+        """
+        tt = getToolByName(self.context, 'portal_types')
+        fti = tt.getTypeInfo(type_name)
+        if IDexterityFTI.providedBy(fti):
+            return
+        ps = getToolByName(self.context, 'portal_setup')
+        profile_name = type_name.lower().replace('_', '')
+        ps.runAllImportStepsFromProfile(
+            'profile-plone.app.contenttypes:%s' % profile_name
+        )
 
 
 class IATCTMigratorForm(Interface):
@@ -381,17 +397,30 @@ class PACInstaller(form.Form):
 
     @button.buttonAndHandler(_(u'Install'), name='install')
     def handle_install(self, action):
-        messages = IStatusMessage(self.request)
+        """ install p.a.c's core-profile (no fti's).
+        This way the AT-fti's are still valid.
+        """
         url = self.context.absolute_url()
+        # setup = getToolByName(self.context, "portal_setup")
+        # steps = _import_step_registry.listSteps()
+        # steps.remove(u'typeinfo')
+        # profile = 'profile-plone.app.contenttypes:default'
+        # for step in steps:
+        #     setup.runImportStepFromProfile(profile,
+        #                                    step,
+        #                                    run_dependencies=False,
+        #                                    purge_old=False)
+
         qi = getToolByName(self.context, "portal_quickinstaller")
         fail = qi.installProduct(
             'plone.app.contenttypes',
-            profile='plone.app.contenttypes:default'
+            profile='plone.app.contenttypes:core',
         )
         if fail:
+            messages = IStatusMessage(self.request)
             messages.addStatusMessage(fail, type='error')
-        else:
-            url = url + "/@@atct_migrator"
+            self.request.response.redirect(url)
+        url = url + '/@@atct_migrator'
         self.request.response.redirect(url)
 
     @button.buttonAndHandler(
