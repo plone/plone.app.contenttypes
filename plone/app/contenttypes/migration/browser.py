@@ -12,6 +12,7 @@ from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
@@ -405,16 +406,7 @@ class PACInstaller(form.Form):
 
     def installTypesWithoutItems(self):
         catalog = getToolByName(self.context, "portal_catalog")
-        for types_name in [
-            'Event',
-            'Collection',
-            'Document',
-            'File',
-            'Folder',
-            'Image',
-            'Link',
-            'News Item',
-        ]:
+        for types_name in DEFAULT_TYPES:
             if not catalog.unrestrictedSearchResults(portal_type=types_name):
                 installTypeIfNeeded(types_name)
 

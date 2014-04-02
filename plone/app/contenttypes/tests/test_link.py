@@ -197,8 +197,10 @@ class LinkFunctionalTest(unittest.TestCase):
             .value = "My link"
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my link."
+        self.browser.getControl(name='form.widgets.IShortName.id')\
+            .value = "my-special-link"
         self.browser.getControl('Save').click()
 
-        self.assertTrue(self.browser.url.endswith('my-link/view'))
+        self.assertTrue(self.browser.url.endswith('my-special-link/view'))
         self.assertTrue('My link' in self.browser.contents)
         self.assertTrue('This is my link' in self.browser.contents)

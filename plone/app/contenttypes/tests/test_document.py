@@ -111,8 +111,10 @@ class DocumentFunctionalTest(unittest.TestCase):
             .value = "This is my document."
         self.browser.getControl(name='form.widgets.IRichText.text')\
             .value = "Lorem Ipsum"
+        self.browser.getControl(name='form.widgets.IShortName.id')\
+            .value = "my-special-document"
         self.browser.getControl('Save').click()
-        self.assertTrue(self.browser.url.endswith('my-document/view'))
+        self.assertTrue(self.browser.url.endswith('my-special-document/view'))
         self.assertTrue('My document' in self.browser.contents)
         self.assertTrue('This is my document' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)

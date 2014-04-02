@@ -16,6 +16,9 @@ from plone.app.contenttypes.testing import \
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
+
 from plone.testing.z2 import Browser
 from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, \
     setRoles, login, logout
@@ -133,6 +136,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):
+        self.browser = Browser(self.layer['app'])
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
@@ -175,8 +179,33 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
+    def test_add_collection(self):
+        browser = self.browser
+        browser.handleErrors = False
+        browser.addHeader(
+            'Authorization',
+            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+        )
+        portal_url = self.portal.absolute_url()
+        browser.open(portal_url)
+        browser.getLink(url='http://nohost/plone/++add++Collection').click()
+        browser.getControl(name='form.widgets.IDublinCore.title')\
+            .value = "My collection"
+        browser.getControl(name='form.widgets.IDublinCore.description')\
+            .value = "This is my collection."
+        browser.getControl(name='form.widgets.IRichText.text')\
+            .value = "Lorem Ipsum"
+        browser.getControl(name='form.widgets.IShortName.id')\
+            .value = "my-special-collection"
+        browser.getControl('Save').click()
+        self.assertTrue(browser.url.endswith('my-special-collection/view'))
+        self.assertTrue('My collection' in browser.contents)
+        self.assertTrue('This is my collection' in browser.contents)
+        self.assertTrue('Lorem Ipsum' in browser.contents)
+
     # @unittest.skip("Needs to be refactored")
     def test_collection_templates(self):
+        browser = self.browser
         portal = self.layer['portal']
         login(portal, 'admin')
         # add an image that will be listed by the collection
@@ -212,7 +241,6 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         commit()
         logout()
         # open a browser to see if our image is in the results
-        browser = Browser(self.layer['app'])
         browser.handleErrors = False
         url = collection.absolute_url()
         browser.open(url)
