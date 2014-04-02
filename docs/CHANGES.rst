@@ -4,6 +4,9 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Enable IShortName for all default-types.
+  [pbauer, mikejmets]
+
 - Replace AT-fti with DX-fti when migrating a type.
   [pbauer]
 
