@@ -15,7 +15,7 @@
             <tal:installable tal:condition="view/pac_installable">
                 <h1 class="documentFirstHeading"
                     i18n:translate="">
-                    Install decterity-based default-type and proceed to migration-form?
+                    Install dexterity and proceed to the migration-form?
                 </h1>
                 <div id="content-core">
                     <form metal:use-macro="context/@@ploneform-macros/titlelessform" />
@@ -24,10 +24,10 @@
 
             <tal:installable tal:condition="view/pac_installed">
                 <h1>
-                    Plone.app.contenttypes is already installed
+                    Dexterity is already installed
                 </h1>
                 <p>
-                    <a href="@@atct_migrator">Proceed to migrating your content to dexterity.</a>
+                    <a href="@@atct_migrator">Proceed to migrating your existing content to dexterity.</a>
                 </p>
             </tal:installable>
 
