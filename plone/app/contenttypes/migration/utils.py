@@ -6,6 +6,7 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+from Products.CMFCore.utils import getToolByName
 from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
@@ -13,6 +14,7 @@ from archetypes.schemaextender.interfaces import ISchemaModifier
 from plone.app.blob.interfaces import IATBlobFile
 from plone.app.blob.interfaces import IATBlobImage
 from plone.app.contenttypes.migration import migration
+from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
 
@@ -152,3 +154,19 @@ def _checkForExtenderInterfaces(interface):
             fields = getattr(adapter.factory(None), 'fields', [])
             return [field.getName() for field in fields]
     return []
+
+
+def installTypeIfNeeded(type_name):
+    """Make sure the dexterity-fti is already installed.
+    If not we run a step that only installs the types fti.
+    """
+    portal = getSite()
+    tt = getToolByName(portal, 'portal_types')
+    fti = tt.getTypeInfo(type_name)
+    if IDexterityFTI.providedBy(fti):
+        return
+    ps = getToolByName(portal, 'portal_setup')
+    profile_name = type_name.lower().replace('_', '')
+    ps.runAllImportStepsFromProfile(
+        'profile-plone.app.contenttypes:%s' % profile_name
+    )

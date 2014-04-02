@@ -340,7 +340,7 @@ def configure_members_folder(portal, target_language):
             assignable.setBlacklistStatus('content_type', True)
 
 
-def importContent(context):
+def step_import_content(context):
     """Remove existing AT-content and create DX-content instead."""
 
     if context.readDataFile('plone.app.contenttypes_content.txt') is None:
@@ -395,7 +395,7 @@ def _delete_at_example_content(portal):
         portal.manage_delObjects(to_delete)
 
 
-def setupVarious(context):
+def step_setup_various(context):
     if context.readDataFile('plone.app.contenttypes_default.txt') is None:
         return
     portal = context.getSite()

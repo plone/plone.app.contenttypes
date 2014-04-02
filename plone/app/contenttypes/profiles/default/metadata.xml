@@ -1,11 +1,13 @@
 <metadata>
  <version>1101</version>
  <dependencies>
-  <dependency>profile-plone.app.dexterity:default</dependency>
-  <dependency>profile-plone.app.event:default</dependency>
-  <dependency>profile-plone.app.relationfield:default</dependency>
-  <dependency>profile-plone.app.versioningbehavior:default</dependency>
-  <!-- XXX: For some reason the p.a.d gs workflow is not applied correctly. -->
-  <dependency>profile-plone.app.discussion:default</dependency>
+  <dependency>profile-plone.app.contenttypes:event</dependency>
+  <dependency>profile-plone.app.contenttypes:collection</dependency>
+  <dependency>profile-plone.app.contenttypes:document</dependency>
+  <dependency>profile-plone.app.contenttypes:file</dependency>
+  <dependency>profile-plone.app.contenttypes:folder</dependency>
+  <dependency>profile-plone.app.contenttypes:image</dependency>
+  <dependency>profile-plone.app.contenttypes:link</dependency>
+  <dependency>profile-plone.app.contenttypes:newsitem</dependency>
  </dependencies>
 </metadata>

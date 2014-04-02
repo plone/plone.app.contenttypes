@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<object meta_type="Plone Types Tool" name="portal_types">
+
+ <object name="Collection" remove="True"/>
+ <object name="Topic" remove="True"/>
+
+ <object meta_type="Dexterity FTI" name="Collection" />
+
+</object>

@@ -8,31 +8,7 @@
            i18n_domain="plone.app.contenttypes">
 
   <includeDependencies package="." />
-
-  <gs:registerProfile
-    name="default"
-    title="Dexterity-based Plone Default Types (without example content)"
-    directory="profiles/default"
-    description="This provides Plones default types without adding example comntent"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="uninstall"
-    title="Uninstall Dexterity-based Plone Default Types"
-    directory="profiles/uninstall"
-    description="Uninstall Base Dexterity content-types and restore Archetypes default-content-types"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <!-- plone.app.contenttypes alternatives to profile-Products.CMFPlone:plone-content -->
-  <gs:registerProfile
-    name="plone-content"
-    title="Dexterity-based Plone Default Types"
-    directory="profiles/content"
-    description="Dexterity content-types used as a replacement for Archetypes default-content-types"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
+  <include file="profiles.zcml" />
 
   <include package=".behaviors" />
   <include package=".browser" />
