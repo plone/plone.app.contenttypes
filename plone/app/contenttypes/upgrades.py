@@ -92,6 +92,7 @@ def migrate_album_view(context):
 def enable_shortname_behavior(context):
     """Add IShortName to all types."""
 
+    behavior = 'plone.app.dexterity.behaviors.id.IShortName'
     for type_id in DEFAULT_TYPES:
         fti = queryUtility(
             IDexterityFTI,
@@ -100,9 +101,8 @@ def enable_shortname_behavior(context):
         if fti is None:
             continue
 
-        behavior = 'plone.app.dexterity.behaviors.id.IShortName'
         if behavior in fti.behaviors:
-            return
+            continue
         behaviors = list(fti.behaviors)
         behaviors.append(behavior)
         behaviors = tuple(behaviors)
