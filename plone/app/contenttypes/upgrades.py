@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 
@@ -46,8 +47,8 @@ def update_fti(context):
 
 
 def enable_collection_behavior(context):
-    """Enable collection behavior on Collection.
-    """
+    """Enable collection behavior on Collection."""
+
     fti = queryUtility(
         IDexterityFTI,
         name='Collection'
@@ -62,8 +63,9 @@ def enable_collection_behavior(context):
 
 
 def migrate_to_richtext(context):
-    """update fti's to add RichText behaviors and remove old text-fields"""
+    """Update fti's to add RichText behaviors and remove old text-fields."""
 
+    # TODO: Don't reload the profile. Only change the settings.
     context.runImportStepFromProfile(
         'profile-plone.app.contenttypes:default',
         'typeinfo',
@@ -71,9 +73,9 @@ def migrate_to_richtext(context):
 
 
 def migrate_album_view(context):
-    """Migrate Folders name view"""
+    """Migrate atct_album_view to folder_album_view."""
 
-    # allow folder_album_view for the types
+    # TODO: Don't reload the profile. Only change the settings.
     context.runImportStepFromProfile(
         'profile-plone.app.contenttypes:default',
         'typeinfo',
@@ -85,3 +87,23 @@ def migrate_album_view(context):
         current = context.getLayout()
         if current == 'atct_album_view':
             obj.setLayout('folder_album_view')
+
+
+def enable_shortname_behavior(context):
+    """Add IShortName to all types."""
+
+    behavior = 'plone.app.dexterity.behaviors.id.IShortName'
+    for type_id in DEFAULT_TYPES:
+        fti = queryUtility(
+            IDexterityFTI,
+            name=type_id
+        )
+        if fti is None:
+            continue
+
+        if behavior in fti.behaviors:
+            continue
+        behaviors = list(fti.behaviors)
+        behaviors.append(behavior)
+        behaviors = tuple(behaviors)
+        fti._updateProperty('behaviors', behaviors)

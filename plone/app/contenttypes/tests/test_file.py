@@ -111,6 +111,19 @@ class FileFunctionalTest(unittest.TestCase):
         self.assertTrue('My file' in self.browser.contents)
         self.assertTrue('This is my file' in self.browser.contents)
 
+    def test_shortname_file(self):
+        self.browser.open(self.portal_url)
+        self.browser.getLink('File').click()
+        self.browser.getControl(name='form.widgets.title')\
+            .value = "My file"
+        self.browser.getControl(name='form.widgets.IShortName.id')\
+            .value = "my-special-file"
+        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        file_ctl = self.browser.getControl(name='form.widgets.file')
+        file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
+        self.browser.getControl('Save').click()
+        self.assertTrue(self.browser.url.endswith('my-special-file/view'))
+
     def test_mime_icon_pdf_for_file_(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
