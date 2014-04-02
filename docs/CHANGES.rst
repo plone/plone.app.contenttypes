@@ -4,6 +4,16 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Replace AT-fti with DX-fti when migrating a type.
+  [pbauer]
+
+- Split up profiles so we have one profile per type
+  [pbauer, yenzenz]
+
+- Add form to install pac's core-profile and forward to dx_migration
+  after a successful migration to Plone 5
+  [pbauer]
+
 - Rename atct_album_view to folder_album_view.
   [pbauer]
 
