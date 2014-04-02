@@ -167,6 +167,10 @@ def installTypeIfNeeded(type_name):
         return
     ps = getToolByName(portal, 'portal_setup')
     profile_name = type_name.lower().replace('_', '')
-    ps.runAllImportStepsFromProfile(
-        'profile-plone.app.contenttypes:%s' % profile_name
-    )
+    try:
+        ps.runAllImportStepsFromProfile(
+            'profile-plone.app.contenttypes:%s' % profile_name
+        )
+    except KeyError:
+        raise KeyError('Profile not found: profile-plone.app.contenttypes:'
+            '%s' % profile_name)

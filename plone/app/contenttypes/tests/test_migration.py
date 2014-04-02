@@ -5,9 +5,10 @@ from five.intid.site import addUtility
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 from plone.app.contenttypes.testing import set_browserlayer
-from plone.event.interfaces import IEventAccessor
-from plone.app.testing import login
 from plone.app.testing import applyProfile
+from plone.app.testing import login
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.event.interfaces import IEventAccessor
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getSiteManager
@@ -117,6 +118,38 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         gsm.unregisterAdapter(required=[IATNewsItem], provided=ISchemaExtender)
 
         return at_newsitem
+
+    def test_install_dx_type_if_needed(self):
+        from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+        applyProfile(self.portal, 'plone.app.contenttypes:core')
+        tt = self.portal['portal_types']
+        fti = tt.getTypeInfo('Document')
+        self.assertFalse(IDexterityFTI.providedBy(fti))
+        installTypeIfNeeded('Document')
+        fti = tt.getTypeInfo('Document')
+        self.assertTrue(IDexterityFTI.providedBy(fti))
+
+    def test_install_dx_type_if_needed_wrong_type_name(self):
+        from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+        self.assertRaises(KeyError, installTypeIfNeeded, 'Unknown')
+        try:
+            installTypeIfNeeded('Unknown')
+        except KeyError as e:
+            self.assertEqual(
+                e.message,
+                'Profile not found: profile-plone.app.contenttypes:unknown'
+            )
+
+    def test_install_single_profile(self):
+        tt = self.portal['portal_types']
+        for ct in ['Document', 'Event']:
+            fti = tt.getTypeInfo(ct)
+            self.assertFalse(IDexterityFTI.providedBy(fti))
+        applyProfile(self.portal, 'plone.app.contenttypes:document')
+        fti = tt.getTypeInfo('Document')
+        self.assertTrue(IDexterityFTI.providedBy(fti))
+        fti = tt.getTypeInfo('Event')
+        self.assertFalse(IDexterityFTI.providedBy(fti))
 
     def test_patct_event_is_migrated(self):
         """Can we migrate a Products.ATContentTypes event?"""
