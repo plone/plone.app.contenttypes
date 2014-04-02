@@ -166,7 +166,7 @@ def installTypeIfNeeded(type_name):
     if IDexterityFTI.providedBy(fti):
         return
     ps = getToolByName(portal, 'portal_setup')
-    profile_name = type_name.lower().replace('_', '')
+    profile_name = type_name.lower().replace('_', '').replace(' ', '')
     try:
         ps.runAllImportStepsFromProfile(
             'profile-plone.app.contenttypes:%s' % profile_name
