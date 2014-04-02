@@ -81,15 +81,15 @@ class FolderFunctionalTest(unittest.TestCase):
         self.browser.getLink(url='http://nohost/plone/++add++Folder').click()
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
             .value = "My folder"
+        self.browser.getControl(name='form.widgets.IShortName.id')\
+            .value = ""
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
             .value = "This is my folder."
         self.browser.getControl('Save').click()
-
         self.assertTrue(self.browser.url.endswith('my-folder/view'))
         self.assertTrue('My folder' in self.browser.contents)
         self.assertTrue('This is my folder' in self.browser.contents)
 
-    @unittest.skip("the IShortName-bahavior is broken on folders")
     def test_add_folder_with_shortname(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Folder').click()
@@ -98,7 +98,6 @@ class FolderFunctionalTest(unittest.TestCase):
         self.browser.getControl(name='form.widgets.IShortName.id')\
             .value = "my-special-folder"
         self.browser.getControl('Save').click()
-
         self.assertTrue(self.browser.url.endswith('my-special-folder/view'))
 
 
