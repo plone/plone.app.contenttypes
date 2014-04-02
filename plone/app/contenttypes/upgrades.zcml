@@ -51,4 +51,13 @@
       handler=".upgrades.migrate_album_view"
       />
 
+  <genericsetup:upgradeStep
+      source="1102"
+      destination="1103"
+      title="Add shortname-behavior"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.enable_shortname_behavior"
+      />
+
 </configure>
