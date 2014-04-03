@@ -86,3 +86,15 @@ class NewsItem(Item):
 
 class Event(Item):
     implements(IEvent)
+
+
+class FolderishDocument(Container):
+    implements(IDocument)
+
+
+class FolderishEvent(Container):
+    implements(IEvent)
+
+
+class FolderishNewsItem(Container):
+    implements(INewsItem)

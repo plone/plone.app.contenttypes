@@ -20,6 +20,16 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
+  <!-- All types, News Item, Document and Event folderish, no sample content,
+       depends on default -->
+  <gs:registerProfile
+    name="folderish"
+    title="Dexterity-based Plone Default Types with folderish behavior"
+    directory="profiles/folderish"
+    description="This provides Plones default types without adding example comntent"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
   <!-- All settings no types, no sample content (only used during migration) -->
   <gs:registerProfile
     name="core"
