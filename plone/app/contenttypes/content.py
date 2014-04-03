@@ -95,3 +95,21 @@ class NewsItem(Item):
 class Event(Item):
     """Convinience subclass for ``File`` portal type
     """
+
+
+@implementer(IDocument)
+class FolderishDocument(Container):
+    """Convinience subclass for ``File`` portal type
+    """
+
+
+@implementer(IEvent)
+class FolderishEvent(Container):
+    """Convinience subclass for ``File`` portal type
+    """
+
+
+@implementer(INewsItem)
+class FolderishNewsItem(Container):
+    """Convinience subclass for ``File`` portal type
+    """
