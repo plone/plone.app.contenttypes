@@ -24,7 +24,7 @@
        depends on default -->
   <gs:registerProfile
     name="folderish"
-    title="Dexterity-based Plone Default Types with folderish behavior"
+    title="Plone default content-types (Folderish behavior) - dexterity"
     directory="profiles/folderish"
     description="This provides Plones default types without adding example comntent"
     provides="Products.GenericSetup.interfaces.EXTENSION"
