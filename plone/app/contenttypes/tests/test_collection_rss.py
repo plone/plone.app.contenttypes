@@ -47,8 +47,8 @@ class RSSViewTest(unittest.TestCase):
 
     def assertIsValidRSS(self, rss):
         # XXX: We might want to validate against a DTD or RelaxNG schema here.
-        #schema = etree.XMLSchema(schema_root)
-        #parser = etree.XMLParser(dtd_validation=True,schema=schema)
+        # schema = etree.XMLSchema(schema_root)
+        # parser = etree.XMLParser(dtd_validation=True,schema=schema)
         if isinstance(rss, unicode):
             rss = rss.encode("utf-8")
         parser = etree.XMLParser()

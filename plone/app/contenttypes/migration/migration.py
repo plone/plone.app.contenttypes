@@ -139,7 +139,7 @@ def restoreReferences(portal):
         out += refs(obj)
         # backrefs
         out += backrefs(portal, obj)
-        #order
+        # order
         out += order(obj)
 
     return out
