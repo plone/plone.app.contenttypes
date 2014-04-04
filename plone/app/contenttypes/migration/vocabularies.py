@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
