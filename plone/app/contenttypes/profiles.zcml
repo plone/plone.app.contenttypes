@@ -2,95 +2,21 @@
            xmlns:gs="http://namespaces.zope.org/genericsetup"
            xmlns:zcml="http://namespaces.zope.org/zcml">
 
-  <!-- default plone content (frontpage etc.), depends on all other profiles -->
+  <!-- Default plone content (frontpage etc.), depends default -->
   <gs:registerProfile
     name="plone-content"
-    title="Content-types example content and all types (plone.app.contenttypes)"
+    title="Content-types plus example content (plone.app.contenttypes)"
     directory="profiles/content"
     description="Plone default content-types (plone.app.contenttypes)"
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
-  <!-- All types, no sample content, depends on types and core -->
+  <!-- All types, no sample content. -->
   <gs:registerProfile
     name="default"
-    title="Content-types all types (plone.app.contenttypes)"
+    title="Content-types (plone.app.contenttypes)"
     directory="profiles/default"
     description="Plone default content-types (plone.app.contenttypes)"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <!-- All settings no types, no sample content (only used during migration) -->
-  <gs:registerProfile
-    name="core"
-    title="Content-types core (plone.app.contenttypes)"
-    directory="profiles/core"
-    description="Plone default content-types (plone.app.contenttypes)"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <!-- Types -->
-  <gs:registerProfile
-    name="collection"
-    title="Content-type Collection (plone.app.contenttypes)"
-    directory="profiles/collection"
-    description="Dexterity-based content-type collection"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="document"
-    title="Content-type Document (plone.app.contenttypes)"
-    directory="profiles/document"
-    description="Dexterity-based content-type document"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="event"
-    title="Content-type Event (plone.app.contenttypes)"
-    directory="profiles/event"
-    description="Dexterity-based content-type event"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="file"
-    title="Content-type File (plone.app.contenttypes)"
-    directory="profiles/file"
-    description="Dexterity-based content-type file"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="folder"
-    title="Content-type Folder (plone.app.contenttypes)"
-    directory="profiles/folder"
-    description="Dexterity-based content-type folder"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="image"
-    title="Content-type Image (plone.app.contenttypes)"
-    directory="profiles/image"
-    description="Dexterity-based content-type image"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="link"
-    title="Content-type Link (plone.app.contenttypes)"
-    directory="profiles/link"
-    description="Dexterity-based content-type link"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    />
-
-  <gs:registerProfile
-    name="newsitem"
-    title="Content-type News Item (plone.app.contenttypes)"
-    directory="profiles/newsitem"
-    description="Dexterity-based content-type News Item"
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 

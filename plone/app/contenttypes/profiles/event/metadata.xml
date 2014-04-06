@@ -1,7 +1,0 @@
-<metadata>
- <version>1000</version>
- <dependencies>
-  <dependency>profile-plone.app.contenttypes:core</dependency>
-  <dependency>profile-plone.app.event:default</dependency>
- </dependencies>
-</metadata>

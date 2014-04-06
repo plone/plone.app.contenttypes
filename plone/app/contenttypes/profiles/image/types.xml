@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<object meta_type="Plone Types Tool" name="portal_types">
-
- <object name="Image" remove="True"/>
- <object meta_type="Dexterity FTI" name="Image" />
-
-</object>

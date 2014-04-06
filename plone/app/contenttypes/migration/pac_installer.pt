@@ -17,6 +17,7 @@
                     i18n:translate="">
                     Install dexterity and proceed to the migration-form?
                 </h1>
+                <p i18n:translate="">After you do this you can't edit your existing content (you can still view it) unless you migrate them to Dexterity in the next step.</p>
                 <div id="content-core">
                     <form metal:use-macro="context/@@ploneform-macros/titlelessform" />
                 </div>
