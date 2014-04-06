@@ -26,8 +26,10 @@ class ContentMigrator(CMFItemMigrator):
 
 
 def migrate_to_pa_event(context):
+    # Install plone.app.event
+    context.runAllImportStepsFromProfile('profile-plone.app.event:default')
     # Re-import types to get newest Event type
-    context.runAllImportStepsFromProfile(
+    context.runImportStepFromProfile(
         'profile-plone.app.contenttypes:default',
         'typeinfo'
     )
