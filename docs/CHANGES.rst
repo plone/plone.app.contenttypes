@@ -7,13 +7,7 @@ Changelog
 - Enable IShortName for all default-types.
   [pbauer, mikejmets]
 
-- Replace AT-fti with DX-fti when migrating a type.
-  [pbauer]
-
-- Split up profiles so we have one profile per type
-  [pbauer, yenzenz]
-
-- Add form to install pac's core-profile and forward to dx_migration
+- Add form to install pac and forward to dx_migration
   after a successful migration to Plone 5
   [pbauer]
 
