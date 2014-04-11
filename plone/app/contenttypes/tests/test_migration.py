@@ -7,7 +7,6 @@ from plone.app.contenttypes.testing import \
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.app.testing import applyProfile
 from plone.app.testing import login
-from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.interfaces import IEventAccessor
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
