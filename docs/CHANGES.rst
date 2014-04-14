@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2a2 (unreleased)
+1.2a2 (2014-04-13)
 ------------------
 
 - Enable IShortName for all default-types.
