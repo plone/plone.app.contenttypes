@@ -4,7 +4,8 @@ Changelog
 1.2a3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Adapt to changes of plone.app.event 2.0.
+  [thet]
 
 
 1.2a2 (2014-04-13)

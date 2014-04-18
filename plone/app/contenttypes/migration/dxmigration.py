@@ -2,11 +2,9 @@
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from plone.app.contenttypes.interfaces import IEvent
-from plone.event.interfaces import IEventAccessor
+from plone.app.contenttypes.migration import datetime_fixer
 from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import getSite
-from zope.lifecycleevent import ObjectModifiedEvent
-from zope.event import notify
 from plone.event.utils import default_timezone
 
 
@@ -51,31 +49,28 @@ class DXOldEventMigrator(ContentMigrator):
             ContentMigrator.migrate(self)
 
     def migrate_schema_fields(self):
-        newacc = IEventAccessor(self.new)
-        newacc.start = self.old.start_date
-        newacc.end = self.old.end_date
-        newacc.timezone = str(self.old.start_date.tzinfo) \
+        timezone = str(self.old.start_date.tzinfo) \
             if self.old.start_date.tzinfo \
             else default_timezone(fallback='UTC')
 
+        self.new.start = datetime_fixer(self.old.start_date, timezone)
+        self.new.end = datetime_fixer(self.old.end_date, timezone)
+
         if hasattr(self.old, 'location'):
-            newacc.location = self.old.location
+            self.new.location = self.old.location
         if hasattr(self.old, 'attendees'):
-            newacc.attendees = tuple(self.old.attendees.splitlines())
+            self.new.attendees = tuple(self.old.attendees.splitlines())
         if hasattr(self.old, 'event_url'):
-            newacc.event_url = self.old.event_url
+            self.new.event_url = self.old.event_url
         if hasattr(self.old, 'contact_name'):
-            newacc.contact_name = self.old.contact_name
+            self.new.contact_name = self.old.contact_name
         if hasattr(self.old, 'contact_email'):
-            newacc.contact_email = self.old.contact_email
+            self.new.contact_email = self.old.contact_email
         if hasattr(self.old, 'contact_phone'):
-            newacc.contact_phone = self.old.contact_phone
+            self.new.contact_phone = self.old.contact_phone
         if hasattr(self.old, 'text'):
             # Copy the entire richtext object, not just it's representation
             self.new.text = self.old.text
-
-        # Trigger ObjectModified, so timezones can be fixed up.
-        notify(ObjectModifiedEvent(self.new))
 
 
 class DXEventMigrator(ContentMigrator):
@@ -87,17 +82,17 @@ class DXEventMigrator(ContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        oldacc = IEventAccessor(self.old)
-        newacc = IEventAccessor(self.new)
-        newacc.start = oldacc.start
-        newacc.end = oldacc.end
-        newacc.timezone = oldacc.timezone
-        newacc.location = oldacc.location
-        newacc.attendees = oldacc.attendees
-        newacc.event_url = oldacc.event_url
-        newacc.contact_name = oldacc.contact_name
-        newacc.contact_email = oldacc.contact_email
-        newacc.contact_phone = oldacc.contact_phone
+        self.new.start = datetime_fixer(self.old.start, self.old.timezone)
+        self.new.end = datetime_fixer(self.old.end, self.old.timezone)
+        self.new.whole_day = self.old.whole_day
+        self.new.open_end = self.old.open_end
+        self.new.recurrence = self.old.recurrence
+        self.new.location = self.old.location
+        self.new.attendees = self.old.attendees
+        self.new.event_url = self.old.event_url
+        self.new.contact_name = self.old.contact_name
+        self.new.contact_email = self.old.contact_email
+        self.new.contact_phone = self.old.contact_phone
         # The old behavior for the rich text field does not exist an more.
         # Look up the old value directly from the Annotation storage
         # Copy the entire richtext object, not just it's representation
@@ -105,6 +100,3 @@ class DXEventMigrator(ContentMigrator):
         old_text = annotations.get(
             'plone.app.event.dx.behaviors.IEventSummary.text', None)
         self.new.text = old_text
-
-        # Trigger ObjectModified, so timezones can be fixed up.
-        notify(ObjectModifiedEvent(self.new))

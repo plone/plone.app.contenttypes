@@ -18,10 +18,10 @@ from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
+from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
-from plone.event.interfaces import IEventAccessor
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
@@ -29,11 +29,9 @@ from z3c.relationfield import RelationValue
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getUtility
-from zope.event import notify
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.intid.interfaces import IIntIds
-from zope.lifecycleevent import ObjectModifiedEvent
 
 
 import logging
@@ -482,26 +480,43 @@ class EventMigrator(ATCTContentMigrator):
             raw_text = ''
         old_richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
                                      outputMimeType='text/x-html-safe')
+
+        wholeDay = None
+        if self.old.getField('wholeDay'):
+            wholeDay = self.old.getField('wholeDay').get(self.old)
+
+        openEnd = None
+        if self.old.getField('openEnd'):
+            openEnd = self.old.getField('openEnd').get(self.old)
+
+        recurrence = None
+        if self.old.getField('recurrence'):
+            recurrence = self.old.getField('recurrence').get(self.old)
+
         if self.old.getField('timezone'):
             old_timezone = self.old.getField('timezone').get(self.old)
         else:
             old_timezone = default_timezone(fallback='UTC')
 
-        acc = IEventAccessor(self.new)
-        acc.start = old_start.asdatetime()  # IEventBasic
-        acc.end = old_end.asdatetime()  # IEventBasic
-        acc.timezone = old_timezone  # IEventBasic
-        acc.location = old_location  # IEventLocation
-        acc.attendees = old_attendees  # IEventAttendees
-        acc.event_url = old_eventurl  # IEventContact
-        acc.contact_name = old_contactname  # IEventContact
-        acc.contact_email = old_contactemail  # IEventContact
-        acc.contact_phone = old_contactphone  # IEventContact
+        # IEventBasic
+        self.new.start = datetime_fixer(old_start.asdatetime(), old_timezone)
+        self.new.end = datetime_fixer(old_end.asdatetime(), old_timezone)
+
+        if wholeDay is not None:
+            self.new.whole_day = wholeDay  # IEventBasic
+        if openEnd is not None:
+            self.new.open_end = openEnd  # IEventBasic
+        if recurrence is not None:
+            self.new.recurrence = recurrence  # IEventRecurrence
+
+        self.new.location = old_location  # IEventLocation
+        self.new.attendees = old_attendees  # IEventAttendees
+        self.new.event_url = old_eventurl  # IEventContact
+        self.new.contact_name = old_contactname  # IEventContact
+        self.new.contact_email = old_contactemail  # IEventContact
+        self.new.contact_phone = old_contactphone  # IEventContact
         # Copy the entire richtext object, not just it's representation
         self.new.text = old_richtext
-
-        # Trigger ObjectModified, so timezones can be fixed up.
-        notify(ObjectModifiedEvent(self.new))
 
 
 def migrate_events(portal):

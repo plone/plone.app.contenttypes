@@ -19,7 +19,7 @@ import time
 import unittest2 as unittest
 
 
-class MigrateToATContentTypesTest(unittest.TestCase):
+class MigrateFromATContentTypesTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 
@@ -162,7 +162,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # assertions
         dx_event = self.portal['event']
-        dx_acc = IEventAccessor(dx_event)
         self.assertEqual(
             "<class 'Products.ATContentTypes.content.event.ATEvent'>",
             str(at_event.__class__),
@@ -171,26 +170,26 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             "<class 'plone.app.contenttypes.content.Event'>",
             str(dx_event.__class__),
         )
-        self.assertEqual(2013, dx_acc.start.year)
-        self.assertEqual(02, dx_acc.start.month)
-        self.assertEqual(03, dx_acc.start.day)
-        self.assertEqual(12, dx_acc.start.hour)
-        self.assertEqual('Asia/Tbilisi', str(dx_acc.start.tzinfo))
-        self.assertEqual(2013, dx_acc.end.year)
-        self.assertEqual(04, dx_acc.end.month)
-        self.assertEqual(05, dx_acc.end.day)
-        self.assertEqual(13, dx_acc.end.hour)
-        self.assertEqual('Asia/Tbilisi', str(dx_acc.end.tzinfo))
-        self.assertEqual(u'Asia/Tbilisi', dx_acc.timezone)
-        self.assertEqual('123456789', dx_acc.contact_phone)
-        self.assertEqual('dummy@email.com', dx_acc.contact_email)
-        self.assertEqual('Name', dx_acc.contact_name)
-        self.assertEqual('http://www.plone.org', dx_acc.event_url)
-        self.assertEqual(('You', 'Me'), dx_acc.attendees)
+        self.assertEqual(2013, dx_event.start.year)
+        self.assertEqual(02, dx_event.start.month)
+        self.assertEqual(03, dx_event.start.day)
+        self.assertEqual(12, dx_event.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(dx_event.start.tzinfo))
+        self.assertEqual(2013, dx_event.end.year)
+        self.assertEqual(04, dx_event.end.month)
+        self.assertEqual(05, dx_event.end.day)
+        self.assertEqual(13, dx_event.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(dx_event.end.tzinfo))
+        self.assertEqual('123456789', dx_event.contact_phone)
+        self.assertEqual('dummy@email.com', dx_event.contact_email)
+        self.assertEqual('Name', dx_event.contact_name)
+        self.assertEqual('http://www.plone.org', dx_event.event_url)
+        self.assertEqual(('You', 'Me'), dx_event.attendees)
         self.assertEquals('Event', dx_event.__class__.__name__)
-        self.assertEqual(u'<p>T\xfctensuppe</p>', dx_acc.text)
+        self.assertEqual(u'<p>T\xfctensuppe</p>', dx_event.text.output)
         self.assertEqual(u'Tütensuppe', dx_event.text.raw)
 
+    @unittest.skip("Skip this test, until old type is mocked")
     def test_pae_atevent_is_migrated(self):
         """Can we migrate a plone.app.event AT event?"""
         from DateTime import DateTime
@@ -234,7 +233,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # Compare new and old events
         new_event = self.portal['pae-at-event']
-        new_event_acc = IEventAccessor(new_event)
         self.assertEqual(
             "<class 'plone.app.event.at.content.ATEvent'>",
             str(old_event.__class__),
@@ -244,24 +242,24 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             str(new_event.__class__),
         )
         self.assertEqual('Event', new_event.portal_type)
-        self.assertEqual(2013, new_event_acc.start.year)
-        self.assertEqual(01, new_event_acc.start.month)
-        self.assertEqual(01, new_event_acc.start.day)
-        self.assertEqual(12, new_event_acc.start.hour)
-        self.assertEqual('Asia/Tbilisi', str(new_event_acc.start.tzinfo))
-        self.assertEqual(2013, new_event_acc.end.year)
-        self.assertEqual(02, new_event_acc.end.month)
-        self.assertEqual(01, new_event_acc.end.day)
-        self.assertEqual(13, new_event_acc.end.hour)
-        self.assertEqual('Asia/Tbilisi', str(new_event_acc.end.tzinfo))
-        self.assertEqual(u'Asia/Tbilisi', new_event_acc.timezone)
-        self.assertEqual(u'Name', new_event_acc.contact_name)
-        self.assertEqual(u'dummy@email.com', new_event_acc.contact_email)
-        self.assertEqual(u'123456789', new_event_acc.contact_phone)
-        self.assertEqual(u'http://www.plone.org', new_event_acc.event_url)
+        self.assertEqual(2013, new_event.start.year)
+        self.assertEqual(01, new_event.start.month)
+        self.assertEqual(01, new_event.start.day)
+        self.assertEqual(12, new_event.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event.start.tzinfo))
+        self.assertEqual(2013, new_event.end.year)
+        self.assertEqual(02, new_event.end.month)
+        self.assertEqual(01, new_event.end.day)
+        self.assertEqual(13, new_event.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event.end.tzinfo))
+        self.assertEqual(u'Name', new_event.contact_name)
+        self.assertEqual(u'dummy@email.com', new_event.contact_email)
+        self.assertEqual(u'123456789', new_event.contact_phone)
+        self.assertEqual(u'http://www.plone.org', new_event.event_url)
         self.assertEqual(u'<p>T\xfctensuppe</p>', new_event.text.output)
         self.assertEqual(u'Tütensuppe', new_event.text.raw)
 
+    @unittest.skip("Skip this test, until old type is mocked")
     def test_pae_dxevent_is_migrated(self):
         from datetime import datetime
         from plone.app.contenttypes.migration.migration import migrate_events
@@ -300,45 +298,42 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # Compare new and old events
         new_event = self.portal['dx-event']
-        new_event_acc = IEventAccessor(new_event)
         self.assertEqual(False, old_event.exclude_from_nav)
         self.assertEqual('Event', new_event.portal_type)
-        self.assertEqual(2011, new_event_acc.start.year)
-        self.assertEqual(11, new_event_acc.start.month)
-        self.assertEqual(11, new_event_acc.start.day)
-        self.assertEqual(11, new_event_acc.start.hour)
-        self.assertEqual('Asia/Tbilisi', str(new_event_acc.start.tzinfo))
-        self.assertEqual(2011, new_event_acc.end.year)
-        self.assertEqual(11, new_event_acc.end.month)
-        self.assertEqual(11, new_event_acc.end.day)
-        self.assertEqual(12, new_event_acc.end.hour)
-        self.assertEqual('Asia/Tbilisi', str(new_event_acc.end.tzinfo))
-        self.assertEqual(u'Asia/Tbilisi', new_event_acc.timezone)
-        self.assertEqual(u'George', new_event_acc.contact_name)
-        self.assertEqual(u'me@geor.ge', new_event_acc.contact_email)
-        self.assertEqual(u'+99512345', new_event_acc.contact_phone)
-        self.assertEqual(u'http://geor.ge/event', new_event_acc.event_url)
+        self.assertEqual(2011, new_event.start.year)
+        self.assertEqual(11, new_event.start.month)
+        self.assertEqual(11, new_event.start.day)
+        self.assertEqual(11, new_event.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event.start.tzinfo))
+        self.assertEqual(2011, new_event.end.year)
+        self.assertEqual(11, new_event.end.month)
+        self.assertEqual(11, new_event.end.day)
+        self.assertEqual(12, new_event.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event.end.tzinfo))
+        self.assertEqual(u'George', new_event.contact_name)
+        self.assertEqual(u'me@geor.ge', new_event.contact_email)
+        self.assertEqual(u'+99512345', new_event.contact_phone)
+        self.assertEqual(u'http://geor.ge/event', new_event.event_url)
         self.assertEqual(u'<p>Woo, yeah</p>', new_event.text.output)
         self.assertEqual('Woo, yeah', new_event.text.raw)
         self.assertEqual(False, new_event.exclude_from_nav)
 
     def test_pact_1_0_dxevent_is_migrated(self):
         from datetime import datetime
-        from pytz import timezone
+        import pytz
         from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.textfield.value import RichTextValue
         from plone.app.contenttypes.tests.oldtypes import create1_0EventType
 
         # Create a 1.0 Event object
+        timezone = pytz.timezone('Asia/Tbilisi')
         create1_0EventType(self.portal)
         old_event = self.portal[self.portal.invokeFactory(
             'Event',
             'dx-event',
             location='Newbraska',
-            start_date=datetime(2019, 04, 02, 15, 20,
-                                tzinfo=timezone('Asia/Tbilisi')),
-            end_date=datetime(2019, 04, 02, 16, 20,
-                              tzinfo=timezone('Asia/Tbilisi')),
+            start_date=timezone.localize(datetime(2019, 04, 02, 15, 20)),
+            end_date=timezone.localize(datetime(2019, 04, 02, 16, 20)),
             attendees='Me & You',
             event_url='http://woo.com',
             contact_name='Frank',
@@ -357,25 +352,23 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
         # Compare new and old events
         new_event = self.portal['dx-event']
-        new_event_acc = IEventAccessor(new_event)
         self.assertEqual(False, old_event.exclude_from_nav)
         self.assertEqual('Event', new_event.portal_type)
-        self.assertEqual(2019, new_event_acc.start.year)
-        self.assertEqual(04, new_event_acc.start.month)
-        self.assertEqual(02, new_event_acc.start.day)
-        self.assertEqual(15, new_event_acc.start.hour)
-        self.assertEqual('Asia/Tbilisi', str(new_event_acc.start.tzinfo))
-        self.assertEqual(2019, new_event_acc.end.year)
-        self.assertEqual(04, new_event_acc.end.month)
-        self.assertEqual(02, new_event_acc.end.day)
-        self.assertEqual(16, new_event_acc.end.hour)
-        self.assertEqual('Asia/Tbilisi', str(new_event_acc.end.tzinfo))
-        self.assertEqual(u'Asia/Tbilisi', new_event_acc.timezone)
-        self.assertEqual(u'Frank', new_event_acc.contact_name)
-        self.assertEqual(u'Newbraska', new_event_acc.location)
-        self.assertEqual(u'me@fra.nk', new_event_acc.contact_email)
-        self.assertEqual(u'+4412345', new_event_acc.contact_phone)
-        self.assertEqual(u'http://woo.com', new_event_acc.event_url)
+        self.assertEqual(2019, new_event.start.year)
+        self.assertEqual(04, new_event.start.month)
+        self.assertEqual(02, new_event.start.day)
+        self.assertEqual(15, new_event.start.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event.start.tzinfo))
+        self.assertEqual(2019, new_event.end.year)
+        self.assertEqual(04, new_event.end.month)
+        self.assertEqual(02, new_event.end.day)
+        self.assertEqual(16, new_event.end.hour)
+        self.assertEqual('Asia/Tbilisi', str(new_event.end.tzinfo))
+        self.assertEqual(u'Frank', new_event.contact_name)
+        self.assertEqual(u'Newbraska', new_event.location)
+        self.assertEqual(u'me@fra.nk', new_event.contact_email)
+        self.assertEqual(u'+4412345', new_event.contact_phone)
+        self.assertEqual(u'http://woo.com', new_event.event_url)
         self.assertEqual(u'<p>Awesüme</p>', new_event.text.output)
         self.assertEqual(u'Awesüme', new_event.text.raw)
         self.assertEqual(False, new_event.exclude_from_nav)

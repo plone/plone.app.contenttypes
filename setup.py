@@ -39,21 +39,22 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
-          'plone.app.event [dexterity]',
-          'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
-          'plone.dexterity>=2.2.1',  # behaviors can provide primaryfields
+          'plone.app.event >= 2.0a1',
+          'plone.app.dexterity >= 2.0.7',  # has a fix for INameFromFilename
+          'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
           'plone.app.relationfield',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
+          'pytz',
       ],
       extras_require={
           'test': [
               'archetypes.schemaextender',
               'lxml',
               'plone.app.robotframework',
-              'plone.app.testing[robot]>=4.2.4',  # we need ROBOT_TEST_LEVEL
+              'plone.app.testing [robot] >= 4.2.4',  # we need ROBOT_TEST_LEVEL
               'Products.ATContentTypes',
-              'Products.contentmigration>=2.1.8.dev0',
+              'Products.contentmigration >= 2.1.8.dev0',
           ],
           'atrefs': [
               'plone.app.referenceablebehavior',
