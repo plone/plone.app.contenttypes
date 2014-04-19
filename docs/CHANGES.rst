@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2a3 (unreleased)
+1.2a3 (2014-04-19)
 ------------------
 
 - Adapt to changes of plone.app.event 2.0.
