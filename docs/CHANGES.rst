@@ -7,6 +7,9 @@ Changelog
 - Adapt to changes of plone.app.event 2.0.
   [thet]
 
+- Fix issue when mimetype can be None.
+  [pbauer]
+
 
 1.2a2 (2014-04-13)
 ------------------
