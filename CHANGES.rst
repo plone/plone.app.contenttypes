@@ -4,7 +4,9 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- For plone.app.contenttypes 1.1.x, depend on plone.app.event < 1.1.999.
+  Closes/Fixes #149.
+  [khink, thet]
 
 
 1.1b2 (2014-02-21)
