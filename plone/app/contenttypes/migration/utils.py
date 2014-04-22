@@ -6,6 +6,9 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+from Products.CMFCore.utils import getToolByName
+from Products.GenericSetup.context import DirectoryImportContext
+from Products.GenericSetup.utils import importObjects
 from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
@@ -13,10 +16,13 @@ from archetypes.schemaextender.interfaces import ISchemaModifier
 from plone.app.blob.interfaces import IATBlobFile
 from plone.app.blob.interfaces import IATBlobImage
 from plone.app.contenttypes.migration import migration
+from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
 
 import pkg_resources
+import os
 
 try:
     pkg_resources.get_distribution('plone.app.collection')
@@ -152,3 +158,27 @@ def _checkForExtenderInterfaces(interface):
             fields = getattr(adapter.factory(None), 'fields', [])
             return [field.getName() for field in fields]
     return []
+
+
+def installTypeIfNeeded(type_name):
+    """Make sure the dexterity-fti is already installed.
+    If not we create a empty dexterity fti and load the
+    information from the fti in the profile.
+    """
+    if type_name not in DEFAULT_TYPES:
+        raise KeyError("%s is not one of the dafault types" % type_name)
+    portal = getSite()
+    tt = getToolByName(portal, 'portal_types')
+    fti = tt.getTypeInfo(type_name)
+    if IDexterityFTI.providedBy(fti):
+        # the dx-type is already installed
+        return
+    tt.manage_delObjects(type_name)
+    tt.manage_addTypeInformation('Dexterity FTI', id=type_name)
+    dx_fti = tt.getTypeInfo(type_name)
+    ps = getToolByName(portal, 'portal_setup')
+    profile_info = ps.getProfileInfo('profile-plone.app.contenttypes:default')
+    profile_path = os.path.join(profile_info['path'])
+    environ = DirectoryImportContext(ps, profile_path)
+    parent_path = 'types/'
+    importObjects(dx_fti, parent_path, environ)
