@@ -4,7 +4,9 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Require plone.app.event < 1.2.1
+  (https://github.com/plone/plone.app.event/issues/151)
+  [khink]
 
 
 1.1b2 (2014-02-21)
