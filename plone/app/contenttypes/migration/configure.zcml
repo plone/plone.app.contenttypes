@@ -59,6 +59,15 @@
     permission="cmf.ManagePortal"
     />
 
+  <browser:page
+    name="custom_migration"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".custom_migration.CustomMigrationForm"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    template="custom_migration.pt"
+    />
+
   <utility
       factory=".vocabularies.ATCTypesVocabulary"
       name="plone.app.contenttypes.migration.atctypes"
