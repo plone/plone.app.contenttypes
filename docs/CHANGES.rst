@@ -4,7 +4,8 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Replace AT-fti with DX-fti when migrating a type.
+  [esteele, pbauer]
 
 
 1.2a3 (2014-04-19)
