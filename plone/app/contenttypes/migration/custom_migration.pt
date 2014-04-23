@@ -46,6 +46,10 @@
             <h3>AT content types</h3>
             <tal:block repeat="at_type at_types">
                 <p tal:content="at_type/title">AT content type title</p>
+                <p style="font-weight: bold;">Fields</p>
+                <tal:block repeat="field python: view.getFieldsForATType(at_type['id'])">
+                    <p tal:content="field/title">AT field</p>
+                </tal:block>
             </tal:block>
             <h3>DX content types</h3>
             <tal:block repeat="dx_type view/getDXFTIs">

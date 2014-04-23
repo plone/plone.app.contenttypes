@@ -4,6 +4,12 @@ from plone.dexterity.interfaces import IDexterityFTI
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
+HAS_EXTENDER = True
+try:
+    from archetypes.schemaextender.extender import instanceSchemaFactory
+except ImportError:
+    HAS_EXTENDER = False
+
 
 class CustomMigrationForm(BrowserView):
 
@@ -33,7 +39,7 @@ class CustomMigrationForm(BrowserView):
         return results
 
     def getDXFTIs(self):
-        '''return the FTI's of all DX-Types (including default-types).'''
+        '''Returns the FTI's of all DX-Types (including default-types).'''
         results = []
         portal = self.context
         ttool = getToolByName(portal, 'portal_types')
@@ -44,9 +50,30 @@ class CustomMigrationForm(BrowserView):
         return results
 
     def getFieldsForATType(self, typename):
-        pass
+        '''Returns schema fields (name and type) for the given typename.'''
+        results = []
+        typesTool = getToolByName(self.context, 'portal_types')
+        fti = typesTool.getTypeInfo(typename)
+        archetype_tool = getToolByName(self.context, 'archetype_tool', None)
+        if not fti or not archetype_tool:
+            return results
+        schema = None
+        # a schema instance is stored in the archetype_tool
+        for regType in archetype_tool.listRegisteredTypes():
+            if regType['meta_type'] == fti.content_meta_type:
+                if HAS_EXTENDER:
+                    schema = instanceSchemaFactory(regType['klass'])
+                else:
+                    schema = regType['schema']
+                break
+        if not schema:
+            return results
+        for field in schema.filterFields(isMetadata=False):
+            results.append({'id': field.getName(),
+                            'title': '%s (%s)' % (field.widget.label, field.widget.getName())})
+        return results
 
-    def getFieldsForDXType(self, typename):
+    def getFieldsForDXType(self, typename, exclude_metadata=True):
         pass
 
     def getPossibleTargetField(self, fieldtype):
