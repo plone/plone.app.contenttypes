@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
 from Products.Five.browser import BrowserView
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.utils import iterSchemataForType
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.ATContentTypes.content.base import ATContentTypeSchema
+
 
 HAS_EXTENDER = True
 try:
@@ -14,6 +17,7 @@ except ImportError:
 class CustomMigrationForm(BrowserView):
 
     template = ViewPageTemplateFile('custom_migration.pt')
+    metadata_fields = ATContentTypeSchema.keys()
 
     def __call__(self):
         return self.template()
@@ -50,7 +54,7 @@ class CustomMigrationForm(BrowserView):
         return results
 
     def getFieldsForATType(self, typename):
-        '''Returns schema fields (name and type) for the given typename.'''
+        '''Returns schema fields (name and type) for the given AT typename.'''
         results = []
         typesTool = getToolByName(self.context, 'portal_types')
         fti = typesTool.getTypeInfo(typename)
@@ -68,13 +72,28 @@ class CustomMigrationForm(BrowserView):
                 break
         if not schema:
             return results
-        for field in schema.filterFields(isMetadata=False):
-            results.append({'id': field.getName(),
-                            'title': '%s (%s)' % (field.widget.label, field.widget.getName())})
+        for field in schema.fields():
+            if not field.getName() in self.metadata_fields:
+                results.append({'id': field.getName(),
+                                'title': '%s (%s)' % (field.widget.label, field.widget.getName())})
         return results
 
-    def getFieldsForDXType(self, typename, exclude_metadata=True):
-        pass
+    def getFieldsForDXType(self, typename):
+        '''Returns schema fields (name and type) for the given DX typename.'''
+        results = []
+        typesTool = getToolByName(self.context, 'portal_types')
+        fti = typesTool.getTypeInfo(typename)
+        if not fti:
+            return results
+
+        for schemata in iterSchemataForType(typename):
+            for fieldName, field in schemata.namesAndDescriptions():
+                # ignore Dublin Core fields
+                if fieldName in self.metadata_fields:
+                    continue
+                results.append({'id': fieldName,
+                                'title': '%s (%s)' % (field.title, field.__class__.__name__)})
+        return results
 
     def getPossibleTargetField(self, fieldtype):
         ''' a list of DX-field types'''

@@ -54,6 +54,10 @@
             <h3>DX content types</h3>
             <tal:block repeat="dx_type view/getDXFTIs">
                 <p tal:content="dx_type/title">DX content type title</p>
+                <p style="font-weight: bold;">Fields</p>
+                <tal:block repeat="field python: view.getFieldsForDXType(dx_type['id'])">
+                    <p tal:content="field/title">AT field</p>
+                </tal:block>
             </tal:block>
           </div>
         </div>
