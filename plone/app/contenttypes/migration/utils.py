@@ -166,7 +166,7 @@ def installTypeIfNeeded(type_name):
     information from the fti in the profile.
     """
     if type_name not in DEFAULT_TYPES:
-        raise KeyError("%s is not one of the dafault types" % type_name)
+        raise KeyError("%s is not one of the default types" % type_name)
     portal = getSite()
     tt = getToolByName(portal, 'portal_types')
     fti = tt.getTypeInfo(type_name)
