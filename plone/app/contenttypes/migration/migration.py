@@ -523,3 +523,147 @@ def migrate_events(portal):
     migrate(portal, DXOldEventMigrator)
     migrate(portal, EventMigrator)
     migrate(portal, DXEventMigrator)
+
+
+# def makeFolderMigrator(context, src_type, dst_type):
+#     """ generate a migrator for the given at-based folderish portal type """
+#     from Products.contentmigration.archetypes import InplaceATFolderMigrator
+
+#     class ATFolderMigrator(InplaceATFolderMigrator):
+#         src_portal_type = src_type
+#         dst_portal_type = dst_type
+
+#     return ATFolderMigrator
+
+
+# def makeContentMigrator(context, src_type, dst_type):
+#     """ generate a migrator for the given at-based portal type """
+#     from Products.contentmigration.archetypes import InplaceATItemMigrator
+
+#     class ATContentMigrator(InplaceATItemMigrator):
+#         src_portal_type = src_type
+#         dst_portal_type = dst_type
+
+#     return ATContentMigrator
+
+
+# def migrateContents(context, src_type, dst_type, query={}):
+#     from Products.contentmigration.walker import CustomQueryWalker
+#     #BBB: i can't find a better way to know if a given portal_type is folderish or not
+#     is_folderish = False
+#     temp_obj = context.restrictedTraverse('portal_factory/%s/tmp_id' % src_type)
+#     if temp_obj:
+#         plone_view = temp_obj.restrictedTraverse('@@plone')
+#         if plone_view.isStructuralFolder():
+#             is_folderish = True
+#     portal_types = context.portal_types
+#     src_infos = portal_types.getTypeInfo(src_type)
+#     dst_infos = portal_types.getTypeInfo(dst_type)
+#     if is_folderish:
+#         migrator = makeFolderMigrator(context,
+#                                      src_type,
+#                                      dst_type,)
+#     else:
+#         migrator = makeContentMigrator(context,
+#                                       src_type,
+#                                       dst_type,)
+#     if migrator:
+#         migrator.src_meta_type = src_infos.content_meta_type
+#         migrator.dst_meta_type = dst_infos.content_meta_type
+#         walker = CustomQueryWalker(context, migrator,
+#                                   src_portal_type=src_type,
+#                                   dst_portal_type=dst_type,
+#                                   query=query,
+#                                   use_savepoint=True)
+#         walker.go()
+#         walk_infos = {'error': walker.errors,
+#                       'msg': walker.getOutput().splitlines(),
+#                       'counter': walker.counter}
+#         return walk_infos
+
+
+def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    field = src_obj.getField(src_fieldname)
+    if not field:
+        return
+    val = field.get(src_obj)
+    setattr(dst_obj, dst_fieldname, val)
+
+
+def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    old_image = src_obj.getField(src_fieldname).get(src_obj)
+    if old_image == '':
+        return
+    filename = safe_unicode(old_image.filename)
+    old_image_data = old_image.data
+    if safe_hasattr(old_image_data, 'data'):
+        old_image_data = old_image_data.data
+    namedblobimage = NamedBlobImage(data=old_image_data,
+                                    filename=filename)
+    dst_obj.image = namedblobimage
+    caption_field = src_obj.getField('imageCaption', None)
+    if caption_field:
+        dst_obj.image_caption = safe_unicode(caption_field.get(src_obj))
+    logger.info("Migrating image %s" % filename)
+
+
+def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    BBB to be tested
+    """
+    old_file = src_obj.getField(src_fieldname).get(src_obj)
+    if old_file == '':
+        return
+    filename = safe_unicode(old_file.filename)
+    old_file_data = old_file.data
+    if safe_hasattr(old_file_data, 'data'):
+        old_file_data = old_file_data.data
+    namedblobfile = NamedBlobFile(data=old_file_data,
+                                    filename=filename)
+    dst_obj.file = namedblobfile
+    logger.info("Migrating file %s" % filename)
+
+
+# def migrate_referencefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+#     # Relations UIDs:
+#     field = src_obj.getField(src_fieldname)
+#     if not field:
+#         return
+#     references = field.get(src_obj)
+#     if not hasattr(src_obj, "_%sOrder" % src_fieldname):
+#         referencesOrder = [item.UID() for item in references]
+#         setattr(src_obj, "_%sOrder" % src_fieldname, PersistentList(referencesOrder))
+
+#     # Backrefs Relations UIDs:
+#     reference_cat = getToolByName(src_obj, REFERENCE_CATALOG)
+#     backrefs = reference_cat.getBackReferences(src_obj,
+#                                                relationship="relatesTo")
+#     backref_objects = map(lambda x: x.getSourceObject(), backrefs)
+#     for obj in backref_objects:
+#         if obj.portal_type != dst_obj.src_portal_type:
+#             continue
+#         if not hasattr(obj, "_relUids"):
+#             relatedItems = obj.getRelatedItems()
+#             relatedItemsOrder = [item.UID() for item in relatedItems]
+#             obj._relatedItemsOrder = PersistentList(relatedItemsOrder)
+
+# def migrate_relatedItems(self):
+#     """ Store Archetype relations as target uids on the dexterity object
+#         for later restore. Backrelations are saved as well because all
+#         relation to deleted objects would be lost.
+#     """
+
+#     # Relations:
+#     relItems = self.old.getRelatedItems()
+#     relUids = [item.UID() for item in relItems]
+#     self.new._relatedItems = relUids
+
+#     # Backrefs:
+#     reference_catalog = getToolByName(self.old, REFERENCE_CATALOG)
+
+#     backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
+#         self.old, relationship="relatesTo")]
+#     self.new._backrefs = backrefs
+
+#     # Order:
+#     self.new._relatedItemsOrder = self.old._relatedItemsOrder
