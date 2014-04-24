@@ -549,7 +549,7 @@ def makeCustomContentMigrator(context, src_type, dst_type, fields_mapping):
     return CustomATContentMigrator
 
 
-def migrateCustomAT(context, fields_mapping):
+def migrateCustomAT(context, fields_mapping, src_type, dst_type):
     #BBB: i can't find a better way to know if a given portal_type is folderish or not
     is_folderish = False
     temp_obj = context.restrictedTraverse('portal_factory/%s/tmp_id' % src_type)

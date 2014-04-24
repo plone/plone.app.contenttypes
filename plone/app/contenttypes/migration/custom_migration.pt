@@ -37,6 +37,24 @@
     <p i18n:translate="">Depending of the number of archetypes in your portal, it may take a <span class="strong">really</span> long time for the migration to be done.
       Stay calm and be patient.</p>
     </div>
+    <script type="text/javascript">
+        // function that toggle an icon by calling the p_viewName view
+        function getDXFields(at_typename) {
+          $.ajax({
+            url: '@@display_dx_fields',
+            dataType: 'html',
+            data: {at_typename:at_typename},
+            cache: false,
+            success: function(data) {
+                var $div = $('#hook_at_fti_' + at_typename);
+                $div.empty();
+                $div.html(data);
+              },
+            error: function(jqXHR, textStatus, errorThrown) {
+              }
+            });
+        }
+    </script>
     <tal:block condition="at_types">
         <div id="migration-options">
           <h2 i18n:translate="">Migrate contents</h2>
@@ -50,15 +68,19 @@
                         <p tal:repeat="field python: view.getFieldsForATType(at_type['id'])" tal:content="field/title">Field name</p>
                     </td>
                     <td valign="top">
-                        <select>
-                            <option value="">Choose</option>
+                        <select tal:attributes="onChange string:javascript:getDXFields(at_typename='${at_type/id}');">
+                            <option value="" selected>Choose</option>
                             <option tal:repeat="dx_type view/getDXFTIs"
                                     tal:attributes="value dx_type/id"
                                     tal:content="dx_type/title">DX type name</option>
                         </select>
-                        <!--tal:block repeat="field python: view.getFieldsForDXType(dx_type['id'])">
-                            <p tal:content="field/title">AT field</p>
+                        <!--tal:block repeat='dx_type view/getDXFTIs'>
+                            <h3 tal:content="dx_type/title"></h3>
+                            <tal:block repeat="field python: view.getFieldsForDXType(dx_type['id'])">
+                                <p tal:content="field/id">AT field</p>
+                            </tal:block>
                         </tal:block-->
+                        <div id="hook_at_fti" tal:attributes="id string:hook_at_fti_${at_type/id}" />
                     </td>
                 </tr>
             </table>

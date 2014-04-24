@@ -68,6 +68,15 @@
     template="custom_migration.pt"
     />
 
+  <browser:page
+    name="display_dx_fields"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".custom_migration.DisplayDXFields"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    template="custom_migration_display_dx_fields.pt"
+    />
+
   <utility
       factory=".vocabularies.ATCTypesVocabulary"
       name="plone.app.contenttypes.migration.atctypes"

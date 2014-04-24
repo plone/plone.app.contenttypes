@@ -4,7 +4,8 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import iterSchemataForType
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.ATContentTypes.content.base import ATContentTypeSchema
+from Products.ATContentTypes.content.schemata import ATContentTypeSchema
+from plone.app.contenttypes.migration.migration import migrateCustomAT
 
 
 HAS_EXTENDER = True
@@ -17,10 +18,27 @@ except ImportError:
 class CustomMigrationForm(BrowserView):
 
     template = ViewPageTemplateFile('custom_migration.pt')
-    metadata_fields = ATContentTypeSchema.keys()
+    at_metadata_fields = ATContentTypeSchema.keys()
+    dx_metadata_fields = list(at_metadata_fields)
+    # some metadata names are different between AT and DX...
+    dx_metadata_fields.remove('allowDiscussion')
+    dx_metadata_fields.remove('excludeFromNav')
+    dx_metadata_fields.append('allow_discussion')
+    dx_metadata_fields.append('exclude_from_nav')
 
     def __call__(self):
-        return self.template()
+        # check that we can actually access this form, aka the current user has an advice to add or edit
+        form = self.request.form
+        cancelled = form.get('form.button.Cancel', False)
+        submitted = form.get('form.button.Save', False)
+        if submitted:
+            # proceed, call the migration methdd
+            self.apply()
+            msg = self.context.utranslate('Migration applied.', domain='plone.app.contenttypes')
+            self.context.plone_utils.addPortalMessage(msg)
+        elif cancelled:
+            self.request.response.redirect(form.get('form.HTTP_REFERER'))
+        return self.index()
 
     def getATFTIs(self):
         '''Returns a list of all AT types with existing instances (including default-types).'''
@@ -73,7 +91,7 @@ class CustomMigrationForm(BrowserView):
         if not schema:
             return results
         for field in schema.fields():
-            if not field.getName() in self.metadata_fields:
+            if not field.getName() in self.at_metadata_fields:
                 results.append({'id': field.getName(),
                                 'title': '%s (%s)' % (field.widget.label, field.widget.getName())})
         return results
@@ -89,7 +107,7 @@ class CustomMigrationForm(BrowserView):
         for schemata in iterSchemataForType(typename):
             for fieldName, field in schemata.namesAndDescriptions():
                 # ignore Dublin Core fields
-                if fieldName in self.metadata_fields:
+                if fieldName in self.dx_metadata_fields:
                     continue
                 results.append({'id': fieldName,
                                 'title': '%s (%s)' % (field.title, field.__class__.__name__)})
@@ -100,3 +118,28 @@ class CustomMigrationForm(BrowserView):
 
     def isFolderish(self):
         ''' decide which base-class we use for the migrator'''
+
+    def apply(self):
+        '''
+        '''
+        # dictionnary structure is like :
+        # ({'AT_field_name': 'text',
+        #   'AT_field_type': 'RichText',
+        #   'DX_field_name': 'text',
+        #   'DX_field_type': 'TextLine', }), },
+        # }
+        data = ({'AT_field_name': 'text',
+                 'AT_field_type': 'RichText',
+                 'DX_field_name': 'text',
+                 'DX_field_type': 'TextLine', }, )
+        migrateCustomAT(fields_mapping=data, src_type='DocumentAT', dst_type='Document')
+
+
+class DisplayDXFields(BrowserView):
+
+    template = ViewPageTemplateFile('custom_migration_display_dx_fields.pt')
+
+    def __call__(self):
+        '''
+        '''
+        return self.index()
