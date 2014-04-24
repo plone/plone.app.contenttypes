@@ -39,11 +39,12 @@
     </div>
     <script type="text/javascript">
         // function that toggle an icon by calling the p_viewName view
-        function getDXFields(at_typename) {
+        function getDXFields(at_typename, dx_typename) {
           $.ajax({
             url: '@@display_dx_fields',
             dataType: 'html',
-            data: {at_typename:at_typename},
+            data: {at_typename:at_typename,
+                   dx_typename: dx_typename},
             cache: false,
             success: function(data) {
                 var $div = $('#hook_at_fti_' + at_typename);
@@ -61,6 +62,8 @@
           <div i18n:translate=""
             class="documentDescription">
             <p>You can select which AT content type you want to migrate to an existing DX content type.</p>
+            <form id="migrateCustomATForm" method="post"
+                  tal:attributes="action python:context.absolute_url() + '/@@custom_migration'">
             <table>
                 <tr tal:repeat="at_type at_types">
                     <td valign="top">
@@ -68,8 +71,9 @@
                         <p tal:repeat="field python: view.getFieldsForATType(at_type['id'])" tal:content="field/title">Field name</p>
                     </td>
                     <td valign="top">
-                        <select tal:attributes="onChange string:javascript:getDXFields(at_typename='${at_type/id}');">
-                            <option value="" selected>Choose</option>
+                        <select tal:attributes="onChange string:javascript:getDXFields(at_typename='${at_type/id}', this.value);
+                                                name string:dx_select_${at_type/id};">
+                            <option value="" selected="selected">Do not migrate</option>
                             <option tal:repeat="dx_type view/getDXFTIs"
                                     tal:attributes="value dx_type/id"
                                     tal:content="dx_type/title">DX type name</option>
@@ -84,6 +88,12 @@
                     </td>
                 </tr>
             </table>
+            <div>
+              <br />
+              <input type="submit" name="form.button.Apply" class="context" value="Apply" i18n:attributes="value" i18n:domain="plone"/>&nbsp;
+              <input type="submit" name="form.button.Cancel" class="standalone" value="Cancel" i18n:attributes="value" i18n:domain="plone"/>
+            </div>
+            </form>
           </div>
         </div>
     </tal:block>

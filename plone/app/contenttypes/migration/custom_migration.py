@@ -30,7 +30,7 @@ class CustomMigrationForm(BrowserView):
         # check that we can actually access this form, aka the current user has an advice to add or edit
         form = self.request.form
         cancelled = form.get('form.button.Cancel', False)
-        submitted = form.get('form.button.Save', False)
+        submitted = form.get('form.button.Apply', False)
         if submitted:
             # proceed, call the migration methdd
             self.apply()
@@ -132,12 +132,17 @@ class CustomMigrationForm(BrowserView):
                  'AT_field_type': 'RichText',
                  'DX_field_name': 'text',
                  'DX_field_type': 'TextLine', }, )
-        migrateCustomAT(fields_mapping=data, src_type='DocumentAT', dst_type='Document')
+        migrateCustomAT(self.context, fields_mapping=data, src_type='DocumentAT', dst_type='Document')
 
 
-class DisplayDXFields(BrowserView):
+class DisplayDXFields(CustomMigrationForm):
 
     template = ViewPageTemplateFile('custom_migration_display_dx_fields.pt')
+
+    def __init__(self, context, request):
+        CustomMigrationForm.__init__(self, context, request)
+        self.at_typename = request.get('at_typename')
+        self.dx_typename = request.get('dx_typename')
 
     def __call__(self):
         '''
