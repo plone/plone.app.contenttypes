@@ -99,3 +99,18 @@ class MigrateFieldsTest(unittest.TestCase):
         self.assertEqual(dx_newsitem.image.contentType, 'image/png')
         self.assertEqual(dx_newsitem.image.data, test_image_data)
 
+
+class MigrateCustomATTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+
+    def tearDown(self):
+        try:
+            applyProfile(self.portal, 'plone.app.contenttypes:uninstall')
+        except KeyError:
+            pass
