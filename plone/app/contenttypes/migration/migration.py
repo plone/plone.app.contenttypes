@@ -38,7 +38,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
     field = src_obj.getField(src_fieldname)
     if field:
         at_value = field.get(src_obj)
@@ -50,7 +50,7 @@ def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
         setattr(dst_obj, dst_fieldname, at_value)
 
 
-def migrate_textfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+def migrate_textfield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
     field = src_obj.getField(src_fieldname)
     raw_text = ''
     if field:
@@ -69,7 +69,7 @@ def migrate_textfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     setattr(dst_obj, dst_fieldname, richtext)
 
 
-def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
     old_image = src_obj.getField(src_fieldname).get(src_obj)
     if old_image == '':
         return
@@ -86,7 +86,7 @@ def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     logger.info("Migrating image %s" % filename)
 
 
-def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
     """
     BBB to be tested
     """
@@ -595,10 +595,15 @@ def migrate_events(portal):
     migrate(portal, DXEventMigrator)
 
 
-def makeCustomFolderMigrator(context, src_type, dst_type, fields_mapping):
+def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderish=False):
     """ generate a migrator for the given at-based folderish portal type """
 
-    class CustomATFolderMigrator(ATCTFolderMigrator):
+    base_class = ATCTContentMigrator
+    if is_folderish:
+        base_class = ATCTFolderMigrator
+
+    class CustomATMigrator(base_class):
+
         src_portal_type = src_type
         dst_portal_type = dst_type
 
@@ -607,38 +612,17 @@ def makeCustomFolderMigrator(context, src_type, dst_type, fields_mapping):
                 at_fieldname = fields_dict.get('AT_field_name')
                 at_fieldtype = fields_dict.get('AT_field_type')
                 dx_fieldname = fields_dict.get('DX_field_name')
+                dx_fieldtype = fields_dict.get('DX_field_type')
                 migration_field_method = migrate_simplefield
                 if at_fieldtype in FIELDS_MAPPING:
                     migration_field_method = FIELDS_MAPPING[at_fieldtype]
-                migration_field_method(self.old,
-                                       self.new,
-                                       at_fieldname,
-                                       dx_fieldname)
+                migration_field_method(src_obj=self.old,
+                                       dst_obj=self.new,
+                                       src_fieldname=at_fieldname,
+                                       dst_fieldname=dx_fieldname,
+                                       dst_fieldtype=dx_fieldtype)
 
-    return CustomATFolderMigrator
-
-
-def makeCustomContentMigrator(context, src_type, dst_type, fields_mapping):
-    """ generate a migrator for the given at-based portal type """
-
-    class CustomATContentMigrator(ATCTContentMigrator):
-        src_portal_type = src_type
-        dst_portal_type = dst_type
-
-        def migrate_schema_fields(self):
-            for fields_dict in fields_mapping:
-                at_fieldname = fields_dict.get('AT_field_name')
-                at_fieldtype = fields_dict.get('AT_field_type')
-                dx_fieldname = fields_dict.get('DX_field_name')
-                migration_field_method = migrate_simplefield
-                if at_fieldtype in FIELDS_MAPPING:
-                    migration_field_method = FIELDS_MAPPING[at_fieldtype]
-                migration_field_method(self.old,
-                                       self.new,
-                                       at_fieldname,
-                                       dx_fieldname)
-
-    return CustomATContentMigrator
+    return CustomATMigrator
 
 
 def migrateCustomAT(fields_mapping, src_type, dst_type):
@@ -648,24 +632,18 @@ def migrateCustomAT(fields_mapping, src_type, dst_type):
     portal = getSite()
     archetype_tool = getToolByName(portal, 'archetype_tool', None)
     src_type_infos = None
-    if archetype_tool:
-        for info in archetype_tool.listRegisteredTypes():
-            if info.get('portal_type') == src_type:
-                src_type_infos = info
-    if src_type_infos and src_type_infos.get('klass').isPrincipiaFolderish:
-        migrator = makeCustomFolderMigrator(portal,
-                                     src_type,
-                                     dst_type,
-                                     fields_mapping)
-    else:
-        migrator = makeCustomContentMigrator(portal,
-                                      src_type,
-                                      dst_type,
-                                      fields_mapping)
+    if not archetype_tool:
+        return
+    for info in archetype_tool.listRegisteredTypes():
+        if info.get('portal_type') == src_type:
+            src_type_infos = info
+    is_folderish = src_type_infos.get('klass').isPrincipiaFolderish
+    migrator = makeCustomATMigrator(context=portal,
+                                 src_type=src_type,
+                                 dst_type=dst_type,
+                                 fields_mapping=fields_mapping,
+                                 is_folderish=is_folderish)
     if migrator:
-        if src_type_infos:
-            migrator.src_meta_type = src_type_infos.get('meta_type')
-        else:
-            migrator.src_meta_type = src_type
+        migrator.src_meta_type = src_type_infos.get('meta_type')
         migrator.dst_meta_type = ''
         migrate(portal, migrator)
