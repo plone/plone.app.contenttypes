@@ -94,9 +94,10 @@ class CustomMigrationForm(BrowserView):
             return results
         for field in schema.fields():
             if not field.getName() in self.at_metadata_fields:
+                translated_label = translate(field.widget.label)
                 results.append({'id': field.getName(),
-                                'title': '%s (%s)' % (field.widget.label, field.widget.getName()),
-                                'type': field.widget.getName()})
+                                'title': '%s (%s)' % (translated_label, field.getType()),
+                                'type': field.getType()})
         return results
 
     def getFieldsForDXType(self, typename):
@@ -125,10 +126,15 @@ class CustomMigrationForm(BrowserView):
 
     def migrate(self):
         '''Build data from self.request.form, we will build something like :
-           {'MyATPortalType': {'MyDXPortalType': {'at_fielname1': 'dx_fieldname1', 'at_fieldname2': 'dx_fieldname2'}}}
+           {'MyATPortalType': {'MyDXPortalType': ({'AT_field_name': 'fieldname1',
+                                                   'AT_field_type': 'TextField',
+                                                   'DX_field_name': 'field_name1',
+                                                   'DX_field_type': 'RichText'}, )
+                                                   }}
            Call the migrateCustomAT migrator for each AT content_type we choose to migrate.'''
         data = {}
         form = self.request.form
+        # manipulate what we receive in the form and build a useable data dict
         for k in self.request.form.keys():
             if k.startswith('dx_select_'):
                 # we found select where we choose a DX type regarding an AT type
@@ -143,17 +149,21 @@ class CustomMigrationForm(BrowserView):
                 # we have 2 keys we relevant mappings, first key is the AT typename
                 # second key is a particular key like 'dx_DXPortalType__for__MyATPortalType
                 dx_key = 'dx_%s__for__%s' % (dx_typename, at_typename)
-                for at_fieldname in form[at_typename]:
-                    data[at_typename][dx_typename][at_fieldname] = form[dx_key][form[at_typename].index(at_fieldname)]
+                for at_field in form[at_typename]:
+                    at_field_name, at_field_type = at_field.split('__type__')
+                    if not hasattr(data[at_typename][dx_typename], at_field_name):
+                        data[at_typename][dx_typename] = []
+                    dx_field_name, dx_field_type = form[dx_key][form[at_typename].index(at_field)].split('__type__')
+                    field_data = {'AT_field_name': at_field_name,
+                                  'AT_field_type': at_field_type,
+                                  'DX_field_name': dx_field_name,
+                                  'DX_field_type': dx_field_type, }
+                    data[at_typename][dx_typename].append(field_data)
+
+        # now that the data dict contains relevant information, we can call the custom migrator
         for at_typename, dx_mappings in data.items():
             for k, v in dx_mappings.items():
-                migrateCustomAT(self.context, fields_mapping=v, src_type=at_typename, dst_type=dx_typename)
-
-        #data = ({'AT_field_name': 'text',
-        #         'AT_field_type': 'RichText',
-        #         'DX_field_name': 'text',
-        #         'DX_field_type': 'TextLine', }, )
-        #migrateCustomAT(self.context, fields_mapping=data, src_type='DocumentAT', dst_type='Document')
+                migrateCustomAT(fields_mapping=v, src_type=at_typename, dst_type=dx_typename)
 
 
 class DisplayDXFields(CustomMigrationForm):

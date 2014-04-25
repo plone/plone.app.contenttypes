@@ -71,7 +71,7 @@
                         <tal:block repeat="field python: view.getFieldsForATType(at_type['id'])">
                             <p tal:content="field/title">Field name</p>
                             <input type="hidden" tal:attributes="name string:${at_type/id}:list;
-                                                                 value string:${field/id};" />
+                                                                 value string:${field/id}__type__${field/type};" />
                         </tal:block>
                     </td>
                     <td valign="top">
