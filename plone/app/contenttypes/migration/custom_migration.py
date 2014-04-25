@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from zope.i18n import translate
 from Products.Five.browser import BrowserView
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import iterSchemataForType
@@ -30,11 +31,12 @@ class CustomMigrationForm(BrowserView):
         # check that we can actually access this form, aka the current user has an advice to add or edit
         form = self.request.form
         cancelled = form.get('form.button.Cancel', False)
-        submitted = form.get('form.button.Apply', False)
+        submitted = form.get('form.button.Migrate', False)
         if submitted:
             # proceed, call the migration methdd
-            self.apply()
-            msg = self.context.utranslate('Migration applied.', domain='plone.app.contenttypes')
+            self.migrate()
+            msg = translate('Migration applied.',
+                            domain='plone.app.contenttypes')
             self.context.plone_utils.addPortalMessage(msg)
         elif cancelled:
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
@@ -93,7 +95,8 @@ class CustomMigrationForm(BrowserView):
         for field in schema.fields():
             if not field.getName() in self.at_metadata_fields:
                 results.append({'id': field.getName(),
-                                'title': '%s (%s)' % (field.widget.label, field.widget.getName())})
+                                'title': '%s (%s)' % (field.widget.label, field.widget.getName()),
+                                'type': field.widget.getName()})
         return results
 
     def getFieldsForDXType(self, typename):
@@ -110,7 +113,8 @@ class CustomMigrationForm(BrowserView):
                 if fieldName in self.dx_metadata_fields:
                     continue
                 results.append({'id': fieldName,
-                                'title': '%s (%s)' % (field.title, field.__class__.__name__)})
+                                'title': '%s (%s)' % (field.title, field.__class__.__name__),
+                                'type': field.__class__.__name__})
         return results
 
     def getPossibleTargetField(self, fieldtype):
@@ -119,20 +123,37 @@ class CustomMigrationForm(BrowserView):
     def isFolderish(self):
         ''' decide which base-class we use for the migrator'''
 
-    def apply(self):
-        '''
-        '''
-        # dictionnary structure is like :
-        # ({'AT_field_name': 'text',
-        #   'AT_field_type': 'RichText',
-        #   'DX_field_name': 'text',
-        #   'DX_field_type': 'TextLine', }), },
-        # }
-        data = ({'AT_field_name': 'text',
-                 'AT_field_type': 'RichText',
-                 'DX_field_name': 'text',
-                 'DX_field_type': 'TextLine', }, )
-        migrateCustomAT(self.context, fields_mapping=data, src_type='DocumentAT', dst_type='Document')
+    def migrate(self):
+        '''Build data from self.request.form, we will build something like :
+           {'MyATPortalType': {'MyDXPortalType': {'at_fielname1': 'dx_fieldname1', 'at_fieldname2': 'dx_fieldname2'}}}
+           Call the migrateCustomAT migrator for each AT content_type we choose to migrate.'''
+        data = {}
+        form = self.request.form
+        for k in self.request.form.keys():
+            if k.startswith('dx_select_'):
+                # we found select where we choose a DX type regarding an AT type
+                # the selelect name is like 'dx_select_MyATPortalType'
+                if not form[k]:
+                    # nothing selected in this select, continue
+                    continue
+                at_typename = k[10:]
+                dx_typename = form[k]
+                data[at_typename] = {dx_typename: {}}
+                # now handle fields mapping for found DX/AT type migration definition
+                # we have 2 keys we relevant mappings, first key is the AT typename
+                # second key is a particular key like 'dx_DXPortalType__for__MyATPortalType
+                dx_key = 'dx_%s__for__%s' % (dx_typename, at_typename)
+                for at_fieldname in form[at_typename]:
+                    data[at_typename][dx_typename][at_fieldname] = form[dx_key][form[at_typename].index(at_fieldname)]
+        for at_typename, dx_mappings in data.items():
+            for k, v in dx_mappings.items():
+                migrateCustomAT(self.context, fields_mapping=v, src_type=at_typename, dst_type=dx_typename)
+
+        #data = ({'AT_field_name': 'text',
+        #         'AT_field_type': 'RichText',
+        #         'DX_field_name': 'text',
+        #         'DX_field_type': 'TextLine', }, )
+        #migrateCustomAT(self.context, fields_mapping=data, src_type='DocumentAT', dst_type='Document')
 
 
 class DisplayDXFields(CustomMigrationForm):

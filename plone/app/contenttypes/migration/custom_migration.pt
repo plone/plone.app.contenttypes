@@ -68,7 +68,11 @@
                 <tr tal:repeat="at_type at_types">
                     <td valign="top">
                         <p tal:content="at_type/title" style="font-weight: bold;">AT content type title</p>
-                        <p tal:repeat="field python: view.getFieldsForATType(at_type['id'])" tal:content="field/title">Field name</p>
+                        <tal:block repeat="field python: view.getFieldsForATType(at_type['id'])">
+                            <p tal:content="field/title">Field name</p>
+                            <input type="hidden" tal:attributes="name string:${at_type/id}:list;
+                                                                 value string:${field/id};" />
+                        </tal:block>
                     </td>
                     <td valign="top">
                         <select tal:attributes="onChange string:javascript:getDXFields(at_typename='${at_type/id}', this.value);
@@ -90,7 +94,7 @@
             </table>
             <div>
               <br />
-              <input type="submit" name="form.button.Apply" class="context" value="Apply" i18n:attributes="value" i18n:domain="plone"/>&nbsp;
+              <input type="submit" name="form.button.Migrate" class="context" value="Migrate" i18n:attributes="value" i18n:domain="plone"/>&nbsp;
               <input type="submit" name="form.button.Cancel" class="standalone" value="Cancel" i18n:attributes="value" i18n:domain="plone"/>
             </div>
             </form>
