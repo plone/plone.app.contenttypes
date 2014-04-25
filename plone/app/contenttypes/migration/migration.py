@@ -7,35 +7,105 @@ only in the setuptools extra_requiers [migrate_atct]. Importing this
 module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
 '''
-from Products.ATContentTypes.interfaces.interfaces import IATContentType
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode, safe_hasattr
-from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
-from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
-from Products.contentmigration.basemigrator.walker import CatalogWalker
 from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
-from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.ATContentTypes.interfaces.interfaces import IATContentType
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode, safe_hasattr
+from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
+from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
+from Products.contentmigration.basemigrator.walker import CatalogWalker
 from z3c.relationfield import RelationValue
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getUtility
-from zope.interface import Interface
+from zope.component.hooks import getSite
 from zope.interface import implementer
+from zope.interface import Interface
 from zope.intid.interfaces import IIntIds
-
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    field = src_obj.getField(src_fieldname)
+    if field:
+        at_value = field.get(src_obj)
+    else:
+        at_value = getattr(src_obj, src_fieldname, None)
+        if at_value and hasattr(at_value, '__call__'):
+            at_value = at_value()
+    if at_value:
+        setattr(dst_obj, dst_fieldname, at_value)
+
+
+def migrate_textfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    field = src_obj.getField(src_fieldname)
+    raw_text = ''
+    if field:
+        mime_type = field.getContentType(src_obj)
+        raw_text = safe_unicode(field.getRaw(src_obj))
+    else:
+        at_value = getattr(src_obj, src_fieldname, None)
+        if at_value:
+            mime_type = at_value.mimetype
+            raw_text = safe_unicode(at_value.raw)
+
+    if raw_text.strip() == '':
+            return
+    richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
+                             outputMimeType='text/x-html-safe')
+    setattr(dst_obj, dst_fieldname, richtext)
+
+
+def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    old_image = src_obj.getField(src_fieldname).get(src_obj)
+    if old_image == '':
+        return
+    filename = safe_unicode(old_image.filename)
+    old_image_data = old_image.data
+    if safe_hasattr(old_image_data, 'data'):
+        old_image_data = old_image_data.data
+    namedblobimage = NamedBlobImage(data=old_image_data,
+                                    filename=filename)
+    dst_obj.image = namedblobimage
+    caption_field = src_obj.getField('imageCaption', None)
+    if caption_field:
+        dst_obj.image_caption = safe_unicode(caption_field.get(src_obj))
+    logger.info("Migrating image %s" % filename)
+
+
+def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    BBB to be tested
+    """
+    old_file = src_obj.getField(src_fieldname).get(src_obj)
+    if old_file == '':
+        return
+    filename = safe_unicode(old_file.filename)
+    old_file_data = old_file.data
+    if safe_hasattr(old_file_data, 'data'):
+        old_file_data = old_file_data.data
+    namedblobfile = NamedBlobFile(data=old_file_data,
+                                    filename=filename)
+    dst_obj.file = namedblobfile
+    logger.info("Migrating file %s" % filename)
+
+
+FIELDS_MAPPING = {'TextField': migrate_textfield,
+                  'FileField': migrate_filefield,
+                  'ImageField': migrate_imagefield}
 
 
 def migrate(portal, migrator):
@@ -532,6 +602,19 @@ def makeCustomFolderMigrator(context, src_type, dst_type, fields_mapping):
         src_portal_type = src_type
         dst_portal_type = dst_type
 
+        def migrate_schema_fields(self):
+            for fields_dict in fields_mapping:
+                at_fieldname = fields_dict.get('AT_field_name')
+                at_fieldtype = fields_dict.get('AT_field_type')
+                dx_fieldname = fields_dict.get('DX_field_name')
+                migration_field_method = migrate_simplefield
+                if at_fieldtype in FIELDS_MAPPING:
+                    migration_field_method = FIELDS_MAPPING[at_fieldtype]
+                migration_field_method(self.old,
+                                       self.new,
+                                       at_fieldname,
+                                       dx_fieldname)
+
     return CustomATFolderMigrator
 
 
@@ -543,121 +626,46 @@ def makeCustomContentMigrator(context, src_type, dst_type, fields_mapping):
         dst_portal_type = dst_type
 
         def migrate_schema_fields(self):
-            # migrate the richtext
-            super(CustomATContentMigrator, self).migrate_schema_fields()
+            for fields_dict in fields_mapping:
+                at_fieldname = fields_dict.get('AT_field_name')
+                at_fieldtype = fields_dict.get('AT_field_type')
+                dx_fieldname = fields_dict.get('DX_field_name')
+                migration_field_method = migrate_simplefield
+                if at_fieldtype in FIELDS_MAPPING:
+                    migration_field_method = FIELDS_MAPPING[at_fieldtype]
+                migration_field_method(self.old,
+                                       self.new,
+                                       at_fieldname,
+                                       dx_fieldname)
 
     return CustomATContentMigrator
 
 
-def migrateCustomAT(context, fields_mapping, src_type, dst_type):
-    #BBB: i can't find a better way to know if a given portal_type is folderish or not
-    is_folderish = False
-    temp_obj = context.restrictedTraverse('portal_factory/%s/tmp_id' % src_type)
-    if temp_obj:
-        plone_view = temp_obj.restrictedTraverse('@@plone')
-        if plone_view.isStructuralFolder():
-            is_folderish = True
-    portal_types = context.portal_types
-    src_infos = portal_types.getTypeInfo(src_type)
-    dst_infos = portal_types.getTypeInfo(dst_type)
-    if is_folderish:
-        migrator = makeCustomFolderMigrator(context,
+def migrateCustomAT(fields_mapping, src_type, dst_type):
+    """
+    try to get types infos from archetype_tool, then set a migrator an pass it given values
+    """
+    portal = getSite()
+    archetype_tool = getToolByName(portal, 'archetype_tool', None)
+    src_type_infos = None
+    if archetype_tool:
+        for info in archetype_tool.listRegisteredTypes():
+            if info.get('portal_type') == src_type:
+                src_type_infos = info
+    if src_type_infos and src_type_infos.get('klass').isPrincipiaFolderish:
+        migrator = makeCustomFolderMigrator(portal,
                                      src_type,
                                      dst_type,
                                      fields_mapping)
     else:
-        migrator = makeCustomContentMigrator(context,
+        migrator = makeCustomContentMigrator(portal,
                                       src_type,
                                       dst_type,
                                       fields_mapping)
     if migrator:
-        migrator.src_meta_type = src_infos.content_meta_type
-        migrator.dst_meta_type = dst_infos.content_meta_type
-        migrate(context, migrator)
-
-
-def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    field = src_obj.getField(src_fieldname)
-    if not field:
-        return
-    val = field.get(src_obj)
-    setattr(dst_obj, dst_fieldname, val)
-
-
-def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    old_image = src_obj.getField(src_fieldname).get(src_obj)
-    if old_image == '':
-        return
-    filename = safe_unicode(old_image.filename)
-    old_image_data = old_image.data
-    if safe_hasattr(old_image_data, 'data'):
-        old_image_data = old_image_data.data
-    namedblobimage = NamedBlobImage(data=old_image_data,
-                                    filename=filename)
-    dst_obj.image = namedblobimage
-    caption_field = src_obj.getField('imageCaption', None)
-    if caption_field:
-        dst_obj.image_caption = safe_unicode(caption_field.get(src_obj))
-    logger.info("Migrating image %s" % filename)
-
-
-def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    """
-    BBB to be tested
-    """
-    old_file = src_obj.getField(src_fieldname).get(src_obj)
-    if old_file == '':
-        return
-    filename = safe_unicode(old_file.filename)
-    old_file_data = old_file.data
-    if safe_hasattr(old_file_data, 'data'):
-        old_file_data = old_file_data.data
-    namedblobfile = NamedBlobFile(data=old_file_data,
-                                    filename=filename)
-    dst_obj.file = namedblobfile
-    logger.info("Migrating file %s" % filename)
-
-
-# def migrate_referencefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-#     # Relations UIDs:
-#     field = src_obj.getField(src_fieldname)
-#     if not field:
-#         return
-#     references = field.get(src_obj)
-#     if not hasattr(src_obj, "_%sOrder" % src_fieldname):
-#         referencesOrder = [item.UID() for item in references]
-#         setattr(src_obj, "_%sOrder" % src_fieldname, PersistentList(referencesOrder))
-
-#     # Backrefs Relations UIDs:
-#     reference_cat = getToolByName(src_obj, REFERENCE_CATALOG)
-#     backrefs = reference_cat.getBackReferences(src_obj,
-#                                                relationship="relatesTo")
-#     backref_objects = map(lambda x: x.getSourceObject(), backrefs)
-#     for obj in backref_objects:
-#         if obj.portal_type != dst_obj.src_portal_type:
-#             continue
-#         if not hasattr(obj, "_relUids"):
-#             relatedItems = obj.getRelatedItems()
-#             relatedItemsOrder = [item.UID() for item in relatedItems]
-#             obj._relatedItemsOrder = PersistentList(relatedItemsOrder)
-
-# def migrate_relatedItems(self):
-#     """ Store Archetype relations as target uids on the dexterity object
-#         for later restore. Backrelations are saved as well because all
-#         relation to deleted objects would be lost.
-#     """
-
-#     # Relations:
-#     relItems = self.old.getRelatedItems()
-#     relUids = [item.UID() for item in relItems]
-#     self.new._relatedItems = relUids
-
-#     # Backrefs:
-#     reference_catalog = getToolByName(self.old, REFERENCE_CATALOG)
-
-#     backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
-#         self.old, relationship="relatesTo")]
-#     self.new._backrefs = backrefs
-
-#     # Order:
-#     self.new._relatedItemsOrder = self.old._relatedItemsOrder
+        if src_type_infos:
+            migrator.src_meta_type = src_type_infos.get('meta_type')
+        else:
+            migrator.src_meta_type = src_type
+        migrator.dst_meta_type = ''
+        migrate(portal, migrator)

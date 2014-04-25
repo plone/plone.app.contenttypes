@@ -1,26 +1,11 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
-from five.intid.intid import IntIds
-from five.intid.site import addUtility
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
-from plone.app.contenttypes.testing import set_browserlayer
 from plone.app.testing import applyProfile
-from plone.app.testing import login
-from plone.event.interfaces import IEventAccessor
-from zope.annotation.interfaces import IAnnotations
-from zope.component import getMultiAdapter
-from zope.component import getSiteManager
-from zope.component import getUtility
-from zope.intid.interfaces import IIntIds
-from zope.schema.interfaces import IVocabularyFactory
 import os.path
-import time
 import unittest2 as unittest
 from plone.app.testing import TEST_USER_ID, setRoles
-from test_image import dummy_image
 from plone.app.contenttypes.migration.migration import migrate_imagefield, migrate_simplefield
-from plone.app.testing import applyProfile
 
 
 class MigrateFieldsTest(unittest.TestCase):
@@ -64,6 +49,23 @@ class MigrateFieldsTest(unittest.TestCase):
         dx_document = self.portal[dx_document_id]
         migrate_simplefield(at_document, dx_document, 'title', 'title')
         self.assertEqual(dx_document.Title(), at_document.Title())
+
+    def test_migrate_richtextfield(self):
+        # create content
+        at_document_id = self.portal.invokeFactory('Document',
+                                                   'foo',
+                                                   title="Foo document",
+                                                   text="Some foo html text")
+        # register p.a.contenttypes profile
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        dx_document_id = self.portal.invokeFactory('Document',
+                                                   'bar',
+                                                   title="Bar document")
+        at_document = self.portal[at_document_id]
+        dx_document = self.portal[dx_document_id]
+        self.assertEqual(dx_document.text, None)
+        migrate_simplefield(at_document, dx_document, 'text', 'text')
+        self.assertEqual(dx_document.text, at_document.getText())
 
     def test_migrate_listfield(self):
         # create content
@@ -114,3 +116,71 @@ class MigrateCustomATTest(unittest.TestCase):
             applyProfile(self.portal, 'plone.app.contenttypes:uninstall')
         except KeyError:
             pass
+
+    def createCustomATDocument(self, id, parent=None):
+        from Products.Archetypes.atapi import StringField, TextField
+        from Products.ATContentTypes.interface import IATDocument
+        from archetypes.schemaextender.interfaces import ISchemaExtender
+        from archetypes.schemaextender.field import ExtensionField
+        from zope.component import getGlobalSiteManager
+        from zope.interface import implements
+
+        # create schema extension
+        class ExtensionTextField(ExtensionField, TextField):
+            """ derivative of text for extending schemas """
+
+        class ExtensionStringField(ExtensionField, StringField):
+            """ derivative of text for extending schemas """
+
+        class SchemaExtender(object):
+            implements(ISchemaExtender)
+            fields = [
+                ExtensionTextField('textExtended',
+                                   ),
+                ExtensionStringField('stringExtended',
+                                     ),
+            ]
+
+            def __init__(self, context):
+                self.context = context
+
+            def getFields(self):
+                return self.fields
+
+        # register adapter
+        gsm = getGlobalSiteManager()
+        gsm.registerAdapter(SchemaExtender, (IATDocument,), ISchemaExtender)
+
+        # create content
+        container = parent or self.portal
+        container.invokeFactory('Document', id,
+                                title="Foo document",
+                                stringExtended="foo text",
+                                textExtended='foo extended rich text')
+        at_document = container[id]
+
+        # unregister adapter assure test isolation
+        gsm.unregisterAdapter(required=[IATDocument], provided=ISchemaExtender)
+
+        return at_document
+
+    def test_migrate_extended_document(self):
+        from plone.app.contenttypes.migration.migration import\
+            migrateCustomAT
+        from plone.app.contenttypes.interfaces import INewsItem
+        at_document = self.createCustomATDocument('foo-document')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        fields_mapping = ({'AT_field_name': 'textExtended',
+                           'AT_field_type': 'TextField',
+                           'DX_field_name': 'text',
+                           'DX_field_type': 'TextField', },
+                           {'AT_field_name': 'stringExtended',
+                           'AT_field_type': 'StringField',
+                           'DX_field_name': 'title',
+                           'DX_field_type': 'StringField', },)
+        migrateCustomAT(fields_mapping, src_type='Document', dst_type='News Item')
+        dx_newsitem = self.portal['foo-document']
+        self.assertTrue(INewsItem.providedBy(dx_newsitem))
+        self.assertTrue(dx_newsitem is not at_document)
+        self.assertEquals(at_document.textExtended(), dx_newsitem.text.raw)
+        self.assertEquals(at_document.stringExtended, dx_newsitem.title)
