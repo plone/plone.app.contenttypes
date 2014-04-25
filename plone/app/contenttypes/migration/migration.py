@@ -634,16 +634,21 @@ def migrateCustomAT(fields_mapping, src_type, dst_type):
     src_type_infos = None
     if not archetype_tool:
         return
+    # get the src meta_type from the portal_type
+    portal_types = getToolByName(portal, 'portal_types')
+    src_meta_type = getattr(portal_types, src_type).content_meta_type
+    # lookup registered type in archetype_tool with
+    # meta_type because several portal_types can use same meta_type
     for info in archetype_tool.listRegisteredTypes():
-        if info.get('portal_type') == src_type:
+        if info.get('meta_type') == src_meta_type:
             src_type_infos = info
     is_folderish = src_type_infos.get('klass').isPrincipiaFolderish
     migrator = makeCustomATMigrator(context=portal,
-                                 src_type=src_type,
-                                 dst_type=dst_type,
-                                 fields_mapping=fields_mapping,
-                                 is_folderish=is_folderish)
+                                    src_type=src_type,
+                                    dst_type=dst_type,
+                                    fields_mapping=fields_mapping,
+                                    is_folderish=is_folderish)
     if migrator:
-        migrator.src_meta_type = src_type_infos.get('meta_type')
+        migrator.src_meta_type = src_meta_type
         migrator.dst_meta_type = ''
         migrate(portal, migrator)
