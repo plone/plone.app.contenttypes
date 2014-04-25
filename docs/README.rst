@@ -439,3 +439,4 @@ Contributors
 * David Glick <david@glicksoftware.com>
 * Kees Hink <keeshink@gmail.com>
 * Roman Kozlovskyi <krzroman@gmail.com>
+* Gauthier Bastien <gauthier.bastien@imio.be>

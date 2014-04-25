@@ -4,7 +4,9 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added helper view for migration custom AT types to available DX types,
+  see issue #133.
+  [gbastien]
 
 
 1.2a3 (2014-04-19)
