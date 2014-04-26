@@ -150,10 +150,14 @@ class CustomMigrationForm(BrowserView):
                 # second key is a particular key like 'dx_DXPortalType__for__MyATPortalType
                 dx_key = 'dx_%s__for__%s' % (dx_typename, at_typename)
                 for at_field in form[at_typename]:
+                    dx_field = form[dx_key][form[at_typename].index(at_field)]
+                    if not dx_field:
+                        continue
                     at_field_name, at_field_type = at_field.split('__type__')
                     if not hasattr(data[at_typename][dx_typename], at_field_name):
                         data[at_typename][dx_typename] = []
-                    dx_field_name, dx_field_type = form[dx_key][form[at_typename].index(at_field)].split('__type__')
+
+                    dx_field_name, dx_field_type = dx_field.split('__type__')
                     field_data = {'AT_field_name': at_field_name,
                                   'AT_field_type': at_field_type,
                                   'DX_field_name': dx_field_name,
