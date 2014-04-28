@@ -8,6 +8,9 @@ Changelog
   see issue #133.
   [gbastien]
 
+- Added migration method that allows to migrate custom AT types to
+  available DX types (#133)
+  [cekk]
 
 1.2a3 (2014-04-19)
 ------------------
