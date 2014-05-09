@@ -128,7 +128,7 @@ These are the version-pinns for Plone 4.3.3:
 
     [versions]
     plone.app.event = 1.1b1
-    plone.app.portlets = 2.5a1
+    plone.app.portlets = 2.5.1
 
 Plone-versions before 4.3.3 need to pinn more packages:
 
@@ -142,7 +142,7 @@ Plone-versions before 4.3.3 need to pinn more packages:
     plone.app.dexterity = 2.0.11
     plone.schemaeditor = 1.3.5
     plone.app.event = 1.1b1
-    plone.app.portlets = 2.5a1
+    plone.app.portlets = 2.5.1
 
 
 Migration
