@@ -51,15 +51,6 @@ class HiddenProfiles(object):
         return [
             u'plone.app.contenttypes:uninstall',
             u'plone.app.contenttypes:default',
-            u'plone.app.contenttypes:event',
-            u'plone.app.contenttypes:collection',
-            u'plone.app.contenttypes:document',
-            u'plone.app.contenttypes:file',
-            u'plone.app.contenttypes:folder',
-            u'plone.app.contenttypes:image',
-            u'plone.app.contenttypes:link',
-            u'plone.app.contenttypes:newsitem',
-            u'plone.app.contenttypes:core',
         ]
 
 
