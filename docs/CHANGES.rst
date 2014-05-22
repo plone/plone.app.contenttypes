@@ -4,7 +4,9 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- When replacing the default news and events collections, reverse the
+  sort order correctly.
+  [maurits]
 
 
 1.2a3 (2014-04-19)

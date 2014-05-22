@@ -246,7 +246,7 @@ def create_news_topic(portal, target_language):
         # Set the Collection criteria.
         #: Sort on the Effective date
         aggregator.sort_on = u'effective'
-        aggregator.reverse_sort = True
+        aggregator.sort_reversed = True
         #: Query by Type and Review State
         aggregator.query = [
             {'i': u'portal_type',
@@ -291,7 +291,7 @@ def create_events_topic(portal, target_language):
         # Set the Collection criteria.
         #: Sort on the Event start date
         aggregator.sort_on = u'start'
-        aggregator.reverse_sort = True
+        aggregator.sort_reversed = True
         #: Query by Type, Review State and Event start date after today
         aggregator.query = [
             {'i': 'portal_type',
