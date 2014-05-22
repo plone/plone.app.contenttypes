@@ -4,6 +4,10 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- When replacing the default news and events collections, reverse the
+  sort order correctly.
+  [maurits]
+
 - For plone.app.contenttypes 1.1.x, depend on plone.app.event < 1.1.999.
   Closes/Fixes #149.
   [khink, thet]
