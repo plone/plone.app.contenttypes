@@ -181,6 +181,6 @@ class ContentProfileTestCase(unittest.TestCase):
                  ]
         collection = self.portal['news']['aggregator']
         self.assertEqual(collection.sort_on, u'effective')
-        self.assertEqual(collection.sort_reversed, True)
+        self.assertEqual(collection.reverse_sort, True)
         self.assertItemsEqual(collection.query, query)
         self.assertEqual(collection.getLayout(), 'summary_view')
