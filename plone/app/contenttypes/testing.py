@@ -14,7 +14,6 @@ from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
 
 import pkg_resources
-from .tests.robot.variables import TEST_FOLDER_ID
 
 
 def set_browserlayer(request):
@@ -55,11 +54,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
         login(portal, 'admin')
         portal.portal_workflow.setDefaultChain("simple_publication_workflow")
         setRoles(portal, TEST_USER_ID, ['Manager'])
-        portal.invokeFactory(
-            "Folder",
-            id=TEST_FOLDER_ID,
-            title=u"Test Folder"
-        )
 
     def tearDownPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:uninstall')

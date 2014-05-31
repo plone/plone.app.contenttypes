@@ -4,6 +4,11 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- Remove 'robot-test-folder' from p.a.contenttypes test setup. It is bad to
+  add content to test layers, especially if those test layers are used by
+  other packages.
+  [timo]
+
 - When replacing the default news and events collections, reverse the
   sort order correctly.
   [maurits]
