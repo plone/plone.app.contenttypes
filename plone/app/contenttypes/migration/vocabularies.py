@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from zope.interface import implements
-from zope.schema.vocabulary import SimpleVocabulary
-from zope.schema.interfaces import IVocabularyFactory
-
 from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from zope.interface import implements
+from zope.schema.interfaces import IVocabularyFactory
+from zope.schema.vocabulary import SimpleVocabulary
 from .. import _
 
 
@@ -40,6 +39,9 @@ def count(brains):
                 pt = "BlobImage"
         if not counter.get(pt):
             counter[pt] = 0
+        if not i.meta_type or 'dexterity' in i.meta_type.lower():
+            # There might be DX types with same iface and meta_type than AT
+            continue
         counter[pt] += 1
     return counter
 
@@ -48,24 +50,23 @@ def results(context, show_extended=False):
     """Helper method to create the vocabularies used below.
     """
     ext_dict = {}
-    ifaces = []
+    meta_types = []
     for k, v in ATCT_LIST.items():
-        iface = v['iface'].__identifier__
+        # iface = v['iface'].__identifier__
         extendend_fields = isSchemaExtended(v['iface'])
         expected = v['extended_fields']
         is_extended = len(extendend_fields) > len(expected)
         if is_extended and show_extended:
-            ifaces.append(iface)
+            meta_types.append(v['old_meta_type'])
             ext_dict[k] = {}
             if expected:
                 extendend_fields.remove(expected[0])
             ext_dict[k]['fields'] = extendend_fields
 
         elif not show_extended and not is_extended:
-            ifaces.append(iface)
+            meta_types.append(v['old_meta_type'])
     catalog = getToolByName(context, "portal_catalog")
-    brains = catalog.search({'object_provides': ifaces})
-
+    brains = catalog.search({'meta_type': meta_types})
     counter = count(brains)
 
     return SimpleVocabulary(get_terms(context,
