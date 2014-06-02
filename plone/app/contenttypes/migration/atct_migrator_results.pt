@@ -97,7 +97,7 @@
             i18n:translate="">Congratulations! You migrated from Archetypes to Dexterity.</h1>
 
         <div id="content-core">
-          <p>The migration finished within <span tal:replace="results/duration">20</span> seconds</p>
+          <p>The migration finished within <span tal:replace="results/duration">20</span></p>
 
           <h3>Migrated Content</h3>
           <table>
