@@ -8,6 +8,7 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
+from datetime import timedelta
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
@@ -137,13 +138,23 @@ class MigrateFromATContentTypes(BrowserView):
                 object_provides=v['iface'].__identifier__,
                 meta_type=v['old_meta_type'])
             )
-            # TODO: num objects is 0 for BlobFile and BlobImage
-            logger.info(
-                "Migrating %s objects of type %s" %
-                (amount_to_be_migrated, k)
-            )
+            starttime_for_current = datetime.now()
+            logger.info("Start migrating %s objects from %s to %s" % (
+                amount_to_be_migrated,
+                v['old_meta_type'],
+                v['new_type_name']))
+
             # call the migrator
             v['migrator'](portal)
+
+            # logging
+            duration_current = datetime.now() - starttime_for_current
+            duration_human = str(timedelta(seconds=duration_current.seconds))
+            logger.info("Finished migrating %s objects from %s to %s in %s" % (
+                amount_to_be_migrated,
+                v['old_meta_type'],
+                v['new_type_name'],
+                duration_human))
 
             # some data for the results-page
             migrated_types[k] = {}
@@ -165,25 +176,26 @@ class MigrateFromATContentTypes(BrowserView):
         # switch on setModificationDate on changes
         self.resetNotifyModified()
 
-        endtime = datetime.now()
-        duration = (endtime - starttime).seconds
+        duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
+        if not_migrated:
+            msg = ("The following types were not migrated: \n %s"
+                   % "\n".join(not_migrated))
+        else:
+            msg = "Migration successful\n\n"
+        msg += '\n-----------------------------\n'
+        msg += 'Migration finished in: %s' % duration
+        msg += '\n-----------------------------\n'
+        msg += 'Migration statictics:\n'
+        msg += pformat(migrated_types)
+        msg += '\n-----------------------------\n'
+        msg += 'State before:\n'
+        msg += pformat(stats_before)
+        msg += '\n-----------------------------\n'
+        msg += 'Stats after:\n'
+        msg += pformat(self.stats())
+        msg += '\n-----------------------------\n'
         if not from_form:
-            if not_migrated:
-                msg = ("The following were not migrated as they "
-                       "have extended schemas (from "
-                       "archetypes.schemaextender): \n %s"
-                       % "\n".join(not_migrated))
-            else:
-                msg = "Default content types successfully migrated\n\n"
-
-            msg += 'Migration finished in %s seconds' % duration
-            msg += '\n-----------------------------\n'
-            msg += 'State before:\n'
-            msg += pformat(stats_before)
-            msg += '\n-----------------------------\n'
-            msg += 'Stats after:\n'
-            msg += pformat(self.stats())
-            msg += '\n-----------------------------\n'
+            logger.info(msg)
             return msg
         else:
             stats = {

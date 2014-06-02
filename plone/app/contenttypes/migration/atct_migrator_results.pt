@@ -26,7 +26,7 @@
     tal:define="results view/results">
 
   <tal:success tal:condition="results">
-    <p>The migration finished within <span tal:replace="results/duration">20</span> seconds</p>
+    <p>The migration finished within <span tal:replace="results/duration">20</span></p>
 
     <h3>Migrated Content</h3>
     <table>
