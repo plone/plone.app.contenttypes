@@ -82,14 +82,14 @@ ATCT_LIST = {
         'migrator': migration.migrate_blobimages,
         'extended_fields': ['image'],
         'new_type_name': 'Image',
-        'old_meta_type': 'ATBlobImage',
+        'old_meta_type': 'ATBlob',
     },
     "BlobFile": {
         'iface': IATBlobFile,
         'migrator': migration.migrate_blobfiles,
         'extended_fields': ['file'],
         'new_type_name': 'File',
-        'old_meta_type': 'ATBlobFile',
+        'old_meta_type': 'ATBlob',
     },
 }
 
