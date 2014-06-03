@@ -4,6 +4,9 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- Remove enabling simple_publication_workflow from testing fixture.
+  [timo]
+
 - Only show migrateable types (fixes #155)
   [pbauer]
 

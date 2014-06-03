@@ -52,7 +52,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
                                            ['Manager'],
                                            [])
         login(portal, 'admin')
-        portal.portal_workflow.setDefaultChain("simple_publication_workflow")
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
     def tearDownPloneSite(self, portal):
