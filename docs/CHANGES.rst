@@ -4,6 +4,12 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
+- Only show migrateable types (fixes #155)
+  [pbauer]
+
+- Add logging during and after migration (fixes #156)
+  [pbauer]
+
 - When replacing the default news and events collections, reverse the
   sort order correctly.
   [maurits]
