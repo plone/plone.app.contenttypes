@@ -4,6 +4,12 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- Only show migrateable types (fixes #155)
+  [pbauer]
+
+- Add logging during and after migration (fixes #156)
+  [pbauer]
+
 - Remove 'robot-test-folder' from p.a.contenttypes test setup. It is bad to
   add content to test layers, especially if those test layers are used by
   other packages.

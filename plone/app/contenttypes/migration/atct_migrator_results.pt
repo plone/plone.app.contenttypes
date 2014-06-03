@@ -102,14 +102,14 @@
           <h3>Migrated Content</h3>
           <table>
             <tr>
-              <th>Old Type</th>
+              <th>Old Meta Type</th>
               <th>New Type</th>
               <th>Items</th>
             </tr>
             <tal:block tal:repeat="ct results/content_types">
               <tr>
                 <td tal:content="python:results['migrated_types'][ct]['old_meta_type']"></td>
-                <td tal:content="python:results['migrated_types'][ct]['new_type_name']"></td>
+                <td tal:content="python:results['migrated_types'][ct]['type_name']"></td>
                 <td tal:content="python:results['migrated_types'][ct]['amount_migrated']"></td>
               </tr>
             </tal:block>
