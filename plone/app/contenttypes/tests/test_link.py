@@ -79,6 +79,8 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.response = self.request.response
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        wftool = getToolByName(self.portal, "portal_workflow")
+        wftool.setDefaultChain("simple_publication_workflow")
         self.portal.invokeFactory('Link', 'link')
         link = self.portal['link']
         link.title = "My Link"

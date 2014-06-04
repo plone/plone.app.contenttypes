@@ -208,6 +208,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         # set the query and publish the collection
         wrapped.query = query
         workflow = portal.portal_workflow
+        workflow.setDefaultChain("simple_publication_workflow")
         workflow.doActionFor(collection, "publish")
         commit()
         logout()

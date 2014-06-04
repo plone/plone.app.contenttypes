@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest2 as unittest
 
-from Products.CMFCore.utils import getToolByName
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
@@ -37,7 +36,6 @@ class RichTextBehaviorTests(RichTextBase, unittest.TestCase):
     def setUp(self):
         app = self.layer['app']
         self.portal = self.layer['portal']
-        self.wf = getToolByName(self.portal, "portal_workflow")
         self.portal.acl_users._doAddUser('user_std', 'secret', ['Member'], [])
         self.portal_url = self.portal.absolute_url()
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
