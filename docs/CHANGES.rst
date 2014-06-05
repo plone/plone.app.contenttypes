@@ -7,6 +7,16 @@ Changelog
 - Replace AT-fti with DX-fti when migrating a type.
   [esteele, pbauer]
 
+- Only show migrateable types (fixes #155)
+  [pbauer]
+
+- Add logging during and after migration (fixes #156)
+  [pbauer]
+
+- When replacing the default news and events collections, reverse the
+  sort order correctly.
+  [maurits]
+
 
 1.2a3 (2014-04-19)
 ------------------

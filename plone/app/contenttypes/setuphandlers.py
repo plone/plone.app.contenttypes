@@ -51,15 +51,6 @@ class HiddenProfiles(object):
         return [
             u'plone.app.contenttypes:uninstall',
             u'plone.app.contenttypes:default',
-            u'plone.app.contenttypes:event',
-            u'plone.app.contenttypes:collection',
-            u'plone.app.contenttypes:document',
-            u'plone.app.contenttypes:file',
-            u'plone.app.contenttypes:folder',
-            u'plone.app.contenttypes:image',
-            u'plone.app.contenttypes:link',
-            u'plone.app.contenttypes:newsitem',
-            u'plone.app.contenttypes:core',
         ]
 
 
@@ -255,7 +246,7 @@ def create_news_topic(portal, target_language):
         # Set the Collection criteria.
         #: Sort on the Effective date
         aggregator.sort_on = u'effective'
-        aggregator.reverse_sort = True
+        aggregator.sort_reversed = True
         #: Query by Type and Review State
         aggregator.query = [
             {'i': u'portal_type',
@@ -300,7 +291,7 @@ def create_events_topic(portal, target_language):
         # Set the Collection criteria.
         #: Sort on the Event start date
         aggregator.sort_on = u'start'
-        aggregator.reverse_sort = True
+        aggregator.sort_reversed = True
         #: Query by Type, Review State and Event start date after today
         aggregator.query = [
             {'i': 'portal_type',
