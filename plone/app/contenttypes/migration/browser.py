@@ -391,7 +391,7 @@ class PACInstaller(form.Form):
         fail = qi.installProduct(
             'plone.app.contenttypes',
             profile='plone.app.contenttypes:default',
-            stepsToSkip=['typeinfo'],
+            blacklistedSteps=['typeinfo'],
         )
         if fail:
             messages = IStatusMessage(self.request)

@@ -107,7 +107,7 @@ class FixBaseclassesTest(unittest.TestCase):
         applyProfile(
             self.portal,
             'plone.app.contenttypes:default',
-            stepsToSkip=['typeinfo'])
+            blacklistedSteps=['typeinfo'])
         fti = tt.getTypeInfo('Document')
         self.assertFalse(IDexterityFTI.providedBy(fti))
         installTypeIfNeeded('Document')
@@ -122,5 +122,5 @@ class FixBaseclassesTest(unittest.TestCase):
         except KeyError as e:
             self.assertEqual(
                 e.message,
-                'Unknown is not one of the dafault types'
+                'Unknown is not one of the default types'
             )
