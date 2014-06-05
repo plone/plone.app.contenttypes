@@ -12,6 +12,8 @@ from datetime import timedelta
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
@@ -143,6 +145,7 @@ class MigrateFromATContentTypes(BrowserView):
                 amount_to_be_migrated,
                 v['old_meta_type'],
                 v['type_name']))
+            installTypeIfNeeded(v['new_type_name'])
 
             # call the migrator
             v['migrator'](portal)
@@ -400,14 +403,25 @@ class PACInstaller(form.Form):
         fail = qi.installProduct(
             'plone.app.contenttypes',
             profile='plone.app.contenttypes:default',
+            blacklistedSteps=['typeinfo'],
         )
         if fail:
             messages = IStatusMessage(self.request)
             messages.addStatusMessage(fail, type='error')
             self.request.response.redirect(url)
 
+        # For types without any instances we want to instantly
+        # replace the AT-FTI's with DX-FTI's.
+        self.installTypesWithoutItems()
+
         url = url + '/@@atct_migrator'
         self.request.response.redirect(url)
+
+    def installTypesWithoutItems(self):
+        catalog = getToolByName(self.context, "portal_catalog")
+        for types_name in DEFAULT_TYPES:
+            if not catalog.unrestrictedSearchResults(portal_type=types_name):
+                installTypeIfNeeded(types_name)
 
     @button.buttonAndHandler(
         _(u'label_cancel', default=u'Cancel'), name='cancel')

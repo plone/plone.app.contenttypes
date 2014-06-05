@@ -4,6 +4,9 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
+- Replace AT-fti with DX-fti when migrating a type.
+  [esteele, pbauer]
+
 - Only show migrateable types (fixes #155)
   [pbauer]
 
