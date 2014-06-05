@@ -145,7 +145,7 @@ class MigrateFromATContentTypes(BrowserView):
                 amount_to_be_migrated,
                 v['old_meta_type'],
                 v['type_name']))
-            installTypeIfNeeded(v['new_type_name'])
+            installTypeIfNeeded(v['type_name'])
 
             # call the migrator
             v['migrator'](portal)
