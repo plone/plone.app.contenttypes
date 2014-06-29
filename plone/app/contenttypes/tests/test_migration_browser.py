@@ -107,7 +107,7 @@ class FixBaseclassesTest(unittest.TestCase):
         applyProfile(
             self.portal,
             'plone.app.contenttypes:default',
-            blacklistedSteps=['typeinfo'])
+            blacklisted_steps=['typeinfo'])
         fti = tt.getTypeInfo('Document')
         self.assertFalse(IDexterityFTI.providedBy(fti))
         installTypeIfNeeded('Document')
