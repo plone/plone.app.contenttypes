@@ -235,7 +235,7 @@ def create_news_topic(portal, target_language):
                             description=description)
         aggregator = container['aggregator']
 
-        # Constain types
+        # Constrain types
         allowed_types = ['News Item', ]
         _setup_constrains(container, allowed_types)
 
