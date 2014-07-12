@@ -51,19 +51,34 @@ def enable_collection_behavior(context):
         IDexterityFTI,
         name='Collection'
     )
+    if not fti:
+        return
     behavior = 'plone.app.contenttypes.behaviors.collection.ICollection'
     if behavior in fti.behaviors:
         return
-    behaviors = list(fti.behaviors)
-    behaviors.append(behavior)
-    behaviors = tuple(behaviors)
+    behaviors = fti.behaviors + (behavior,)
     fti._updateProperty('behaviors', behaviors)
 
 
 def migrate_to_richtext(context):
     """update fti's to add RichText behaviors and remove old text-fields"""
 
-    context.runImportStepFromProfile(
-        'profile-plone.app.contenttypes:default',
-        'typeinfo',
-    )
+    behavior = "plone.app.contenttypes.behaviors.richtext.IRichText"
+    types = [
+        "Document",
+        "News Item",
+        "Event",
+        "Collection",
+    ]
+    for type_name in types:
+        fti = queryUtility(
+            IDexterityFTI,
+            name=type_name
+        )
+        if not fti:
+            continue
+        if behavior in fti.behaviors:
+            return
+        behaviors = fti.behaviors + (behavior,)
+        fti._updateProperty('behaviors', behaviors)
+        # the mode-file is automatically reloaded?
