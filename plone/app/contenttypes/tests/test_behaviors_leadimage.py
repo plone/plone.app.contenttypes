@@ -18,7 +18,7 @@ from plone.dexterity.fti import DexterityFTI
 from plone.app.testing import TEST_USER_ID, setRoles
 
 
-class DocumentFunctionalTest(unittest.TestCase):
+class LeadImageBehaviorFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
