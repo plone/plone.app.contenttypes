@@ -4,6 +4,11 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
+- Support ``custom_query`` parameter in the ``result`` method of the
+  ``Collection`` behavior. This allows for run time customization of the
+  stored query, e.g. by request parameters.
+  [thet]
+
 - Replace AT-fti with DX-fti when migrating a type.
   [esteele, pbauer]
 
