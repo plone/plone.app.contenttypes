@@ -21,7 +21,7 @@
                       scale_func context/@@images;
                       scaled_image python: getattr(context.aq_explicit, 'image', False) and scale_func.scale('image', scale='mini')">
 
-        <div class="newsImageContainer"
+        <figure class="newsImageContainer"
              tal:condition="python: scaled_image">
             <a href="#"
                tal:define="here_url context/@@plone_context_state/object_url;
@@ -29,13 +29,13 @@
                tal:attributes="href large_image/url">
               <img tal:replace="structure python: scaled_image.tag(css_class='newsImage')" />
 
-              <p class="discreet"
+              <figcaption
                  tal:condition="context/image_caption|nothing"
                  tal:content="structure context/image_caption" >
-              </p>
+              </figcaption>
 
             </a>
-        </div>
+        </figure>
 
 
         <div id="parent-fieldname-text"
