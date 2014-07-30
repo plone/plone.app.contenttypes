@@ -4,6 +4,11 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
+- Restore Plone 4.3 compatibility by depending on ``plone.app.event >= 2.0a4``.
+  The previous release of p.a.c got an implicit Plone 5 dependency through a
+  previous version of plone.app.event.
+  [thet]
+
 - Replace AT-fti with DX-fti when migrating a type.
   [esteele, pbauer]
 
