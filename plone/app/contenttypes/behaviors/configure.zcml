@@ -54,6 +54,7 @@
   <browser:page
     name="getText"
     for=".richtext.IRichText"
+    class=".richtext.WidgetView"
     permission="zope2.View"
     template="richtext_gettext.pt"
     />
