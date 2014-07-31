@@ -4,6 +4,9 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
+- Add bbb getText view for content with IRichText-behavior
+  [datakurre]
+
 - Restore Plone 4.3 compatibility by depending on ``plone.app.event >= 2.0a4``.
   The previous release of p.a.c got an implicit Plone 5 dependency through a
   previous version of plone.app.event.
