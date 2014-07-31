@@ -1,0 +1,1 @@
+<div tal:replace="structure context/@@view/++widget++IRichText.text/render|string:" />

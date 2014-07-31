@@ -51,6 +51,13 @@
     marker=".richtext.IRichText"
     />
 
+  <browser:page
+    name="getText"
+    for=".richtext.IRichText"
+    permission="zope2.View"
+    template="richtext_gettext.pt"
+    />
+
   <utility
       component=".collection.MetaDataFieldsVocabularyFactory"
       name="plone.app.contenttypes.metadatafields" />
