@@ -39,7 +39,7 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
-          'plone.app.event >= 2.0a1',
+          'plone.app.event >= 2.0a4',
           'plone.app.dexterity >= 2.0.7',  # has a fix for INameFromFilename
           'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
