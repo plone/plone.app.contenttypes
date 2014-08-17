@@ -313,6 +313,51 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue(ritem0.CreationDate() > ritem1.CreationDate())
         self.assertTrue(ritem1.CreationDate() > ritem2.CreationDate())
 
+    def test_custom_query(self):
+        portal = self.layer['portal']
+        login(portal, 'admin')
+        query = [{
+            'i': 'portal_type',
+            'o': 'plone.app.querystring.operation.string.is',
+            'v': ['News Item', 'Document'],
+        }]
+        portal.invokeFactory("Collection",
+                             "collection",
+                             title="New Collection",
+                             query=query,
+                             )
+
+        # item 1
+        portal.invokeFactory(id='testnews',
+                             type_name='News Item')
+        item1 = portal.testnews
+        item1.reindexObject()
+
+        # item 2
+        portal.invokeFactory(id="testdoc",
+                             type_name='Document')
+        item2 = portal.testdoc
+        item2.reindexObject()
+
+        collection = portal['collection']
+        wrapped = ICollection_behavior(collection)
+
+        # Test unmodified query
+        results = wrapped.results(batch=False)
+        self.assertEqual(len(results), 2)
+
+        # Test with custom query
+        results = wrapped.results(batch=False,
+                                  custom_query={'portal_type': 'Document'})
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].id, 'testdoc')
+
+        # Test with custom query, which should not find anything
+        results = wrapped.results(batch=False,
+                                  custom_query={'portal_type': 'Document',
+                                                'id': 'bla'})
+        self.assertEqual(len(results), 0)
+
     def test_getFoldersAndImages(self):
         portal = self.layer['portal']
         login(portal, 'admin')

@@ -98,7 +98,8 @@ class Collection(object):
         self.context = context
 
     def results(self, batch=True, b_start=0, b_size=None,
-                sort_on=None, limit=None, brains=False):
+                sort_on=None, limit=None, brains=False,
+                custom_query={}):
         querybuilder = getMultiAdapter((self.context, self.context.REQUEST),
                                        name='querybuilderresults')
         sort_order = 'reverse' if self.sort_reversed else 'ascending'
@@ -138,7 +139,7 @@ class Collection(object):
         return querybuilder(
             query=query, batch=batch, b_start=b_start, b_size=b_size,
             sort_on=sort_on, sort_order=sort_order,
-            limit=limit, brains=brains
+            limit=limit, brains=brains, custom_query=custom_query
         )
 
     def getFoldersAndImages(self):
