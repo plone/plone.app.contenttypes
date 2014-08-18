@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.autoform.interfaces import IFormFieldProvider
+
+from plone.autoform.view import WidgetsView
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.textfield import RichText as RichTextField
 from plone.supermodel import model
@@ -28,3 +30,7 @@ class RichText(object):
 
     def __init__(self, context):
         self.context = context
+
+
+class WidgetView(WidgetsView):
+    schema = IRichText

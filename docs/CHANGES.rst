@@ -4,6 +4,9 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
+- Add bbb getText view for content with IRichText-behavior
+  [datakurre]
+
 - Support ``custom_query`` parameter in the ``result`` method of the
   ``Collection`` behavior. This allows for run time customization of the
   stored query, e.g. by request parameters.
