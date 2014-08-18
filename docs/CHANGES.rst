@@ -7,6 +7,14 @@ Changelog
 - Add bbb getText view for content with IRichText-behavior
   [datakurre]
 
+- Support ``custom_query`` parameter in the ``result`` method of the
+  ``Collection`` behavior. This allows for run time customization of the
+  stored query, e.g. by request parameters.
+  [thet]
+
+- Fix 'AttributeError: image' when NewsItem unused the lead image behavior.
+  [jianaijun]
+
 - Restore Plone 4.3 compatibility by depending on ``plone.app.event >= 2.0a4``.
   The previous release of p.a.c got an implicit Plone 5 dependency through a
   previous version of plone.app.event.
