@@ -23,7 +23,7 @@
  <property name="schema"></property>
  <property name="model_source"></property>
  <property name="model_file">plone.app.contenttypes.schema:image.xml</property>
- <property name="behaviors">
+ <property name="behaviors" purge="false">
   <element value="plone.app.dexterity.behaviors.metadata.ICategorization"/>
   <element value="plone.app.dexterity.behaviors.metadata.IPublication"/>
   <element value="plone.app.dexterity.behaviors.metadata.IOwnership"/>

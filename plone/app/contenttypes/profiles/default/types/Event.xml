@@ -25,7 +25,7 @@
  <property name="add_permission">plone.app.contenttypes.addEvent</property>
 
  <!-- Enabled behaviors -->
- <property name="behaviors">
+ <property name="behaviors" purge="false">
   <element value="plone.app.event.dx.behaviors.IEventBasic"/>
   <element value="plone.app.event.dx.behaviors.IEventRecurrence"/>
   <element value="plone.app.event.dx.behaviors.IEventLocation"/>

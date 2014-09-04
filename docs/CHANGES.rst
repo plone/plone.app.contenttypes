@@ -4,6 +4,9 @@ Changelog
 1.2a4 (unreleased)
 ------------------
 
+- Don't remove custom behaviors on reinstalling.
+  [pbauer]
+
 - Add bbb getText view for content with IRichText-behavior
   [datakurre]
 
