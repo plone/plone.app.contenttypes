@@ -4,6 +4,9 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- Add simple confirmation to prevent unintentional migration.
+  [pbauer]
+
 - Don't remove custom behaviors on reinstalling.
   [pbauer]
 

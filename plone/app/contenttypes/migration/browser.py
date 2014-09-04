@@ -91,15 +91,25 @@ class MigrateFromATContentTypes(BrowserView):
     """
 
     def __call__(self,
+                 migrate=False,
                  content_types="all",
                  migrate_schemaextended_content=False,
                  migrate_references=True,
                  from_form=False):
 
-        stats_before = self.stats()
-        starttime = datetime.now()
         portal = self.context
-        catalog = portal.portal_catalog
+        if not from_form and migrate not in ['1', 'True', 'true', 1]:
+            url1 = '{0}/@@migrate_from_atct?migrate=1'.format(
+                portal.absolute_url())
+            url2 = '{0}/@@atct_migrator'.format(portal.absolute_url())
+            msg = u'Warning \n'
+            msg += u'-------\n'
+            msg += u'You are accessing "@@migrate_from_atct" directly. '
+            msg += u'This will migrate all content to dexterity!\n\n'
+            msg += u'Really migrate all content now: {0}\n\n'.format(url1)
+            msg += u'First select what to migrate: {0}'.format(url2)
+            return msg
+
         helpers = getMultiAdapter((portal, self.request),
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
@@ -109,6 +119,10 @@ class MigrateFromATContentTypes(BrowserView):
             msg += 'http://github.com/plone/plone.app.contenttypes#migration '
             msg += 'for more information.'
             return msg
+
+        stats_before = self.stats()
+        starttime = datetime.now()
+        catalog = portal.portal_catalog
 
         # switch linkintegrity temp off
         ptool = queryUtility(IPropertiesTool)
