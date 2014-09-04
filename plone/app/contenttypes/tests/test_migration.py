@@ -847,12 +847,14 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         # This would result in changed modification-dates on the folders
         # unless this is patched in the migration-view.
         migration_view(
+            migrate=True,
             content_types=['Document'],
             migrate_schemaextended_content=True,
             migrate_references=True,
             from_form=False,
         )
         migration_view(
+            migrate=True,
             content_types=['Folder'],
             migrate_schemaextended_content=True,
             migrate_references=True,
@@ -1265,3 +1267,16 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(stats['Document']['amount_migrated'], 2)
         self.assertEqual(stats['Folder']['amount_migrated'], 2)
         self.assertEqual(stats['Collection']['amount_migrated'], 1)
+
+    def test_migration_view_confirmation(self):
+        set_browserlayer(self.request)
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migration_view = getMultiAdapter(
+            (self.portal, self.request),
+            name=u'migrate_from_atct'
+        )
+        results = migration_view()
+        self.assertIn('@@migrate_from_atct?migrate=1', results)
