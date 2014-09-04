@@ -27,6 +27,22 @@ else:
     HAS_APP_COLLECTION = True
     from plone.app.collection.interfaces import ICollection
 
+# Is there a multilingual addon?
+try:
+    pkg_resources.get_distribution('Products.LinguaPlone')
+except pkg_resources.DistributionNotFound:
+    HAS_MULTILINGUAL = False
+else:
+    HAS_MULTILINGUAL = True
+
+if not HAS_MULTILINGUAL:
+    try:
+        pkg_resources.get_distribution('plone.app.multilingual')
+    except pkg_resources.DistributionNotFound:
+        HAS_MULTILINGUAL = False
+    else:
+        HAS_MULTILINGUAL = True
+
 ATCT_LIST = {
     "Folder": {
         'iface': IATFolder,

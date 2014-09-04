@@ -4,6 +4,9 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- Include translated content into migration-information (see #170)
+  [pbauer]
+
 - Add simple confirmation to prevent unintentional migration.
   [pbauer]
 

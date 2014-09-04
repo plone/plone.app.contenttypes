@@ -9,6 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
+from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
@@ -67,8 +68,12 @@ class FixBaseClasses(BrowserView):
             ('News Item', NewsItem),
         ]
         catalog = getToolByName(self.context, "portal_catalog")
+        query = {}
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] = 'all'
         for portal_type, portal_type_class in portal_types:
-            results = catalog.searchResults(portal_type=portal_type)
+            query['portal_type'] = portal_type
+            results = catalog(query)
             for brain in results:
                 obj = brain.getObject()
                 if IDexterityContent.providedBy(obj):
@@ -146,10 +151,13 @@ class MigrateFromATContentTypes(BrowserView):
                     and not migrate_schemaextended_content:
                 not_migrated.append(k)
                 continue
-            amount_to_be_migrated = len(catalog(
-                object_provides=v['iface'].__identifier__,
-                meta_type=v['old_meta_type'])
-            )
+            query = {
+                'object_provides': v['iface'].__identifier__,
+                'meta_type': v['old_meta_type'],
+            }
+            if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+                query['Language'] = 'all'
+            amount_to_be_migrated = len(catalog(query))
             starttime_for_current = datetime.now()
             logger.info("Start migrating %s objects from %s to %s" % (
                 amount_to_be_migrated,
@@ -221,7 +229,11 @@ class MigrateFromATContentTypes(BrowserView):
 
     def stats(self):
         results = {}
-        for brain in self.context.portal_catalog():
+        query = {}
+        catalog = self.context.portal_catalog
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] ='all'
+        for brain in catalog(query):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return results
@@ -266,7 +278,9 @@ class IATCTMigratorForm(Interface):
         title=u"Migrate references?",
         description=(
             u"Select this option to migrate all "
-            u"references to each content type"
+            u"references to each content type. "
+            u"This will rebuild the whole catalog and "
+            u"might duplicate the migration-time."
         ),
         default=True
     )
@@ -347,8 +361,10 @@ class ATCTMigratorHelpers(BrowserView):
     def objects_to_be_migrated(self):
         """ Return the number of AT objects in the portal """
         catalog = getToolByName(self.context, "portal_catalog")
-        meta_types = [i['old_meta_type'] for i in ATCT_LIST.values()]
-        return len(catalog(meta_type=meta_types))
+        query = {'meta_type': [i['old_meta_type'] for i in ATCT_LIST.values()]}
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] ='all'
+        return len(catalog(query))
 
     def estimated_migration_time(self):
         """ Return the estimated migration time """
