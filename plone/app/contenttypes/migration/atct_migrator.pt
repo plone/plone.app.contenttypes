@@ -115,6 +115,8 @@
                   <tal:block i18n:name="minutes" content="time/minutes">45</tal:block> minutes
                   <tal:block i18n:name="seconds" content="time/seconds">23</tal:block> seconds
                 </span>
+                <br />
+                Please note that migrating references might double this time.
                 </p>
               </div>
               <div id="migration-options">
