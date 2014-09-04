@@ -22,7 +22,7 @@
  <property name="schema"></property>
  <property name="model_source"></property>
  <property name="model_file">plone.app.contenttypes.schema:document.xml</property>
- <property name="behaviors">
+ <property name="behaviors" purge="false">
   <element value="plone.app.content.interfaces.INameFromTitle"/>
   <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
   <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>

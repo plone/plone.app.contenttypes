@@ -4,6 +4,9 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- Don't remove custom behaviors on reinstalling.
+  [pbauer]
+
 - Remove enabling simple_publication_workflow from testing fixture.
   [timo]
 
