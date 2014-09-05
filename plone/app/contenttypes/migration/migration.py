@@ -172,12 +172,11 @@ class ReferenceMigrator(object):
                 relatedItemsOrder = [item.UID() for item in relatedItems]
                 obj._relatedItemsOrder = PersistentList(relatedItemsOrder)
 
-    def migrate_relatedItems(self):
+    def migrate_at_relatedItems(self):
         """ Store Archetype relations as target uids on the dexterity object
             for later restore. Backrelations are saved as well because all
             relation to deleted objects would be lost.
         """
-
         # Relations:
         relItems = self.old.getRelatedItems()
         relUids = [item.UID() for item in relItems]
