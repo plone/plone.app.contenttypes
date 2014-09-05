@@ -61,7 +61,7 @@ def enable_collection_behavior(context):
 
 
 def migrate_to_richtext(context):
-    """update fti's to add RichText behaviors and remove old text-fields"""
+    """Update fti's to add RichText behaviors and remove old text-fields"""
 
     behavior = "plone.app.contenttypes.behaviors.richtext.IRichText"
     types = [
@@ -78,7 +78,7 @@ def migrate_to_richtext(context):
         if not fti:
             continue
         if behavior in fti.behaviors:
-            return
-        behaviors = fti.behaviors + (behavior,)
-        fti._updateProperty('behaviors', behaviors)
-        # the mode-file is automatically reloaded?
+            continue
+        behaviors = list(fti.behaviors)
+        behaviors.append(behavior)
+        fti._updateProperty('behaviors', tuple(behaviors))
