@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1b3 (unreleased)
+1.1b3 (2014-09-07)
 ------------------
 
 - Include translated content into migration-information (see #170)
