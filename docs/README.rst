@@ -95,7 +95,7 @@ If you install plone.app.contenttypes on a fresh site (i.e. when no content has 
 
 
 Uninstalling
-^^^^^^^^^^^^
+------------
 
 To remove plone.app.contenttypes and return full functionality to old content and restore the AT-based default-types you have to install the import step "Types Tool" of the current base profile. Follow the following steps:
 
@@ -109,7 +109,7 @@ Any content you created based on plone.app.contenttypes will not be editable unt
 
 
 Dependencies
-^^^^^^^^^^^^
+------------
 
 * ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`_.
 
@@ -410,13 +410,13 @@ The 1.1.x-branch supports Plone 4.3.x. From this 1.1.x-releases will be cut.
 
 
 License
-^^^^^^^
+-------
 
 GNU General Public License, version 2
 
 
 Contributors
-^^^^^^^^^^^^
+------------
 
 * Philip Bauer <bauer@starzel.de>
 * Michael Mulich <michael.mulich@gmail.com>
