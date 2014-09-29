@@ -7,15 +7,6 @@
     <type portal_type="Event">
       <field name="any" difftype="Compound Diff for Dexterity types"/>
     </type>
-    <type portal_type="File">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
-    </type>
-    <type portal_type="Folder">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
-    </type>
-    <type portal_type="Image">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
-    </type>
     <type portal_type="Link">
       <field name="any" difftype="Compound Diff for Dexterity types"/>
     </type>

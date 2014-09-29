@@ -4,8 +4,7 @@ Changelog
 1.2a5 (unreleased)
 ------------------
 
-- Fix: Added missing types to CMFDiffTool configuraion.
-  [jensens]
+- Nothing changed yet.
 
 
 1.2a4 (2014-09-17)
