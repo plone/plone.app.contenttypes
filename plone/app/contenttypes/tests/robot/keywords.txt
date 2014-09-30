@@ -3,7 +3,9 @@ Variables  plone/app/contenttypes/tests/robot/variables.py
 *** Keywords ***
 
 I am logged in as site owner
-  Log in as site owner
+  # TODO: Replace with autologin
+  Log in  admin  secret
+  Wait until page contains  You are now logged in
 
 Click Edit
   Click Link  xpath=//a[contains(., "Edit")]

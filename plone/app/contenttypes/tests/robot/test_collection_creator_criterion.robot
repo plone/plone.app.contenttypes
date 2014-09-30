@@ -23,7 +23,7 @@ Scenario: Test Creator Criterion
 
 a site owner document
     [Arguments]  ${title}
-    Log in as site owner
+    I am logged in as site owner
     a document  ${title}
 
 a test user document
@@ -31,7 +31,7 @@ a test user document
     Log in as test user
     a document  ${title}
     Log out
-    Log in as site owner
+    I am logged in as site owner
 
 I set the collection's creator criterion to
     [Arguments]  ${criterion}
