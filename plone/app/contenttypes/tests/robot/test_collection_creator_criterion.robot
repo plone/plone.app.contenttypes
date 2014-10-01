@@ -1,4 +1,4 @@
-*** Settings ***
+*** Settings *****************************************************************
 
 Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
@@ -6,9 +6,8 @@ Resource  plone/app/contenttypes/tests/robot/keywords.txt
 Test Setup  Run keywords  Open test browser
 Test Teardown  Close all browsers
 
-*** Variables ***
 
-*** Test cases ***
+*** Test cases ***************************************************************
 
 Scenario: Test Creator Criterion
     Given a site owner document  Site Owner Document
@@ -19,7 +18,7 @@ Scenario: Test Creator Criterion
       And the collection should not contain  Site Owner Document
 
 
-*** Keywords ***
+*** Keywords *****************************************************************
 
 a site owner document
     [Arguments]  ${title}
@@ -36,7 +35,7 @@ a test user document
 I set the collection's creator criterion to
     [Arguments]  ${criterion}
     Click Edit
-
+    Wait until page contains  Edit Collection
     I set the criteria index in row 1 to the option 'Creator'
     I set the criteria operator in row 1 to the option 'Is'
     I set the criteria value in row 1 to the text '${criterion}'
