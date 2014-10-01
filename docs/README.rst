@@ -361,7 +361,7 @@ You have several options:
       </schema>
     </model>
 
-For more complex features you should create custom behaviors and/or write your own content-types. For more information on creating custom dexterity-types or custom behaviors to extend these types with read the `dexterity documentation <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/>`_.
+For more complex features you should create custom behaviors and/or write your own content-types. For more information on creating custom dexterity-types or custom behaviors to extend these types with read the `dexterity documentation <http://docs.plone.org/external/plone.app.dexterity/docs/>`_.
 
 
 Reordering fields provided by behaviors
