@@ -1,36 +1,40 @@
 *** Settings *****************************************************************
 
 Resource  plone/app/robotframework/keywords.robot
+Resource  plone/app/robotframework/saucelabs.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
-Test Setup  Run keywords  Open test browser
-Test Teardown  Close all browsers
+Library  Remote  ${PLONE_URL}/RobotRemote
+
+Test Setup  Open SauceLabs test browser
+Test Teardown  Run keywords  Report test status  Close all browsers
 
 
 *** Test cases ***************************************************************
 
-Scenario: Test Creator Criterion
+Scenario: Test Creator Criterions
     Given a site owner document  Site Owner Document
       And a test user document  Test User Document
-      And a collection  My Collection
-     When I set the collection's creator criterion to  ${TEST_USER_ID}
-     Then the collection should contain  Test User Document
-      And the collection should not contain  Site Owner Document
+      and a logged in site administrator
+      and a collection  My Collection
+     When I set the collection's creator criterion to  ${SITE_OWNER_NAME}
+     Then the collection should not contain  Test User Document
+      And the collection should contain  Site Owner Document
 
 
 *** Keywords *****************************************************************
 
 a site owner document
     [Arguments]  ${title}
-    I am logged in as site owner
+    a logged in site owner
     a document  ${title}
+    Disable autologin
 
 a test user document
     [Arguments]  ${title}
-    Log in as test user
+    a logged in test user
     a document  ${title}
-    Log out
-    I am logged in as site owner
+    Disable autologin
 
 I set the collection's creator criterion to
     [Arguments]  ${criterion}

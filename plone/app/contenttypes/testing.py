@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+from plone.app.robotframework import AutoLogin
+from plone.app.robotframework import Content
+from plone.app.robotframework import RemoteLibraryLayer
+from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.event.testing import PAEvent_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
@@ -14,7 +18,7 @@ from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
 
 import pkg_resources
-from .tests.robot.variables import TEST_FOLDER_ID
+from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
 
 
 def set_browserlayer(request):
@@ -132,7 +136,20 @@ PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
     name="PloneAppContenttypes:Functional"
 )
+
+PLONE_APP_CONTENTTYPES_REMOTE_LIBRARY_FIXTURE = RemoteLibraryLayer(
+    bases=(
+        PLONE_FIXTURE,
+    ),
+    libraries=(AutoLogin, Content),
+    name="CMFPloneRobotRemoteLibrary:RobotRemote"
+)
+
 PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_CONTENTTYPES_FIXTURE, z2.ZSERVER_FIXTURE),
+    bases=(
+        PLONE_APP_CONTENTTYPES_FIXTURE,
+        PLONE_APP_CONTENTTYPES_REMOTE_LIBRARY_FIXTURE,
+        z2.ZSERVER_FIXTURE
+    ),
     name="PloneAppContenttypes:Robot"
 )
