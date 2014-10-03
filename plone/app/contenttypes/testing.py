@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
-from plone.app.robotframework import AutoLogin
-from plone.app.robotframework import Content
-from plone.app.robotframework import RemoteLibraryLayer
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.event.testing import PAEvent_FIXTURE
 from plone.app.testing import PloneSandboxLayer
@@ -136,19 +133,10 @@ PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
     name="PloneAppContenttypes:Functional"
 )
-
-PLONE_APP_CONTENTTYPES_REMOTE_LIBRARY_FIXTURE = RemoteLibraryLayer(
-    bases=(
-        PLONE_FIXTURE,
-    ),
-    libraries=(AutoLogin, Content),
-    name="CMFPloneRobotRemoteLibrary:RobotRemote"
-)
-
 PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
     bases=(
         PLONE_APP_CONTENTTYPES_FIXTURE,
-        PLONE_APP_CONTENTTYPES_REMOTE_LIBRARY_FIXTURE,
+        REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE
     ),
     name="PloneAppContenttypes:Robot"
