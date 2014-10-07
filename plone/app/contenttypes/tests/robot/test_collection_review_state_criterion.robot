@@ -25,7 +25,7 @@ Scenario: Test Review state Criterion
 a published document
     [Arguments]  ${title}
     a document  ${title}
-    Click link  css=#plone-contentmenu-workflow a.actionMenuHeader
+    Click link  xpath=//li[@id='plone-contentmenu-workflow']/a
     Click Link  workflow-transition-publish
 
 a private document
