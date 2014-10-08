@@ -1,3 +1,5 @@
+*** Settings ***
+
 Variables  plone/app/contenttypes/tests/robot/variables.py
 
 *** Keywords ***
