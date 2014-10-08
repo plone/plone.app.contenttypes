@@ -131,22 +131,13 @@ fill date field
 
 I set the criteria ${type} in row ${number} to the option '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Mouse over  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Capture page screenshot
   Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Wait until element is visible  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
-  Capture page screenshot
-  Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+  Input text  jquery=.select2-search:visible .select2-input  ${label}\n
+# Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
 
 I set the criteria ${type} in row ${number} to the options '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
-  Mouse over  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Capture page screenshot
   Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
-  Wait until element is visible  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
-  Capture page screenshot
   Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
 
 I set the criteria ${type} in row ${number} to the text '${label}'
