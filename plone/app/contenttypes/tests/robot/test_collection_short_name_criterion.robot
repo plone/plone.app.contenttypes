@@ -24,6 +24,7 @@ Test Short name (id) Criterion
 
 I set the collection short name (id) criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
 
     I set the criteria index in row 1 to the option 'Short name'

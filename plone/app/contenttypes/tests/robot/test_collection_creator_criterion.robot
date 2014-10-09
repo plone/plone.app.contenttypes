@@ -38,6 +38,7 @@ a test user document
 
 I set the collection's creator criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
     Wait until page contains  Edit Collection
     I set the criteria index in row 1 to the option 'Creator'

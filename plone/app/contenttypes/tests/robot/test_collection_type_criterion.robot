@@ -24,6 +24,7 @@ Test Type Criterion
 
 I set the collection's type criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
 
     I set the criteria index in row 1 to the option 'Type'

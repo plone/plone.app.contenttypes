@@ -18,27 +18,33 @@ Click Edit
 
 a collection
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Collection
-  Wait until page contains  Add Collection
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Collection  title=${title}
+# Go to  ${PLONE_URL}/++add++Collection
+# Wait until page contains  Add Collection
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a document
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Document
-  Wait until page contains  Add Page
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Document  title=${title}
+# Go to  ${PLONE_URL}/++add++Document
+# Wait until page contains  Add Page
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a event
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Event
-  Wait until page contains  Add Event
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Event  title=${title}
+# Go to  ${PLONE_URL}/++add++Event
+# Wait until page contains  Add Event
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a file
   [Arguments]  ${title}
@@ -51,11 +57,13 @@ a file
 
 a folder
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Folder
-  Wait until page contains  Add Folder
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Folder  title=${title}
+# Go to  ${PLONE_URL}/++add++Folder
+# Wait until page contains  Add Folder
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a image
   [Arguments]  ${title}
@@ -68,11 +76,13 @@ a image
 
 a link
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Link
-  Wait until page contains  Add Link
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Link  title=${title}
+# Go to  ${PLONE_URL}/++add++Link
+# Wait until page contains  Add Link
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a news item
   [Arguments]  ${title}
