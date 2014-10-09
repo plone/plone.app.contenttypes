@@ -24,9 +24,8 @@ Scenario: Test Review state Criterion
 
 a published document
     [Arguments]  ${title}
-    a document  ${title}
-    Click link  css=#plone-contentmenu-workflow a.actionMenuHeader
-    Click Link  workflow-transition-publish
+    ${uid} =  a document  ${title}
+    Fire transition  ${uid}  publish
 
 a private document
     [Arguments]  ${title}
@@ -34,6 +33,7 @@ a private document
 
 I set the collection's review state criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
 
     I set the criteria index in row 1 to the option 'Review state'

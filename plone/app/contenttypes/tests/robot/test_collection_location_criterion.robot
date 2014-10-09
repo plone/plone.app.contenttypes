@@ -47,6 +47,7 @@ a folder '${folder-id}' with a document '${document-title}'
 
 I set the collection's relative location criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
 
     I set the criteria index in row 1 to the option 'Location'
@@ -58,6 +59,7 @@ I set the collection's relative location criterion to
 
 I set the collection's absolute location criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
 
     I set the criteria index in row 1 to the option 'Location'
