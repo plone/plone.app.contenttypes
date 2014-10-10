@@ -73,9 +73,9 @@ def getEXIFOrientation(self):
         return (mirror, rotation)
 
     try:
-        code = int(code)
-    except ValueError:
-        code = ROTATION[code]
+        code = int(code.values[0])
+    except (ValueError, IndexError):
+        code = ROTATION[code.printable]
 
     if code in (2, 4, 5, 7):
         mirror = 1
