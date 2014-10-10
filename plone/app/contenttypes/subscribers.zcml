@@ -20,7 +20,7 @@
   <subscriber
       for="plone.app.contenttypes.content.Image
            zope.lifecycleevent.IObjectAddedEvent"
-      handler=".subscribers.events.exifRotation"
+      handler=".subscribers.exifRotation"
       />
 
 </configure>
