@@ -1,15 +1,26 @@
 <configure xmlns="http://namespaces.zope.org/zope">
+  <subscriber
+      for=".interfaces.IFile
+          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+      handler=".subscribers.set_title_description"
+      />
 
-	<subscriber
-	  for=".interfaces.IFile
-	       zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-	  handler=".subscribers.set_title_description"
-	 />
+  <subscriber
+      for=".interfaces.IImage
+           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+      handler=".subscribers.set_title_description"
+       />
 
-	<subscriber
-	  for=".interfaces.IImage
-	       zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-	  handler=".subscribers.set_title_description"
-	 />
+  <subscriber
+      for="plone.app.contenttypes.content.Image
+           zope.lifecycleevent.IObjectModifiedEvent"
+      handler=".subscribers.exifRotation"
+      />
+
+  <subscriber
+      for="plone.app.contenttypes.content.Image
+           zope.lifecycleevent.IObjectAddedEvent"
+      handler=".subscribers.events.exifRotation"
+      />
 
 </configure>

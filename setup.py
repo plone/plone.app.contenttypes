@@ -46,6 +46,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.relationfield',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
+          'exifread',
           'pytz',
       ],
       extras_require={
