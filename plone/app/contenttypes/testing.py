@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
-from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
+from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
 from plone.app.event.testing import PAEvent_FIXTURE
-from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import applyProfile
-from plone.app.testing import PLONE_FIXTURE
-from plone.app.testing import IntegrationTesting
+from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import FunctionalTesting
+from plone.app.testing import IntegrationTesting
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import TEST_USER_ID
-from plone.app.testing import setRoles
+from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
-
 import pkg_resources
-from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
 
 
 def set_browserlayer(request):

@@ -1,24 +1,19 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.interfaces import (
-    ICollection,
-    IDocument,
-    IFile,
-    IFolder,
-    IImage,
-    ILink,
-    INewsItem,
-    IEvent,
-)
-
-from plone.dexterity.content import Item
+from plone.app.contenttypes.interfaces import ICollection
+from plone.app.contenttypes.interfaces import IDocument
+from plone.app.contenttypes.interfaces import IEvent
+from plone.app.contenttypes.interfaces import IFile
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IImage
+from plone.app.contenttypes.interfaces import ILink
+from plone.app.contenttypes.interfaces import INewsItem
 from plone.dexterity.content import Container
+from plone.dexterity.content import Item
+from zope.interface import implementer
 
-from zope.interface import implements
 
-
+@implementer(ICollection)
 class Collection(Item):
-    implements(ICollection)
-
     # BBB
 
     def listMetaDataFields(self, exclude=True):
@@ -60,29 +55,43 @@ class Collection(Item):
         return ICollection_behavior(self).results(**kwargs)
 
 
+@implementer(IDocument)
 class Document(Item):
-    implements(IDocument)
+    """Convinience Item subclass for ``Document`` portal type
+    """
 
 
+@implementer(IFile)
 class File(Item):
-    implements(IFile)
+    """Convinience subclass for ``File`` portal type
+    """
 
 
+@implementer(IFolder)
 class Folder(Container):
-    implements(IFolder)
+    """Convinience subclass for ``File`` portal type
+    """
 
 
+@implementer(IImage)
 class Image(Item):
-    implements(IImage)
+    """Convinience subclass for ``File`` portal type
+    """
 
 
+@implementer(ILink)
 class Link(Item):
-    implements(ILink)
+    """Convinience subclass for ``File`` portal type
+    """
 
 
+@implementer(INewsItem)
 class NewsItem(Item):
-    implements(INewsItem)
+    """Convinience subclass for ``File`` portal type
+    """
 
 
+@implementer(IEvent)
 class Event(Item):
-    implements(IEvent)
+    """Convinience subclass for ``File`` portal type
+    """

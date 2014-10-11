@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from plone.app.contenttypes import _
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from zope.interface import implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
-from .. import _
 
 
 def get_terms(context, counter, ext_dict, show_extended):

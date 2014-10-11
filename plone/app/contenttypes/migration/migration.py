@@ -16,9 +16,9 @@ from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
-from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
@@ -32,9 +32,8 @@ from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.intid.interfaces import IIntIds
-
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 

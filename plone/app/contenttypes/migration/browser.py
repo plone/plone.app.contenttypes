@@ -12,8 +12,8 @@ from datetime import timedelta
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
-from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
@@ -29,8 +29,8 @@ from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import Interface
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 # Schema Extender allowed interfaces

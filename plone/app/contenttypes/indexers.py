@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from ZODB.POSException import ConflictError
@@ -10,6 +9,7 @@ from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
+from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 

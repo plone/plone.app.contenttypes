@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
-from Products.CMFCore.utils import getToolByName
-
-from ..utils import replace_link_variables_by_paths
+from plone.app.contenttypes.utils import replace_link_variables_by_paths
 
 
 class LinkRedirectView(BrowserView):
