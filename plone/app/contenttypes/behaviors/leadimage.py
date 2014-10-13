@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from zope.interface import alsoProvides, implements
-from zope.component import adapts
-from zope import schema
-from plone.supermodel import model
-from plone.dexterity.interfaces import IDexterityContent
-from plone.autoform.interfaces import IFormFieldProvider
-
-from plone.namedfile import field as namedfile
-
 from plone.app.contenttypes import _
+from plone.autoform.interfaces import IFormFieldProvider
+from plone.dexterity.interfaces import IDexterityContent
+from plone.namedfile import field as namedfile
+from plone.supermodel import model
+from zope import schema
+from zope.component import adapter
+from zope.interface import implementer
+from zope.interface import provider
 
 
+@provider(IFormFieldProvider)
 class ILeadImage(model.Schema):
 
     image = namedfile.NamedBlobImage(
@@ -25,12 +25,10 @@ class ILeadImage(model.Schema):
         required=False,
     )
 
-alsoProvides(ILeadImage, IFormFieldProvider)
 
-
+@implementer(ILeadImage)
+@adapter(IDexterityContent)
 class LeadImage(object):
-    implements(ILeadImage)
-    adapts(IDexterityContent)
 
     def __init__(self, context):
         self.context = context

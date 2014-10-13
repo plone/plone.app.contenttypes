@@ -20,9 +20,8 @@ from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
-
-import pkg_resources
 import os
+import pkg_resources
 
 try:
     pkg_resources.get_distribution('plone.app.collection')

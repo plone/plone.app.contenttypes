@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from Products.Five import BrowserView
-
 from plone.app.contenttypes.behaviors.collection import ICollection
 
 

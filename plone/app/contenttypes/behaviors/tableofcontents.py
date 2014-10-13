@@ -2,12 +2,13 @@
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
 from zope import schema
-from zope.interface import alsoProvides
 from zope.i18nmessageid import MessageFactory
+from zope.interface import provider
 
 _ = MessageFactory('atcontenttypes')
 
 
+@provider(IFormFieldProvider)
 class ITableOfContents(model.Schema):
 
     model.fieldset('settings', label=_(u"Settings"),
@@ -23,5 +24,3 @@ class ITableOfContents(model.Schema):
                     u' at the top of the page.'),
         required=False,
     )
-
-alsoProvides(ITableOfContents, IFormFieldProvider)

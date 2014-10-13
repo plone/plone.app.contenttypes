@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from plone.app.layout.viewlets import ViewletBase
-
-from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+from plone.app.contenttypes.interfaces import INewsItem
+from plone.app.layout.viewlets import ViewletBase
 
 
 class LeadImageViewlet(ViewletBase):

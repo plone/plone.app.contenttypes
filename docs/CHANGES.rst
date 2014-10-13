@@ -4,6 +4,9 @@ Changelog
 1.2a5 (unreleased)
 ------------------
 
+- Code modernization: sorted imports, use decorators, utf8 headers.
+  [jensens]
+
 - Fix: Added missing types to CMFDiffTool configuraion.
   [jensens]
 
