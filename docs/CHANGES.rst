@@ -10,6 +10,11 @@ Changelog
 - Fix: Added missing types to CMFDiffTool configuraion.
   [jensens]
 
+- Integration of the new markup update and CSS for both Plone and Barceloneta
+  theme. This is the work done in the GSOC Barceloneta theme project. Fix
+  several templates.
+  [albertcasado, sneridagh]
+
 
 1.2a4 (2014-09-17)
 ------------------
