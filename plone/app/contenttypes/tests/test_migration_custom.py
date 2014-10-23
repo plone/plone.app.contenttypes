@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+from plone.app.contenttypes.migration.migration import migrate_imagefield
+from plone.app.contenttypes.migration.migration import migrate_simplefield
+from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+from plone.app.testing import TEST_USER_ID
 from plone.app.testing import applyProfile
+from plone.app.testing import setRoles
+
 import os.path
 import unittest2 as unittest
-from plone.app.testing import TEST_USER_ID, setRoles
-from plone.app.contenttypes.migration.migration import migrate_imagefield, migrate_simplefield
 
 
 class MigrateFieldsTest(unittest.TestCase):
@@ -169,7 +173,13 @@ class MigrateCustomATTest(unittest.TestCase):
             migrateCustomAT
         from plone.app.contenttypes.interfaces import INewsItem
         at_document = self.createCustomATDocument('foo-document')
-        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        qi = self.portal.portal_quickinstaller
+        # install pac but only install News Items
+        qi.installProduct(
+            'plone.app.contenttypes',
+            profile='plone.app.contenttypes:default',
+            blacklistedSteps=['typeinfo'])
+        installTypeIfNeeded("News Item")
         fields_mapping = ({'AT_field_name': 'textExtended',
                            'AT_field_type': 'TextField',
                            'DX_field_name': 'text',
@@ -178,6 +188,7 @@ class MigrateCustomATTest(unittest.TestCase):
                            'AT_field_type': 'StringField',
                            'DX_field_name': 'title',
                            'DX_field_type': 'StringField', },)
+        # migrate extended AT Document to default DX News Item
         migrateCustomAT(fields_mapping, src_type='Document', dst_type='News Item')
         dx_newsitem = self.portal['foo-document']
         self.assertTrue(INewsItem.providedBy(dx_newsitem))
