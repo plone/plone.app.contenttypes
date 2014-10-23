@@ -17,7 +17,7 @@ from plone.dexterity.fti import DexterityFTI
 from plone.app.testing import TEST_USER_ID, setRoles
 
 
-class DocumentFunctionalTest(unittest.TestCase):
+class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
@@ -67,4 +67,4 @@ class DocumentFunctionalTest(unittest.TestCase):
         toc_ctl.value = [u"selected"]
         # Submit form
         self.browser.getControl('Save').click()
-        self.assertTrue('<dl id="document-toc"' in self.browser.contents)
+        self.assertTrue('<section id="document-toc"' in self.browser.contents)

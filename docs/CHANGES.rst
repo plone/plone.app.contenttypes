@@ -1,12 +1,66 @@
 Changelog
 =========
 
-1.2a4 (unreleased)
+1.2a5 (unreleased)
 ------------------
 
 - Added helper view for migration custom AT types to available DX types,
   see issue #133.
   [gbastien]
+
+- Code modernization: sorted imports, use decorators, utf8 headers.
+  [jensens]
+
+- Fix: Added missing types to CMFDiffTool configuraion.
+  [jensens]
+
+- Integration of the new markup update and CSS for both Plone and Barceloneta
+  theme. This is the work done in the GSOC Barceloneta theme project. Fix
+  several templates.
+  [albertcasado, sneridagh]
+
+
+1.2a4 (2014-09-17)
+------------------
+
+- Include translated content into migration-information (see #170)
+  [pbauer]
+
+- Add simple confirmation to prevent unintentional migration.
+  [pbauer]
+
+- Don't remove custom behaviors on reinstalling.
+  [pbauer]
+
+- Add bbb getText view for content with IRichText-behavior
+  [datakurre]
+
+- Support ``custom_query`` parameter in the ``result`` method of the
+  ``Collection`` behavior. This allows for run time customization of the
+  stored query, e.g. by request parameters.
+  [thet]
+
+- Fix 'AttributeError: image' when NewsItem unused the lead image behavior.
+  [jianaijun]
+
+- Restore Plone 4.3 compatibility by depending on ``plone.app.event >= 2.0a4``.
+  The previous release of p.a.c got an implicit Plone 5 dependency through a
+  previous version of plone.app.event.
+  [thet]
+
+- Replace AT-fti with DX-fti when migrating a type.
+  [esteele, pbauer]
+
+- Only show migrateable types (fixes #155)
+  [pbauer]
+
+- Add logging during and after migration (fixes #156)
+  [pbauer]
+
+- When replacing the default news and events collections, reverse the
+  sort order correctly.
+  [maurits]
+>>>>>>> master
 
 - Added migration method that allows to migrate custom AT types to
   available DX types (#133)
@@ -68,6 +122,59 @@ Changelog
 
 
 1.2a1 (2014-02-22)
+------------------
+
+- Fix viewlet warning about ineditable content (fixes #130)
+  [pbauer]
+
+- Reintroduce the removed schema-files and add upgrade-step to migrate to
+  behavior-driven richtext-fields (fixes #127)
+  [pbauer]
+
+- Delete Archetypes Member-folder before creating new default-content
+  (fixes #128)
+  [pbauer]
+
+- Remove outdated summary-behavior from event (fixes #129)
+  [pbauer]
+
+
+1.1b3 (2014-09-07)
+------------------
+
+- Include translated content into migration-information (see #170)
+  [pbauer]
+
+- Add simple confirmation to prevent unintentional migration.
+  [pbauer]
+
+- Don't remove custom behaviors on reinstalling.
+  [pbauer]
+
+- Remove enabling simple_publication_workflow from testing fixture.
+  [timo]
+
+- Only show migrateable types (fixes #155)
+  [pbauer]
+
+- Add logging during and after migration (fixes #156)
+  [pbauer]
+
+- Remove 'robot-test-folder' from p.a.contenttypes test setup. It is bad to
+  add content to test layers, especially if those test layers are used by
+  other packages.
+  [timo]
+
+- When replacing the default news and events collections, reverse the
+  sort order correctly.
+  [maurits]
+
+- For plone.app.contenttypes 1.1.x, depend on plone.app.event < 1.1.999.
+  Closes/Fixes #149.
+  [khink, thet]
+
+
+1.1b2 (2014-02-21)
 ------------------
 
 - Fix viewlet warning about ineditable content (fixes #130)

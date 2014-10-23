@@ -24,12 +24,13 @@ Test Short name (id) Criterion
 
 I set the collection short name (id) criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
 
-    I set the criteria index in row 1 to the option 'Short name (id)'
+    I set the criteria index in row 1 to the option 'Short name'
     I set the criteria operator in row 1 to the option 'Is'
     I set the criteria value in row 1 to the text '${criterion}'
-    
+
     Sleep  1
     Click Button  Save
     Wait until page contains  Changes saved

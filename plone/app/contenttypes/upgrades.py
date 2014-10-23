@@ -65,11 +65,25 @@ def enable_collection_behavior(context):
 def migrate_to_richtext(context):
     """Update fti's to add RichText behaviors and remove old text-fields."""
 
-    # TODO: Don't reload the profile. Only change the settings.
-    context.runImportStepFromProfile(
-        'profile-plone.app.contenttypes:default',
-        'typeinfo',
-    )
+    behavior = "plone.app.contenttypes.behaviors.richtext.IRichText"
+    types = [
+        "Document",
+        "News Item",
+        "Event",
+        "Collection",
+    ]
+    for type_name in types:
+        fti = queryUtility(
+            IDexterityFTI,
+            name=type_name
+        )
+        if not fti:
+            continue
+        if behavior in fti.behaviors:
+            continue
+        behaviors = list(fti.behaviors)
+        behaviors.append(behavior)
+        fti._updateProperty('behaviors', tuple(behaviors))
 
 
 def migrate_album_view(context):

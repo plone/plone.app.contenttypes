@@ -4,7 +4,6 @@ from Acquisition import aq_inner
 from Products.CMFCore.permissions import ManagePortal
 from plone.app.layout.viewlets import ViewletBase
 from plone.dexterity.interfaces import IDexterityFTI
-
 import pkg_resources
 
 try:

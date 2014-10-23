@@ -5,20 +5,23 @@ from Products.CMFPlone.browser.syndication.adapters import CollectionFeed \
 from Products.CMFPlone.interfaces.syndication import IFeed
 from Products.CMFPlone.interfaces.syndication import ISyndicatable
 from plone.app.contentlisting.interfaces import IContentListing
+from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
 from zope import schema
-from zope.component import adapts, getMultiAdapter, getUtility
-from zope.interface import alsoProvides, implements
+from zope.component import adapter
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.interface import provider
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
-from zope.schema.vocabulary import SimpleTerm, SimpleVocabulary
-from plone.app.contenttypes import _
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 
 
+@implementer(IVocabularyFactory)
 class MetaDataFieldsVocabulary(object):
-
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         cat = getToolByName(context, 'portal_catalog')
@@ -31,6 +34,7 @@ class MetaDataFieldsVocabulary(object):
 MetaDataFieldsVocabularyFactory = MetaDataFieldsVocabulary()
 
 
+@provider(IFormFieldProvider, ISyndicatable)
 class ICollection(model.Schema):
 
     query = schema.List(
@@ -81,24 +85,21 @@ class ICollection(model.Schema):
         )
 
 
-alsoProvides(ICollection, IFormFieldProvider)
-alsoProvides(ICollection, ISyndicatable)
-
-
 class ISyndicatableCollection(ISyndicatable):
     """Marker interface for syndicatable collections.
     """
 
 
+@implementer(ICollection)
+@adapter(IDexterityContent)
 class Collection(object):
-    implements(ICollection)
-    adapts(IDexterityContent)
 
     def __init__(self, context):
         self.context = context
 
     def results(self, batch=True, b_start=0, b_size=None,
-                sort_on=None, limit=None, brains=False):
+                sort_on=None, limit=None, brains=False,
+                custom_query={}):
         querybuilder = getMultiAdapter((self.context, self.context.REQUEST),
                                        name='querybuilderresults')
         sort_order = 'reverse' if self.sort_reversed else 'ascending'
@@ -138,7 +139,7 @@ class Collection(object):
         return querybuilder(
             query=query, batch=batch, b_start=b_start, b_size=b_size,
             sort_on=sort_on, sort_order=sort_order,
-            limit=limit, brains=brains
+            limit=limit, brains=brains, custom_query=custom_query
         )
 
     def getFoldersAndImages(self):
@@ -236,8 +237,8 @@ class Collection(object):
     customViewFields = property(_get_customViewFields, _set_customViewFields)
 
 
+@implementer(IFeed)
 class CollectionFeed(BaseCollectionFeed):
-    implements(IFeed)
 
     def _brains(self):
         return ICollection(self.context).results(batch=False)[:self.limit]

@@ -6,6 +6,9 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+from Products.CMFCore.utils import getToolByName
+from Products.GenericSetup.context import DirectoryImportContext
+from Products.GenericSetup.utils import importObjects
 from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
@@ -13,9 +16,11 @@ from archetypes.schemaextender.interfaces import ISchemaModifier
 from plone.app.blob.interfaces import IATBlobFile
 from plone.app.blob.interfaces import IATBlobImage
 from plone.app.contenttypes.migration import migration
+from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
-
+import os
 import pkg_resources
 
 try:
@@ -27,69 +32,87 @@ else:
     HAS_APP_COLLECTION = True
     from plone.app.collection.interfaces import ICollection
 
+# Is there a multilingual addon?
+try:
+    pkg_resources.get_distribution('Products.LinguaPlone')
+except pkg_resources.DistributionNotFound:
+    HAS_MULTILINGUAL = False
+else:
+    HAS_MULTILINGUAL = True
+
+if not HAS_MULTILINGUAL:
+    try:
+        pkg_resources.get_distribution('plone.app.multilingual')
+    except pkg_resources.DistributionNotFound:
+        HAS_MULTILINGUAL = False
+    else:
+        HAS_MULTILINGUAL = True
+
 ATCT_LIST = {
     "Folder": {
         'iface': IATFolder,
         'migrator': migration.migrate_folders,
         'extended_fields': [],
-        'new_type_name': 'Folder',
+        'type_name': 'Folder',
         'old_meta_type': 'ATFolder',
     },
     "Document": {
         'iface': IATDocument,
         'migrator': migration.migrate_documents,
         'extended_fields': [],
-        'new_type_name': 'Document',
+        'type_name': 'Document',
         'old_meta_type': 'ATDocument',
     },
+    # File without blobs
     "File": {
         'iface': IATFile,
         'migrator': migration.migrate_files,
-        'extended_fields': ['file'],
-        'new_type_name': 'File',
+        'extended_fields': [],
+        'type_name': 'File',
         'old_meta_type': 'ATFile',
     },
+    # Image without blobs
     "Image": {
         'iface': IATImage,
         'migrator': migration.migrate_images,
-        'extended_fields': ['image'],
-        'new_type_name': 'Image',
+        'extended_fields': [],
+        'type_name': 'Image',
         'old_meta_type': 'ATImage',
     },
     "News Item": {
         'iface': IATNewsItem,
         'migrator': migration.migrate_newsitems,
         'extended_fields': [],
-        'new_type_name': 'News Item',
+        'type_name': 'News Item',
         'old_meta_type': 'ATNewsItem',
     },
     "Link": {
         'iface': IATLink,
         'migrator': migration.migrate_links,
         'extended_fields': [],
-        'new_type_name': 'Link',
+        'type_name': 'Link',
         'old_meta_type': 'ATLink',
     },
     "Event": {
         'iface': IATEvent,
         'migrator': migration.migrate_events,
         'extended_fields': [],
-        'new_type_name': 'Event',
+        'type_name': 'Event',
         'old_meta_type': 'ATEvent',
     },
     "BlobImage": {
         'iface': IATBlobImage,
         'migrator': migration.migrate_blobimages,
         'extended_fields': ['image'],
-        'new_type_name': 'Image',
-        'old_meta_type': 'ATBlobImage',
+        'type_name': 'Image',
+        'old_meta_type': 'ATBlob',
     },
     "BlobFile": {
         'iface': IATBlobFile,
         'migrator': migration.migrate_blobfiles,
         'extended_fields': ['file'],
-        'new_type_name': 'File',
-        'old_meta_type': 'ATBlobFile',
+        'type_name': 'File',
+        'old_meta_type': 'ATBlob',
     },
 }
 
@@ -98,7 +121,7 @@ if HAS_APP_COLLECTION:
         'iface': ICollection,
         'migrator': migration.migrate_collections,
         'extended_fields': [],
-        'new_type_name': 'Collection',
+        'type_name': 'Collection',
         'old_meta_type': 'Collection',
     }
 
@@ -152,3 +175,27 @@ def _checkForExtenderInterfaces(interface):
             fields = getattr(adapter.factory(None), 'fields', [])
             return [field.getName() for field in fields]
     return []
+
+
+def installTypeIfNeeded(type_name):
+    """Make sure the dexterity-fti is already installed.
+    If not we create a empty dexterity fti and load the
+    information from the fti in the profile.
+    """
+    if type_name not in DEFAULT_TYPES:
+        raise KeyError("%s is not one of the default types" % type_name)
+    portal = getSite()
+    tt = getToolByName(portal, 'portal_types')
+    fti = tt.getTypeInfo(type_name)
+    if IDexterityFTI.providedBy(fti):
+        # the dx-type is already installed
+        return
+    tt.manage_delObjects(type_name)
+    tt.manage_addTypeInformation('Dexterity FTI', id=type_name)
+    dx_fti = tt.getTypeInfo(type_name)
+    ps = getToolByName(portal, 'portal_setup')
+    profile_info = ps.getProfileInfo('profile-plone.app.contenttypes:default')
+    profile_path = os.path.join(profile_info['path'])
+    environ = DirectoryImportContext(ps, profile_path)
+    parent_path = 'types/'
+    importObjects(dx_fti, parent_path, environ)

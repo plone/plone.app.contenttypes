@@ -24,12 +24,13 @@ Test Type Criterion
 
 I set the collection's type criterion to
     [Arguments]  ${criterion}
+    Go to  ${PLONE_URL}/my-collection
     Click Edit
 
     I set the criteria index in row 1 to the option 'Type'
     I set the criteria operator in row 1 to the option 'Is'
     I set the criteria value in row 1 to the options '${criterion}'
-    
+
     Sleep  1
     Click Button  Save
     Wait until page contains  Changes saved

@@ -29,7 +29,7 @@ It contains the following types:
 * Image
 * Link
 * Event (Using behaviors from plone.app.event)
-* Collection (this already replaces plone.app.collection which is no longer needed then)
+* Collection
 
 The main difference from a users perspective is that these types are extendable through-the-web. This means you can add or remove fields and behaviors using the control-panel "Dexterity Content Types" (``/@@dexterity-types``).
 
@@ -43,11 +43,11 @@ plone.app.contenttypes has been merged into the Plone 5.0 branch and will be shi
 Compatibility
 -------------
 
-Version 1.1b1 is tested with Plone 4.3.x. The versions 1.1.x will stay compatible with Plone 4.3.x.
+Version 1.1b3 is tested with Plone 4.3.x. The versions of branch 1.1.x will stay compatible with Plone 4.3.x.
 
 For support of Plone 4.1 and 4.2 please use version 1.0.x. Please note that they do not provide the full functionality.
 
-The future versions 1.2.x will be compatible with Plone 5 only and add support for plone.app.widgets
+The versions 1.2.x of the master-branch are compatible with Plone 5 and plone.app.widgets.
 
 
 Installation
@@ -95,7 +95,7 @@ If you install plone.app.contenttypes on a fresh site (i.e. when no content has 
 
 
 Uninstalling
-^^^^^^^^^^^^
+------------
 
 To remove plone.app.contenttypes and return full functionality to old content and restore the AT-based default-types you have to install the import step "Types Tool" of the current base profile. Follow the following steps:
 
@@ -109,7 +109,7 @@ Any content you created based on plone.app.contenttypes will not be editable unt
 
 
 Dependencies
-^^^^^^^^^^^^
+------------
 
 * ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`_.
 
@@ -127,8 +127,8 @@ These are the version-pinns for Plone 4.3.3:
     versions = versions
 
     [versions]
-    plone.app.event = 1.1b1
-    plone.app.portlets = 2.5a1
+    plone.app.event = 1.1.1
+    plone.app.portlets = 2.5.1
 
 Plone-versions before 4.3.3 need to pinn more packages:
 
@@ -142,7 +142,7 @@ Plone-versions before 4.3.3 need to pinn more packages:
     plone.app.dexterity = 2.0.11
     plone.schemaeditor = 1.3.5
     plone.app.event = 1.1b1
-    plone.app.portlets = 2.5a1
+    plone.app.portlets = 2.5.1
 
 
 Migration
@@ -150,7 +150,7 @@ Migration
 
 To migrate your existing content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
 
-For migrations to work you need at least ``Products.contentmigration = 2.1.3`` (part of Plone since Plone 4.2.5) and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
+For migrations to work you need at least ``Products.contentmigration = 2.1.9`` and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
 
 
 Migrating Archetypes-based content to plone.app.contenttypes
@@ -176,7 +176,7 @@ The following non-default types will also be migrated:
 * Files and Images without blobs
 * AT-based collection provided by plone.app.collection
 
-Migrations that might come in a future version:
+Migrations that are coming in future versions:
 
 * from ATTopic to Collections
 
@@ -211,7 +211,11 @@ You need to implement a custom migration for your types and dexterity-behaviors 
 Migrating custom content
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Custom content-types will not be touched by the migration plone.app.contenttypes and will continue to work as expeced. However if you'd like to migrate your content-types to Dexterity (you'll have to create these types in Dexterity first) you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint.
+Custom content-types will not be touched by the migration plone.app.contenttypes and will continue to work as expected.
+
+Future versions of plone.app.contenttypes will have with a form that allows you to migrate old custom Archetypes-content to Dexterity (you'll have to create the Dexterity-types before) .
+
+However if you'd like to migrate your content-types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
 
 
 Widgets
@@ -266,10 +270,10 @@ Once you install ``collective.z3cform.widgets`` in the quickinstaller, the new w
 Information for Addon-Developers
 --------------------------------
 
-Design decicions
+Design decisions
 ^^^^^^^^^^^^^^^^
 
-The schemata for the types File, Image and Link are defined in xml-files using ``plone.supermodel``. This allows the types to be editable trough the web. The types Document, News Item, Folder and Event have no schemata but only use behaviors to provide their fields.
+The schemata for the types File, Image and Link are defined in xml-files using ``plone.supermodel``. This allows the types to be editable trough the web. The types Document, News Item, Folder and Event have no schemata at all but only use behaviors to provide their fields.
 
 
 Installation as a dependency from another product
@@ -357,7 +361,7 @@ You have several options:
       </schema>
     </model>
 
-For more complex features you should create custom behaviors and/or write your own content-types. For more information on creating custom dexterity-types or custom behaviors to extend these types with read the `dexterity documentation <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/>`_.
+For more complex features you should create custom behaviors and/or write your own content-types. For more information on creating custom dexterity-types or custom behaviors to extend these types with read the `dexterity documentation <http://docs.plone.org/external/plone.app.dexterity/docs/>`_.
 
 
 Reordering fields provided by behaviors
@@ -406,13 +410,13 @@ The 1.1.x-branch supports Plone 4.3.x. From this 1.1.x-releases will be cut.
 
 
 License
-^^^^^^^
+-------
 
 GNU General Public License, version 2
 
 
 Contributors
-^^^^^^^^^^^^
+------------
 
 * Philip Bauer <bauer@starzel.de>
 * Michael Mulich <michael.mulich@gmail.com>

@@ -1,9 +1,13 @@
+*** Settings ***
+
+Library  Remote  ${PLONE_URL}/RobotRemote
+
 Variables  plone/app/contenttypes/tests/robot/variables.py
 
 *** Keywords ***
 
 I am logged in as site owner
-  Log in as site owner
+  Enable autologin as  Site Administrator
 
 Click Edit
   Click Link  xpath=//a[contains(., "Edit")]
@@ -14,27 +18,33 @@ Click Edit
 
 a collection
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Collection
-  Wait until page contains  Add Collection
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Collection  title=${title}
+# Go to  ${PLONE_URL}/++add++Collection
+# Wait until page contains  Add Collection
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a document
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Document
-  Wait until page contains  Add Page
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Document  title=${title}
+# Go to  ${PLONE_URL}/++add++Document
+# Wait until page contains  Add Page
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a event
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Event
-  Wait until page contains  Add Event
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Event  title=${title}
+# Go to  ${PLONE_URL}/++add++Event
+# Wait until page contains  Add Event
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a file
   [Arguments]  ${title}
@@ -47,11 +57,13 @@ a file
 
 a folder
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Folder
-  Wait until page contains  Add Folder
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Folder  title=${title}
+# Go to  ${PLONE_URL}/++add++Folder
+# Wait until page contains  Add Folder
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a image
   [Arguments]  ${title}
@@ -64,11 +76,13 @@ a image
 
 a link
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/++add++Link
-  Wait until page contains  Add Link
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
-  Wait until page contains  Item created
+  [Return]  ${uid}
+  ${uid} =  Create content  type=Link  title=${title}
+# Go to  ${PLONE_URL}/++add++Link
+# Wait until page contains  Add Link
+# Input text  name=form.widgets.IDublinCore.title  ${title}
+# Click Button  Save
+# Wait until page contains  Item created
 
 a news item
   [Arguments]  ${title}
@@ -129,17 +143,19 @@ fill date field
 
 I set the criteria ${type} in row ${number} to the option '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
+  Wait until page contains element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
   Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Wait until page contains Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
-  Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+  Wait until page contains element  css=.select2-input.select2-focused
+  Input text  css=.select2-input.select2-focused  ${label}\n
+# Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
 
 I set the criteria ${type} in row ${number} to the options '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
+  Wait until page contains element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
   Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
-  Wait until page contains Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
-  Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+  Wait until page contains element  css=.select2-input.select2-focused
+  Input text  css=.select2-input.select2-focused  ${label}\n
+# Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
 
 I set the criteria ${type} in row ${number} to the text '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})

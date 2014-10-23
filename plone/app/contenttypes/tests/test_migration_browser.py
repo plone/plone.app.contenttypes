@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.fti import DexterityFTI
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
@@ -10,6 +11,7 @@ from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+from plone.app.testing import applyProfile
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.event.interfaces import IEvent
 from zope.interface import directlyProvides
@@ -94,3 +96,31 @@ class FixBaseclassesTest(unittest.TestCase):
         self.portal.restrictedTraverse('fix_base_classes')()
 
         self.assertTrue(INewsItem.providedBy(self.obj))
+
+    def test_install_dx_type_if_needed(self):
+        from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+        tt = self.portal.portal_types
+        tt.manage_delObjects('Document')
+        tt.manage_addTypeInformation(
+            'Factory-based Type Information with dynamic views',
+            id='Document')
+        applyProfile(
+            self.portal,
+            'plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'])
+        fti = tt.getTypeInfo('Document')
+        self.assertFalse(IDexterityFTI.providedBy(fti))
+        installTypeIfNeeded('Document')
+        fti = tt.getTypeInfo('Document')
+        self.assertTrue(IDexterityFTI.providedBy(fti))
+
+    def test_install_dx_type_if_needed_wrong_type_name(self):
+        from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+        self.assertRaises(KeyError, installTypeIfNeeded, ['Unknown'])
+        try:
+            installTypeIfNeeded('Unknown')
+        except KeyError as e:
+            self.assertEqual(
+                e.message,
+                'Unknown is not one of the default types'
+            )

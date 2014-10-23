@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-from plone.autoform.interfaces import IFormFieldProvider
-from plone.dexterity.interfaces import IDexterityContent
-from plone.app.textfield import RichText as RichTextField
-from plone.supermodel import model
-from zope.component import adapts
-from zope.interface import alsoProvides, implements
-
 from plone.app.contenttypes import _
+from plone.app.textfield import RichText as RichTextField
+from plone.autoform.interfaces import IFormFieldProvider
+from plone.autoform.view import WidgetsView
+from plone.dexterity.interfaces import IDexterityContent
+from plone.supermodel import model
+from zope.component import adapter
+from zope.interface import implementer
+from zope.interface import provider
 
 
+@provider(IFormFieldProvider)
 class IRichText(model.Schema):
 
     text = RichTextField(
@@ -19,12 +21,13 @@ class IRichText(model.Schema):
     model.primary('text')
 
 
-alsoProvides(IRichText, IFormFieldProvider)
-
-
+@implementer(IRichText)
+@adapter(IDexterityContent)
 class RichText(object):
-    implements(IRichText)
-    adapts(IDexterityContent)
 
     def __init__(self, context):
         self.context = context
+
+
+class WidgetView(WidgetsView):
+    schema = IRichText

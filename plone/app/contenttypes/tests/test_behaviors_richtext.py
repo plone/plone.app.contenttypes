@@ -25,7 +25,7 @@ class RichTextBase:
         fti.behaviors = self._behaviors
 
 
-class RichTextBehaviorTests(RichTextBase, unittest.TestCase):
+class RichTextBehaviorFunctionalTest(RichTextBase, unittest.TestCase):
     """ basic use cases and tests for richtext behavior"""
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
@@ -60,8 +60,3 @@ class RichTextBehaviorTests(RichTextBase, unittest.TestCase):
 
     def test_richtext_behavior(self):
         IRichText.providedBy(self.portal.doc1)
-
-
-def test_suite():
-    from unittest import defaultTestLoader
-    return defaultTestLoader.loadTestsFromName(__name__)

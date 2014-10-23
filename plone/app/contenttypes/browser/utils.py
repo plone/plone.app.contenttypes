@@ -6,7 +6,7 @@ from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
 from plone.memoize.view import memoize
 from zope.component import getMultiAdapter
 from zope.interface import Interface
-from zope.interface import implements
+from zope.interface import implementer
 
 
 class IUtils(Interface):
@@ -19,8 +19,8 @@ class IUtils(Interface):
         """
 
 
+@implementer(IUtils)
 class Utils(BrowserView):
-    implements(IUtils)
 
     @memoize
     def getMimeTypeIcon(self, content_file):

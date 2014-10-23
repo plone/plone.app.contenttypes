@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
+from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
 from plone.app.contenttypes.migration import datetime_fixer
+from plone.event.utils import default_timezone
 from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import getSite
-from plone.event.utils import default_timezone
 
 
 def migrate(portal, migrator):

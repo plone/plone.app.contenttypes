@@ -26,7 +26,7 @@
     tal:define="results view/results">
 
   <tal:success tal:condition="results">
-    <p>The migration finished within <span tal:replace="results/duration">20</span> seconds</p>
+    <p>The migration finished within <span tal:replace="results/duration">20</span></p>
 
     <h3>Migrated Content</h3>
     <table>
@@ -38,7 +38,7 @@
     <tal:block tal:repeat="ct results/content_types">
     <tr>
       <td tal:content="python:results['migrated_types'][ct]['old_meta_type']"></td>
-      <td tal:content="python:results['migrated_types'][ct]['new_type_name']"></td>
+      <td tal:content="python:results['migrated_types'][ct]['type_name']"></td>
       <td tal:content="python:results['migrated_types'][ct]['amount_migrated']"></td>
     </tr>
     </tal:block>

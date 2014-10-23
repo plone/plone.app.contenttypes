@@ -8,9 +8,13 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
+from datetime import timedelta
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
+from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
+from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
@@ -25,8 +29,8 @@ from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import Interface
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 # Schema Extender allowed interfaces
@@ -68,8 +72,12 @@ class FixBaseClasses(BrowserView):
             ('News Item', NewsItem),
         ]
         catalog = getToolByName(self.context, "portal_catalog")
+        query = {}
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] = 'all'
         for portal_type, portal_type_class in portal_types:
-            results = catalog.searchResults(portal_type=portal_type)
+            query['portal_type'] = portal_type
+            results = catalog(query)
             for brain in results:
                 obj = brain.getObject()
                 if IDexterityContent.providedBy(obj):
@@ -92,15 +100,25 @@ class MigrateFromATContentTypes(BrowserView):
     """
 
     def __call__(self,
+                 migrate=False,
                  content_types="all",
                  migrate_schemaextended_content=False,
                  migrate_references=True,
                  from_form=False):
 
-        stats_before = self.stats()
-        starttime = datetime.now()
         portal = self.context
-        catalog = portal.portal_catalog
+        if not from_form and migrate not in ['1', 'True', 'true', 1]:
+            url1 = '{0}/@@migrate_from_atct?migrate=1'.format(
+                portal.absolute_url())
+            url2 = '{0}/@@atct_migrator'.format(portal.absolute_url())
+            msg = u'Warning \n'
+            msg += u'-------\n'
+            msg += u'You are accessing "@@migrate_from_atct" directly. '
+            msg += u'This will migrate all content to dexterity!\n\n'
+            msg += u'Really migrate all content now: {0}\n\n'.format(url1)
+            msg += u'First select what to migrate: {0}'.format(url2)
+            return msg
+
         helpers = getMultiAdapter((portal, self.request),
                                   name="atct_migrator_helpers")
         if helpers.linguaplone_installed():
@@ -110,6 +128,10 @@ class MigrateFromATContentTypes(BrowserView):
             msg += 'http://github.com/plone/plone.app.contenttypes#migration '
             msg += 'for more information.'
             return msg
+
+        stats_before = self.stats()
+        starttime = datetime.now()
+        catalog = portal.portal_catalog
 
         # switch linkintegrity temp off
         ptool = queryUtility(IPropertiesTool)
@@ -133,23 +155,37 @@ class MigrateFromATContentTypes(BrowserView):
                     and not migrate_schemaextended_content:
                 not_migrated.append(k)
                 continue
-            amount_to_be_migrated = len(catalog(
-                object_provides=v['iface'].__identifier__,
-                meta_type=v['old_meta_type'])
-            )
-            # TODO: num objects is 0 for BlobFile and BlobImage
-            logger.info(
-                "Migrating %s objects of type %s" %
-                (amount_to_be_migrated, k)
-            )
+            query = {
+                'object_provides': v['iface'].__identifier__,
+                'meta_type': v['old_meta_type'],
+            }
+            if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+                query['Language'] = 'all'
+            amount_to_be_migrated = len(catalog(query))
+            starttime_for_current = datetime.now()
+            logger.info("Start migrating %s objects from %s to %s" % (
+                amount_to_be_migrated,
+                v['old_meta_type'],
+                v['type_name']))
+            installTypeIfNeeded(v['type_name'])
+
             # call the migrator
             v['migrator'](portal)
+
+            # logging
+            duration_current = datetime.now() - starttime_for_current
+            duration_human = str(timedelta(seconds=duration_current.seconds))
+            logger.info("Finished migrating %s objects from %s to %s in %s" % (
+                amount_to_be_migrated,
+                v['old_meta_type'],
+                v['type_name'],
+                duration_human))
 
             # some data for the results-page
             migrated_types[k] = {}
             migrated_types[k]['amount_migrated'] = amount_to_be_migrated
             migrated_types[k]['old_meta_type'] = v['old_meta_type']
-            migrated_types[k]['new_type_name'] = v['new_type_name']
+            migrated_types[k]['type_name'] = v['type_name']
 
         # if there are blobnewsitems we just migrate them silently.
         migration.migrate_blobnewsitems(portal)
@@ -165,25 +201,26 @@ class MigrateFromATContentTypes(BrowserView):
         # switch on setModificationDate on changes
         self.resetNotifyModified()
 
-        endtime = datetime.now()
-        duration = (endtime - starttime).seconds
+        duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
+        if not_migrated:
+            msg = ("The following types were not migrated: \n %s"
+                   % "\n".join(not_migrated))
+        else:
+            msg = "Migration successful\n\n"
+        msg += '\n-----------------------------\n'
+        msg += 'Migration finished in: %s' % duration
+        msg += '\n-----------------------------\n'
+        msg += 'Migration statictics:\n'
+        msg += pformat(migrated_types)
+        msg += '\n-----------------------------\n'
+        msg += 'State before:\n'
+        msg += pformat(stats_before)
+        msg += '\n-----------------------------\n'
+        msg += 'Stats after:\n'
+        msg += pformat(self.stats())
+        msg += '\n-----------------------------\n'
         if not from_form:
-            if not_migrated:
-                msg = ("The following were not migrated as they "
-                       "have extended schemas (from "
-                       "archetypes.schemaextender): \n %s"
-                       % "\n".join(not_migrated))
-            else:
-                msg = "Default content types successfully migrated\n\n"
-
-            msg += 'Migration finished in %s seconds' % duration
-            msg += '\n-----------------------------\n'
-            msg += 'State before:\n'
-            msg += pformat(stats_before)
-            msg += '\n-----------------------------\n'
-            msg += 'Stats after:\n'
-            msg += pformat(self.stats())
-            msg += '\n-----------------------------\n'
+            logger.info(msg)
             return msg
         else:
             stats = {
@@ -197,7 +234,11 @@ class MigrateFromATContentTypes(BrowserView):
 
     def stats(self):
         results = {}
-        for brain in self.context.portal_catalog():
+        query = {}
+        catalog = self.context.portal_catalog
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] ='all'
+        for brain in catalog(query):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return results
@@ -242,7 +283,9 @@ class IATCTMigratorForm(Interface):
         title=u"Migrate references?",
         description=(
             u"Select this option to migrate all "
-            u"references to each content type"
+            u"references to each content type. "
+            u"This will rebuild the whole catalog and "
+            u"increase the migration-time."
         ),
         default=True
     )
@@ -324,7 +367,10 @@ class ATCTMigratorHelpers(BrowserView):
     def objects_to_be_migrated(self):
         """ Return the number of AT objects in the portal """
         catalog = getToolByName(self.context, "portal_catalog")
-        brains = catalog(portal_type=ATCT_LIST.keys())
+        query = {'meta_type': [i['old_meta_type'] for i in ATCT_LIST.values()]}
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] = 'all'
+        brains = catalog(query)
         self._objects_to_be_migrated = len(brains)
         return self._objects_to_be_migrated
 
@@ -388,14 +434,25 @@ class PACInstaller(form.Form):
         fail = qi.installProduct(
             'plone.app.contenttypes',
             profile='plone.app.contenttypes:default',
+            blacklistedSteps=['typeinfo'],
         )
         if fail:
             messages = IStatusMessage(self.request)
             messages.addStatusMessage(fail, type='error')
             self.request.response.redirect(url)
 
+        # For types without any instances we want to instantly
+        # replace the AT-FTI's with DX-FTI's.
+        self.installTypesWithoutItems()
+
         url = url + '/@@atct_migrator'
         self.request.response.redirect(url)
+
+    def installTypesWithoutItems(self):
+        catalog = getToolByName(self.context, "portal_catalog")
+        for types_name in DEFAULT_TYPES:
+            if not catalog.unrestrictedSearchResults(portal_type=types_name):
+                installTypeIfNeeded(types_name)
 
     @button.buttonAndHandler(
         _(u'label_cancel', default=u'Cancel'), name='cancel')

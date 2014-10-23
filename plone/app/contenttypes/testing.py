@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
 from plone.app.event.testing import PAEvent_FIXTURE
-from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import applyProfile
-from plone.app.testing import PLONE_FIXTURE
-from plone.app.testing import IntegrationTesting
+from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import FunctionalTesting
+from plone.app.testing import IntegrationTesting
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import TEST_USER_ID
-from plone.app.testing import setRoles
+from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
-
 import pkg_resources
-from .tests.robot.variables import TEST_FOLDER_ID
 
 
 def set_browserlayer(request):
@@ -133,6 +133,10 @@ PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
     name="PloneAppContenttypes:Functional"
 )
 PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_CONTENTTYPES_FIXTURE, z2.ZSERVER_FIXTURE),
+    bases=(
+        PLONE_APP_CONTENTTYPES_FIXTURE,
+        REMOTE_LIBRARY_BUNDLE_FIXTURE,
+        z2.ZSERVER_FIXTURE
+    ),
     name="PloneAppContenttypes:Robot"
 )
