@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2a5 (unreleased)
+1.2a5 (2014-10-23)
 ------------------
 
 - Code modernization: sorted imports, use decorators, utf8 headers.
