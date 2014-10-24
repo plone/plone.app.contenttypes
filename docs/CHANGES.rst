@@ -60,7 +60,6 @@ Changelog
 - When replacing the default news and events collections, reverse the
   sort order correctly.
   [maurits]
->>>>>>> master
 
 - Added migration method that allows to migrate custom AT types to
   available DX types (#133)
