@@ -39,7 +39,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
+def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    migrate a generic simple field (like a string field or a date field)
+    """
     field = src_obj.getField(src_fieldname)
     if field:
         at_value = field.get(src_obj)
@@ -51,7 +54,11 @@ def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fiel
         setattr(dst_obj, dst_fieldname, at_value)
 
 
-def migrate_textfield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
+def migrate_richtextfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    migrate a rich text field.
+    This field needs some extra stuffs like keep the same mimetype.
+    """
     field = src_obj.getField(src_fieldname)
     raw_text = ''
     if field:
@@ -70,7 +77,11 @@ def migrate_textfield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldt
     setattr(dst_obj, dst_fieldname, richtext)
 
 
-def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
+def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    migrate an image field.
+    This field needs to be migrated with an NamedBlobImage instance.
+    """
     old_image = src_obj.getField(src_fieldname).get(src_obj)
     if old_image == '':
         return
@@ -87,8 +98,10 @@ def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_field
     logger.info("Migrating image %s" % filename)
 
 
-def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldtype):
+def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     """
+    migrate an image field.
+    This field needs to be migrated with an NamedBlobFile instance.
     BBB to be tested
     """
     old_file = src_obj.getField(src_fieldname).get(src_obj)
@@ -104,7 +117,8 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname, dst_fieldt
     logger.info("Migrating file %s" % filename)
 
 
-FIELDS_MAPPING = {'TextField': migrate_textfield,
+#this mapping is needed to use the right migration method
+FIELDS_MAPPING = {'TextField': migrate_richtextfield,
                   'FileField': migrate_filefield,
                   'ImageField': migrate_imagefield}
 
