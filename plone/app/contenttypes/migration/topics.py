@@ -12,7 +12,7 @@ from zope.dottedname.resolve import resolve
 
 import logging
 
-logger = logging.getLogger('plone.app.collection')
+logger = logging.getLogger(__name__)
 prefix = "plone.app.querystring"
 
 INVALID_OPERATION = 'Invalid operation %s for criterion: %s'
