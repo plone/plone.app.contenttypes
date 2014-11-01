@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from zope.i18n import translate
 from Products.Five.browser import BrowserView
+from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import iterSchemataForType
 from Products.CMFCore.utils import getToolByName
@@ -70,6 +71,24 @@ class CustomMigrationForm(BrowserView):
                                 'title': fti.Title()})
         return results
 
+    def getATTypesWithoutFTI(self):
+        """Returns a list of the id's of archetypes-types that are
+           not registered in portal_types but still have instances.
+        """
+        results = []
+        all_registered_types = [i['id'] for i in self.getATFTIs()]
+        catalog = getToolByName(self.context, 'portal_catalog')
+        for meta_type in catalog.uniqueValuesFor('meta_type'):
+            # querying for meta_type will only return at-types
+            brain = catalog(meta_type=meta_type, sort_limit=1)[0]
+            if IDexterityContent.providedBy(brain.getObject()):
+                continue
+            typename = brain.portal_type
+            if typename not in all_registered_types:
+                    results.append({'id': typename,
+                                    'title': typename})
+        return results
+
     def getDXFTIs(self):
         '''Returns the FTI's of all DX-Types (including default-types).'''
         results = []
@@ -101,6 +120,26 @@ class CustomMigrationForm(BrowserView):
         if not schema:
             return results
         for field in schema.fields():
+            if not field.getName() in self.at_metadata_fields:
+                translated_label = translate(field.widget.label)
+                results.append({'id': field.getName(),
+                                'title': '%s (%s)' % (translated_label, field.getType()),
+                                'type': field.getType()})
+        return results
+
+    def getFieldsForATTypeWithoutFTI(self, typename):
+        """Returns a list of fields for archetypes-types without a fti.
+           Instead of iterating over the schema in the fti it takes one
+           instance and gets the schema from that.
+        """
+        catalog = getToolByName(self.context, 'portal_catalog')
+        results = []
+        brains = catalog(portal_type=typename, sort_limit=1)
+        if not brains:
+            return results
+        obj = brains[0].getObject()
+        for field_name in obj.schema._fields:
+            field = obj.schema._fields[field_name]
             if not field.getName() in self.at_metadata_fields:
                 translated_label = translate(field.widget.label)
                 results.append({'id': field.getName(),
