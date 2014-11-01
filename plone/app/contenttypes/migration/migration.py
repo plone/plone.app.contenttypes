@@ -118,9 +118,10 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
 
 
 # this mapping is needed to use the right migration method
-# XXX we use the full field type path as it is retrieved from the field
-# (fiel.getType()), to avoid conflict. In the __future__ we should have a more
-# dynamic way to configure this mapping
+# we use the full field type path as it is retrieved from the field
+# (fiel.getType()), to avoid conflict. 
+# TODO In the __future__ we should have a more dynamic way to configure this 
+# mapping
 FIELDS_MAPPING = {'Products.Archetypes.Field.TextField': migrate_richtextfield,
                   'Products.Archetypes.Field.FileField': migrate_filefield,
                   'plone.app.blob.field.FileField': migrate_filefield,
