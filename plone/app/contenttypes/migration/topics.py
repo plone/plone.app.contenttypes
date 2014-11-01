@@ -1,4 +1,33 @@
 # -*- coding: utf-8 -*-
+
+"""
+TODO/plans for topic migration.
+
+- Fix the TODO items embedded in the code below, or document missing
+  features.  This may need additions in plone.app.querystring, or
+  needs checking to see if features are already supported in there
+  meanwhile.
+
+- When needed, register a FolderishCollection type: Folder with
+  Collection behavior enabled.  We can use this to migrate Topics with
+  sub topics.
+
+- See if we can get migrations to work for anything we can come up with:
+
+  - Plain AT Topics.
+
+  - AT Topics with sub Topics inside.
+
+  - plone.app.collection 1.x Archetypes
+
+  - plone.app.collection 1.x Archetypes folderish (in use by Maurits,
+    see p.a.collection branch maurits-upgrade-path, where this
+    migration code actually originated)
+
+  - plone.app.collection 2.x Dexterity
+
+"""
+
 from DateTime import DateTime
 from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.utils import getToolByName
