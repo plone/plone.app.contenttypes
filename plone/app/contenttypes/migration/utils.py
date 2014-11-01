@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-from Products.ATContentTypes.interfaces.document import IATDocument
-from Products.ATContentTypes.interfaces.event import IATEvent
-from Products.ATContentTypes.interfaces.file import IATFile
-from Products.ATContentTypes.interfaces.folder import IATFolder
-from Products.ATContentTypes.interfaces.image import IATImage
-from Products.ATContentTypes.interfaces.link import IATLink
-from Products.ATContentTypes.interfaces.news import IATNewsItem
 from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.context import DirectoryImportContext
 from Products.GenericSetup.utils import importObjects
@@ -13,24 +6,12 @@ from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaModifier
-from plone.app.blob.interfaces import IATBlobFile
-from plone.app.blob.interfaces import IATBlobImage
-from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
 import os
 import pkg_resources
-
-try:
-    pkg_resources.get_distribution('plone.app.collection')
-except pkg_resources.DistributionNotFound:
-    ICollection = None
-    HAS_APP_COLLECTION = False
-else:
-    HAS_APP_COLLECTION = True
-    from plone.app.collection.interfaces import ICollection
 
 # Is there a multilingual addon?
 try:
@@ -47,84 +28,6 @@ if not HAS_MULTILINGUAL:
         HAS_MULTILINGUAL = False
     else:
         HAS_MULTILINGUAL = True
-
-ATCT_LIST = {
-    "Folder": {
-        'iface': IATFolder,
-        'migrator': migration.migrate_folders,
-        'extended_fields': [],
-        'type_name': 'Folder',
-        'old_meta_type': 'ATFolder',
-    },
-    "Document": {
-        'iface': IATDocument,
-        'migrator': migration.migrate_documents,
-        'extended_fields': [],
-        'type_name': 'Document',
-        'old_meta_type': 'ATDocument',
-    },
-    # File without blobs
-    "File": {
-        'iface': IATFile,
-        'migrator': migration.migrate_files,
-        'extended_fields': [],
-        'type_name': 'File',
-        'old_meta_type': 'ATFile',
-    },
-    # Image without blobs
-    "Image": {
-        'iface': IATImage,
-        'migrator': migration.migrate_images,
-        'extended_fields': [],
-        'type_name': 'Image',
-        'old_meta_type': 'ATImage',
-    },
-    "News Item": {
-        'iface': IATNewsItem,
-        'migrator': migration.migrate_newsitems,
-        'extended_fields': [],
-        'type_name': 'News Item',
-        'old_meta_type': 'ATNewsItem',
-    },
-    "Link": {
-        'iface': IATLink,
-        'migrator': migration.migrate_links,
-        'extended_fields': [],
-        'type_name': 'Link',
-        'old_meta_type': 'ATLink',
-    },
-    "Event": {
-        'iface': IATEvent,
-        'migrator': migration.migrate_events,
-        'extended_fields': [],
-        'type_name': 'Event',
-        'old_meta_type': 'ATEvent',
-    },
-    "BlobImage": {
-        'iface': IATBlobImage,
-        'migrator': migration.migrate_blobimages,
-        'extended_fields': ['image'],
-        'type_name': 'Image',
-        'old_meta_type': 'ATBlob',
-    },
-    "BlobFile": {
-        'iface': IATBlobFile,
-        'migrator': migration.migrate_blobfiles,
-        'extended_fields': ['file'],
-        'type_name': 'File',
-        'old_meta_type': 'ATBlob',
-    },
-}
-
-if HAS_APP_COLLECTION:
-    ATCT_LIST["Collection"] = {
-        'iface': ICollection,
-        'migrator': migration.migrate_collections,
-        'extended_fields': [],
-        'type_name': 'Collection',
-        'old_meta_type': 'Collection',
-    }
-
 
 def isSchemaExtended(iface):
     """Return a list of fields added by archetypes.schemaextender

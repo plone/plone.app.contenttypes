@@ -10,10 +10,10 @@ from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from datetime import timedelta
 from plone.app.contenttypes.migration import migration
-from plone.app.contenttypes.migration.utils import ATCT_LIST
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
