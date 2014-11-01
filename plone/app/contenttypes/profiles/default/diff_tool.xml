@@ -13,5 +13,11 @@
     <type portal_type="News Item">
       <field name="any" difftype="Compound Diff for Dexterity types"/>
     </type>
+    <type portal_type="Image">
+      <field name="any" difftype="Compound Diff for Dexterity types"/>
+    </type>
+    <type portal_type="File">
+      <field name="any" difftype="Compound Diff for Dexterity types"/>
+    </type>
   </difftypes>
 </object>

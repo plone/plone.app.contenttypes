@@ -401,13 +401,6 @@ def _delete_at_example_content(portal):
         portal.manage_delObjects(to_delete)
 
 
-def setupVarious(context):
-    if context.readDataFile('plone.app.contenttypes_default.txt') is None:
-        return
-    portal = context.getSite()
-    enable_multilingual_behavior(portal)
-
-
 def enable_multilingual_behavior(portal):
     if not HAS_MULTILINGUAL:
         return
@@ -421,3 +414,18 @@ def enable_multilingual_behavior(portal):
         ])
         behaviors = tuple(set(behaviors))
         fti._updateProperty('behaviors', behaviors)
+
+
+def disable_clone_blobs(portal):
+    portal_modifier = getToolByName(portal, 'portal_modifier')
+    if 'CloneBlobs' in portal_modifier.objectIds():
+        modifier = portal_modifier.get('CloneBlobs')
+        modifier.edit(enabled=False)
+
+
+def setupVarious(context):
+    if context.readDataFile('plone.app.contenttypes_default.txt') is None:
+        return
+    portal = context.getSite()
+    enable_multilingual_behavior(portal)
+    disable_clone_blobs(portal)
