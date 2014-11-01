@@ -139,9 +139,9 @@ class CriterionConverter(object):
         key = '%s.field.%s.operations' % (prefix, index)
         operations = registry.get(key)
         operation = self.get_operation(value, index, criterion)
-        if not operation in operations:
+        if operation not in operations:
             operation = self.get_alt_operation(value, index, criterion)
-            if not operation in operations:
+            if operation not in operations:
                 return
         if self.is_operation_valid(registry, operation):
             return operation
@@ -234,7 +234,7 @@ class ATDateCriteriaConverter(CriterionConverter):
         operations = registry.get(key)
 
         def add_row(operation, value=None):
-            if not operation in operations:
+            if operation not in operations:
                 # TODO just ignore it?
                 raise ValueError(INVALID_OPERATION % (operation, criterion))
             if not self.is_operation_valid(registry, operation):
