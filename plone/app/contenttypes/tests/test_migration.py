@@ -2,12 +2,19 @@
 from Products.CMFCore.utils import getToolByName
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
+from lxml import etree
+from plone.app.contenttypes.testing import \
+    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 from plone.app.contenttypes.testing import set_browserlayer
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.dexterity.content import Container
 from plone.event.interfaces import IEventAccessor
+from plone.testing.z2 import Browser
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getSiteManager
@@ -1374,3 +1381,125 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_folder = self.portal['folder']
         self.failUnless('static-portlet' in get_portlets(dx_folder,
                                                          u'plone.rightcolumn'))
+
+
+class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+
+        applyProfile(self.portal, 'plone.app.dexterity:testing')
+
+        self.portal.acl_users.userFolderAddUser('admin',
+                                                'secret',
+                                                ['Manager'],
+                                                [])
+        login(self.portal, 'admin')
+
+        # Add default content
+        self.portal.invokeFactory('Document', 'item')
+
+        # Change Document conent type to folderish
+        portal_types = getToolByName(self.portal, 'portal_types')
+        portal_types['Document'].klass = 'plone.dexterity.content.Container'
+        portal_types['Document'].allowed_content_types = ('Document',)
+
+    def test_dxmigration_migrate_item_to_container_class_is_changed(self):
+        """Check that base class was changed."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            migrate_base_class_to_new_class
+        migrate_base_class_to_new_class(self.portal.item)
+        self.assertTrue(isinstance(self.portal.item, Container))
+
+    def test_dxmigration_migrate_item_to_container_add_object_inside(self):
+        """Check that after migrate base class it can add items inside object.
+        """
+        from plone.app.contenttypes.migration.dxmigration import \
+            migrate_base_class_to_new_class
+        migrate_base_class_to_new_class(self.portal.item)
+        self.portal.item.invokeFactory('Document', 'doc')
+        self.assertEqual(len(self.portal.item.folderlistingFolderContents()), 1)
+
+    def test_dxmigration_migrate_list_of_objects_with_changed_base_class(self):
+        """Check list of objects with changed classes."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            list_of_objects_with_changed_base_class
+        # We have already one changed object
+        objects = [i for i in list_of_objects_with_changed_base_class()]
+        self.assertEqual(len(objects), 1)
+
+    def test_dxmigration_migrate_list_of_changed_base_class_names(self):
+        """Check list of changed base class names."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            list_of_changed_base_class_names
+        # We have already one changed object
+        names = [i for i in list_of_changed_base_class_names()]
+        self.assertEqual(len(names), 1)
+
+    def test_dxmigration_migrate_vocabulary_changed_base_classes(self):
+        """Check vocabulary of changed base class names."""
+        # We have already one changed object
+        name = 'plone.app.contenttypes.migration.changed_base_classes'
+        factory = getUtility(IVocabularyFactory, name)
+        vocabulary = factory(self.portal)
+        self.assertEqual(len(vocabulary), 1)
+
+
+class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        app = self.layer['app']
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+
+        self.portal_url = self.portal.absolute_url()
+        self.manage_document_url = '{0}/{1}/{2}/{3}'.format(
+            self.portal_url,
+            'portal_types',
+            'Document',
+            'manage_propertiesForm',
+        )
+
+        self.browser = Browser(app)
+        self.browser.handleErrors = False
+        self.browser.addHeader(
+            'Authorization',
+            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+        )
+
+        # Add default content
+        self.browser.open(self.portal_url)
+        self.browser.getLink('Page').click()
+        self.browser.getControl(name='form.widgets.IDublinCore.title')\
+            .value = "My item"
+        self.browser.getControl(name='form.widgets.IShortName.id')\
+            .value = "item"
+        self.browser.getControl('Save').click()
+
+        # Change Document conent type to folderish
+        self.browser.open(self.manage_document_url)
+        self.browser.getControl(name='klass:string') \
+            .value = 'plone.app.contenttypes.content.Collection'
+        self.browser.getControl('Save Changes').click()
+        self.browser.open(
+            '{0}/@@base_class_migrator_form'.format(self.portal_url))
+        self.good_info_message_template = 'There are {0} objects migrated.'
+
+    def test_dxmigration_migrate_check_migration_form_view(self):
+        """Check base class migrator view of changed base class names."""
+        html = etree.HTML(self.browser.contents)
+        checkboxes = html.xpath('//form//*[@name="{0}"]'.format(
+            'form.widgets.changed_base_classes:list'))
+        self.assertEqual(len(checkboxes), 1)
+
+    def test_dxmigration_migrate_check_migration_successful_message(self):
+        """Check base class migrator view of changed base class names."""
+        self.browser.getControl(name='form.widgets.changed_base_classes:list') \
+            .value = ['true']
+        self.browser.getControl('Update').click()
+        self.assertIn(
+            self.good_info_message_template.format(1), self.browser.contents)
