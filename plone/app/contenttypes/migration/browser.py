@@ -10,6 +10,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from datetime import timedelta
 from plone.app.contenttypes.migration import migration
+from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
@@ -359,6 +360,65 @@ class ATCTMigratorForm(form.Form):
 ATCTMigrator = wrap_form(
     ATCTMigratorForm,
     index=ViewPageTemplateFile('atct_migrator.pt')
+)
+
+
+class IBaseClassMigratorForm(Interface):
+
+    changed_base_classes = schema.List(
+        title=u'Changed base classes',
+        description=u'Select changed base classes you want to migrate',
+        value_type=schema.Choice(
+            vocabulary='plone.app.contenttypes.migration.changed_base_classes',
+        ),
+        required=True,
+    )
+
+
+class BaseClassMigratorForm(form.Form):
+
+    fields = field.Fields(IBaseClassMigratorForm)
+    fields['changed_base_classes'].widgetFactory = CheckBoxFieldWidget
+    ignoreContext = True
+    enableCSRFProtection = True
+
+    @button.buttonAndHandler(u'Update', name='update')
+    def handle_migrate(self, action):
+        data, errors = self.extractData()
+
+        if errors:
+            return
+
+        changed_base_classes = data.get('changed_base_classes', [])
+        if not changed_base_classes:
+            return
+
+        catalog = getToolByName(self.context, "portal_catalog")
+        migrated = []
+        not_migrated = []
+        for brain in catalog():
+            obj = brain.getObject()
+            old_class_name = dxmigration.get_old_class_name_string(obj)
+            if old_class_name in changed_base_classes:
+                if dxmigration.migrate_base_class_to_new_class(obj):
+                    migrated.append(obj)
+                else:
+                    not_migrated.append(obj)
+
+        messages = IStatusMessage(self.request)
+        info_message_template = 'There are {0} objects migrated.'
+        warn_message_template = 'There are not {0} objects migrated.'
+        if migrated:
+            msg = info_message_template.format(len(migrated))
+            messages.addStatusMessage(msg, type='info')
+        if not_migrated:
+            msg = warn_message_template.format(len(not_migrated))
+            messages.addStatusMessage(msg, type='warn')
+        self.request.response.redirect(self.request['ACTUAL_URL'])
+
+
+BaseClassMigrator = wrap_form(
+    BaseClassMigratorForm,
 )
 
 

@@ -204,3 +204,19 @@ class ExtendedTypesVocabulary(object):
         extended fields.
         """
         return results(context, show_extended=True)
+
+
+class ChangedBaseClasses(object):
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        """Return a vocabulary with all changed base classes."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            list_of_changed_base_class_names
+        list_of_class_names = list_of_changed_base_class_names() or {}
+        return SimpleVocabulary(
+            [SimpleVocabulary.createTerm(
+                class_name, class_name,
+                '{0} ({1})'.format(class_name, list_of_class_names[class_name]))
+             for class_name in list_of_class_names.keys()]
+        )
