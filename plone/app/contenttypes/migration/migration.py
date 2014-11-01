@@ -25,15 +25,17 @@ from Products.CMFPlone.utils import safe_unicode, safe_hasattr
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
+from Products.contentmigration.walker import CustomQueryWalker
+import transaction
 from z3c.relationfield import RelationValue
 from zope.component import adapter
 from zope.component import getAdapters
+from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.intid.interfaces import IIntIds
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -609,7 +611,7 @@ def migrate_events(portal):
     migrate(portal, DXEventMigrator)
 
 
-def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderish=False):
+def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderish=False, dry_run=False):
     """ generate a migrator for the given at-based folderish portal type """
 
     base_class = ATCTContentMigrator
@@ -620,28 +622,37 @@ def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderi
 
         src_portal_type = src_type
         dst_portal_type = dst_type
+        dry_run_mode = dry_run
 
         def migrate_schema_fields(self):
             for fields_dict in fields_mapping:
                 at_fieldname = fields_dict.get('AT_field_name')
                 at_fieldtype = fields_dict.get('AT_field_type')
                 dx_fieldname = fields_dict.get('DX_field_name')
-                dx_fieldtype = fields_dict.get('DX_field_type')
                 migration_field_method = migrate_simplefield
                 if at_fieldtype in FIELDS_MAPPING:
                     migration_field_method = FIELDS_MAPPING[at_fieldtype]
                 migration_field_method(src_obj=self.old,
                                        dst_obj=self.new,
                                        src_fieldname=at_fieldname,
-                                       dst_fieldname=dx_fieldname,
-                                       dst_fieldtype=dx_fieldtype)
+                                       dst_fieldname=dx_fieldname)
+
+        def last_migrate_check(self):
+            """
+            BBB to be checked
+            if there is an error with the fields, an exception will be raised.
+            """
+            if self.dry_run_mode:
+                view = getMultiAdapter((self.new, self.new.REQUEST), name="view")
+                view()
 
     return CustomATMigrator
 
 
-def migrateCustomAT(fields_mapping, src_type, dst_type):
+def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     """
-    try to get types infos from archetype_tool, then set a migrator an pass it given values
+    Try to get types infos from archetype_tool, then set a migrator an pass it given values.
+    There is a dry_run mode that allows to check the success of a migration without committing.
     """
     portal = getSite()
     archetype_tool = getToolByName(portal, 'archetype_tool', None)
@@ -657,12 +668,38 @@ def migrateCustomAT(fields_mapping, src_type, dst_type):
         if info.get('meta_type') == src_meta_type:
             src_type_infos = info
     is_folderish = src_type_infos.get('klass').isPrincipiaFolderish
+    #to be removed when this parameter comes from the view
+    dry_run = True
     migrator = makeCustomATMigrator(context=portal,
                                     src_type=src_type,
                                     dst_type=dst_type,
                                     fields_mapping=fields_mapping,
-                                    is_folderish=is_folderish)
+                                    is_folderish=is_folderish,
+                                    dry_run=dry_run)
     if migrator:
         migrator.src_meta_type = src_meta_type
         migrator.dst_meta_type = ''
-        migrate(portal, migrator)
+        walker_settings = {'portal': portal,
+                           'migrator': migrator,
+                           'src_portal_type': src_type,
+                           'dst_portal_type': dst_type,
+                           'src_meta_type': src_meta_type,
+                           'dst_meta_type': '',
+                           'use_savepoint': True}
+        if dry_run:
+            tools = getMultiAdapter((portal, portal.REQUEST), name=u'plone_tools')
+            portal_catalog = tools.catalog()
+            #BBB search_limit doesn't seems working
+            test_search = portal_catalog(portal_type=src_type, search_limit=1)
+            if test_search:
+                walker_settings['query'] = {'UID': test_search[0].UID}
+        walker = CustomQueryWalker(**walker_settings)
+        walker.go()
+        walker_infos = {'errors': walker.errors,
+                        'msg': walker.getOutput().splitlines(),
+                        'counter': walker.counter}
+        for error in walker.errors:
+            logger.error(error.get('message'))
+        if dry_run:
+            transaction.abort()
+        return walker_infos
