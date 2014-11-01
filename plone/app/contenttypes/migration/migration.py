@@ -626,15 +626,13 @@ def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderi
                 at_fieldname = fields_dict.get('AT_field_name')
                 at_fieldtype = fields_dict.get('AT_field_type')
                 dx_fieldname = fields_dict.get('DX_field_name')
-                dx_fieldtype = fields_dict.get('DX_field_type')
                 migration_field_method = migrate_simplefield
                 if at_fieldtype in FIELDS_MAPPING:
                     migration_field_method = FIELDS_MAPPING[at_fieldtype]
                 migration_field_method(src_obj=self.old,
                                        dst_obj=self.new,
                                        src_fieldname=at_fieldname,
-                                       dst_fieldname=dx_fieldname,
-                                       dst_fieldtype=dx_fieldtype)
+                                       dst_fieldname=dx_fieldname)
 
     return CustomATMigrator
 
