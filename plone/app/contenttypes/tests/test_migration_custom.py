@@ -51,7 +51,7 @@ class MigrateFieldsTest(unittest.TestCase):
                                                    title="Bar document")
         at_document = self.portal[at_document_id]
         dx_document = self.portal[dx_document_id]
-        migrate_simplefield(at_document, dx_document, 'title', 'title', '')
+        migrate_simplefield(at_document, dx_document, 'title', 'title')
         self.assertEqual(dx_document.Title(), at_document.Title())
 
     def test_migrate_richtextfield(self):
@@ -68,7 +68,7 @@ class MigrateFieldsTest(unittest.TestCase):
         at_document = self.portal[at_document_id]
         dx_document = self.portal[dx_document_id]
         self.assertEqual(dx_document.text, None)
-        migrate_simplefield(at_document, dx_document, 'text', 'text', '')
+        migrate_simplefield(at_document, dx_document, 'text', 'text')
         self.assertEqual(dx_document.text, at_document.getText())
 
     def test_migrate_listfield(self):
@@ -84,7 +84,7 @@ class MigrateFieldsTest(unittest.TestCase):
                                                    title="Bar document")
         at_document = self.portal[at_document_id]
         dx_document = self.portal[dx_document_id]
-        migrate_simplefield(at_document, dx_document, 'subject', 'subject', '')
+        migrate_simplefield(at_document, dx_document, 'subject', 'subject',)
         self.assertEqual(dx_document.Subject(), at_document.Subject())
 
     def test_migrate_imagefield(self):
@@ -101,7 +101,7 @@ class MigrateFieldsTest(unittest.TestCase):
         at_newsitem = self.portal[at_newsitem_id]
         dx_newsitem = self.portal[dx_newsitem_id]
         self.assertEqual(dx_newsitem.image, None)
-        migrate_imagefield(at_newsitem, dx_newsitem, 'image', 'image', '')
+        migrate_imagefield(at_newsitem, dx_newsitem, 'image', 'image')
         self.assertEqual(dx_newsitem.image.contentType, 'image/png')
         self.assertEqual(dx_newsitem.image.data, test_image_data)
 
