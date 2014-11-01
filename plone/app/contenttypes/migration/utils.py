@@ -8,10 +8,16 @@ from archetypes.schemaextender.interfaces import ISchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaModifier
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.portlets.interfaces import IPortletAssignmentMapping
+from plone.portlets.interfaces import IPortletManager
 from zope.component import getGlobalSiteManager
+from zope.component import getMultiAdapter
+from zope.component import getUtility
 from zope.component.hooks import getSite
+
 import os
 import pkg_resources
+
 
 # Is there a multilingual addon?
 try:
@@ -28,6 +34,7 @@ if not HAS_MULTILINGUAL:
         HAS_MULTILINGUAL = False
     else:
         HAS_MULTILINGUAL = True
+
 
 def isSchemaExtended(iface):
     """Return a list of fields added by archetypes.schemaextender
@@ -102,3 +109,10 @@ def installTypeIfNeeded(type_name):
     environ = DirectoryImportContext(ps, profile_path)
     parent_path = 'types/'
     importObjects(dx_fti, parent_path, environ)
+
+
+def add_portlet(context, assignment, portlet_key, columnName):
+    column = getUtility(IPortletManager, columnName)
+    assignmentmapping = getMultiAdapter((context, column),
+                                        IPortletAssignmentMapping)
+    assignmentmapping[portlet_key] = assignment
