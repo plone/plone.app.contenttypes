@@ -237,7 +237,7 @@ class MigrateFromATContentTypes(BrowserView):
         query = {}
         catalog = self.context.portal_catalog
         if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] ='all'
+            query['Language'] = 'all'
         for brain in catalog(query):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
