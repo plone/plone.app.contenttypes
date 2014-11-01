@@ -4,6 +4,10 @@ Changelog
 1.2a5 (unreleased)
 ------------------
 
+- Add methods to get AT-Types that were removed and get the schema from their
+  instances.
+  [pbauer]
+
 - Added helper view for migration custom AT types to available DX types,
   see issue #133.
   [gbastien]
