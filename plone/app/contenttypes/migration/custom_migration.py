@@ -51,6 +51,11 @@ class CustomMigrationForm(BrowserView):
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
         return self.index()
 
+    def getAllArchetypeTypes(self):
+        at_types = self.getATFTIs()
+        at_types.extend(self.getATTypesWithoutFTI())
+        return at_types
+
     def getATFTIs(self):
         '''Returns a list of all AT types with existing instances (including default-types).'''
         results = []
@@ -68,7 +73,8 @@ class CustomMigrationForm(BrowserView):
                fti.content_meta_type in registeredTypeNames and \
                catalog(portal_type=ftiId):
                 results.append({'id': ftiId,
-                                'title': fti.Title()})
+                                'title': fti.Title(),
+                                'removed': False})
         return results
 
     def getATTypesWithoutFTI(self):
@@ -86,7 +92,8 @@ class CustomMigrationForm(BrowserView):
             typename = brain.portal_type
             if typename not in all_registered_types:
                     results.append({'id': typename,
-                                    'title': typename})
+                                    'title': typename,
+                                    'removed': True})
         return results
 
     def getDXFTIs(self):
@@ -100,8 +107,14 @@ class CustomMigrationForm(BrowserView):
                                 'title': fti.Title()})
         return results
 
-    def getFieldsForATType(self, typename):
+    def getFieldsForATType(self, typeinfo):
         '''Returns schema fields (name and type) for the given AT typename.'''
+        if typeinfo['removed']:
+            return self.getFieldsForATTypeWithoutFTI(typeinfo['id'])
+        return self.getFieldsForATTypeWithFTI(typeinfo['id'])
+
+    def getFieldsForATTypeWithFTI(self, typename):
+        '''Returns schema fields (name and type) from the fti.'''
         results = []
         typesTool = getToolByName(self.context, 'portal_types')
         fti = typesTool.getTypeInfo(typename)

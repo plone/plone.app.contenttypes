@@ -25,7 +25,8 @@
 </metal:custom_desc>
 
 <metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core" tal:define="at_types view/getATFTIs">
+<metal:block define-macro="content-core"
+             tal:define="at_types view/getAllArchetypeTypes">
   <div class="important">
     <h2 i18n:translate="">Important</h2>
     <p i18n:translate="">Before migrating your content please read the <a href="https://github.com/plone/plone.app.contenttypes#migration">migration-section in the documentation of plone.app.contenttypes</a></p>
@@ -66,9 +67,10 @@
                   tal:attributes="action python:context.absolute_url() + '/@@custom_migration'">
             <table>
                 <tr tal:repeat="at_type at_types">
+                <p tal:content="at_type"></p>
                     <td valign="top">
                         <p tal:content="at_type/title" style="font-weight: bold;">AT content type title</p>
-                        <tal:block repeat="field python: view.getFieldsForATType(at_type['id'])">
+                        <tal:block repeat="field python: view.getFieldsForATType(at_type)">
                             <p tal:content="field/title">Field name</p>
                             <input type="hidden" tal:attributes="name string:${at_type/id}:list;
                                                                  value string:${field/id}__type__${field/type};" />

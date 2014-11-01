@@ -1,4 +1,4 @@
-<tal:loop repeat="at_field python: view.getFieldsForATType(view.at_typename)">
+<tal:loop repeat="at_field python: view.getFieldsForATTypeWithoutFTI(view.at_typename)">
     <select tal:attributes="name string:dx_${view/dx_typename}__for__${view/at_typename}:list;">
         <option value="">Do not migrate</option>
         <option tal:repeat="dx_field python: view.getFieldsForDXType(view.dx_typename)"

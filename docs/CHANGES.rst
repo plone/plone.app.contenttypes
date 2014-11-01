@@ -4,8 +4,7 @@ Changelog
 1.2a5 (unreleased)
 ------------------
 
-- Add methods to get AT-Types that were removed and get the schema from their
-  instances.
+- Add custom migration for AT-Types that were removed from portal_types.
   [pbauer]
 
 - Added helper view for migration custom AT types to available DX types,
