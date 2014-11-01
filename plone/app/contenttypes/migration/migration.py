@@ -35,6 +35,7 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
+from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
@@ -243,11 +244,11 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
         hidden and skips broken assignments.
         """
 
-        # FIXME: also take custom portlet managers into account
-        # from zope.component import getSiteManager
-        # [util for util in sm.registeredUtilities()
-        #   if util.provided == IPortletManager]
-        managers = [u'plone.leftcolumn', u'plone.rightcolumn']
+        # also take custom portlet managers into account
+        managers = [reg.name for reg in getSiteManager().registeredUtilities() \
+                    if reg.provided == IPortletManager]
+        # faster, but no custom managers
+        # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
 
         # copy information which categories are hidden for which manager
         blacklist_status = IAnnotations(self.old).get(
