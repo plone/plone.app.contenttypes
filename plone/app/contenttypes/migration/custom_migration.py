@@ -6,8 +6,8 @@ from plone.dexterity.utils import iterSchemataForType
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.ATContentTypes.content.schemata import ATContentTypeSchema
+from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.contenttypes.migration.migration import migrateCustomAT
-
 
 HAS_EXTENDER = True
 try:
@@ -34,10 +34,18 @@ class CustomMigrationForm(BrowserView):
         submitted = form.get('form.button.Migrate', False)
         if submitted:
             # proceed, call the migration methdd
-            self.migrate()
-            msg = translate('Migration applied.',
-                            domain='plone.app.contenttypes')
-            self.context.plone_utils.addPortalMessage(msg)
+            results = self.migrate()
+            messages = IStatusMessage(self.request)
+            for migration_result in results:
+                res_type = migration_result.get('type')
+                res_infos = migration_result.get('infos')
+                if res_infos.get('errors'):
+                    messages.add(u'Error when migrating "%s" type. Check the log for other informations.' % res_type, type=u"error")
+                else:
+                    msg = translate('Migration applied succesfully for %s "%s" items.' % (res_infos.get('counter'),
+                                                                                          res_type),
+                                domain='plone.app.contenttypes')
+                    messages.add(msg, type=u"info")
         elif cancelled:
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
         return self.index()
@@ -165,9 +173,13 @@ class CustomMigrationForm(BrowserView):
                     data[at_typename][dx_typename].append(field_data)
 
         # now that the data dict contains relevant information, we can call the custom migrator
+        migration_results = []
         for at_typename, dx_mappings in data.items():
             for k, v in dx_mappings.items():
-                migrateCustomAT(fields_mapping=v, src_type=at_typename, dst_type=dx_typename)
+                res = migrateCustomAT(fields_mapping=v, src_type=at_typename, dst_type=dx_typename)
+                migration_results.append({'type': at_typename,
+                                          'infos': res})
+        return migration_results
 
 
 class DisplayDXFields(CustomMigrationForm):
