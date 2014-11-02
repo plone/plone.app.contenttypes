@@ -350,16 +350,19 @@ class ATPathCriterionConverter(CriterionConverter):
     operator_code = 'string.path'
 
     def get_query_value(self, value, index, criterion):
-        if not criterion.Recurse():
-            logger.warn("Cannot handle non-recursive path search. "
-                        "Allowing recursive search. %r", value)
         raw = criterion.getRawValue()
         if not raw:
             return
         if len(raw) > 1:
             logger.warn("Multiple paths in query. Using only the first. %r",
                         value['query'])
-        return raw[0]
+        path = raw[0]
+        # Is this a recursive query?  Could check depth in the value
+        # actually, but Recurse is the canonical way.  Also, the only
+        # possible values for depth are -1 and 1.
+        if not criterion.Recurse():
+            path += '::1'
+        return path
 
 
 class ATBooleanCriterionConverter(CriterionConverter):

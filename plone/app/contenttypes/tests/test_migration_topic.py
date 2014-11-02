@@ -336,23 +336,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.portal.topic.getQuery()
 
     def test_ATPathCriterion(self):
-        self.add_criterion('path', 'ATPathCriterion', self.portal.folder.UID())
-        self.run_migration()
-        self.assertEqual(self.portal.topic.getRawQuery(),
-                         [{'i': 'path',
-                           'o': 'plone.app.querystring.operation.string.path',
-                           'v': self.portal.folder.UID()}])
-
-        # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
-
-    def test_ATPathCriterionNonRecursive(self):
-        # Topics supported non recursive search, so search at a specific
-        # depth.  New Collections do not support it.
         crit = self.add_criterion(
             'path',
-            'ATPathCriterion', self.portal.folder.UID()
-        )
+            'ATPathCriterion', self.portal.folder.UID())
         crit.setRecurse(True)
         self.run_migration()
         self.assertEqual(self.portal.topic.getRawQuery(),
@@ -363,15 +349,34 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         # Check that the resulting query does not give an error.
         self.portal.topic.getQuery()
 
+    def test_ATPathCriterionNonRecursive(self):
+        # Topics supported non recursive search, so search at a
+        # specific depth of 1.  At first, new Collections did not
+        # support it.  But since plone.app.querystring 1.1.0 it works.
+        crit = self.add_criterion(
+            'path',
+            'ATPathCriterion', self.portal.folder.UID()
+        )
+        crit.setRecurse(False)
+        self.run_migration()
+        self.assertEqual(self.portal.topic.getRawQuery(),
+                         [{'i': 'path',
+                           'o': 'plone.app.querystring.operation.string.path',
+                           'v': self.portal.folder.UID() + '::1'}])
+
+        # Check that the resulting query does not give an error.
+        self.portal.topic.getQuery()
+
     def test_ATPathCriterionDouble(self):
         # Collections currently support only one path.
         login(self.portal, 'admin')
         self.portal.invokeFactory("Folder", "folder2", title="Folder 2")
-        self.add_criterion(
+        crit = self.add_criterion(
             'path',
             'ATPathCriterion',
             [self.portal.folder.UID(), self.portal.folder2.UID()]
         )
+        crit.setRecurse(True)
         self.run_migration()
         query = self.portal.topic.getRawQuery()
         self.assertEqual(len(query), 1)
