@@ -115,14 +115,14 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
         old_file_data = old_file_data.data
     namedblobfile = NamedBlobFile(data=old_file_data,
                                     filename=filename)
-    dst_obj.file = namedblobfile
+    setattr(dst_obj, dst_fieldname, namedblobfile)
     logger.info("Migrating file %s" % filename)
 
 
 # this mapping is needed to use the right migration method
 # we use the full field type path as it is retrieved from the field
-# (fiel.getType()), to avoid conflict. 
-# TODO In the __future__ we should have a more dynamic way to configure this 
+# (field.getType()), to avoid conflict.
+# TODO In the __future__ we should have a more dynamic way to configure this
 # mapping
 FIELDS_MAPPING = {'Products.Archetypes.Field.TextField': migrate_richtextfield,
                   'Products.Archetypes.Field.FileField': migrate_filefield,
@@ -673,7 +673,7 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
         if info.get('meta_type') == src_meta_type:
             src_type_infos = info
     is_folderish = src_type_infos.get('klass').isPrincipiaFolderish
-    #to be removed when this parameter comes from the view
+    # TODO : to be removed when this parameter comes from the view
     dry_run = True
     migrator = makeCustomATMigrator(context=portal,
                                     src_type=src_type,
