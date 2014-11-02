@@ -359,7 +359,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         )
         crit.setRecurse(False)
         self.run_migration()
-        self.assertEqual(self.portal.topic.getRawQuery(),
+        query = self.portal.topic.getRawQuery()
+        self.assertEqual(len(query), 1)
+        self.assertEqual(query,
                          [{'i': 'path',
                            'o': 'plone.app.querystring.operation.string.path',
                            'v': self.portal.folder.UID() + '::1'}])
@@ -367,8 +369,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         # Check that the resulting query does not give an error.
         self.portal.topic.getQuery()
 
-    def test_ATPathCriterionDouble(self):
-        # Collections currently support only one path.
+    def test_ATPathCriterionMultiRecursive(self):
+        # Collections support multiple paths since
+        # plone.app.querystring 1.2.0.
         login(self.portal, 'admin')
         self.portal.invokeFactory("Folder", "folder2", title="Folder 2")
         crit = self.add_criterion(
@@ -379,18 +382,41 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         crit.setRecurse(True)
         self.run_migration()
         query = self.portal.topic.getRawQuery()
-        self.assertEqual(len(query), 1)
-        self.assertEqual(query[0]['i'], 'path')
-        self.assertEqual(
-            query[0]['o'],
-            'plone.app.querystring.operation.string.path'
+        self.assertEqual(len(query), 2)
+        self.assertEqual(query[0],
+                         {'i': 'path',
+                          'o': 'plone.app.querystring.operation.string.path',
+                          'v': self.portal.folder.UID()})
+        self.assertEqual(query[1],
+                         {'i': 'path',
+                          'o': 'plone.app.querystring.operation.string.path',
+                          'v': self.portal.folder2.UID()})
+
+        # Check that the resulting query does not give an error.
+        self.portal.topic.getQuery()
+
+    def test_ATPathCriterionMultiNonRecursive(self):
+        # Collections support multiple paths since
+        # plone.app.querystring 1.2.0.
+        login(self.portal, 'admin')
+        self.portal.invokeFactory("Folder", "folder2", title="Folder 2")
+        crit = self.add_criterion(
+            'path',
+            'ATPathCriterion',
+            [self.portal.folder.UID(), self.portal.folder2.UID()]
         )
-        # Which of the paths is taken is not defined.  This might
-        # depend on the sort order of the uids.
-        self.assertTrue(
-            query[0]['v'] in (self.portal.folder.UID(),
-                              self.portal.folder2.UID())
-        )
+        crit.setRecurse(False)
+        self.run_migration()
+        query = self.portal.topic.getRawQuery()
+        self.assertEqual(len(query), 2)
+        self.assertEqual(query[0],
+                         {'i': 'path',
+                          'o': 'plone.app.querystring.operation.string.path',
+                          'v': self.portal.folder.UID() + '::1'})
+        self.assertEqual(query[1],
+                         {'i': 'path',
+                          'o': 'plone.app.querystring.operation.string.path',
+                          'v': self.portal.folder2.UID() + '::1'})
 
         # Check that the resulting query does not give an error.
         self.portal.topic.getQuery()

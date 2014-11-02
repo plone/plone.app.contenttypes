@@ -175,6 +175,13 @@ class CriterionConverter(object):
         if self.is_operation_valid(registry, operation):
             return operation
 
+    def add_to_formquery(self, formquery, index, operation, query_value):
+        row = {'i': index,
+               'o': operation}
+        if query_value is not None:
+            row['v'] = query_value
+        formquery.append(row)
+
     def __call__(self, formquery, criterion, registry):
         criteria = criterion.getCriteriaItems()
         if not criteria:
@@ -211,11 +218,7 @@ class CriterionConverter(object):
             query_value = self.get_query_value(value, index, criterion)
 
             # Add a row to the form query.
-            row = {'i': index,
-                   'o': operation}
-            if query_value is not None:
-                row['v'] = query_value
-            formquery.append(row)
+            self.add_to_formquery(formquery, index, operation, query_value)
 
 
 class ATDateCriteriaConverter(CriterionConverter):
@@ -356,13 +359,22 @@ class ATPathCriterionConverter(CriterionConverter):
         if len(raw) > 1:
             logger.warn("Multiple paths in query. Using only the first. %r",
                         value['query'])
-        path = raw[0]
         # Is this a recursive query?  Could check depth in the value
         # actually, but Recurse is the canonical way.  Also, the only
         # possible values for depth are -1 and 1.
         if not criterion.Recurse():
-            path += '::1'
-        return path
+            for index, path in enumerate(raw):
+                raw[index] = path + '::1'
+        return raw
+
+    def add_to_formquery(self, formquery, index, operation, query_value):
+        if query_value is None:
+            return
+        for value in query_value:
+            row = {'i': index,
+                   'o': operation,
+                   'v': value}
+            formquery.append(row)
 
 
 class ATBooleanCriterionConverter(CriterionConverter):
