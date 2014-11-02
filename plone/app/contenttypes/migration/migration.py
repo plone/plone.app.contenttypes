@@ -84,6 +84,7 @@ def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     migrate an image field.
     This field needs to be migrated with an NamedBlobImage instance.
     """
+    # get old image data and filename
     old_image = src_obj.getField(src_fieldname).get(src_obj)
     if old_image == '':
         return
@@ -91,12 +92,26 @@ def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     old_image_data = old_image.data
     if safe_hasattr(old_image_data, 'data'):
         old_image_data = old_image_data.data
+
+    # create the new image field
     namedblobimage = NamedBlobImage(data=old_image_data,
                                     filename=filename)
-    dst_obj.image = namedblobimage
-    caption_field = src_obj.getField('imageCaption', None)
+
+    # set new field on destination object
+    setattr(dst_obj, dst_fieldname, namedblobimage)
+
+    # handle a possible image caption field
+    # postulate is the old caption field name is ending by 'Caption'
+    # and the new field name is ending by '_caption'
+    # is this postulate correct ?
+    # should this field not be handle by itself because it will appear in the
+    # old field list ?
+    caption_field = src_obj.getField('%sCaption' % src_fieldname, None)
     if caption_field:
-        dst_obj.image_caption = safe_unicode(caption_field.get(src_obj))
+        setattr(dst_obj,
+                ('%s_caption' % dst_fieldname),
+                safe_unicode(caption_field.get(src_obj)))
+
     logger.info("Migrating image %s" % filename)
 
 
