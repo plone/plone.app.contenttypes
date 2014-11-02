@@ -52,6 +52,40 @@ def migrate(portal, migrator):
     return walker
 
 
+def migrate_portlets(src_obj, dst_obj):
+    """Copy portlets for all available portletmanagers from one object
+    to another.
+    Also takes blocked portlet settings into account, keeps hidden portlets
+    hidden and skips broken assignments.
+    """
+
+    # also take custom portlet managers into account
+    managers = [reg.name for reg in getSiteManager().registeredUtilities() \
+                if reg.provided == IPortletManager]
+    # faster, but no custom managers
+    # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
+
+    # copy information which categories are hidden for which manager
+    blacklist_status = IAnnotations(src_obj).get(
+        CONTEXT_BLACKLIST_STATUS_KEY, None)
+    if blacklist_status is not None:
+        IAnnotations(dst_obj)[CONTEXT_BLACKLIST_STATUS_KEY] = \
+            deepcopy(blacklist_status)
+
+    # copy all portlet assignments (visibilty is stored as annotation
+    # on the assignments and gets copied here too)
+    for manager in managers:
+        column = getUtility(IPortletManager, manager)
+        mappings = getMultiAdapter((src_obj, column),
+                                   IPortletAssignmentMapping)
+        for key, assignment in mappings.items():
+            # skip possibly broken portlets here
+            if not hasattr(assignment, '__Broken_state__'):
+                add_portlet(dst_obj, assignment, key, manager)
+            else:
+                logger.warn(u'skipping broken portlet assignment {0} for manager {1}'.format(key, manager))
+
+
 def refs(obj):
     intids = getUtility(IIntIds)
     out = ''
@@ -237,39 +271,6 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
             "Migrating object {0}".format(
                 '/'.join(self.old.getPhysicalPath())))
 
-    def migrate_portlets(self):
-        """copy portlets for all available portletmanagers from AT objects
-        to DX objects
-        also takes blocked portlet settings into account, keeps hidden portlets
-        hidden and skips broken assignments.
-        """
-
-        # also take custom portlet managers into account
-        managers = [reg.name for reg in getSiteManager().registeredUtilities() \
-                    if reg.provided == IPortletManager]
-        # faster, but no custom managers
-        # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
-
-        # copy information which categories are hidden for which manager
-        blacklist_status = IAnnotations(self.old).get(
-            CONTEXT_BLACKLIST_STATUS_KEY, None)
-        if blacklist_status is not None:
-            IAnnotations(self.new)[CONTEXT_BLACKLIST_STATUS_KEY] = \
-                deepcopy(blacklist_status)
-
-        # copy all portlet assignments (visibilty is stored as annotation
-        # on the assignments and gets copied here too)
-        for manager in managers:
-            column = getUtility(IPortletManager, manager)
-            mappings = getMultiAdapter((self.old, column),
-                                       IPortletAssignmentMapping)
-            for key, assignment in mappings.items():
-                # skip possibly broken portlets here
-                if not hasattr(assignment, '__Broken_state__'):
-                    add_portlet(self.new, assignment, key, manager)
-                else:
-                    logger.warn(u'skipping broken portlet assignment {0} for manager {1}'.format(key, manager))
-
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
         self.new.exclude_from_nav = field.get(self.old)
@@ -279,6 +280,9 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
         """
         for _, migrator in getAdapters((self.old,), ICustomMigrator):
             migrator.migrate(self.old, self.new)
+
+    def migrate_portlets(self):
+        migrate_portlets(self.old, self.new)
 
 
 class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
@@ -299,6 +303,9 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
         """
         for _, migrator in getAdapters((self.old,), ICustomMigrator):
             migrator.migrate(self.old, self.new)
+
+    def migrate_portlets(self):
+        migrate_portlets(self.old, self.new)
 
 
 class DocumentMigrator(ATCTContentMigrator):

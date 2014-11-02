@@ -1287,6 +1287,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         content including portlet settings.
         """
         from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import FolderMigrator
         from plone.portlet.static.static import Assignment as StaticAssignment
         from plone.portlets.constants import GROUP_CATEGORY
         from plone.portlets.interfaces import ILocalPortletAssignmentManager
@@ -1331,10 +1332,22 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         broken.__Broken_state__ = True
         add_portlet(at_document, broken, 'broken-portlet', u'plone.leftcolumn')
 
+        # add a folder
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+
+        # add a portlet to the folder
+        portlet2 = StaticAssignment(u"Sample Folder Portlet",
+                                   "<p>Do I get migrated?</p>")
+        add_portlet(at_folder, portlet2, 'static-portlet',
+                    u'plone.rightcolumn')
+
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_document, DocumentMigrator)
         migrator.migrate()
+        folder_migrator = self.get_migrator(at_folder, FolderMigrator)
+        folder_migrator.migrate()
 
         # assertions
         dx_document = self.portal['document']
@@ -1357,3 +1370,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
                                   u'plone.leftcolumn')['static-portlet']
         settings = IPortletAssignmentSettings(assignment)
         self.assertFalse(settings['visible'])
+
+        dx_folder = self.portal['folder']
+        self.failUnless('static-portlet' in get_portlets(dx_folder,
+                                                         u'plone.rightcolumn'))
