@@ -22,7 +22,7 @@ from plone.app.contenttypes.testing import (
 
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.z3cform.interfaces import IPloneFormLayer
-
+import transaction
 
 class DocumentIntegrationTest(unittest.TestCase):
 
@@ -84,6 +84,11 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.assertTrue('My Document' in view())
         self.assertTrue('This is my document.' in view())
         self.assertTrue('Lorem ipsum' in view())
+
+    def tearDown(self):
+        if 'document' in self.portal.objectIds():
+            self.portal.manage_delObjects(ids='document')
+            transaction.commit()
 
 
 class DocumentFunctionalTest(unittest.TestCase):
