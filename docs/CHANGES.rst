@@ -6,6 +6,8 @@ Changelog
 
 - Nothing changed yet.
 
+- Consider portlets when migrating AT to DX (fixes #161)
+  [frisi, gbastien, petschki]
 
 1.2a5 (2014-10-23)
 ------------------

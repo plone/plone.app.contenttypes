@@ -105,7 +105,6 @@ if HAS_APP_COLLECTION:
     }
 
 
-
 def get_terms(context, counter, ext_dict, show_extended):
     """Takes dicts of types and their numbers and their extended fields
     Returns a list of SimpleVocabularyTerms:

@@ -17,6 +17,7 @@ from zope.schema.interfaces import IVocabularyFactory
 import os.path
 import time
 import unittest2 as unittest
+from plone.app.contenttypes.migration.utils import add_portlet
 
 
 class MigrateFromATContentTypesTest(unittest.TestCase):
@@ -1280,3 +1281,79 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         )
         results = migration_view()
         self.assertIn('@@migrate_from_atct?migrate=1', results)
+
+    def test_portlets_are_migrated(self):
+        """add portlets and see if they're still available on the migrated
+        content including portlet settings.
+        """
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.portlet.static.static import Assignment as StaticAssignment
+        from plone.portlets.constants import GROUP_CATEGORY
+        from plone.portlets.interfaces import ILocalPortletAssignmentManager
+        from plone.portlets.interfaces import IPortletAssignmentMapping
+        from plone.portlets.interfaces import IPortletAssignmentSettings
+        from plone.portlets.interfaces import IPortletManager
+
+        def get_portlets(context, columnName):
+            column = getUtility(IPortletManager, columnName)
+            mapping = getMultiAdapter((context, column),
+                                      IPortletAssignmentMapping)
+            return mapping
+
+        # create an ATDocument
+        self.portal.invokeFactory('Document', 'document')
+        at_document = self.portal['document']
+        at_document.setText(u'Tütensuppe with some portlet')
+        at_document.setContentType('chemical/x-gaussian-checkpoint')
+
+        # add a portlet
+        portlet = StaticAssignment(u"Sample Portlet",
+                                   "<p>Yay! I get migrated!</p>")
+        add_portlet(at_document, portlet, 'static-portlet',
+                    u'plone.leftcolumn')
+
+        # disable group portlets for right columns
+        right_column = getUtility(IPortletManager, u'plone.rightcolumn')
+        localsettings = getMultiAdapter((at_document, right_column),
+                                        ILocalPortletAssignmentManager)
+        localsettings.setBlacklistStatus(GROUP_CATEGORY, True)
+
+        # hide our portlet
+        settings = IPortletAssignmentSettings(portlet)
+        settings['visible'] = False
+
+        # add another portlet type that is not available when doing the
+        # migration and make sure it got ignored in the migration
+        broken = StaticAssignment(u"Fake broken portlet",
+                                  "<p>Ouch! I'm broken</p>")
+        # ZODB.broken will add an ___Broken_state__ attribute if a portlet's
+        # module is no longer available
+        broken.__Broken_state__ = True
+        add_portlet(at_document, broken, 'broken-portlet', u'plone.leftcolumn')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+
+        # assertions
+        dx_document = self.portal['document']
+
+        # portlet is available
+        self.failUnless('static-portlet' in get_portlets(dx_document,
+                                                         u'plone.leftcolumn'))
+        # broken portlets don't get copied
+        self.failIf('broken-portlet' in get_portlets(dx_document,
+                                                     u'plone.leftcolumn'))
+
+        # block portlets settings copied
+        right_column = getUtility(IPortletManager, u'plone.rightcolumn')
+        localsettings = getMultiAdapter((dx_document, right_column),
+                                        ILocalPortletAssignmentManager)
+        self.assertTrue(localsettings.getBlacklistStatus(GROUP_CATEGORY))
+
+        # hide portlets settings survived
+        assignment = get_portlets(dx_document,
+                                  u'plone.leftcolumn')['static-portlet']
+        settings = IPortletAssignmentSettings(assignment)
+        self.assertFalse(settings['visible'])

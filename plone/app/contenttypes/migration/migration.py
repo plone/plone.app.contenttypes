@@ -14,20 +14,28 @@ from Products.CMFPlone.utils import safe_unicode, safe_hasattr
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
+from copy import deepcopy
 from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
+from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
+from plone.portlets.interfaces import IPortletAssignmentMapping
+from plone.portlets.interfaces import IPortletManager
 from z3c.relationfield import RelationValue
+from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getAdapters
+from zope.component import getMultiAdapter
+from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
@@ -226,9 +234,41 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTContentMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating object %s" %
-            '/'.join(self.old.getPhysicalPath())
-        )
+            "Migrating object {0}".format(
+                '/'.join(self.old.getPhysicalPath())))
+
+    def migrate_portlets(self):
+        """copy portlets for all available portletmanagers from AT objects
+        to DX objects
+        also takes blocked portlet settings into account, keeps hidden portlets
+        hidden and skips broken assignments.
+        """
+
+        # also take custom portlet managers into account
+        managers = [reg.name for reg in getSiteManager().registeredUtilities() \
+                    if reg.provided == IPortletManager]
+        # faster, but no custom managers
+        # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
+
+        # copy information which categories are hidden for which manager
+        blacklist_status = IAnnotations(self.old).get(
+            CONTEXT_BLACKLIST_STATUS_KEY, None)
+        if blacklist_status is not None:
+            IAnnotations(self.new)[CONTEXT_BLACKLIST_STATUS_KEY] = \
+                deepcopy(blacklist_status)
+
+        # copy all portlet assignments (visibilty is stored as annotation
+        # on the assignments and gets copied here too)
+        for manager in managers:
+            column = getUtility(IPortletManager, manager)
+            mappings = getMultiAdapter((self.old, column),
+                                       IPortletAssignmentMapping)
+            for key, assignment in mappings.items():
+                # skip possibly broken portlets here
+                if not hasattr(assignment, '__Broken_state__'):
+                    add_portlet(self.new, assignment, key, manager)
+                else:
+                    logger.warn(u'skipping broken portlet assignment {0} for manager {1}'.format(key, manager))
 
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
@@ -237,7 +277,7 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
     def migrate_custom(self):
         """Get all ICustomMigrator registered migrators and run the migration.
         """
-        for _, migrator in getAdapters((self.old, ), ICustomMigrator):
+        for _, migrator in getAdapters((self.old,), ICustomMigrator):
             migrator.migrate(self.old, self.new)
 
 
@@ -248,9 +288,7 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTFolderMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating object %s" %
-            '/'.join(self.old.getPhysicalPath())
-        )
+            "Migrating object {}".format('/'.join(self.old.getPhysicalPath())))
 
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
@@ -259,7 +297,7 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
     def migrate_custom(self):
         """Get all ICustomMigrator registered migrators and run the migration.
         """
-        for _, migrator in getAdapters((self.old, ), ICustomMigrator):
+        for _, migrator in getAdapters((self.old,), ICustomMigrator):
             migrator.migrate(self.old, self.new)
 
 
