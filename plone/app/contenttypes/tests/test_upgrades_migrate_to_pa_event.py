@@ -42,7 +42,7 @@ class MigrateEventContentTypesTest(unittest.TestCase):
         ps = getToolByName(self.portal, 'portal_setup')
         upgrades = [
             u for u
-            in ps.listUpgrades(profile)
+            in ps.listUpgrades(profile, show_old=True)
             if u['ssource'] == source and u['sdest'] == dest
         ]
         self.assertEqual(len(upgrades), 1)
