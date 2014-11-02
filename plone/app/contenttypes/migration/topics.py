@@ -356,9 +356,6 @@ class ATPathCriterionConverter(CriterionConverter):
         raw = criterion.getRawValue()
         if not raw:
             return
-        if len(raw) > 1:
-            logger.warn("Multiple paths in query. Using only the first. %r",
-                        value['query'])
         # Is this a recursive query?  Could check depth in the value
         # actually, but Recurse is the canonical way.  Also, the only
         # possible values for depth are -1 and 1.
