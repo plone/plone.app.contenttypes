@@ -233,7 +233,6 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.portal.topic.getQuery()
 
     def test_ATDateCriteriaExactDay(self):
-        #time1 = DateTime()
         # 5 days ago:
         crit = self.add_criterion('created', 'ATFriendlyDateCriteria', 5)
         crit.setOperation('within_day')
