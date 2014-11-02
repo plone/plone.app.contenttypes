@@ -117,9 +117,8 @@ def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
 
 def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     """
-    migrate an image field.
+    migrate a file field.
     This field needs to be migrated with an NamedBlobFile instance.
-    BBB to be tested
     """
     old_file = src_obj.getField(src_fieldname).get(src_obj)
     if old_file == '':

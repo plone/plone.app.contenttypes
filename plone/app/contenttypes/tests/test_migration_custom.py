@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.migration.migration import migrate_imagefield
+from plone.app.contenttypes.migration.migration import migrate_filefield
 from plone.app.contenttypes.migration.migration import migrate_simplefield
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.testing import \
@@ -104,6 +105,23 @@ class MigrateFieldsTest(unittest.TestCase):
         migrate_imagefield(at_newsitem, dx_newsitem, 'image', 'image')
         self.assertEqual(dx_newsitem.image.contentType, 'image/png')
         self.assertEqual(dx_newsitem.image.data, test_image_data)
+
+    def test_migrate_filefield(self):
+        test_file_data = self.get_test_file_data()
+        at_file_id = self.portal.invokeFactory('File',
+                                               'foo',
+                                               title="Foo file",
+                                               file=test_file_data)
+        # register p.a.contenttypes profile
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        dx_file_id = self.portal.invokeFactory('File',
+                                               'bar',
+                                                title="Bar file")
+        at_file = self.portal[at_file_id]
+        dx_file = self.portal[dx_file_id]
+        self.assertEqual(dx_file.file, None)
+        migrate_filefield(at_file, dx_file, 'file', 'file')
+        self.assertEqual(dx_file.file.data, test_file_data)
 
 
 class MigrateCustomATTest(unittest.TestCase):
