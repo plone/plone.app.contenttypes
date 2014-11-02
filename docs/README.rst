@@ -218,6 +218,36 @@ Future versions of plone.app.contenttypes will have with a form that allows you 
 However if you'd like to migrate your content-types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
 
 
+Migrating non folderish to folderish objects (or change base class for any dexterety base type)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Migration non folderish object to folderish has few steps.
+
+Step 1 (Update base content types folderish)
+-------------------------------------------
+
+Apply `folderish` profile.
+
+- Go to portal_setup->Import;
+
+- Select `Plone default content-types (Folderish behavior) - dexterity`
+
+- Click  `Import all steps`
+
+
+Step 2 (Update base class for exist objects)
+--------------------------------------------
+
+There is update changed base class migration step which allow you to update base class if last one was changed.
+
+To get this migration form you have to open follow link `PORTAL_URL/@@base_class_migrator_form`.
+
+On this view you will see check boxes with class name string and numbers of changed objects that are going to be updated.
+Select classes that you want to update and click on button `Update`.
+
+If migration was successful you see the info box with number of successfully updated objects or warning with number of not updated objects.
+
+
 Widgets
 -------
 
