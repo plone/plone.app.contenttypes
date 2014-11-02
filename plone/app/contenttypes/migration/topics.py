@@ -289,7 +289,7 @@ class ATDateCriteriaConverter(CriterionConverter):
             new_operation = "%s.operation.date.between" % prefix
             add_row(new_operation, date_range)
             return
-        elif operation == 'more':
+        if operation == 'more':
             if value != 0:
                 new_operation = ("{0}.operation.date."
                                  "largerThanRelativeDate".format(prefix))
@@ -299,7 +299,7 @@ class ATDateCriteriaConverter(CriterionConverter):
                 new_operation = "{0}.operation.date.afterToday".format(prefix)
                 add_row(new_operation)
                 return
-        elif operation == 'less':
+        if operation == 'less':
             if value != 0:
                 new_operation = ("{0}.operation.date."
                                  "lessThanRelativeDate".format(prefix))
@@ -407,7 +407,8 @@ class ATBooleanCriterionConverter(CriterionConverter):
                 continue
             self.is_index_enabled(registry, fieldname)
             # Get the operation method.
-            operation = self.get_valid_operation(registry, fieldname, value, criterion)
+            operation = self.get_valid_operation(
+                registry, fieldname, value, criterion)
             if not operation:
                 logger.error(INVALID_OPERATION % (operation, criterion))
                 # TODO: raise an Exception?
