@@ -688,8 +688,6 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
         if info.get('meta_type') == src_meta_type:
             src_type_infos = info
     is_folderish = src_type_infos.get('klass').isPrincipiaFolderish
-    # TODO : to be removed when this parameter comes from the view
-    dry_run = True
     migrator = makeCustomATMigrator(context=portal,
                                     src_type=src_type,
                                     dst_type=dst_type,
