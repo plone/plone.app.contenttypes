@@ -14,6 +14,8 @@ from zope.interface import implementer
 
 @implementer(ICollection)
 class Collection(Item):
+    """Convinience Item subclass for ``Collection`` portal type
+    """
     # BBB
 
     def listMetaDataFields(self, exclude=True):
@@ -69,47 +71,54 @@ class File(Item):
 
 @implementer(IFolder)
 class Folder(Container):
-    """Convinience subclass for ``File`` portal type
+    """Convinience subclass for ``Folder`` portal type
     """
 
 
 @implementer(IImage)
 class Image(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convinience subclass for ``Image`` portal type
     """
 
 
 @implementer(ILink)
 class Link(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convinience subclass for ``Link`` portal type
     """
 
 
 @implementer(INewsItem)
 class NewsItem(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convinience subclass for ``News Item`` portal type
     """
 
 
 @implementer(IEvent)
 class Event(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convinience subclass for ``Event`` portal type
+    """
+
+# Folderish subclasses used by 'profile-plone.app.contenttypes:folderish'
+
+@implementer(ICollection)
+class FolderishCollection(Container):
+    """Folderish convinience subclass for ``Collection`` portal type
     """
 
 
 @implementer(IDocument)
 class FolderishDocument(Container):
-    """Convinience subclass for ``File`` portal type
+    """Folderish convinience subclass for ``Document`` portal type
     """
 
 
 @implementer(IEvent)
 class FolderishEvent(Container):
-    """Convinience subclass for ``File`` portal type
+    """Folderish convinience subclass for ``Event`` portal type
     """
 
 
 @implementer(INewsItem)
 class FolderishNewsItem(Container):
-    """Convinience subclass for ``File`` portal type
+    """Folderish convinience subclass for ``News Item`` portal type
     """
