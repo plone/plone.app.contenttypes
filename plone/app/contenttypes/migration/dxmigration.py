@@ -5,12 +5,19 @@ from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
 from plone.app.contenttypes.migration import datetime_fixer
+from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
+from plone.dexterity.interfaces import IDexterityContent
 from plone.event.utils import default_timezone
+from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import getSite
+
 import importlib
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def migrate(portal, migrator):
@@ -148,10 +155,8 @@ def migrate_base_class_to_new_class(obj,
 
     is_container = isinstance(obj, Container)
 
-    # If object was Item likesh and becomes Containerish we have to do few
-    # preparation
     if was_item and is_container:
-        # update obj _tree, because now it is container
+        #  If Itemish becomes Folderish we have to update obj _tree
         BTreeFolder2Base._initBTrees(obj)
 
     # reindex
@@ -160,21 +165,25 @@ def migrate_base_class_to_new_class(obj,
     return True
 
 
-def list_of_objects_with_changed_base_class():
-    portal = getSite()
-
-    catalog = getToolByName(portal, "portal_catalog")
-
-    for brain in catalog():
-        obj = brain.getObject()
+def list_of_objects_with_changed_base_class(context):
+    catalog = getToolByName(context, "portal_catalog")
+    query = {'object_provides': IDexterityContent.__identifier__}
+    if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+        query['Language'] = 'all'
+    for brain in catalog(query):
+        try:
+            obj = brain.getObject()
+        except NotFound:
+            logger.warn("Object {0} not found".format(brain.getPath()))
+            continue
         if get_portal_type_name_string(obj) != get_old_class_name_string(obj):
             yield obj
 
 
-def list_of_changed_base_class_names():
+def list_of_changed_base_class_names(context):
     """Returns list of class names that are not longer in portal_types."""
     changed_base_class_names = {}
-    for obj in list_of_objects_with_changed_base_class():
+    for obj in list_of_objects_with_changed_base_class(context):
         changed_base_class_name = get_old_class_name_string(obj)
         if changed_base_class_name not in changed_base_class_names:
             number_objects = changed_base_class_names.get(

@@ -212,7 +212,7 @@ class ChangedBaseClasses(object):
         """Return a vocabulary with all changed base classes."""
         from plone.app.contenttypes.migration.dxmigration import \
             list_of_changed_base_class_names
-        list_of_class_names = list_of_changed_base_class_names() or {}
+        list_of_class_names = list_of_changed_base_class_names(context) or {}
         return SimpleVocabulary(
             [SimpleVocabulary.createTerm(
                 class_name, class_name,
