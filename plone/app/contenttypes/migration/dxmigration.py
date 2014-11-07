@@ -186,8 +186,7 @@ def list_of_changed_base_class_names(context):
     for obj in list_of_objects_with_changed_base_class(context):
         changed_base_class_name = get_old_class_name_string(obj)
         if changed_base_class_name not in changed_base_class_names:
-            number_objects = changed_base_class_names.get(
-                changed_base_class_name, 0)
-            changed_base_class_names[changed_base_class_name] = \
-                number_objects + 1
+            changed_base_class_names[changed_base_class_name] = 1
+        else:
+            changed_base_class_names[changed_base_class_name] += 1
     return changed_base_class_names
