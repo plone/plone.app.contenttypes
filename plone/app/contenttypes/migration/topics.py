@@ -31,12 +31,16 @@ TODO/plans for topic migration.
 from DateTime import DateTime
 from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.utils import getToolByName
-from Products.contentmigration.archetypes import InplaceATFolderMigrator
-from Products.contentmigration.archetypes import InplaceATItemMigrator
+from Products.contentmigration.inplace import InplaceCMFFolderMigrator
+from Products.contentmigration.inplace import InplaceCMFItemMigrator
 from Products.contentmigration.walker import CustomQueryWalker
+from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.migration.migration import ReferenceMigrator
 from plone.app.querystring.interfaces import IQuerystringRegistryReader
 from plone.registry.interfaces import IRegistry
+from plone.uuid.interfaces import IMutableUUID
 from zope.component import getUtility
+from zope.component import queryAdapter
 from zope.dottedname.resolve import resolve
 
 import logging
@@ -45,7 +49,7 @@ logger = logging.getLogger(__name__)
 prefix = "plone.app.querystring"
 
 INVALID_OPERATION = 'Invalid operation %s for criterion: %s'
-PROFILE_ID = 'profile-plone.app.collection:default'
+# PROFILE_ID = 'profile-plone.app.collection:default'
 
 
 def format_date(value):
@@ -478,7 +482,7 @@ class ATSimpleIntCriterionConverter(CriterionConverter):
         return value['query']
 
 
-class TopicMigrator(InplaceATFolderMigrator):
+class TopicMigrator(InplaceCMFItemMigrator, ReferenceMigrator):
     src_portal_type = 'Topic'
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
@@ -510,7 +514,8 @@ class TopicMigrator(InplaceATFolderMigrator):
             self.new.setLayout('tabular_view')
             return
 
-        layout = self.view_methods_mapping.get(self.old.getLayout())
+        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        layout = self.view_methods_mapping.get(old_layout)
         if layout:
             self.new.setLayout(layout)
 
@@ -559,19 +564,35 @@ class TopicMigrator(InplaceATFolderMigrator):
         """
         # The old Topic has boolean limitNumber and integer itemCount,
         # where the new Collection only has limit.
+        adapted = ICollection(self.new)
         if self.old.getLimitNumber():
-            self.new.setLimit(self.old.getItemCount())
+            adapted.limit = self.old.getItemCount()
+        adapted.customViewFields = self.old.getCustomViewFields()
 
-        # Get the old data stores by the beforeChange_criteria method.
+        # Get the old data stored by the beforeChange_criteria method.
         if self._collection_sort_reversed is not None:
-            self.new.setSort_reversed(self._collection_sort_reversed)
+            adapted.sort_reversed = self._collection_sort_reversed
         if self._collection_sort_on is not None:
-            self.new.setSort_on(self._collection_sort_on)
+            adapted.sort_on = self._collection_sort_on
         if self._collection_query is not None:
-            self.new.setQuery(self._collection_query)
+            adapted.query = self._collection_query
 
 
-class FolderishCollectionMigrator(InplaceATItemMigrator):
+    def migrate_atctmetadata(self):
+        field = self.old.getField('excludeFromNav')
+        self.new.exclude_from_nav = field.get(self.old)
+
+    def migrate_at_uuid(self):
+        """Migrate AT universal uid
+        """
+        uid = self.UID
+        if uid and queryAdapter(self.new, IMutableUUID):
+            IMutableUUID(self.new).set(str(uid))
+
+
+class FolderishCollectionMigrator(InplaceCMFFolderMigrator, ReferenceMigrator):
+    """stub Migration for ATTopic -> Folderish Collections
+    """
     src_portal_type = src_meta_type = 'Collection'
     dst_portal_type = dst_meta_type = 'Collection'
 
@@ -616,23 +637,18 @@ def run_propertiestool_step(context):
     context.runImportStepFromProfile(PROFILE_ID, 'propertiestool')
 
 
-def migrate_topics(context):
-    """Migrate ATContentTypes Topics to plone.app.collection Collections.
+def migrate_topics(portal):
+    """Migrate ATContentTypes Topics to plone.app.contenttypes Collections.
 
-    This can be used as upgrade step.
-
-    The new-style Collections might again get some changes later.
-    They may become folderish or dexterity items or dexterity
-    containers or a dexterity behavior.
+    This could also be used as upgrade step.
     """
-    site = getToolByName(context, 'portal_url').getPortalObject()
-    topic_walker = CustomQueryWalker(site, TopicMigrator)
     # Parse the registry to get allowed operations and pass it to the
     # migrator.
     reg = getUtility(IRegistry)
     reader = IQuerystringRegistryReader(reg)
     registry = reader.parseRegistry()
-    topic_walker.go(registry=registry)
+    walker = CustomQueryWalker(portal, TopicMigrator)(registry=registry)
+    return walker
 
 
 CONVERTERS = {
