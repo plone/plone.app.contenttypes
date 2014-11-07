@@ -1428,7 +1428,7 @@ class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
         from plone.app.contenttypes.migration.dxmigration import \
             list_of_objects_with_changed_base_class
         # We have already one changed object
-        objects = [i for i in list_of_objects_with_changed_base_class()]
+        objects = [i for i in list_of_objects_with_changed_base_class(self.portal)]
         self.assertEqual(len(objects), 1)
 
     def test_dxmigration_migrate_list_of_changed_base_class_names(self):
@@ -1436,7 +1436,7 @@ class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
         from plone.app.contenttypes.migration.dxmigration import \
             list_of_changed_base_class_names
         # We have already one changed object
-        names = [i for i in list_of_changed_base_class_names()]
+        names = [i for i in list_of_changed_base_class_names(self.portal)]
         self.assertEqual(len(names), 1)
 
     def test_dxmigration_migrate_vocabulary_changed_base_classes(self):
