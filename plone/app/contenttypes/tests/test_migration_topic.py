@@ -2,14 +2,16 @@
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.migration.topics import migrate_topics
+from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+from plone.app.testing import applyProfile
 from plone.app.testing import login
 
 import unittest
 
 
-class MigrateToATContentTypesTest(unittest.TestCase):
+class MigrateTopicsIntegrationTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 
@@ -30,7 +32,7 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         self.portal.invokeFactory("Folder", "folder", title="Folder")
 
     def run_migration(self):
-        migrate_topics(getToolByName(self.portal, 'portal_setup'))
+        migrate_topics(self.portal)
 
     def add_criterion(self, index, criterion, value=None):
         name = '%s_%s' % (index, criterion)
@@ -43,61 +45,59 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_migrate_simple_topic(self):
         self.assertEqual(self.portal.topic.portal_type, 'Topic')
         self.assertEqual(self.portal.topic.getLayout(), 'atct_topic_view')
-        self.assertEqual(self.portal.topic.getAcquireCriteria(), False)
         self.assertEqual(self.portal.topic.getLimitNumber(), False)
         self.assertEqual(self.portal.topic.getItemCount(), 0)
         self.assertEqual(self.portal.topic.getCustomViewFields(), ('Title',))
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
+        new = ICollection(self.portal.topic)
         self.assertEqual(self.portal.topic.portal_type, 'Collection')
         self.assertEqual(self.portal.topic.getLayout(), 'standard_view')
-
-        # TODO: Check how to proceed with the missing method
-        # self.assertEqual(self.portal.topic.getAcquireCriteria(), False)
-        self.assertEqual(self.portal.topic.getSort_on(), 'sortable_title')
-        self.assertEqual(self.portal.topic.getSort_reversed(), False)
-        self.assertEqual(self.portal.topic.getLimit(), 1000)
-        self.assertEqual(self.portal.topic.getCustomViewFields(), ('Title',))
+        self.assertEqual(new.sort_on, None)
+        self.assertEqual(new.sort_reversed, None)
+        self.assertEqual(new.limit, 1000)
+        self.assertEqual(new.customViewFields, ('Title',))
 
     def test_migrate_topic_fields(self):
-        self.portal.topic.setAcquireCriteria(True)
         self.portal.topic.setText('<p>Hello</p>')
         self.portal.topic.setLimitNumber(True)
         self.portal.topic.setItemCount(42)
         self.portal.topic.setCustomViewFields(('Title', 'Type'))
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
+        new = ICollection(self.portal.topic)
         self.assertEqual(self.portal.topic.portal_type, 'Collection')
-
-        # TODO: Check how to proceed with the missing method
-        # self.assertEqual(self.portal.topic.getAcquireCriteria(), True)
-        self.assertEqual(self.portal.topic.getLimit(), 42)
-        self.assertEqual(self.portal.topic.getCustomViewFields(),
-                         ('Title', 'Type'))
+        self.assertEqual(new.limit, 42)
+        self.assertEqual(new.customViewFields, ('Title', 'Type'))
 
     def test_migrate_layout(self):
-        self.portal.topic.setAcquireCriteria(True)
         self.portal.topic.setLayout('folder_summary_view')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(self.portal.topic.getLayout(), 'summary_view')
 
     def test_migrate_customView(self):
-        self.portal.topic.setAcquireCriteria(True)
         self.portal.topic.setCustomView(True)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(self.portal.topic.getLayout(), 'tabular_view')
 
+    @unittest.skip("Only works when migrating to folderish collections")
     def test_migrate_nested_topic(self):
         self.portal.portal_types.Topic.filter_content_types = False
         self.portal.portal_types.Collection.filter_content_types = False
         self.portal.topic.invokeFactory("Topic", "subtopic", title="Sub Topic")
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(self.portal.topic.portal_type, 'Collection')
         self.assertEqual(self.portal.topic.subtopic.portal_type, 'Collection')
 
     def test_ATSimpleStringCriterion(self):
         self.add_criterion('SearchableText', 'ATSimpleStringCriterion', 'bar')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(
-            self.portal.topic.getRawQuery(),
+            self.portal.topic.query,
             [{'i': 'SearchableText',
               'o': 'plone.app.querystring.operation.string.contains',
               'v': 'bar'}]
@@ -112,16 +112,14 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'review_state',
             'ATSimpleStringCriterion', 'published'
         )
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(
-            self.portal.topic.getRawQuery(),
+            self.portal.topic.query,
             [{'i': 'review_state',
               'o': 'plone.app.querystring.operation.selection.is',
               'v': 'published'}]
         )
-
-        # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
 
     def test_ATDateCriteriaPast(self):
         # More than 5 days in the past:
@@ -144,8 +142,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         crit.setOperation('less')
         crit.setDateRange('-')
 
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 4)
 
         self.assertEqual(query[0]['i'], 'created')
@@ -197,8 +196,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         crit.setOperation('less')
         crit.setDateRange('+')
 
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 4)
 
         self.assertEqual(query[0]['i'], 'created')
@@ -251,8 +251,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         crit.setOperation('within_day')
         crit.setDateRange('+')
 
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         time2 = DateTime()
         self.assertEqual(len(query), 4)
 
@@ -295,9 +296,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_ATCurrentAuthorCriterion(self):
         self.add_criterion('Creator', 'ATCurrentAuthorCriterion')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(
-            self.portal.topic.getRawQuery(),
+            self.portal.topic.query,
             [{'i': 'Creator',
               'o': 'plone.app.querystring.operation.string.currentUser',
               'v': 'admin'}]
@@ -319,8 +321,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         )
         crit.setOperator('and')
 
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 2)
         self.assertEqual(query[0],
                          {'i': 'Subject',
@@ -339,8 +342,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'path',
             'ATPathCriterion', self.portal.folder.UID())
         crit.setRecurse(True)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        self.assertEqual(self.portal.topic.getRawQuery(),
+        self.assertEqual(self.portal.topic.query,
                          [{'i': 'path',
                            'o': 'plone.app.querystring.operation.string.path',
                            'v': self.portal.folder.UID()}])
@@ -357,8 +361,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'ATPathCriterion', self.portal.folder.UID()
         )
         crit.setRecurse(False)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 1)
         self.assertEqual(query,
                          [{'i': 'path',
@@ -379,8 +384,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             [self.portal.folder.UID(), self.portal.folder2.UID()]
         )
         crit.setRecurse(True)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 2)
         self.assertEqual(query[0],
                          {'i': 'path',
@@ -405,8 +411,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             [self.portal.folder.UID(), self.portal.folder2.UID()]
         )
         crit.setRecurse(False)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 2)
         self.assertEqual(query[0],
                          {'i': 'path',
@@ -427,8 +434,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         crit.setBool(True)
         crit = self.add_criterion('is_default_page', 'ATBooleanCriterion')
         crit.setBool(False)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 2)
         self.assertEqual(
             query[0],
@@ -459,8 +467,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         crit.setStart(time1 + 3)
         crit.setEnd(time1 + 5)
 
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 3)
 
         self.assertEqual(query[0]['i'], 'created')
@@ -492,8 +501,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'portal_type',
             'ATPortalTypeCriterion', ('Document', 'Folder')
         )
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(
             query,
             [{'i': 'portal_type',
@@ -511,8 +521,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'portal_type',
             'ATPortalTypeCriterion', ('Topic',)
         )
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(query,
                          [{'i': 'portal_type',
                            'o': 'plone.app.querystring.operation.selection.is',
@@ -540,8 +551,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         )
         crit.setOperator('and')
 
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(len(query), 2)
         self.assertEqual(query[0],
                          {'i': 'Subject',
@@ -564,8 +576,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         # Type is not enabled as criterion index by default, so we
         # want to migrate to a portal_type criterion instead.
         self.add_criterion('Type', 'ATSelectionCriterion', ('Page', 'Folder'))
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        query = self.portal.topic.getRawQuery()
+        query = self.portal.topic.query
         self.assertEqual(query,
                          [{'i': 'portal_type',
                            'o': 'plone.app.querystring.operation.selection.is',
@@ -583,10 +596,11 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'ATReferenceCriterion',
             self.portal.folder.UID()
         )
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         # TODO re-enable this check when the queryparser works.
         # self.assertEqual(
-        #     self.portal.topic.getRawQuery(),
+        #     self.portal.topic.query,
         #     [{'i': 'getRawRelatedItems',
         #       'o': 'plone.app.querystring.operation.reference.is',
         #       'v': (portal.folder.UID(),)}]
@@ -601,9 +615,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'ATRelativePathCriterion'
         )
         crit.setRelativePath('../folder')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(
-            self.portal.topic.getRawQuery(),
+            self.portal.topic.query,
             [{'i': 'path',
               'o': 'plone.app.querystring.operation.string.relativePath',
               'v': '../folder'}]
@@ -618,9 +633,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         crit = self.add_criterion('path', 'ATRelativePathCriterion')
         crit.setRelativePath('../folder')
         crit.setRecurse(True)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(
-            self.portal.topic.getRawQuery(),
+            self.portal.topic.query,
             [{'i': 'path',
               'o': 'plone.app.querystring.operation.string.relativePath',
               'v': '../folder'}])
@@ -630,8 +646,9 @@ class MigrateToATContentTypesTest(unittest.TestCase):
 
     def test_ATSimpleIntCriterion(self):
         self.add_criterion('getObjPositionInParent', 'ATSimpleIntCriterion', 7)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        self.assertEqual(self.portal.topic.getRawQuery(),
+        self.assertEqual(self.portal.topic.query,
                          [{'i': 'getObjPositionInParent',
                            'o': 'plone.app.querystring.operation.int.is',
                            'v': 7}])
@@ -645,9 +662,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             'ATSimpleIntCriterion', 6
         )
         crit.setDirection('min')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(
-            self.portal.topic.getRawQuery(),
+            self.portal.topic.query,
             [{'i': 'getObjPositionInParent',
               'o': 'plone.app.querystring.operation.int.largerThan',
               'v': 6}]
@@ -663,9 +681,10 @@ class MigrateToATContentTypesTest(unittest.TestCase):
             5
         )
         crit.setDirection('max')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         self.assertEqual(
-            self.portal.topic.getRawQuery(),
+            self.portal.topic.query,
             [{'i': 'getObjPositionInParent',
               'o': 'plone.app.querystring.operation.int.lessThan',
               'v': 5}]
@@ -683,18 +702,20 @@ class MigrateToATContentTypesTest(unittest.TestCase):
         )
         crit.setDirection('min:max')
         crit.setValue2(8)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        self.assertEqual(self.portal.topic.getRawQuery(), [])
+        self.assertEqual(self.portal.topic.query, [])
 
         # Check that the resulting query does not give an error.
         self.portal.topic.getQuery()
 
     def test_ATSortCriterion(self):
         self.add_criterion('modified', 'ATSortCriterion')
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        self.assertEqual(self.portal.topic.getSort_on(), 'modified')
-        self.assertEqual(self.portal.topic.getSort_reversed(), False)
-        self.assertEqual(self.portal.topic.getRawQuery(), [])
+        self.assertEqual(self.portal.topic.sort_on, 'modified')
+        self.assertEqual(self.portal.topic.sort_reversed, False)
+        self.assertEqual(self.portal.topic.query, [])
 
         # Check that the resulting query does not give an error.
         self.portal.topic.getQuery()
@@ -702,10 +723,11 @@ class MigrateToATContentTypesTest(unittest.TestCase):
     def test_ATSortCriterionReversed(self):
         crit = self.add_criterion('created', 'ATSortCriterion')
         crit.setReversed(True)
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
-        self.assertEqual(self.portal.topic.getSort_on(), 'created')
-        self.assertEqual(self.portal.topic.getSort_reversed(), True)
-        self.assertEqual(self.portal.topic.getRawQuery(), [])
+        self.assertEqual(self.portal.topic.sort_on, 'created')
+        self.assertEqual(self.portal.topic.sort_reversed, True)
+        self.assertEqual(self.portal.topic.query, [])
 
         # Check that the resulting query does not give an error.
         self.portal.topic.getQuery()

@@ -1139,6 +1139,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             migrate_folders,
             migrate_events,
         )
+        from plone.app.contenttypes.migration.topics import migrate_topics
 
         # create all content types
         self.portal.invokeFactory('Document', 'document')
@@ -1152,6 +1153,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.createATCTBlobNewsItem('blobnewsitem')
         self.portal.invokeFactory('Folder', 'folder')
         self.portal.invokeFactory('Event', 'event')
+        self.portal.invokeFactory('Topic', 'topic')
 
         # migrate all
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -1166,6 +1168,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         migrate_blobnewsitems(self.portal)
         migrate_folders(self.portal)
         migrate_events(self.portal)
+        migrate_topics(self.portal)
 
         # assertions
         cat = self.catalog
@@ -1174,7 +1177,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_contents = cat(object_provides='plone.dexterity'
                           '.interfaces.IDexterityContent')
         self.assertEqual(len(at_contents), 0)
-        self.assertEqual(len(dx_contents), 11)
+        self.assertEqual(len(dx_contents), 12)
 
     def test_warning_for_uneditable_content(self):
         set_browserlayer(self.request)
