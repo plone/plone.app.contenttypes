@@ -1289,6 +1289,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         results = migration_view()
         self.assertIn('@@migrate_from_atct?migrate=1', results)
 
+
     def test_portlets_are_migrated(self):
         """add portlets and see if they're still available on the migrated
         content including portlet settings.
