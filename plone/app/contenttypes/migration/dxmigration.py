@@ -1,11 +1,23 @@
 # -*- coding: utf-8 -*-
+from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
+from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
 from plone.app.contenttypes.migration import datetime_fixer
+from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
+from plone.dexterity.content import Container
+from plone.dexterity.content import Item
+from plone.dexterity.interfaces import IDexterityContent
 from plone.event.utils import default_timezone
+from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import getSite
+
+import importlib
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def migrate(portal, migrator):
@@ -100,3 +112,81 @@ class DXEventMigrator(ContentMigrator):
         old_text = annotations.get(
             'plone.app.event.dx.behaviors.IEventSummary.text', None)
         self.new.text = old_text
+
+
+def get_old_class_name_string(obj):
+    """Returns old class name string."""
+    return '{0}.{1}'.format(obj.__module__, obj.__class__.__name__)
+
+
+def get_portal_type_name_string(obj):
+    portal = getSite()
+    types = getToolByName(portal, "portal_types")
+    portal_type = types.get(obj.portal_type)
+    if not portal_type:
+        return
+
+    return portal_type.klass
+
+
+def migrate_base_class_to_new_class(obj,
+                                    indexes=[
+                                        'is_folderish',
+                                        'object_provides',
+                                    ],
+                                    ):
+    new_class_name = get_portal_type_name_string(obj)
+    current_class_name = get_old_class_name_string(obj)
+
+    if new_class_name == current_class_name:
+        return False
+
+    was_item = isinstance(obj, Item)
+    obj_id = obj.getId()
+    module_name, class_name = new_class_name.rsplit('.', 1)
+    module = importlib.import_module(module_name)
+    new_class = getattr(module, class_name)
+
+    # update obj class
+    parent = obj.__parent__
+    parent._delOb(obj_id)
+    obj.__class__ = new_class
+    parent._setOb(obj_id, obj)
+
+    is_container = isinstance(obj, Container)
+
+    if was_item and is_container:
+        #  If Itemish becomes Folderish we have to update obj _tree
+        BTreeFolder2Base._initBTrees(obj)
+
+    # reindex
+    obj.reindexObject(indexes)
+
+    return True
+
+
+def list_of_objects_with_changed_base_class(context):
+    catalog = getToolByName(context, "portal_catalog")
+    query = {'object_provides': IDexterityContent.__identifier__}
+    if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+        query['Language'] = 'all'
+    for brain in catalog(query):
+        try:
+            obj = brain.getObject()
+        except NotFound:
+            logger.warn("Object {0} not found".format(brain.getPath()))
+            continue
+        if get_portal_type_name_string(obj) != get_old_class_name_string(obj):
+            yield obj
+
+
+def list_of_changed_base_class_names(context):
+    """Returns list of class names that are not longer in portal_types."""
+    changed_base_class_names = {}
+    for obj in list_of_objects_with_changed_base_class(context):
+        changed_base_class_name = get_old_class_name_string(obj)
+        if changed_base_class_name not in changed_base_class_names:
+            changed_base_class_names[changed_base_class_name] = 1
+        else:
+            changed_base_class_names[changed_base_class_name] += 1
+    return changed_base_class_names

@@ -218,6 +218,28 @@ Future versions of plone.app.contenttypes will have with a form that allows you 
 However if you'd like to migrate your content-types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
 
 
+Migrating to folderish objects or change base class for any dexterity type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Migration non folderish object to folderish has few steps.
+
+Step 1: Enable folderish types
+++++++++++++++++++++++++++++++
+
+See `Using folderish types`_
+
+
+Step 2: Update base class for existing objects
+++++++++++++++++++++++++++++++++++++++++++++++
+
+If you changed the base-class of existing types you might also want to upgrade the base-class of existing objects. You can use the following form for this: `PORTAL_URL/@@base_class_migrator_form`.
+
+On this you will see checkboxes with class names and the amount of objects that are going to be updated. Select classes that you want to update and click on button `Update`.
+
+If the migration was successful you see the info box with number of successfully updated objects or a warning with number of not updated objects.
+
+This form can be used to change the base-class of any dexterity-types instances.
+
 Widgets
 -------
 
@@ -291,6 +313,29 @@ If you want to add plone.app.contenttypes as a dependency from another products 
     </metadata>
 
 If you use the profile ``default`` then the default-content in new sites will still be Archetypes-based. You'll then have to migrate that content using the migration-form ``@@atct_migrator`` or delete it by hand.
+
+
+Using folderish types
+^^^^^^^^^^^^^^^^^^^^^
+
+If you want all types folderish you need to depend on the profile ``folderish`` in your own ``metadata.xml``.
+
+.. code:: xml
+
+    <metadata>
+      <version>1</version>
+        <dependencies>
+            <dependency>profile-plone.app.contenttypes:folderish</dependency>
+        </dependencies>
+    </metadata>
+
+You can also enable this profile by hand by applying the `folderish` profile:
+
+- Go to portal_setup->Import;
+- Select `Plone default content-types (Folderish behavior) - dexterity`
+- Click  `Import all steps`
+
+You can also migrate your existing objects to folderish types. For details see `Step 2: Update base class for existing objects`_
 
 
 Extending the types
