@@ -704,12 +704,7 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
                            'dst_meta_type': '',
                            'use_savepoint': True}
         if dry_run:
-            tools = getMultiAdapter((portal, portal.REQUEST), name=u'plone_tools')
-            portal_catalog = tools.catalog()
-            #BBB search_limit doesn't seems working
-            test_search = portal_catalog(portal_type=src_type, search_limit=1)
-            if test_search:
-                walker_settings['query'] = {'UID': test_search[0].UID}
+            walker_settings['limit'] = 1
         walker = CustomQueryWalker(**walker_settings)
         walker.go()
         walker_infos = {'errors': walker.errors,

@@ -56,6 +56,36 @@
               }
             });
         }
+        $(document).ready(function () {
+            $('input[name="form.button.Test"]').on( "click", function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                var tested_type = $this.parent().siblings('select.selectedType');
+                $this.parent().removeClass('error');
+                $this.parent().siblings('.fieldsMapping').removeClass('error');
+                $this.parent().removeClass('success');
+                $this.parent().addClass('testing');
+                $.ajax({
+                    url: '@@test_migration?' + $(this).parents('form').serialize() + '&tested_type=' + tested_type.attr('name'),
+                    dataType: 'json',
+                    success: function(data) {
+                        $this.parent().removeClass('testing');
+                        if(data.status === 'error') {
+                            $this.parent().addClass('error');
+                            $this.parent().siblings('.fieldsMapping').addClass('error');
+                        }
+                        else {
+                            $this.parent().addClass('success');
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $this.parent().removeClass('testing');
+                        $this.parent().addClass('error');
+                        $this.parent().siblings('.fieldsMapping').addClass('error');
+                    }
+                });
+            });
+        });
     </script>
     <tal:block condition="at_types">
         <div id="migration-options">
@@ -78,19 +108,23 @@
                     </td>
                     <td valign="top">
                         <select tal:attributes="onChange string:javascript:getDXFields(at_typename='${at_type/id}', this.value);
-                                                name string:dx_select_${at_type/id};">
+                                                name string:dx_select_${at_type/id};"
+                                class="selectedType">
                             <option value="" selected="selected">Do not migrate</option>
                             <option tal:repeat="dx_type view/getDXFTIs"
                                     tal:attributes="value dx_type/id"
                                     tal:content="dx_type/title">DX type name</option>
                         </select>
-                        <!--tal:block repeat='dx_type view/getDXFTIs'>
-                            <h3 tal:content="dx_type/title"></h3>
-                            <tal:block repeat="field python: view.getFieldsForDXType(dx_type['id'])">
-                                <p tal:content="field/id">AT field</p>
-                            </tal:block>
-                        </tal:block-->
-                        <div id="hook_at_fti" tal:attributes="id string:hook_at_fti_${at_type/id}" />
+                        <div id="hook_at_fti" class="field fieldsMapping" tal:attributes="id string:hook_at_fti_${at_type/id}" />
+                        <br />
+                        <div class="testConfig">
+                            <input type="submit"
+                                   name="form.button.Test"
+                                   class="context"
+                                   value="Test configuration"
+                                   i18n:attributes="value"
+                                   i18n:domain="plone"/>&nbsp;
+                        </div>
                     </td>
                 </tr>
             </table>

@@ -77,6 +77,14 @@
     template="custom_migration_display_dx_fields.pt"
     />
 
+  <browser:page
+    name="test_migration"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".custom_migration.TestMigration"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    />
+
   <utility
       factory=".vocabularies.ATCTypesVocabulary"
       name="plone.app.contenttypes.migration.atctypes"

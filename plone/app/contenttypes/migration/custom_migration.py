@@ -9,6 +9,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.ATContentTypes.content.schemata import ATContentTypeSchema
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.contenttypes.migration.migration import migrateCustomAT
+import json
 
 HAS_EXTENDER = True
 try:
@@ -33,6 +34,7 @@ class CustomMigrationForm(BrowserView):
         form = self.request.form
         cancelled = form.get('form.button.Cancel', False)
         submitted = form.get('form.button.Migrate', False)
+        test = form.get('form.button.Test', False)
         if submitted:
             # proceed, call the migration methdd
             results = self.migrate()
@@ -173,8 +175,9 @@ class CustomMigrationForm(BrowserView):
                 # ignore Dublin Core fields
                 if fieldName in self.dx_metadata_fields:
                     continue
+                translated_title = translate(field.title)
                 results.append({'id': fieldName,
-                                'title': '%s (%s)' % (field.title, field.__class__.__name__),
+                                'title': '%s (%s)' % (translated_title, field.__class__.__name__),
                                 'type': field.__class__.__name__})
         return results
 
@@ -184,7 +187,7 @@ class CustomMigrationForm(BrowserView):
     def isFolderish(self):
         ''' decide which base-class we use for the migrator'''
 
-    def migrate(self):
+    def migrate(self, dry_run=False):
         '''Build data from self.request.form, we will build something like :
            {'MyATPortalType': {'MyDXPortalType': ({'AT_field_name': 'fieldname1',
                                                    'AT_field_type': 'TextField',
@@ -199,7 +202,7 @@ class CustomMigrationForm(BrowserView):
             if k.startswith('dx_select_'):
                 # we found select where we choose a DX type regarding an AT type
                 # the selelect name is like 'dx_select_MyATPortalType'
-                if not form[k]:
+                if not form[k] or (dry_run and k != form.get('tested_type')):
                     # nothing selected in this select, continue
                     continue
                 at_typename = k[10:]
@@ -228,7 +231,7 @@ class CustomMigrationForm(BrowserView):
         migration_results = []
         for at_typename, dx_mappings in data.items():
             for k, v in dx_mappings.items():
-                res = migrateCustomAT(fields_mapping=v, src_type=at_typename, dst_type=dx_typename)
+                res = migrateCustomAT(fields_mapping=v, src_type=at_typename, dst_type=dx_typename, dry_run=dry_run)
                 migration_results.append({'type': at_typename,
                                           'infos': res})
         return migration_results
@@ -247,3 +250,26 @@ class DisplayDXFields(CustomMigrationForm):
         '''
         '''
         return self.index()
+
+class TestMigration(CustomMigrationForm):
+
+    def __call__(self):
+        '''
+        View that call migrate method with dry_run mode set.
+        Returns a json response with the result.
+        This view is called by a js.
+        '''
+        results = self.migrate(dry_run=True)
+        response = {}
+        if results:
+            migration_result = results[0]
+            res_infos = migration_result.get('infos')
+            if res_infos.get('errors'):
+                response['status'] = 'error'
+                response['message'] = "Impossible migrating to this content type with this configuration"
+            else:
+                response['status'] = 'success'
+                response['message'] = "Testing migration succesful"
+        #i need to fix the response header because in case of success, it is set to text/html
+        self.request.response.setHeader("Content-type", "application/json")
+        return json.dumps(response)
