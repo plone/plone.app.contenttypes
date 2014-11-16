@@ -12,6 +12,7 @@ from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.content import Container
 from plone.event.interfaces import IEventAccessor
 from plone.testing.z2 import Browser
@@ -1128,7 +1129,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate(self.portal, DocumentMigrator)
         dx_document = self.portal["document"]
-        self.assertEqual(dx_document.meta_type, 'Dexterity Item')
+        self.assertTrue(IDexterityContent.providedBy(dx_document)
 
     def test_migrate_xx_functions(self):
         from Products.ATContentTypes.content.image import ATImage
