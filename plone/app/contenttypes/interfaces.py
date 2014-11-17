@@ -13,40 +13,40 @@ class IPloneAppContenttypesLayer(Interface):
 
 
 class ICollection(Interface):
-    """Explixiet marker interface for Collection
+    """Explicit marker interface for Collection
     """
 
 
 class IDocument(Interface):
-    """Explixit marker interface for Document
+    """Explicit marker interface for Document
     """
 
 
 class IFile(Interface):
-    """Explixit marker interface for File
+    """Explicit marker interface for File
     """
 
 
 class IFolder(Interface):
-    """Explixit marker interface for Folder
+    """Explicit marker interface for Folder
     """
 
 
 class IImage(Interface):
-    """Explixit marker interface for Image
+    """Explicit marker interface for Image
     """
 
 
 class ILink(Interface):
-    """Explixit marker interface for Link
+    """Explicit marker interface for Link
     """
 
 
 class INewsItem(Interface):
-    """Explixit marker interface for News Item
+    """Explicit marker interface for News Item
     """
 
 
 class IEvent(Interface):
-    """Explixit marker interface for Event
+    """Explicit marker interface for Event
     """
