@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
 from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 
+import logging
+logger = logging.getLogger(__name__)
 
 def update_fti(context):
     """ Schema-files moved into their own folder after 1.0b1
@@ -121,3 +124,48 @@ def enable_shortname_behavior(context):
         behaviors.append(behavior)
         behaviors = tuple(behaviors)
         fti._updateProperty('behaviors', behaviors)
+
+
+def migrate_to_folderish_types(context):
+    """Migrate instances to work as containers.
+
+    The base-class for all types except Link, Image and File changed to
+    container. This step re-instaciated the _tree of existing instances
+    to be useable after the change.
+    We only have to reinstanciate the _tree of the objects. We don't need to
+    change the class of these objects since it stays the same (only the
+    base-class changes). For the same reason we also don't have to re-add the
+    objects to their parents.
+    See .migration.dxmigration.migrate_base_class_to_new_class for a full
+    example of migrating classes.
+
+    We might as well have used:
+        migrate_base_class_to_new_class(obj, migrate_to_folderish=True)
+    """
+
+    to_migrate = [
+        'plone.app.contenttypes.interfaces.ICollection',
+        'plone.app.contenttypes.interfaces.IDocument',
+        'plone.app.contenttypes.interfaces.IEvent',
+        'plone.app.contenttypes.interfaces.INewsItem',
+        'plone.app.contenttypes.interfaces.ILink',
+    ]
+    catalog = getToolByName(context, 'portal_catalog')
+    search = catalog.unrestrictedSearchResults
+    for iface in to_migrate:
+        brains = search(meta_type='Dexterity Item',
+                        object_provides=iface)
+        if brains:
+            logger.info(
+                'Switching {0} {1}s from item to container'.format(
+                    len(brains), iface.split('.')[-1][1:]))
+        for brain in brains:
+            obj = brain.getObject()
+            if not obj:
+                logger.info('No object found at {0}'.format(brain.getPath()))
+                continue
+
+            # Since the objs are now folderish update the objects _tree
+            # obj is now a instance of BTreeFolder2Base
+            BTreeFolder2Base._initBTrees(obj)
+            obj.reindexObject(['is_folderish', 'object_provides'])

@@ -80,6 +80,48 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.assertTrue('This is my document.' in output)
         self.assertTrue('Lorem ipsum' in output)
 
+    def test_folderish_document(self):
+        fti = queryUtility(
+            IDexterityFTI,
+            name='Document'
+        )
+        fti.allowed_content_types = ['Document', 'Folder']
+
+        self.portal.invokeFactory('Document', 'document')
+        document = self.portal['document']
+        document.title = "My Document"
+        document.description = "This is my document."
+
+        # Add and access a document in a document
+        document.invokeFactory('Document', 'document2')
+        document2 = document['document2']
+        document2.title = "Document within Document"
+        document2.description = "This is my subdocument."
+
+        view = document2.restrictedTraverse('@@view')
+        self.assertEqual(view.request.response.status, 200)
+        output = view()
+        self.assertIn(
+            '<span id="breadcrumbs-current">Document within Document</span>',
+            output)
+
+        # Add and access a folder in a document
+        document.invokeFactory('Folder', 'folder1')
+        folder1 = document['folder1']
+        folder1.title = "Folder within Document"
+        folder1.description = "This is a pointless subfolder."
+
+        view = folder1.restrictedTraverse('@@view')
+        self.assertEqual(view.request.response.status, 200)
+        output = view()
+        self.assertIn(
+            '<span id="breadcrumbs-current">Folder within Document</span>',
+            output)
+
+        # News Items are not allowed in Documents
+        self.assertRaises(
+            ValueError, document.invokeFactory, 'News Item', 'news1')
+
     def tearDown(self):
         if 'document' in self.portal.objectIds():
             self.portal.manage_delObjects(ids='document')

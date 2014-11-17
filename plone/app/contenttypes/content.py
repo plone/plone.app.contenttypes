@@ -13,8 +13,8 @@ from zope.interface import implementer
 
 
 @implementer(ICollection)
-class Collection(Item):
-    """Convinience Item subclass for ``Collection`` portal type
+class Collection(Container):
+    """Convinience subclass for ``Collection`` portal type
     """
     # BBB
 
@@ -58,8 +58,8 @@ class Collection(Item):
 
 
 @implementer(IDocument)
-class Document(Item):
-    """Convinience Item subclass for ``Document`` portal type
+class Document(Container):
+    """Convinience subclass for ``Document`` portal type
     """
 
 
@@ -82,18 +82,18 @@ class Image(Item):
 
 
 @implementer(ILink)
-class Link(Item):
+class Link(Container):
     """Convinience subclass for ``Link`` portal type
     """
 
 
 @implementer(INewsItem)
-class NewsItem(Item):
+class NewsItem(Container):
     """Convinience subclass for ``News Item`` portal type
     """
 
 
 @implementer(IEvent)
-class Event(Item):
+class Event(Container):
     """Convinience subclass for ``Event`` portal type
     """

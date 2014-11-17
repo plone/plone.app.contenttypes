@@ -62,4 +62,13 @@
       handler=".upgrades.enable_shortname_behavior"
       />
 
+  <genericsetup:upgradeStep
+      source="1103"
+      destination="1104"
+      title="Migrate to folderish types"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.migrate_to_folderish_types"
+      />
+
 </configure>

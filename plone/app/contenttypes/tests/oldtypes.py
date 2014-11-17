@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
-from plone.dexterity.fti import DexterityFTI
-from plone.dexterity.content import Item
+from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IEvent
+from plone.dexterity.content import Item
+from plone.dexterity.fti import DexterityFTI
 from zope.interface import implementer
 
 
 @implementer(IEvent)
 class Event(Item):
     """Dummy subclass for old ``Event`` portal type
+    """
+
+
+@implementer(IDocument)
+class Document(Item):
+    """Dummy subclass for non-folderish ``Document`` portal type
     """
 
 
