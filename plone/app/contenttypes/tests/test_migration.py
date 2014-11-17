@@ -1129,7 +1129,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate(self.portal, DocumentMigrator)
         dx_document = self.portal["document"]
-        self.assertTrue(IDexterityContent.providedBy(dx_document)
+        self.assertTrue(IDexterityContent.providedBy(dx_document))
 
     def test_migrate_xx_functions(self):
         from Products.ATContentTypes.content.image import ATImage
