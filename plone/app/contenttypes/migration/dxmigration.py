@@ -134,12 +134,13 @@ def migrate_base_class_to_new_class(obj,
                                         'is_folderish',
                                         'object_provides',
                                     ],
+                                    old_class_name='',
+                                    new_class_name=''
                                     ):
-    new_class_name = get_portal_type_name_string(obj)
-    current_class_name = get_old_class_name_string(obj)
-
-    if new_class_name == current_class_name:
-        return False
+    if not old_class_name:
+        old_class_name = get_old_class_name_string(obj)
+    if not new_class_name:
+        new_class_name = get_portal_type_name_string(obj)
 
     was_item = isinstance(obj, Item)
     obj_id = obj.getId()
