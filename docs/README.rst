@@ -221,6 +221,10 @@ However if you'd like to migrate your content-types to Dexterity before this fea
 Migrating to folderish objects or change base class for any dexterity type
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. warning::
+
+   All types will probably be folderish in Plone 5 (see https://dev.plone.org/ticket/20144). The additional profile ``folderish`` will be removed soon. Use it at your own risk!
+
 Migration non folderish object to folderish has few steps.
 
 Step 1: Enable folderish types
@@ -236,7 +240,7 @@ If you changed the base-class of existing types you might also want to upgrade t
 
 On this you will see checkboxes with class names and the amount of objects that are going to be updated. Select classes that you want to update and click on button `Update`.
 
-If the migration was successful you see the info box with number of successfully updated objects or a warning with number of not updated objects.
+If the migration was successful you see the info box with number of successfully updated objects or a warning with the number of skipped objects.
 
 This form can be used to change the base-class of any dexterity-types instances.
 
@@ -317,6 +321,10 @@ If you use the profile ``default`` then the default-content in new sites will st
 
 Using folderish types
 ^^^^^^^^^^^^^^^^^^^^^
+
+.. warning::
+
+   All types will probably be folderish in Plone 5 (see https://dev.plone.org/ticket/20144). The additional profile ``folderish`` will be removed soon. Use it at your own risk!
 
 If you want all types folderish you need to depend on the profile ``folderish`` in your own ``metadata.xml``.
 
