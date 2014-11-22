@@ -115,11 +115,12 @@ class DXEventMigrator(ContentMigrator):
 
 
 def get_old_class_name_string(obj):
-    """Returns old class name string."""
+    """Returns the current class name string."""
     return '{0}.{1}'.format(obj.__module__, obj.__class__.__name__)
 
 
 def get_portal_type_name_string(obj):
+    """Returns the klass-attribute of the fti."""
     portal = getSite()
     types = getToolByName(portal, "portal_types")
     portal_type = types.get(obj.portal_type)
@@ -135,28 +136,30 @@ def migrate_base_class_to_new_class(obj,
                                         'object_provides',
                                     ],
                                     old_class_name='',
-                                    new_class_name=''
+                                    new_class_name='',
+                                    migrate_to_folderish=False,
                                     ):
     if not old_class_name:
         old_class_name = get_old_class_name_string(obj)
     if not new_class_name:
         new_class_name = get_portal_type_name_string(obj)
 
-    was_item = isinstance(obj, Item)
-    obj_id = obj.getId()
-    module_name, class_name = new_class_name.rsplit('.', 1)
-    module = importlib.import_module(module_name)
-    new_class = getattr(module, class_name)
+    was_item = not isinstance(obj, BTreeFolder2Base)
+    if old_class_name != new_class_name:
+        obj_id = obj.getId()
+        module_name, class_name = new_class_name.rsplit('.', 1)
+        module = importlib.import_module(module_name)
+        new_class = getattr(module, class_name)
 
-    # update obj class
-    parent = obj.__parent__
-    parent._delOb(obj_id)
-    obj.__class__ = new_class
-    parent._setOb(obj_id, obj)
+        # update obj class
+        parent = obj.__parent__
+        parent._delOb(obj_id)
+        obj.__class__ = new_class
+        parent._setOb(obj_id, obj)
 
-    is_container = isinstance(obj, Container)
+    is_container = isinstance(obj, BTreeFolder2Base)
 
-    if was_item and is_container:
+    if was_item and is_container or migrate_to_folderish and is_container:
         #  If Itemish becomes Folderish we have to update obj _tree
         BTreeFolder2Base._initBTrees(obj)
 
