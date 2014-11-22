@@ -373,6 +373,15 @@ class IBaseClassMigratorForm(Interface):
         ),
         required=True,
     )
+    migrate_to_folderish = schema.Bool(
+        title=u"Migrate to folderish type?",
+        description=(
+            u"Select this option if you changed a type from being "
+            u"itemish to being folderish but the class of the type is still "
+            u"the same."
+        ),
+        default=False,
+    )
 
 
 class BaseClassMigratorForm(form.Form):
@@ -393,6 +402,7 @@ class BaseClassMigratorForm(form.Form):
         if not changed_base_classes:
             return
 
+        migrate_to_folderish = data.get('changed_base_classes', False)
         catalog = getToolByName(self.context, "portal_catalog")
         migrated = []
         not_migrated = []
@@ -400,7 +410,8 @@ class BaseClassMigratorForm(form.Form):
             obj = brain.getObject()
             old_class_name = dxmigration.get_old_class_name_string(obj)
             if old_class_name in changed_base_classes:
-                if dxmigration.migrate_base_class_to_new_class(obj):
+                if dxmigration.migrate_base_class_to_new_class(
+                        obj, migrate_to_folderish=migrate_to_folderish):
                     migrated.append(obj)
                 else:
                     not_migrated.append(obj)

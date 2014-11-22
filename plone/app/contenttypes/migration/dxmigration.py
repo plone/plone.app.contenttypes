@@ -9,10 +9,12 @@ from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone
 from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
 from zope.component.hooks import getSite
+from zope.component import queryUtility
 
 import importlib
 import logging
@@ -121,13 +123,10 @@ def get_old_class_name_string(obj):
 
 def get_portal_type_name_string(obj):
     """Returns the klass-attribute of the fti."""
-    portal = getSite()
-    types = getToolByName(portal, "portal_types")
-    portal_type = types.get(obj.portal_type)
-    if not portal_type:
-        return
-
-    return portal_type.klass
+    fti = queryUtility(IDexterityFTI, name=obj.portal_type)
+    if not fti:
+        return False
+    return fti.klass
 
 
 def migrate_base_class_to_new_class(obj,
@@ -143,6 +142,10 @@ def migrate_base_class_to_new_class(obj,
         old_class_name = get_old_class_name_string(obj)
     if not new_class_name:
         new_class_name = get_portal_type_name_string(obj)
+        if not new_class_name:
+            logger.warning(
+                'The type {0} has no fti!'.format(obj.portal_type))
+            return False
 
     was_item = not isinstance(obj, BTreeFolder2Base)
     if old_class_name != new_class_name:
