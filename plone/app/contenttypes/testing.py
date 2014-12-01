@@ -44,6 +44,12 @@ class PloneAppContenttypes(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
+
+        # install and enable referenceablebehavior on Documents to be able to test
+        # controlpanel to enable plone.app.linkintegrity checks
+        applyProfile(portal, 'plone.app.referenceablebehavior:default')
+        portal.portal_types.Document.behaviors += ('zope.lifecycleevent.interfaces.IObjectModifiedEvent',)
+
         mtr = portal.mimetypes_registry
         mime_doc = mtr.lookup('application/msword')[0]
         mime_doc.icon_path = 'custom.png'
