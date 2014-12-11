@@ -97,28 +97,3 @@ class NewsItem(Item):
 class Event(Item):
     """Convinience subclass for ``Event`` portal type
     """
-
-# Folderish subclasses used by 'profile-plone.app.contenttypes:folderish'
-
-@implementer(ICollection)
-class FolderishCollection(Container):
-    """Folderish convinience subclass for ``Collection`` portal type
-    """
-
-
-@implementer(IDocument)
-class FolderishDocument(Container):
-    """Folderish convinience subclass for ``Document`` portal type
-    """
-
-
-@implementer(IEvent)
-class FolderishEvent(Container):
-    """Folderish convinience subclass for ``Event`` portal type
-    """
-
-
-@implementer(INewsItem)
-class FolderishNewsItem(Container):
-    """Folderish convinience subclass for ``News Item`` portal type
-    """

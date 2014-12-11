@@ -218,32 +218,6 @@ Future versions of plone.app.contenttypes will have with a form that allows you 
 However if you'd like to migrate your content-types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
 
 
-Migrating to folderish objects or change base class for any dexterity type
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. warning::
-
-   All types will probably be folderish in Plone 5 (see https://dev.plone.org/ticket/20144). The additional profile ``folderish`` will be removed soon. Use it at your own risk!
-
-Migration non folderish object to folderish has few steps.
-
-Step 1: Enable folderish types
-++++++++++++++++++++++++++++++
-
-See `Using folderish types`_
-
-
-Step 2: Update base class for existing objects
-++++++++++++++++++++++++++++++++++++++++++++++
-
-If you changed the base-class of existing types you might also want to upgrade the base-class of existing objects. You can use the following form for this: `PORTAL_URL/@@base_class_migrator_form`.
-
-On this you will see checkboxes with class names and the amount of objects that are going to be updated. Select classes that you want to update and click on button `Update`.
-
-If the migration was successful you see the info box with number of successfully updated objects or a warning with the number of skipped objects.
-
-This form can be used to change the base-class of any dexterity-types instances.
-
 Widgets
 -------
 
@@ -322,28 +296,15 @@ If you use the profile ``default`` then the default-content in new sites will st
 Using folderish types
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. warning::
+At some point all default types will probably be folderish. If you want the default types to be folderish before that happens please look at https://pypi.python.org/pypi/collective.folderishtypes.
 
-   All types will probably be folderish in Plone 5 (see https://dev.plone.org/ticket/20144). The additional profile ``folderish`` will be removed soon. Use it at your own risk!
 
-If you want all types folderish you need to depend on the profile ``folderish`` in your own ``metadata.xml``.
+Changing the base class for existing objects
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code:: xml
+If you changed the base-class of existing types (e.g. because you changed them to be folderish) you also need to upgrade the base-class of existing objects. You can use the following form for this: ``@@base_class_migrator_form``.
 
-    <metadata>
-      <version>1</version>
-        <dependencies>
-            <dependency>profile-plone.app.contenttypes:folderish</dependency>
-        </dependencies>
-    </metadata>
-
-You can also enable this profile by hand by applying the `folderish` profile:
-
-- Go to portal_setup->Import;
-- Select `Plone default content-types (Folderish behavior) - dexterity`
-- Click  `Import all steps`
-
-You can also migrate your existing objects to folderish types. For details see `Step 2: Update base class for existing objects`_
+This form lets you select classes to be updated and shows the number of objects for each class. This form can be used to change the base-class of any dexterity-types instances. The migration will also transform itemish content to folderish content if the new class is folderish. You might want to use the method ``plone.app.contenttypes.migration.dxmigration.migrate_base_class_to_new_class`` in your own upgrade-steps.
 
 
 Extending the types
