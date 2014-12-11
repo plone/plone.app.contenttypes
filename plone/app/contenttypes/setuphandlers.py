@@ -51,6 +51,7 @@ class HiddenProfiles(object):
         return [
             u'plone.app.contenttypes:uninstall',
             u'plone.app.contenttypes:default',
+            u'plone.app.contenttypes:folderish',
         ]
 
 
