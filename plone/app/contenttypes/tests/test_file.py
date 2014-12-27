@@ -2,6 +2,7 @@
 import unittest2 as unittest
 
 import os.path
+import transaction
 
 from zope.interface import alsoProvides
 from zope.component import createObject
@@ -89,6 +90,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.portal_url = self.portal.absolute_url()
+
         self.browser = Browser(app)
         self.browser.handleErrors = False
         self.browser.addHeader(
@@ -127,6 +129,11 @@ class FileFunctionalTest(unittest.TestCase):
         self.assertTrue('pdf.png' in self.browser.contents)
 
     def test_alternative_mime_icon_doc_for_file(self):
+        mtr = self.portal.mimetypes_registry
+        mime_doc = mtr.lookup('application/msword')[0]
+        mime_doc.icon_path = 'custom.png'
+        transaction.commit()
+
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
 
