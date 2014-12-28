@@ -13,7 +13,7 @@ from zope.interface import implementer
 
 
 @implementer(ICollection)
-class Collection(Item):
+class Collection(Container):
     # BBB
 
     def listMetaDataFields(self, exclude=True):

@@ -5,10 +5,20 @@ from plone.app.contenttypes.migration.topics import migrate_topics
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+from plone.dexterity.content import Container
 from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.dexterity.interfaces import IDexterityFTI
+from zope.component import queryUtility
+from zope.interface import implementer
 
 import unittest
+
+
+@implementer(ICollection)
+class FolderishCollection(Container):
+   """Test subclass for folderish ``Collections``.
+   """
 
 
 class MigrateTopicsIntegrationTest(unittest.TestCase):
@@ -82,12 +92,15 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.run_migration()
         self.assertEqual(self.portal.topic.getLayout(), 'tabular_view')
 
-    @unittest.skip("Only works when migrating to folderish collections")
     def test_migrate_nested_topic(self):
-        self.portal.portal_types.Topic.filter_content_types = False
-        self.portal.portal_types.Collection.filter_content_types = False
+        self.portal.portal_types['Topic'].filter_content_types = False
         self.portal.topic.invokeFactory("Topic", "subtopic", title="Sub Topic")
         applyProfile(self.portal, 'plone.app.contenttypes:default')
+        fti = queryUtility(IDexterityFTI, name='Collection')
+        fti.allowed_content_types = ['Document', 'Folder']
+        # switch our a custom folderish base-class for collections
+        fti.klass = 'plone.app.contenttypes.tests.test_migration_topic.FolderishCollection'
+        fti.filter_content_types = False
         self.run_migration()
         self.assertEqual(self.portal.topic.portal_type, 'Collection')
         self.assertEqual(self.portal.topic.subtopic.portal_type, 'Collection')

@@ -1,31 +1,11 @@
 # -*- coding: utf-8 -*-
+""" Migrate Topic to DX-Collectons.
 
-"""
-TODO/plans for topic migration.
-
-- Fix the TODO items embedded in the code below, or document missing
-  features.  This may need additions in plone.app.querystring, or
-  needs checking to see if features are already supported in there
-  meanwhile.
-
-- When needed, register a FolderishCollection type: Folder with
-  Collection behavior enabled.  We can use this to migrate Topics with
-  sub topics.
-
-- See if we can get migrations to work for anything we can come up with:
-
-  - Plain AT Topics.
-
-  - AT Topics with sub Topics inside.
-
-  - plone.app.collection 1.x Archetypes
-
-  - plone.app.collection 1.x Archetypes folderish (in use by Maurits,
-    see p.a.collection branch maurits-upgrade-path, where this
-    migration code actually originated)
-
-  - plone.app.collection 2.x Dexterity
-
+Note on Subtopics:
+When a migration of Subtopics is needed, you can replace the default itemish
+Collection with a folderish Collection by creating a new type folderish
+type 'Collection' with the collection-behavior enabled. You can then use
+the default migration to migrate Topics with Subtopics.
 """
 
 from DateTime import DateTime
@@ -49,32 +29,6 @@ logger = logging.getLogger(__name__)
 prefix = "plone.app.querystring"
 
 INVALID_OPERATION = 'Invalid operation %s for criterion: %s'
-# PROFILE_ID = 'profile-plone.app.collection:default'
-
-
-def format_date(value):
-    """Format the date.
-
-    The value is expected to be a DateTime.DateTime object, though it
-    actually also works on datetime.datetime objects.
-
-    The query field expects a string with month/date/year.
-    So 28 March 2013 should become '03/28/2013'.
-    """
-    return value.strftime('%m/%d/%Y')
-
-
-def is_old_non_folderish_item(obj, **kwargs):
-    """Is this an old not yet migrated Collection item?
-
-    The old non-folderish and new folderish Collections have the same
-    meta_type and portal_type, which means a simple catalog walker
-    will crash when it is called on a new folderish Collection, for
-    example when the upgrade step is run twice.  We can use this
-    function to ignore the new Collections.
-    """
-    return not IFolderish(obj)
-
 
 # Converters
 
@@ -483,6 +437,11 @@ class ATSimpleIntCriterionConverter(CriterionConverter):
 
 
 class TopicMigrator(InplaceCMFItemMigrator, ReferenceMigrator):
+    """Migrate Topics to Collections. Existing subtopics will be lost.
+
+    The only difference to the migration below is the base-class
+    (InplaceCMFItemMigrator instead of InplaceCMFFolderMigrator).
+    """
     src_portal_type = 'Topic'
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
@@ -590,51 +549,117 @@ class TopicMigrator(InplaceCMFItemMigrator, ReferenceMigrator):
             IMutableUUID(self.new).set(str(uid))
 
 
-class FolderishCollectionMigrator(InplaceCMFFolderMigrator, ReferenceMigrator):
-    """stub Migration for ATTopic -> Folderish Collections
+class FolderishTopicMigrator(InplaceCMFFolderMigrator, ReferenceMigrator):
+    """Migrate Topics and Subtopics to folderish collections.
+
+    The only difference to the migration above is the base-class
+    (InplaceCMFFolderMigrator instead of InplaceCMFItemMigrator).
     """
-    src_portal_type = src_meta_type = 'Collection'
+    src_portal_type = 'Topic'
+    src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
+    view_methods_mapping = {
+        'folder_listing': 'standard_view',
+        'folder_summary_view': 'summary_view',
+        'folder_full_view': 'all_content',
+        'folder_tabular_view': 'tabular_view',
+        'atct_album_view': 'thumbnail_view',
+        'atct_topic_view': 'standard_view',
+        }
+
+    @property
+    def registry(self):
+        return self.kwargs['registry']
+
+    def last_migrate_layout(self):
+        """Migrate the layout (view method).
+
+        This needs to be done last, as otherwise our changes in
+        migrate_criteria may get overriden by a later call to
+        migrate_properties.
+        """
+        if self.old.getCustomView():
+            # Previously, the atct_topic_view had logic for showing
+            # the results in a list or in tabular form.  If
+            # getCustomView is True, this means the new object should
+            # use the tabular view.
+            self.new.setLayout('tabular_view')
+            return
+
+        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        layout = self.view_methods_mapping.get(old_layout)
+        if layout:
+            self.new.setLayout(layout)
+
+    def beforeChange_criteria(self):
+        """Store the criteria of the old Topic.
+
+        Store the info on the migrator and restore the values in the
+        migrate_criteria method.
+        """
+        self._collection_sort_reversed = None
+        self._collection_sort_on = None
+        self._collection_query = None
+        path = '/'.join(self.old.getPhysicalPath())
+        logger.info("Migrating %s at %s", self.src_portal_type, path)
+        # Get the old criteria.
+        # See also Products.ATContentTypes.content.topic.buildQuery
+        criteria = self.old.listCriteria()
+        logger.debug("Old criteria for %s: %r", path,
+                     [(crit, crit.getCriteriaItems()) for crit in criteria])
+        formquery = []
+        for criterion in criteria:
+            type_ = criterion.__class__.__name__
+            if type_ == 'ATSortCriterion':
+                # Sort order and direction are now stored in the Collection.
+                self._collection_sort_reversed = criterion.getReversed()
+                self._collection_sort_on = criterion.Field()
+                logger.debug("Sort on %r, reverse: %s.",
+                             self._collection_sort_on,
+                             self._collection_sort_reversed)
+                continue
+
+            converter = CONVERTERS.get(type_)
+            if converter is None:
+                msg = 'Unsupported criterion %s' % type_
+                logger.error(msg)
+                raise ValueError(msg)
+            converter(formquery, criterion, self.registry)
+
+        logger.debug("New query for %s: %r", path, formquery)
+        self._collection_query = formquery
+
+    def migrate_criteria(self):
+        """Migrate old style to new style criteria.
+
+        Plus handling for some special fields.
+        """
+        # The old Topic has boolean limitNumber and integer itemCount,
+        # where the new Collection only has limit.
+        adapted = ICollection(self.new)
+        if self.old.getLimitNumber():
+            adapted.limit = self.old.getItemCount()
+        adapted.customViewFields = self.old.getCustomViewFields()
+
+        # Get the old data stored by the beforeChange_criteria method.
+        if self._collection_sort_reversed is not None:
+            adapted.sort_reversed = self._collection_sort_reversed
+        if self._collection_sort_on is not None:
+            adapted.sort_on = self._collection_sort_on
+        if self._collection_query is not None:
+            adapted.query = self._collection_query
 
 
-def migrate_to_folderish_collections(context):
-    """Migrate new-style Collections to folderish Collections.
+    def migrate_atctmetadata(self):
+        field = self.old.getField('excludeFromNav')
+        self.new.exclude_from_nav = field.get(self.old)
 
-    This can be used as upgrade step.
-
-    The new-style Collections started out as inheriting from
-    ATDocument.  Historically users could nest topics, so we want to
-    try to bring that back.  This is the first step: make existing
-    new-style Collections folderish.
-
-    TODO/notes:
-
-    - This simple migration seems to work.
-
-    - The sub collection should 'inherit' the query from its parent,
-      otherwise this exercise does not make much sense.  See the
-      maurits-recursive branch of archetypes.querywidget, which seems
-      to work, though for the tests to pass it currently needs the
-      maurits-upgradepath branch of plone.app.collection.
-
-    """
-    site = getToolByName(context, 'portal_url').getPortalObject()
-    collection_walker = CustomQueryWalker(
-        site, FolderishCollectionMigrator,
-        callBefore=is_old_non_folderish_item)
-    collection_walker.go()
-
-
-def run_typeinfo_step(context):
-    context.runImportStepFromProfile(PROFILE_ID, 'typeinfo')
-
-
-def run_actions_step(context):
-    context.runImportStepFromProfile(PROFILE_ID, 'actions')
-
-
-def run_propertiestool_step(context):
-    context.runImportStepFromProfile(PROFILE_ID, 'propertiestool')
+    def migrate_at_uuid(self):
+        """Migrate AT universal uid
+        """
+        uid = self.UID
+        if uid and queryAdapter(self.new, IMutableUUID):
+            IMutableUUID(self.new).set(str(uid))
 
 
 def migrate_topics(portal):
@@ -647,7 +672,13 @@ def migrate_topics(portal):
     reg = getUtility(IRegistry)
     reader = IQuerystringRegistryReader(reg)
     registry = reader.parseRegistry()
-    walker = CustomQueryWalker(portal, TopicMigrator)(registry=registry)
+    # select migrator based on the base-class of collections
+    fti = portal.portal_types['Collection']
+    if fti.content_meta_type == "Dexterity Item":
+        migrator = TopicMigrator
+    elif fti.content_meta_type == "Dexterity Container":
+        migrator = FolderishTopicMigrator
+    walker = CustomQueryWalker(portal, migrator)(registry=registry)
     return walker
 
 
