@@ -425,6 +425,25 @@ class ATCTMigratorHelpers(BrowserView):
         This much can even be done ttw. For the views of collections
         to work the base-class of the Collections also has to implement the
         interface `plone.app.contenttypes.interfaces.ICollection`.
+
+        This is what such a class would look like:
+
+            from plone.app.contenttypes.behaviors.collection import ICollection
+            from plone.dexterity.content import Container
+            from zope.interface import implementer
+
+            @implementer(ICollection)
+            class FolderishCollection(Container):
+                pass
+
+        You can either use a completely new fti or overwrite the default fti
+        like this:
+
+            <?xml version="1.0"?>
+            <object name="Collection" meta_type="Dexterity FTI">
+             <property name="klass">my.package.content.FolderishCollection</property>
+            </object>
+
         """
         fti = queryUtility(IDexterityFTI, name="Collection")
         if fti and fti.content_meta_type == "Dexterity Container":

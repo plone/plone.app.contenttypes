@@ -97,10 +97,14 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.portal.topic.invokeFactory("Topic", "subtopic", title="Sub Topic")
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         fti = queryUtility(IDexterityFTI, name='Collection')
-        fti.allowed_content_types = ['Document', 'Folder']
         # switch our a custom folderish base-class for collections
-        fti.klass = 'plone.app.contenttypes.tests.test_migration_topic.FolderishCollection'
-        fti.filter_content_types = False
+        # we need to use _updateProperty because this also refreshes
+        # the content_meta_type attribute when klass has changed
+        fti._updateProperty(
+            'klass',
+            'plone.app.contenttypes.tests.test_migration_topic.FolderishCollection')
+        fti._updateProperty('allowed_content_types', ['Document', 'Folder'])
+        fti._updateProperty('filter_content_types', False)
         self.run_migration()
         self.assertEqual(self.portal.topic.portal_type, 'Collection')
         self.assertEqual(self.portal.topic.subtopic.portal_type, 'Collection')
