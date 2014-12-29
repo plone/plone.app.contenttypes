@@ -1,8 +1,5 @@
 .. contents::
 
-.. image:: http://jenkins.plone.org/job/kgs-plone.app.contenttypes-plone-5.0-python-2.7/badge/icon
-    :target: http://jenkins.plone.org/job/kgs-plone.app.contenttypes-plone-5.0-python-2.7/
-
 .. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
     :target: https://crate.io/packages/plone.app.contenttypes
 
@@ -17,27 +14,22 @@ Introduction
 ------------
 
 
-
-plone.app.contenttypes offers default content types for Plone based on Dexterity. This package replaces ``Products.ATContenttypes`` and will provide the default-types in Plone 5.
+plone.app.contenttypes provides default content types for Plone based on Dexterity. It replaces ``Products.ATContentTypes`` and provides the default-types in Plone 5. It can be used as an add-on in Plone 4.x.
 
 It contains the following types:
 
-* Folder
+* Collection
 * Document
-* News item
+* Event
 * File
+* Folder
 * Image
 * Link
-* Event (Using behaviors from plone.app.event)
-* Collection
+* News Item
 
 The main difference from a users perspective is that these types are extendable through-the-web. This means you can add or remove fields and behaviors using the control-panel "Dexterity Content Types" (``/@@dexterity-types``).
 
-The aim is to mimick the default-types as closely as possible.
-
-plone.app.contenttypes has been merged into the Plone 5.0 branch and will be shipped with the next Plone release: https://dev.plone.org/ticket/12344
-
-**Warning: Using plone.app.contenttypes on a site with existing content requires migrating the sites content. Please see the chapter "Migration". It can be used on a new site without problems.**
+**Warning: Using plone.app.contenttypes on a site with existing Archetypes-based content requires migrating the sites content. Please see the chapter "Migration".**
 
 
 Compatibility
@@ -53,7 +45,9 @@ The versions 1.2.x of the master-branch are compatible with Plone 5 and plone.ap
 Installation
 ------------
 
-Add this line in the eggs section of your ``buildout.cfg``
+This package is included in Plone 5 and does not need installation.
+
+To use plone.app.contenttypes in Plone 4.x add this line in the eggs section of your ``buildout.cfg``
 
 .. code:: ini
 
@@ -97,29 +91,27 @@ If you install plone.app.contenttypes on a fresh site (i.e. when no content has 
 Uninstalling
 ------------
 
-To remove plone.app.contenttypes and return full functionality to old content and restore the AT-based default-types you have to install the import step "Types Tool" of the current base profile. Follow the following steps:
+Uninstalling the default-types is not supported in Plone 5. If you really want to switch back to Archetypes-based types you have to to the following:
 
-* in the ZMI navigate to portal_setup and the tab "import"
-* in "Select Profile or Snapshot" leave "Current base profile (<Name of your Plonesite>)" selected. This is usually Products.CMFPlone
-* select the Types Tool (usually Step 44)
-* click "import selected steps"
+* Go to the ZMI
+* In portal_types delete the default-types
+* In portal_setup navigate to the tab 'import', select the profile 'Archetypes Content Types for Plone' and install all step including dependencies.
 
-Any content you created based on plone.app.contenttypes will not be editable until you reinstall plone.app.contenttypes.
-
+Any content you created based on plone.app.contenttypes will no longer be editable until you reinstall plone.app.contenttypes.
 
 
 Dependencies
 ------------
 
-* ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the correct version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://developer.plone.org/reference_manuals/external/plone.app.dexterity/install.html#installing-dexterity-on-older-versions-of-plone>`_.
+* ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the right version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://docs.plone.org/external/plone.app.dexterity/docs/install.html#installing-dexterity-on-older-versions-of-plone>`_.
 
 * ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the rss-views because plone.app.contenttypes uses behaviors for the richtext-fields.
 
-* ``plone.app.event >= 1.1b1``. This provides the behaviors used for the event-type.
+* ``plone.app.event >= 1.1.4``. This provides the behaviors used for the event-type.
 
 * ``plone.app.portlets >= 2.5a1``. In older version the event-portlet will not work with the new event-type.
 
-These are the version-pinns for Plone 4.3.3:
+These are the version-pinns for Plone 4.3.4:
 
 .. code:: ini
 
@@ -127,8 +119,9 @@ These are the version-pinns for Plone 4.3.3:
     versions = versions
 
     [versions]
-    plone.app.event = 1.1.1
-    plone.app.portlets = 2.5.1
+    plone.app.event = 1.1.4
+
+Plone 4.3.3 also needs ``plone.app.portlets = 2.5.2``
 
 Plone-versions before 4.3.3 need to pinn more packages:
 
@@ -156,7 +149,7 @@ For migrations to work you need at least ``Products.contentmigration = 2.1.9`` a
 Migrating Archetypes-based content to plone.app.contenttypes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-plone.app.contenttypes can migrate the following default types:
+plone.app.contenttypes can migrate the following archetypes-based default types:
 
 * Document
 * Event
@@ -166,6 +159,7 @@ plone.app.contenttypes can migrate the following default types:
 * Link
 * News Item
 * Collection
+* Topic (old Collections)
 
 The following non-default types will also be migrated:
 
@@ -174,13 +168,39 @@ The following non-default types will also be migrated:
 * The Event-type provided by plone.app.contenttypes until version 1.0
 * News Items with blobs (provoded by https://github.com/plone/plone.app.blob/pull/2)
 * Files and Images without blobs
-* AT-based collection provided by plone.app.collection
 
-Migrations that are coming in future versions:
 
-* from ATTopic to Collections
+Migrating Topics
+^^^^^^^^^^^^^^^^
 
-Please note that migrating versions of content is not supported. Only the current state of items is migrated without any content- or workflow-history.
+Topics are migrated to Collections. However, the old type Topic had support for Subtopics, a feature that does not exit in Collections. Subtopics are nested Topics that inherited search terms from their parents. Since Collections are not folderish (i.e. they cannot contain content) Subtopics cannot be migrated unless Collections are made folderish (i.e. that they can contain content). Also the feature that search terms can be inherited from parents does not exist for Collections.
+
+The migration-form will warn you if you have subtopics in your site and your Collections are not folderish. You then have several options:
+
+1. You can delete all Subtopics before migrating and achieve their functionality in another way (e.g. using eea.facetednavigation).
+2. You can choose to not migrate Topics by not selecting them. This will keep your old Topics functional. You can still add new Collections.
+3. You can modify Collections to be folderish or create your own folderish content-type.   That type would need a base-class that inherits from ``plone.dexterity.content.Container`` instead of ``plone.dexterity.content.Item``:
+
+   .. code-block:: python
+
+      from plone.app.contenttypes.behaviors.collection import ICollection
+      from plone.dexterity.content import Container
+      from zope.interface import implementer
+
+      @implementer(ICollection)
+      class FolderishCollection(Container):
+          pass
+
+   You can either use a new Collection type or simply modify the default type to use this new base-class by overriding the klass-attribute of the default Collection. To override add a ``Collection.xml`` in your own package:
+
+   .. code-block:: xml
+
+      <?xml version="1.0"?>
+      <object name="Collection" meta_type="Dexterity FTI">
+       <property name="klass">my.package.content.FolderishCollection</property>
+      </object>
+
+   If you really need it you could add the functionality to inherit search terms to your own folderish Collections by extending the behavior like in the example at https://github.com/plone/plone.app.contenttypes/commit/366cc1a911c81954645ec6aabce925df4a297c63
 
 
 Migrating content that is translated with LinguaPlone
@@ -213,9 +233,9 @@ Migrating custom content
 
 Custom content-types will not be touched by the migration plone.app.contenttypes and will continue to work as expected.
 
-Future versions of plone.app.contenttypes will have with a form that allows you to migrate old custom Archetypes-content to Dexterity (you'll have to create the Dexterity-types before) .
+Future versions of plone.app.contenttypes will have with a form that allows you to migrate old custom Archetypes-content to Dexterity (you'll still have to create the Dexterity-types before migrating).
 
-However if you'd like to migrate your content-types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
+If you want to migrate your custom types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
 
 
 Widgets
@@ -457,4 +477,5 @@ Contributors
 * David Glick <david@glicksoftware.com>
 * Kees Hink <keeshink@gmail.com>
 * Roman Kozlovskyi <krzroman@gmail.com>
-
+* Bogdan Girman <bogdan.girman@gmail.com>
+* Martin Opstad Reistadbakk <martin@blaastolen.com>

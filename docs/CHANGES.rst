@@ -4,10 +4,19 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Allow migrating Topics and Subtopics to folderish Collections.
+  [pbauer]
 
-- Consider portlets when migrating AT to DX (fixes #161)
+- Add migration from Topics to Collections (fixes #131).
+  [maurits, pbauer]
+
+- Add helpers and a form to update object with changed base class. Also
+  allows migrating from itemish to folderish.
+  [bogdangi, pbauer]
+
+- Keep portlets when migrating AT to DX (fixes #161)
   [frisi, gbastien, petschki]
+
 
 1.2a5 (2014-10-23)
 ------------------
