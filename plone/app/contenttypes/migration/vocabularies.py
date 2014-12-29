@@ -6,12 +6,14 @@ from Products.ATContentTypes.interfaces.folder import IATFolder
 from Products.ATContentTypes.interfaces.image import IATImage
 from Products.ATContentTypes.interfaces.link import IATLink
 from Products.ATContentTypes.interfaces.news import IATNewsItem
+from Products.ATContentTypes.interfaces.topic import IATTopic
 from Products.CMFCore.utils import getToolByName
 from plone.app.blob.interfaces import IATBlobFile
 from plone.app.blob.interfaces import IATBlobImage
 from plone.app.contenttypes import _
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.migration.topics import migrate_topics
 from zope.interface import implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
@@ -92,6 +94,13 @@ ATCT_LIST = {
         'extended_fields': ['file'],
         'type_name': 'File',
         'old_meta_type': 'ATBlob',
+    },
+    "Topic": {
+        'iface': IATTopic,
+        'migrator': migrate_topics,
+        'extended_fields': [],
+        'type_name': 'Collection',
+        'old_meta_type': 'ATTopic',
     },
 }
 

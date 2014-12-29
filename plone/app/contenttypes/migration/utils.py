@@ -100,7 +100,8 @@ def installTypeIfNeeded(type_name):
     if IDexterityFTI.providedBy(fti):
         # the dx-type is already installed
         return
-    tt.manage_delObjects(type_name)
+    if fti:
+        tt.manage_delObjects(type_name)
     tt.manage_addTypeInformation('Dexterity FTI', id=type_name)
     dx_fti = tt.getTypeInfo(type_name)
     ps = getToolByName(portal, 'portal_setup')

@@ -19,6 +19,7 @@ from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from z3c.form import button
@@ -461,6 +462,69 @@ class ATCTMigratorHelpers(BrowserView):
         """
         existing = queryUtility(ILocalBrowserLayerType, name='LinguaPlone')
         return bool(existing)
+
+    def site_has_subtopics(self):
+        """Check if there are subtopics. Since Collections are itemish by
+        default the migration of subtopics would fail Collections are changed
+        to be folderish.
+        """
+        catalog = getToolByName(self.context, "portal_catalog")
+        query = {'meta_type': 'ATTopic'}
+        results = []
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] = 'all'
+        brains = catalog(query)
+        for brain in brains:
+            for item in catalog(path={'query': brain.getPath(), 'depth': 1}):
+                results.append(item.getURL())
+        if results:
+            results = set(results)
+            paths = "\n".join(results)
+            logger.info("Found {0} subtopics at: \n{1}".format(
+                len(results), paths))
+            return results
+
+    def collections_are_folderish(self):
+        """Since Collections are itemish by default the migration would fail
+        if there are any subtopics. As a workaround we allow to migrate to
+        custom folderish Collections. The custom Collections have to fulfill
+        the following criteria:
+        1. The id if the type has to be Collection (not collection). You can
+           change a type's id in portal_types
+        2. The type has to have the collection-behavior.
+
+        This much can even be done ttw. For the views of collections
+        to work the base-class of the Collections also has to implement the
+        interface `plone.app.contenttypes.interfaces.ICollection`.
+
+        This is what such a class would look like:
+
+            from plone.app.contenttypes.behaviors.collection import ICollection
+            from plone.dexterity.content import Container
+            from zope.interface import implementer
+
+            @implementer(ICollection)
+            class FolderishCollection(Container):
+                pass
+
+        You can either use a completely new fti or overwrite the default fti
+        like this:
+
+            <?xml version="1.0"?>
+            <object name="Collection" meta_type="Dexterity FTI">
+             <property name="klass">my.package.content.FolderishCollection</property>
+            </object>
+
+        """
+        fti = queryUtility(IDexterityFTI, name="Collection")
+        if fti and fti.content_meta_type == "Dexterity Container":
+            return True
+        # test for lowercase ttw-type
+        fti = queryUtility(IDexterityFTI, name="collection")
+        behavior = 'plone.app.contenttypes.behaviors.collection.ICollection'
+        if fti and behavior in fti.behaviors:
+            logger.warn("You are trying to migrate topic to collection. "
+                "Instead you need a type 'Collection'.")
 
 
 class ATCTMigratorResults(BrowserView):
