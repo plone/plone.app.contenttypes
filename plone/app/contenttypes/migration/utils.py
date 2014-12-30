@@ -6,18 +6,24 @@ from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaModifier
+from copy import deepcopy
 from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.app.discussion.conversation import ANNOTATION_KEY
+from plone.app.discussion.interfaces import IConversation
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.portlets.interfaces import IPortletAssignmentMapping
 from plone.portlets.interfaces import IPortletManager
+from zope.annotation.interfaces import IAnnotations
 from zope.component import getGlobalSiteManager
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component.hooks import getSite
 
+import logging
 import os
 import pkg_resources
 
+logger = logging.getLogger(__name__)
 
 # Is there a multilingual addon?
 try:
@@ -117,3 +123,20 @@ def add_portlet(context, assignment, portlet_key, columnName):
     assignmentmapping = getMultiAdapter((context, column),
                                         IPortletAssignmentMapping)
     assignmentmapping[portlet_key] = assignment
+
+def move_comments(source_object, target_object):
+    """Move comments by copying the annotation to the target
+    and then removing the comments from the source (not the annotation).
+    """
+    source_annotations = IAnnotations(source_object)
+    comments = source_annotations.get(ANNOTATION_KEY, None)
+    if comments is not None:
+        target_annotations = IAnnotations(target_object)
+        if target_annotations.get(ANNOTATION_KEY, None) is not None:
+            logger.error('Comments exist on {0}').format(
+                target_object.absolute_url())
+        target_annotations[ANNOTATION_KEY] = deepcopy(comments)
+        source_conversation = IConversation(source_object)
+        for comment in source_conversation.getComments():
+            del source_conversation[comment.comment_id]
+        del source_annotations[ANNOTATION_KEY]

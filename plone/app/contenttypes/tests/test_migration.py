@@ -1387,6 +1387,54 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.failUnless('static-portlet' in get_portlets(dx_folder,
                                                          u'plone.rightcolumn'))
 
+    def test_comments_are_migrated(self):
+        """add some comments and check that it is correctly migrated.
+
+        XXX fixme : original comment id is not kept, comments are created
+        with new ids...
+        """
+        from zope.component import createObject
+        from plone.app.discussion.interfaces import IConversation
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+
+        # create an ATDocument
+        self.portal.invokeFactory('Document', 'document')
+        at_document = self.portal['document']
+        at_document.setText(u'Document with some comments')
+
+        # add some comments to the document
+        at_conversation = IConversation(at_document)
+        new_comment = createObject('plone.Comment')
+        new_comment.text = u"Hey Dude! Ä is not ascii."
+        at_conversation.addComment(new_comment)
+        at_comments = at_conversation.getComments()
+        at_comment = [i for i in at_comments][0]
+        at_plone_uuid = getattr(at_comment, '_plone.uuid')
+        at_comment_id = getattr(at_comment, 'comment_id')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+
+        dx_document = self.portal['document']
+
+        # no more comments on the portal
+        portal_conversation = IConversation(self.portal)
+        self.failIf(portal_conversation)
+        # comments were migrated
+        dx_conversation = IConversation(dx_document)
+        self.failUnless(len(dx_conversation) == 1)
+        dx_comments = dx_conversation.getComments()
+        dx_comment = [i for i in dx_comments][0]
+        dx_comment_id = getattr(dx_comment, 'comment_id')
+        self.assertEqual(dx_comment_id, at_comment_id)
+        dx_plone_uuid = getattr(dx_comment, '_plone.uuid')
+        self.assertEqual(dx_plone_uuid, at_plone_uuid)
+        self.assertEqual(
+            dx_comment.getText(),
+            '<p>Hey Dude! \xc3\x84 is not ascii.</p>')
+
 
 class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
 

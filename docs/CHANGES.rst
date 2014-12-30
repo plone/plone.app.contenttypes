@@ -4,6 +4,9 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Migrate comments created with plone.app.discussion.
+  [gbastien, pbauer]
+
 - Allow migrating Topics and Subtopics to folderish Collections.
   [pbauer]
 

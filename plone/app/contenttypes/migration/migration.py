@@ -21,6 +21,7 @@ from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
 from plone.app.contenttypes.migration.utils import add_portlet
+from plone.app.contenttypes.migration.utils import move_comments
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
@@ -271,6 +272,13 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
             "Migrating object {0}".format(
                 '/'.join(self.old.getPhysicalPath())))
 
+    def beforeChange_store_comments_on_portal(self):
+        """Comments from plone.app.discussion are lost when the
+           old object is renamed...
+           We save the comments in a safe place..."""
+        portal = getToolByName(self.old, 'portal_url').getPortalObject()
+        move_comments(self.old, portal)
+
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
         self.new.exclude_from_nav = field.get(self.old)
@@ -283,6 +291,13 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
 
     def migrate_portlets(self):
         migrate_portlets(self.old, self.new)
+
+    def last_migrate_comments(self):
+        """Migrate the plone.app.discussion comments.
+           Comments were stored on the portal, get them and
+           Copy the conversations from old to new object."""
+        portal = getToolByName(self.old, 'portal_url').getPortalObject()
+        move_comments(portal, self.new)
 
 
 class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
