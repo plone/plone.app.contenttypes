@@ -10,7 +10,6 @@
     tal:define="dummy python:request.set('disable_border', 1);
                 disable_column_two python:request.set('disable_plone.rightcolumn', 1);
                 disable_column_two python:request.set('disable_plone.leftcolumn', 1);
-                portal_state context/@@plone_portal_state;
                 portal_url portal_state/portal_url">
   <link rel="stylesheet" type="text/css" href="" media="screen" tal:attributes="href string:${portal_url}/++resource++pac_migrator.css">
 </metal:block>

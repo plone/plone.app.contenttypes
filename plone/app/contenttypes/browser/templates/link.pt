@@ -23,8 +23,8 @@
 
     <metal:content-core fill-slot="content-core">
         <metal:block define-macro="content-core">
-        <p tal:define="portal_url context/@@plone_portal_state/portal_url;
-                       navigation_root_url context/@@plone_portal_state/navigation_root_url;
+        <p tal:define="portal_url portal_state/portal_url;
+                       navigation_root_url portal_state/navigation_root_url;
                        url view/absolute_target_url">
             <span i18n:translate="link_address">The link address is:</span>
             <a href="#" tal:attributes="href url"

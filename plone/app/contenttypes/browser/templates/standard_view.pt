@@ -26,11 +26,11 @@
                              batch python:view.results(b_start=b_start);
                              site_properties context/portal_properties/site_properties;
                              use_view_action site_properties/typesUseViewActionInListings|python:();
-                             isAnon context/@@plone_portal_state/anonymous;
+                             isAnon portal_state/anonymous;
                              normalizeString nocall: context/plone_utils/normalizeString;
-                             toLocalizedTime nocall: context/@@plone/toLocalizedTime;
+                             toLocalizedTime nocall: plone_view/toLocalizedTime;
                              show_about python:not isAnon or site_properties.allowAnonymousViewAbout;
-                             navigation_root_url context/@@plone_portal_state/navigation_root_url;
+                             navigation_root_url portal_state/navigation_root_url;
                              pas_member context/@@pas_member;">
         <tal:listing condition="batch">
 
