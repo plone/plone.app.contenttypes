@@ -12,9 +12,10 @@
          tal:define="portal_state context/@@plone_portal_state;
                      context_state context/@@plone_context_state;
                      plone_view context/@@plone;
+                     plone_layout context/@@plone_layout;
                      lang portal_state/language;
                      view nocall:view | nocall: plone_view;
-                     dummy python: plone_view.mark_view(view);
+                     dummy python: plone_layout.mark_view(view);
                      portal_url portal_state/portal_url;
                      checkPermission nocall: context/portal_membership/checkPermission;
                      site_properties context/portal_properties/site_properties;
@@ -34,7 +35,7 @@
 
         <h2 class="headline">
             <a href="#" class="summary url" tal:content="context/Title"
-               tal:attributes="href python:test(item_type in use_view_action, item_url+'/view', item_url);">
+               tal:attributes="href python:item_url+'/view' if item_type in use_view_action else item_url;">
                Title or id
              </a>
         </h2>
@@ -65,7 +66,7 @@
 
         <p class="more" tal:condition="python:not(item_macro) or rendering_error">
             <a href=""
-               tal:attributes="href python: item_type in use_view_action and  item_url+'/view' or item_url;"
+               tal:attributes="href python: item_url+'/view' if item_type in use_view_action else item_url;"
                i18n:translate="read_more">
                 Read More&hellip;
             </a>

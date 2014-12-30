@@ -154,6 +154,14 @@
     />
 
   <browser:page
+    name="folder_full_view_item"
+    for="Products.CMFCore.interfaces._content.IContentish"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    template="templates/folder_full_view_item.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
     name="folder_summary_view"
     for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
