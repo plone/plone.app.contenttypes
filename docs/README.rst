@@ -137,13 +137,13 @@ Plone-versions before 4.3.3 need to pinn more packages:
     plone.app.event = 1.1b1
     plone.app.portlets = 2.5.1
 
+For migrations to work you need at least ``Products.contentmigration = 2.1.9`` and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
+
 
 Migration
 ---------
 
 To migrate your existing content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
-
-For migrations to work you need at least ``Products.contentmigration = 2.1.9`` and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
 
 
 Migrating Archetypes-based content to plone.app.contenttypes
@@ -168,6 +168,18 @@ The following non-default types will also be migrated:
 * The Event-type provided by plone.app.contenttypes until version 1.0
 * News Items with blobs (provoded by https://github.com/plone/plone.app.blob/pull/2)
 * Files and Images without blobs
+
+The migration tries to keep most features (including portlets, comments and local roles). The following features are **not** migrated:
+
+* **Content-rules:** Rules assigned to content are not migrated. Rules assigned at the site itself are kept.
+* **Local workflows:** Workflows-assignments to content using CMFPlacefulWorkflow are not migrated.
+* **Versions:** During migration you will lose all old revisions.
+
+
+Migrating only certain types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There is also a view ``/@@pac_installer`` that allows you to install plone.app.contenttypes without replacing those archetypes-types with the dexterity-types of which there are existing objects in the site. Afterwards it redirects to the migration-form and only the types that you chose to migrate are installed. This allows you to keep certain types as archetypes while migrating others to dexterity (for example if you did heavy customizations of these types and do not have the time to reimplement these features in dexterity.
 
 
 Migrating Topics
