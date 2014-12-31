@@ -84,7 +84,7 @@
         <p><a i18n:translate="" href="https://pypi.python.org/pypi/plone.app.contenttypes#migration">See here for details.</a></p>
         <p i18n:translate="">Your subtopics:</p>
         <ul>
-          <li tal:repeat="subtopic subtopics"><a href="" target="_new" tal:attributes="href subtopic" tal:content="subtopic"></li>
+          <li tal:repeat="subtopic subtopics"><a href="" target="_new" tal:attributes="href subtopic" tal:content="subtopic"></a></li>
         </ul>
       </div>
     </tal:block>
