@@ -21,6 +21,7 @@ from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
 from plone.app.contenttypes.migration.utils import add_portlet
+from plone.app.contenttypes.migration.utils import copy_contentrules
 from plone.app.contenttypes.migration.utils import move_comments
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
@@ -41,8 +42,8 @@ from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.intid.interfaces import IIntIds
-import logging
 
+import logging
 logger = logging.getLogger(__name__)
 
 
@@ -292,6 +293,9 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
     def migrate_portlets(self):
         migrate_portlets(self.old, self.new)
 
+    def migrate_contentrules(self):
+        copy_contentrules(self.old, self.new)
+
     def last_migrate_comments(self):
         """Migrate the plone.app.discussion comments.
            Comments were stored on the portal, get them and
@@ -321,6 +325,9 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
 
     def migrate_portlets(self):
         migrate_portlets(self.old, self.new)
+
+    def migrate_contentrules(self):
+        copy_contentrules(self.old, self.new)
 
 
 class DocumentMigrator(ATCTContentMigrator):

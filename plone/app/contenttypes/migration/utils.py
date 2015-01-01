@@ -7,9 +7,11 @@ from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaModifier
 from copy import deepcopy
+from plone.app.contentrules.api import assign_rule
 from plone.app.contenttypes.utils import DEFAULT_TYPES
-from plone.app.discussion.conversation import ANNOTATION_KEY
+from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
 from plone.app.discussion.interfaces import IConversation
+from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.portlets.interfaces import IPortletAssignmentMapping
 from plone.portlets.interfaces import IPortletManager
@@ -129,14 +131,28 @@ def move_comments(source_object, target_object):
     and then removing the comments from the source (not the annotation).
     """
     source_annotations = IAnnotations(source_object)
-    comments = source_annotations.get(ANNOTATION_KEY, None)
+    comments = source_annotations.get(DISCUSSION_KEY, None)
     if comments is not None:
         target_annotations = IAnnotations(target_object)
-        if target_annotations.get(ANNOTATION_KEY, None) is not None:
+        if target_annotations.get(DISCUSSION_KEY, None) is not None:
             logger.error('Comments exist on {0}').format(
                 target_object.absolute_url())
-        target_annotations[ANNOTATION_KEY] = deepcopy(comments)
+        target_annotations[DISCUSSION_KEY] = deepcopy(comments)
         source_conversation = IConversation(source_object)
         for comment in source_conversation.getComments():
             del source_conversation[comment.comment_id]
-        del source_annotations[ANNOTATION_KEY]
+        del source_annotations[DISCUSSION_KEY]
+
+def copy_contentrules(source_object, target_object):
+    """Copy contentrules.
+    """
+    source_assignable = IRuleAssignmentManager(source_object, None)
+    if source_assignable is not None:
+        try:
+            IRuleAssignmentManager(target_object)
+        except TypeError:
+            logger.info("Cound not migrate contentrule to {0}".format(
+                target_object.absolute_url()))
+            return
+        for rule_id in source_assignable:
+            assign_rule(target_object, rule_id)
