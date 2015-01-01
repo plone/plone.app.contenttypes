@@ -169,11 +169,10 @@ The following non-default types will also be migrated:
 * News Items with blobs (provoded by https://github.com/plone/plone.app.blob/pull/2)
 * Files and Images without blobs
 
-The migration tries to keep most features (including portlets, comments and local roles). The following features are **not** migrated:
+The migration tries to keep most features (including portlets, comments, local roles and local workflows). The following features are **not** migrated:
 
-* **Content-rules:** Rules assigned to content are not migrated. Rules assigned at the site itself are kept.
-* **Local workflows:** Workflows-assignments to content using CMFPlacefulWorkflow are not migrated.
 * **Versions:** During migration you will lose all old revisions.
+* **Content-rules:** Rules assigned to content are not migrated. Rules assigned at the site itself are kept.
 
 
 Migrating only certain types
