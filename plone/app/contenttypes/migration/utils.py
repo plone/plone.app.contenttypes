@@ -151,7 +151,7 @@ def copy_contentrules(source_object, target_object):
         try:
             IRuleAssignmentManager(target_object)
         except TypeError:
-            logger.info("Cound not migrate contentrule to {0}".format(
+            logger.info("Cound not assign contentrules to {0}".format(
                 target_object.absolute_url()))
             return
         for rule_id in source_assignable:
