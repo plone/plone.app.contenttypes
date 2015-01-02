@@ -23,6 +23,7 @@ from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
 from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.contenttypes.migration.utils import copy_contentrules
 from plone.app.contenttypes.migration.utils import move_comments
+from plone.app.contenttypes.migration.utils import migrate_leadimage
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
@@ -296,6 +297,9 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
     def migrate_contentrules(self):
         copy_contentrules(self.old, self.new)
 
+    def migrate_leadimage(self):
+        migrate_leadimage(self.old, self.new)
+
     def last_migrate_comments(self):
         """Migrate the plone.app.discussion comments.
            Comments were stored on the portal, get them and
@@ -335,6 +339,9 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
 
     def migrate_contentrules(self):
         copy_contentrules(self.old, self.new)
+
+    def migrate_leadimage(self):
+        migrate_leadimage(self.old, self.new)
 
     def last_migrate_comments(self):
         """Migrate the plone.app.discussion comments.
