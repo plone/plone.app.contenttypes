@@ -65,7 +65,11 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         pass
 
     def test_bbb_selectedViewFields(self):
-        self.assertEqual(self.collection.selectedViewFields(), [])
+        self.assertEqual(
+            self.collection.selectedViewFields(),
+            [('Title', 'Title'), ('Creator', 'Creator'),
+             ('Type', 'Type'), ('ModificationDate', 'ModificationDate')]
+        )
         self.collection.customViewFields = ['Title', 'Description']
         self.assertEqual(self.collection.selectedViewFields(),
                          [('Title', 'Title'), ('Description', 'Description')])
