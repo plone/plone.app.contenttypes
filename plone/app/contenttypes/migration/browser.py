@@ -9,8 +9,14 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from datetime import timedelta
-from plone.app.contenttypes.migration import migration
+from plone.app.contenttypes.content import Document
+from plone.app.contenttypes.content import File
+from plone.app.contenttypes.content import Folder
+from plone.app.contenttypes.content import Image
+from plone.app.contenttypes.content import Link
+from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.migration import dxmigration
+from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
@@ -31,20 +37,18 @@ from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import Interface
+
 import logging
+import pkg_resources
+
+try:
+    pkg_resources.get_distribution('collective.contentleadimage')
+except pkg_resources.DistributionNotFound:
+    HAS_CONTENTLEADIMAGE = False
+else:
+    HAS_CONTENTLEADIMAGE = True
 
 logger = logging.getLogger(__name__)
-
-# Schema Extender allowed interfaces
-
-from plone.app.contenttypes.content import (
-    Document,
-    File,
-    Folder,
-    Image,
-    Link,
-    NewsItem,
-)
 
 PATCH_NOTIFY = [
     DexterityContent,
@@ -525,6 +529,28 @@ class ATCTMigratorHelpers(BrowserView):
         if fti and behavior in fti.behaviors:
             logger.warn("You are trying to migrate topic to collection. "
                 "Instead you need a type 'Collection'.")
+
+    def has_contentleadimage(self):
+        return HAS_CONTENTLEADIMAGE
+
+    def installed_types(self):
+        """Which types are already Dexterity and which are not."""
+        results = {}
+        results['installed_with_behavior'] = []
+        results['installed_without_behavior'] = []
+        results['not_installed'] = []
+        behavior = 'plone.app.contenttypes.behaviors.leadimage.ILeadImage'
+        portal_types = getToolByName(self.context, 'portal_types')
+        for type_name in DEFAULT_TYPES:
+            fti = queryUtility(IDexterityFTI, name=type_name)
+            if fti:
+                if behavior in fti.behaviors:
+                    results['installed_with_behavior'].append(type_name)
+                else:
+                    results['installed_without_behavior'].append(type_name)
+            else:
+                results['not_installed'].append(type_name)
+        return results
 
 
 class ATCTMigratorResults(BrowserView):
