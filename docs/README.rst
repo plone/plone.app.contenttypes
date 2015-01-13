@@ -222,7 +222,7 @@ Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlon
 Migrating from old versions of plone.app.contenttypes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Before version 1.0a2 the content-items did not implement marker-interfaces.  They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
+Before version 1.0a2 the content-items did not implement marker-interfaces. They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
 
 Since plone.app.contenttypes 1.1a1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
 
@@ -233,9 +233,17 @@ Since plone.app.contenttypes 1.1a1, the Collection type uses the new Collection 
 Migrating default-content that was extended with archetypes.schemaextender
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The migration should warn you if any of your types are extended with archetypes.schemaextender. The data contained in these fields will be lost.
+The migration-form warns you if any of your old types were extended with aditional fields using archetypes.schemaextender. The data contained in these fields will be lost during migration (with the exception of images added with collective.contentleadimage).
 
-You need to implement a custom migration for your types and dexterity-behaviors for the functionality provided by the schemaextenders. This is an advanced development task and beyond the scope of this documentation.
+To keep the data you would need to write a custom migration for your types dexterity-behaviors for the functionality provided by the schemaextenders. This is an advanced development task and beyond the scope of this documentation.
+
+
+Migrating images created with collective.contentleadimage
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`collective.contentleadimage <https://pypi.python.org/pypi/collective.contentleadimage/>`_ was a popular addon that allows you to add images to any content in your site by extending the default types. To make sure these images are kept during migration you have to enable the behavior "Lead Image" on all those types where you want to migrate images added using collective.contentleadimage.
+
+The old types that use leadimages are listed in the navigation-form with the comment *"extended fields: 'leadImage', 'leadImage_caption'"*. The migration-form informs you which new types have the behavior enabled and which do not. Depending on the way you installed plone.app.contenttypes you might have to first install these types by (re-)installing plone.app.contenttypes.
 
 
 Migrating custom content
