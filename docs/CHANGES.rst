@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Add ``event_listing`` to available view methods for the Folder and Collection
+  types.
+  [thet]
+
 - Migrate comments created with plone.app.discussion.
   [gbastien, pbauer]
 

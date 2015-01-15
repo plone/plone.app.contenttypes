@@ -19,6 +19,7 @@
   <element value="folder_tabular_view"/>
   <element value="folder_album_view"/>
   <element value="folder_listing"/>
+  <element value="event_listing"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">plone.app.contenttypes.addFolder</property>
