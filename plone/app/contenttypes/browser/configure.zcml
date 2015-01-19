@@ -117,6 +117,7 @@
     name="file_view"
     for="plone.app.contenttypes.interfaces.IFile"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".file.FileView"
     template="templates/file.pt"
     permission="zope2.View"
     menu="plone_displayviews"

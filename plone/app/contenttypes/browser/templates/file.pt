@@ -11,10 +11,10 @@
     <metal:content-core fill-slot="content-core">
         <metal:block define-macro="content-core"
                      tal:define="content_type context/file/contentType|nothing;
-                                 v python:context.restrictedTraverse('contenttype_utils');">
+                                 download_url string:${context/absolute_url}/@@download/file/${context/file/filename}">
             <p>
-                <a tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}">
-                    <img tal:attributes="src python: v.getMimeTypeIcon(context.file);
+                <a tal:attributes="href download_url">
+                    <img tal:attributes="src view/get_mimetype_icon;
                                          alt content_type;" border="0"  />
                     <tal:name tal:content="context/file/filename" >Filename</tal:name>
                 </a>
@@ -23,6 +23,14 @@
                                   kb python:size/1024">
                       &mdash; <span tal:replace="kb" /> KB</span>
             </p>
+
+            <video tal:condition="view/is_videotype" controls="controls">
+              <source tal:attributes="src download_url; type content_type"></source>
+            </video>
+
+            <audio tal:condition="view/is_audiotype" controls="controls">
+              <source tal:attributes="src download_url; type content_type"></source>
+            </audio>
 
             <div tal:condition="python: content_type.startswith('text')">
                 <h2 i18n:translate="heading_file_contents">File contents</h2>
