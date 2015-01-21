@@ -4,6 +4,11 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- In the file view, render HTML5 ``<audio>`` or ``<video>`` tags for audio
+  respectively video file types. Ancient browsers, which do not support that,
+  just don't render these tags.
+  [thet]
+
 - Add ``event_listing`` to available view methods for the Folder and Collection
   types.
   [thet]
