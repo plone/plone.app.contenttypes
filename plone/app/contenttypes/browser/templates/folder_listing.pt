@@ -35,6 +35,7 @@
                         site_properties context/portal_properties/site_properties;
                         use_view_action site_properties/typesUseViewActionInListings|python:();
                         Batch python:modules['Products.CMFPlone'].Batch;
+                        plone_layout context/@@plone_layout;
                         b_start python:request.get('b_start', 0);
                         batch python:isinstance(folderContents, Batch) and folderContents or Batch(folderContents, limit_display or 100, int(b_start), orphan=1);
                         isAnon portal_state/anonymous;
