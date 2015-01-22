@@ -13,6 +13,15 @@ Changelog
   types.
   [thet]
 
+- Add migration for images added with collective.contentleadimage.
+  [pbauer]
+
+- Add migration for contentrules.
+  [pbauer]
+
+- Fix folder_full_view_item and allow overriding with jbot (fix #162).
+  [pbauer]
+
 - Migrate comments created with plone.app.discussion.
   [gbastien, pbauer]
 
