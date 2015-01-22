@@ -225,6 +225,7 @@ class ChangedBaseClasses(object):
         return SimpleVocabulary(
             [SimpleVocabulary.createTerm(
                 class_name, class_name,
-                '{0} ({1})'.format(class_name, list_of_class_names[class_name]))
+                '{0} ({1})'.format(
+                    class_name, list_of_class_names[class_name]))
              for class_name in list_of_class_names.keys()]
         )

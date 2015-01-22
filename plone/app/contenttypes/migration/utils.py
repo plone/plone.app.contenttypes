@@ -129,6 +129,7 @@ def add_portlet(context, assignment, portlet_key, columnName):
                                         IPortletAssignmentMapping)
     assignmentmapping[portlet_key] = assignment
 
+
 def move_comments(source_object, target_object):
     """Move comments by copying the annotation to the target
     and then removing the comments from the source (not the annotation).
@@ -146,6 +147,7 @@ def move_comments(source_object, target_object):
             del source_conversation[comment.comment_id]
         del source_annotations[DISCUSSION_KEY]
 
+
 def copy_contentrules(source_object, target_object):
     """Copy contentrules.
     """
@@ -159,6 +161,7 @@ def copy_contentrules(source_object, target_object):
             return
         for rule_id in source_assignable:
             assign_rule(target_object, rule_id)
+
 
 def migrate_leadimage(source_object, target_object):
     """ Migrate images added using collective.contentleadimage to the

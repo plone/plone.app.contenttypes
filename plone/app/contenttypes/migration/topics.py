@@ -9,7 +9,6 @@ the default migration to migrate Topics with Subtopics.
 """
 
 from DateTime import DateTime
-from Products.CMFCore.interfaces._content import IFolderish
 from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.inplace import InplaceCMFFolderMigrator
 from Products.contentmigration.inplace import InplaceCMFItemMigrator
@@ -30,8 +29,8 @@ prefix = "plone.app.querystring"
 
 INVALID_OPERATION = 'Invalid operation %s for criterion: %s'
 
-# Converters
 
+# Converters
 class CriterionConverter(object):
 
     # Last part of the code for the dotted operation method,
@@ -536,7 +535,6 @@ class TopicMigrator(InplaceCMFItemMigrator, ReferenceMigrator):
         if self._collection_query is not None:
             adapted.query = self._collection_query
 
-
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
         self.new.exclude_from_nav = field.get(self.old)
@@ -648,7 +646,6 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator, ReferenceMigrator):
             adapted.sort_on = self._collection_sort_on
         if self._collection_query is not None:
             adapted.query = self._collection_query
-
 
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
