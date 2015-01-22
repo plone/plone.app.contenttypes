@@ -67,4 +67,4 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
         toc_ctl.value = [u"selected"]
         # Submit form
         self.browser.getControl('Save').click()
-        self.assertTrue('<section id="document-toc"' in self.browser.contents)
+        self.assertTrue(' id="document-toc"' in self.browser.contents)

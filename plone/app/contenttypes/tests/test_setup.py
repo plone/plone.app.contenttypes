@@ -39,8 +39,7 @@ class PloneAppContenttypesSetupTest(unittest.TestCase):
         )
 
     def test_css_registered(self):
-        resreg = getattr(self.portal, 'portal_registry')
-        from Products.CMFPlone.interfaces import IResourceRegistry
-        resources_ids = resreg.collectionOfInterface(IResourceRegistry, prefix="plone.resources").keys()
+        cssreg = getattr(self.portal, 'portal_css')
+        stylesheets_ids = cssreg.getResourceIds()
         self.assertTrue(
-            'resource-collection-css' in resources_ids)
+            '++resource++collection.css' in stylesheets_ids)

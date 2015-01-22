@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 import os
 
-version = '1.2b1.dev0'
+version = '1.1b4.dev0'
 
 
 def read(*rnames):
@@ -39,14 +39,17 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
-          'plone.app.event >= 2.0a4',
-          'plone.app.dexterity >= 2.0.7',  # has a fix for INameFromFilename
+          'plone.app.event [dexterity] < 1.1.999',
+          'plone.app.dexterity < 2.1.0',  # before Plone 5
           'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
+          'plone.formwidget.querystring',
           'plone.app.relationfield',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
           'pytz',
+          'Products.CMFQuickInstallerTool >= 3.0.7',  # allow blacklisting steps
+          'Products.GenericSetup >= 1.7.5',  # allow blacklisting steps
       ],
       extras_require={
           'test': [

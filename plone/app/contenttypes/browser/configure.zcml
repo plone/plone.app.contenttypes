@@ -273,4 +273,7 @@
       />
   </configure>
 
+  <!-- Query string widget -->
+  <adapter factory=".widgets.QueryStringFieldWidget" />
+
 </configure>

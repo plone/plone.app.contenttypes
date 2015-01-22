@@ -103,21 +103,21 @@ def migrate_album_view(context):
             obj.setLayout('folder_album_view')
 
 
-def enable_shortname_behavior(context):
-    """Add IShortName to all types."""
+# def enable_shortname_behavior(context):
+#     """Add IShortName to all types."""
 
-    behavior = 'plone.app.dexterity.behaviors.id.IShortName'
-    for type_id in DEFAULT_TYPES:
-        fti = queryUtility(
-            IDexterityFTI,
-            name=type_id
-        )
-        if fti is None:
-            continue
+#     behavior = 'plone.app.dexterity.behaviors.id.IShortName'
+#     for type_id in DEFAULT_TYPES:
+#         fti = queryUtility(
+#             IDexterityFTI,
+#             name=type_id
+#         )
+#         if fti is None:
+#             continue
 
-        if behavior in fti.behaviors:
-            continue
-        behaviors = list(fti.behaviors)
-        behaviors.append(behavior)
-        behaviors = tuple(behaviors)
-        fti._updateProperty('behaviors', behaviors)
+#         if behavior in fti.behaviors:
+#             continue
+#         behaviors = list(fti.behaviors)
+#         behaviors.append(behavior)
+#         behaviors = tuple(behaviors)
+#         fti._updateProperty('behaviors', behaviors)

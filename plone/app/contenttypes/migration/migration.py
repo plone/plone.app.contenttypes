@@ -525,6 +525,15 @@ class CollectionMigrator(DocumentMigrator):
     dst_portal_type = 'Collection'
     dst_meta_type = None  # not used
 
+    view_methods_mapping = {
+        'folder_listing': 'standard_view',
+        'folder_summary_view': 'summary_view',
+        'folder_full_view': 'all_content',
+        'folder_tabular_view': 'tabular_view',
+        'atct_album_view': 'thumbnail_view',
+        'atct_topic_view': 'standard_view',
+        }
+
     def migrate_schema_fields(self):
         # migrate the richtext
         super(CollectionMigrator, self).migrate_schema_fields()
@@ -536,6 +545,14 @@ class CollectionMigrator(DocumentMigrator):
         wrapped.sort_reversed = self.old.sort_reversed
         wrapped.limit = self.old.limit
         wrapped.customViewFields = self.old.customViewFields
+
+    def last_migrate_layout(self):
+        """Migrate the layout (view method).
+        """
+        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        layout = self.view_methods_mapping.get(old_layout)
+        if layout:
+            self.new.setLayout(layout)
 
 
 def migrate_collections(portal):

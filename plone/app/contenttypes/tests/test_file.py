@@ -145,6 +145,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.assertTrue('My file' in self.browser.contents)
         self.assertTrue('This is my file' in self.browser.contents)
 
+    @unittest.skip("IShortName not available")
     def test_shortname_file(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()

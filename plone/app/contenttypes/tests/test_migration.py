@@ -1529,8 +1529,8 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
         self.browser.getLink('Page').click()
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
             .value = "My item"
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "item"
+        # self.browser.getControl(name='form.widgets.IShortName.id')\
+        #     .value = "item"
         self.browser.getControl('Save').click()
 
         # Change Document conent type to folderish

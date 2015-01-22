@@ -104,9 +104,10 @@ class FixBaseclassesTest(unittest.TestCase):
         tt.manage_addTypeInformation(
             'Factory-based Type Information with dynamic views',
             id='Document')
-        applyProfile(
-            self.portal,
-            'plone.app.contenttypes:default',
+        setupTool = self.portal['portal_setup']
+        profileId = 'profile-plone.app.contenttypes:default'
+        setupTool.runAllImportStepsFromProfile(
+            profileId,
             blacklisted_steps=['typeinfo'])
         fti = tt.getTypeInfo('Document')
         self.assertFalse(IDexterityFTI.providedBy(fti))
