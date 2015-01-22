@@ -1293,7 +1293,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         results = migration_view()
         self.assertIn('@@migrate_from_atct?migrate=1', results)
 
-
     def test_portlets_are_migrated(self):
         """add portlets and see if they're still available on the migrated
         content including portlet settings.
@@ -1350,7 +1349,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # add a portlet to the folder
         portlet2 = StaticAssignment(u"Sample Folder Portlet",
-                                   "<p>Do I get migrated?</p>")
+                                    "<p>Do I get migrated?</p>")
         add_portlet(at_folder, portlet2, 'static-portlet',
                     u'plone.rightcolumn')
 
@@ -1473,14 +1472,16 @@ class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
             migrate_base_class_to_new_class
         migrate_base_class_to_new_class(self.portal.item)
         self.portal.item.invokeFactory('Document', 'doc')
-        self.assertEqual(len(self.portal.item.folderlistingFolderContents()), 1)
+        self.assertEqual(
+            len(self.portal.item.folderlistingFolderContents()), 1)
 
     def test_dxmigration_migrate_list_of_objects_with_changed_base_class(self):
         """Check list of objects with changed classes."""
         from plone.app.contenttypes.migration.dxmigration import \
             list_of_objects_with_changed_base_class
         # We have already one changed object
-        objects = [i for i in list_of_objects_with_changed_base_class(self.portal)]
+        objects = [i for i in
+                   list_of_objects_with_changed_base_class(self.portal)]
         self.assertEqual(len(objects), 1)
 
     def test_dxmigration_migrate_list_of_changed_base_class_names(self):

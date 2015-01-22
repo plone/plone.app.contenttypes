@@ -516,7 +516,8 @@ class ATCTMigratorHelpers(BrowserView):
 
             <?xml version="1.0"?>
             <object name="Collection" meta_type="Dexterity FTI">
-             <property name="klass">my.package.content.FolderishCollection</property>
+             <property name="klass">my.package.content.FolderishCollection
+             </property>
             </object>
 
         """
@@ -528,7 +529,7 @@ class ATCTMigratorHelpers(BrowserView):
         behavior = 'plone.app.contenttypes.behaviors.collection.ICollection'
         if fti and behavior in fti.behaviors:
             logger.warn("You are trying to migrate topic to collection. "
-                "Instead you need a type 'Collection'.")
+                        "Instead you need a type 'Collection'.")
 
     def has_contentleadimage(self):
         return HAS_CONTENTLEADIMAGE
@@ -540,7 +541,6 @@ class ATCTMigratorHelpers(BrowserView):
         results['installed_without_behavior'] = []
         results['not_installed'] = []
         behavior = 'plone.app.contenttypes.behaviors.leadimage.ILeadImage'
-        portal_types = getToolByName(self.context, 'portal_types')
         for type_name in DEFAULT_TYPES:
             fti = queryUtility(IDexterityFTI, name=type_name)
             if fti:

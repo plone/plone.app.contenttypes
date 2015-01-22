@@ -63,7 +63,7 @@ def migrate_portlets(src_obj, dst_obj):
     """
 
     # also take custom portlet managers into account
-    managers = [reg.name for reg in getSiteManager().registeredUtilities() \
+    managers = [reg.name for reg in getSiteManager().registeredUtilities()
                 if reg.provided == IPortletManager]
     # faster, but no custom managers
     # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
@@ -86,7 +86,8 @@ def migrate_portlets(src_obj, dst_obj):
             if not hasattr(assignment, '__Broken_state__'):
                 add_portlet(dst_obj, assignment, key, manager)
             else:
-                logger.warn(u'skipping broken portlet assignment {0} for manager {1}'.format(key, manager))
+                logger.warn(u'skipping broken portlet assignment {0} '
+                            'for manager {1}'.format(key, manager))
 
 
 def refs(obj):

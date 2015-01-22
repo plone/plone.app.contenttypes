@@ -6,8 +6,6 @@ from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
 from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
-from plone.dexterity.content import Container
-from plone.dexterity.content import Item
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone

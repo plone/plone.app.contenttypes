@@ -17,8 +17,8 @@ import unittest
 
 @implementer(ICollection)
 class FolderishCollection(Container):
-   """Test subclass for folderish ``Collections``.
-   """
+    """Test subclass for folderish ``Collections``.
+    """
 
 
 class MigrateTopicsIntegrationTest(unittest.TestCase):
@@ -102,7 +102,8 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         # the content_meta_type attribute when klass has changed
         fti._updateProperty(
             'klass',
-            'plone.app.contenttypes.tests.test_migration_topic.FolderishCollection')
+            'plone.app.contenttypes.tests.test_migration_topic.'
+            'FolderishCollection')
         fti._updateProperty('allowed_content_types', ['Document', 'Folder'])
         fti._updateProperty('filter_content_types', False)
         self.run_migration()
