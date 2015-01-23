@@ -8,19 +8,47 @@
 
 <body>
 
-    <metal:content-core fill-slot="content-core">
-        <metal:block define-macro="listing" extend-macro="context/folder_listing/macros/content-core">
-            <!-- we don't want the dl -->
-            <metal:entries fill-slot="entries">
-                <metal:block use-macro="context/folder_listing/macros/entries">
-                    <metal:entry fill-slot="entry">
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core">
+
+    <div metal:define-macro="text-field-view"
+         id="parent-fieldname-text" class="stx"
+         tal:define="text view/text"
+         tal:condition="text"
+         tal:attributes="class view/text_class">
+        <div metal:define-slot="inside" tal:replace="structure text">The body</div>
+    </div>
+
+    <tal:foldercontents define="batch view/batch">
+    <tal:listing condition="batch">
+
+
+        <ul>
+            <li tal:repeat="item batch">
+            <tal:block tal:define="item_url item/getURL;
+                                   item_id item/getId;
+                                   item_title item/Title;
+                                   item_description item/Description;
+                                   item_type item/PortalType;
+                                   item_modified item/ModificationDate;
+                                   item_created item/CreationDate;
+                                   item_icon item/getIcon;
+                                   item_type_class python:'contenttype-' + view.normalizeString(item_type);
+                                   item_wf_state item/review_state;
+                                   item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
+                                   item_creator item/Creator;
+                                   item_start item/start|nothing;
+                                   item_end item/end|nothing;
+                                   item_sametime python: item_start == item_end;
+                                   item_samedate python: (item_end - item_start &lt; 1) if item_type == 'Event' else False">
+
                 <div class="tileItem visualIEFloatFix"
                      tal:define="item_object item/getObject;">
 
                     <a href="#"
                        tal:define="real_object python:item_object.aq_explicit"
                        tal:condition="python:getattr(real_object, 'image', None)"
-                       tal:attributes="href python: item_type in use_view_action and item_url+'/view' or item_url">
+                       tal:attributes="href python: item_type in view.use_view_action and item_url+'/view' or item_url">
                         <img tal:define="images item_object/@@images;
                                          scale python: images.scale('image', scale='thumb')"
                              tal:condition="scale"
@@ -33,14 +61,14 @@
 
                         <a href="#"
                            class="summary url"
-                           tal:attributes="href python: item_type in use_view_action and item_url+'/view' or item_url;"
-                           tal:content="item_title_or_id">
+                           tal:attributes="href python: item_type in view.use_view_action and item_url+'/view' or item_url;"
+                           tal:content="item_title">
                             Item Title
                         </a>
 
                     </h2>
 
-                    <div class="documentByLine" tal:condition="python: site_properties.allowAnonymousViewAbout or not isAnon">
+                    <div class="documentByLine" tal:condition="python: view.site_properties.allowAnonymousViewAbout or not view.isAnon">
                     <tal:event condition="python: item_type == 'Event'">
                         <span tal:condition="python: item_type == 'Event' and item.location"
                               i18n:translate="label_event_byline_with_location">
@@ -49,11 +77,11 @@
                                    i18n:name="location">Oslo</span>, from
                              <abbr class="dtstart"
                                    tal:attributes="title python:item_start"
-                                   tal:content="python:toLocalizedTime(item_start,long_format=1)"
+                                   tal:content="python:view.toLocalizedTime(item_start,long_format=1)"
                                    i18n:name="start">from date</abbr> to
                              <abbr class="dtend"
                                    tal:attributes="title python:item_end"
-                                   tal:content="python:toLocalizedTime(item_end,long_format=1)"
+                                   tal:content="python:view.toLocalizedTime(item_end,long_format=1)"
                                    i18n:name="end">to date</abbr>)
                         </span>
                         <span tal:condition="python: item_type == 'Event' and not item.location"
@@ -61,11 +89,11 @@
                             (from
                              <abbr class="dtstart"
                                    tal:attributes="title python:item_start"
-                                   tal:content="python:toLocalizedTime(item_start,long_format=1)"
+                                   tal:content="python:view.toLocalizedTime(item_start,long_format=1)"
                                    i18n:name="start">from date</abbr> to
                              <abbr class="dtend"
                                    tal:attributes="title python:item_end"
-                                   tal:content="python:toLocalizedTime(item_end,long_format=1)"
+                                   tal:content="python:view.toLocalizedTime(item_end,long_format=1)"
                                    i18n:name="end">to date</abbr>)
                         </span>
                     </tal:event>
@@ -75,7 +103,7 @@
                           <span class="documentAuthor" i18n:translate="label_by_author">
                             by
                           <a href="#"
-                             tal:attributes="href string:${navigation_root_url}/author/${item_creator}"
+                             tal:attributes="href string:${view/navigation_root_url}/author/${item_creator}"
                              tal:content="author/name_or_id"
                              tal:omit-tag="not:author"
                              i18n:name="author">
@@ -103,7 +131,7 @@
 
                     <p class="tileFooter">
                         <a href=""
-                           tal:attributes="href python: item_type in use_view_action and item_url+'/view' or item_url;"
+                           tal:attributes="href python: item_type in view.use_view_action and item_url+'/view' or item_url;"
                            i18n:translate="read_more">
                         Read More&hellip;
                         </a>
@@ -112,11 +140,26 @@
                     <div class="visualClear"><!-- --></div>
 
                 </div>
-                    </metal:entry>
-                </metal:block>
-            </metal:entries>
-        </metal:block>
-    </metal:content-core>
+
+            </tal:block>
+            </li>
+        </ul>
+
+        <div metal:use-macro="context/batch_macros/macros/navigation" />
+
+    </tal:listing>
+    <metal:empty metal:define-slot="no_items_in_listing">
+        <p class="discreet"
+           tal:condition="not: view/folderContents"
+           i18n:translate="description_no_items_in_folder">
+            There are currently no items in this folder.
+        </p>
+    </metal:empty>
+
+    </tal:foldercontents>
+
+</metal:block>
+</metal:content-core>
 
 </body>
 </html>
