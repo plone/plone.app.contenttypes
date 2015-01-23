@@ -6,8 +6,7 @@ branches:
 before_install:
   - pip install http://effbot.org/downloads/Imaging-1.1.7.tar.gz
 install:
-  - mkdir -p buildout-cache/eggs
-  - mkdir -p buildout-cache/downloads
+  - mkdir -p buildout-cache/{eggs,downloads}
   - python bootstrap.py -c travis.cfg
   - bin/buildout -N -t 3 -c travis.cfg
 before_script:
