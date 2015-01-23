@@ -147,7 +147,6 @@ class NewsItemFunctionalTest(unittest.TestCase):
         self.assertTrue('This is my news item' in self.browser.contents)
         self.assertTrue('Lorem Ipsum' in self.browser.contents)
 
-
     @unittest.skip("IShortName not available")
     def test_add_news_item_with_shortname(self):
         self.browser.open(self.portal_url)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from plone.app.contenttypes.utils import DEFAULT_TYPES
+# from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 

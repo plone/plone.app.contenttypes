@@ -11,7 +11,7 @@ from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-from plone.app.testing import applyProfile
+# from plone.app.testing import applyProfile
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.event.interfaces import IEvent
 from zope.interface import directlyProvides

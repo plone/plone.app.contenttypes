@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+# import json
 import unittest2 as unittest
 
 from plone.app.testing import SITE_OWNER_NAME

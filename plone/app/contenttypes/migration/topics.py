@@ -200,7 +200,7 @@ class ATDateCriteriaConverter(CriterionConverter):
     values ourselves instead of translating the values back and forth.
     """
 
-    def __call__(self, formquery, criterion, registry):
+    def __call__(self, formquery, criterion, registry):  # noqa
         if criterion.value is None:
             logger.warn("Ignoring empty criterion %s.", criterion)
             return
