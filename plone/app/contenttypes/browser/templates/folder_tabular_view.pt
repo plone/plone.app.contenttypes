@@ -41,21 +41,14 @@
 
             <tal:entries tal:repeat="item batch">
             <tal:block tal:define="item_url item/getURL;
-                                   item_id item/getId;
                                    item_title item/Title;
                                    item_description item/Description;
                                    item_type item/PortalType;
-                                   item_modified item/ModificationDate;
-                                   item_created item/CreationDate;
-                                   item_icon item/getIcon;
                                    item_type_class python:'contenttype-' + view.normalizeString(item_type);
                                    item_wf_state item/review_state;
                                    item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                                    item_creator item/Creator;
-                                   item_start item/start|nothing;
-                                   item_end item/end|nothing;
-                                   item_sametime python: item_start == item_end;
-                                   item_samedate python: (item_end - item_start &lt; 1) if item_type == 'Event' else False">
+                                   item_link python:item_type in view.use_view_action and item_url+'/view' or item_url">
 
                     <tr metal:define-macro="listitem"
                         tal:define="oddrow repeat/item/odd;"
@@ -68,7 +61,7 @@
                             </td>
                             <td tal:condition="python:field == 'Title'">
                                 <a href="#"
-                                   tal:attributes="href python: item_type in view.use_view_action and item_url+'/view' or item_url;
+                                   tal:attributes="href item_link;
                                                    class string:$item_wf_state_class $item_type_class;
                                                    title item_description;"
                                    tal:content="item_title">
