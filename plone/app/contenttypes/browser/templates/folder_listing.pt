@@ -40,7 +40,8 @@
                                    item_start item/start|nothing;
                                    item_end item/end|nothing;
                                    item_sametime python: item_start == item_end;
-                                   item_samedate python: (item_end - item_start &lt; 1) if item_type == 'Event' else False">
+                                   item_samedate python: (item_end - item_start &lt; 1) if item_type == 'Event' else False;
+                                   item_link python:item_type in view.use_view_action and item_url+'/view' or item_url">
                 <metal:block define-slot="entry">
                 <header metal:define-macro="listitem"
                     tal:attributes="class python:item_type == 'Event' and 'vevent' or ''">
@@ -48,7 +49,7 @@
                     <span class="summary">
                         <img tal:replace="structure item_icon" />
                         <a href="#"
-                           tal:attributes="href python: item_type in view.use_view_action and item_url+'/view' or item_url;
+                           tal:attributes="href item_link;
                                            class string:$item_type_class $item_wf_state_class url"
                            tal:content="item_title">
                             Item Title
