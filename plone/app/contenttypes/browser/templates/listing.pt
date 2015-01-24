@@ -47,10 +47,10 @@
                     tal:attributes="class python:item_type == 'Event' and 'vevent' or ''">
 
                     <span class="summary">
-                        <img tal:replace="structure item_icon" />
                         <a href="#"
                            tal:attributes="href item_link;
-                                           class string:$item_type_class $item_wf_state_class url"
+                                           class string:$item_type_class $item_wf_state_class url;
+                                           title item_type"
                            tal:content="item_title">
                             Item Title
                         </a>
