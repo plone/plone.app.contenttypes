@@ -20,11 +20,11 @@
     </div>
 
     <metal:listingmacro define-macro="listing">
-    <tal:foldercontents define="batch view/batch">
+    <tal:results define="batch view/batch">
     <tal:listing condition="batch">
 
-        <ul metal:define-slot="entries">
-            <li tal:repeat="item batch" metal:define-macro="entries">
+        <div metal:define-slot="entries">
+            <article tal:repeat="item batch" metal:define-macro="entries">
             <tal:block tal:define="item_url item/getURL;
                                    item_id item/getId;
                                    item_title item/Title;
@@ -42,9 +42,8 @@
                                    item_sametime python: item_start == item_end;
                                    item_samedate python: (item_end - item_start &lt; 1) if item_type == 'Event' else False">
                 <metal:block define-slot="entry">
-                <span metal:define-macro="listitem"
-                    tal:define="item_type_event_class python: item_type == 'Event' and 'vevent' or None"
-                    tal:attributes="class item_type_event_class|nothing">
+                <header metal:define-macro="listitem"
+                    tal:attributes="class python:item_type == 'Event' and 'vevent' or ''">
 
                     <span class="summary">
                         <img tal:replace="structure item_icon" />
@@ -56,27 +55,28 @@
                         </a>
                     </span>
 
+                    <metal:block metal:define-macro="document_byline">
                     <span class="documentByLine">
                         <span tal:condition="python: item_type == 'Event' and item_sametime"
                               i18n:translate="label_event_byline_onlyfrom">
                              <abbr class="dtstart"
                                    tal:attributes="title python:item_start"
-                                   tal:content="python:toLocalizedTime(item_start,long_format=1)"
+                                   tal:content="python:view.toLocalizedTime(item_start,long_format=1)"
                                    i18n:name="start">from date</abbr>
                         </span>
                         <span tal:condition="python: item_type == 'Event' and item_samedate and not item_sametime"
                               i18n:translate="label_event_byline_samedate">
                              <abbr class="dtstart"
                                    tal:attributes="title python:item_start"
-                                   tal:content="python:toLocalizedTime(item_start)"
+                                   tal:content="python:view.toLocalizedTime(item_start)"
                                    i18n:name="start">from date</abbr> from
                              <abbr class="dtstart"
                                    tal:attributes="title python:item_start"
-                                   tal:content="python:toLocalizedTime(item_start,time_only=1)"
+                                   tal:content="python:view.toLocalizedTime(item_start,time_only=1)"
                                    i18n:name="starttime">from time</abbr> to
                              <abbr class="dtend"
                                    tal:attributes="title python:item_end"
-                                   tal:content="python:toLocalizedTime(item_end,time_only=1)"
+                                   tal:content="python:view.toLocalizedTime(item_end,time_only=1)"
                                    i18n:name="end">to time</abbr>
                         </span>
                         <span tal:condition="python: item_type == 'Event' and not item_samedate and not item_sametime"
@@ -84,11 +84,11 @@
                               from
                                    <abbr class="dtstart"
                                    tal:attributes="title python:item_start"
-                                   tal:content="python:toLocalizedTime(item_start,long_format=1)"
+                                   tal:content="python:view.toLocalizedTime(item_start,long_format=1)"
                                    i18n:name="start">from date</abbr> to
                              <abbr class="dtend"
                                    tal:attributes="title python:item_end"
-                                   tal:content="python:toLocalizedTime(item_end,long_format=1)"
+                                   tal:content="python:view.toLocalizedTime(item_end,long_format=1)"
                                    i18n:name="end">to date</abbr>
                         </span>
                          <span tal:condition="python: item_type == 'Event' and item.location"
@@ -124,7 +124,7 @@
                                 <tal:mod i18n:translate="box_last_modified">
                                   last modified
                                 </tal:mod>
-                                <span tal:replace="python:toLocalizedTime(item_modified,long_format=1)">
+                                <span tal:replace="python:view.toLocalizedTime(item_modified,long_format=1)">
                                   August 16, 2001 at 23:35:59
                                 </span>
                             </tal:modified>
@@ -136,8 +136,9 @@
                             </metal:description>
                         </tal:byline>
                     </span>
+                    </metal:block>
 
-                </span>
+                </header>
 
                 <p class="description discreet"
                     tal:condition="item_description"
@@ -146,21 +147,22 @@
                 </p>
             </metal:block>
             </tal:block>
-            </li>
-        </ul>
+            </article>
+        </div>
 
         <div metal:use-macro="context/batch_macros/macros/navigation" />
 
     </tal:listing>
+
     <metal:empty metal:define-slot="no_items_in_listing">
         <p class="discreet"
-           tal:condition="not: view/folderContents"
-           i18n:translate="description_no_items_in_folder">
+           tal:condition="not: view/batch"
+           tal:content="view/no_items_message">
             There are currently no items in this folder.
         </p>
     </metal:empty>
 
-    </tal:foldercontents>
+    </tal:results>
     </metal:listingmacro>
 
 </metal:block>
