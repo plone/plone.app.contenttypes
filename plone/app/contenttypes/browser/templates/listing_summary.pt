@@ -49,7 +49,8 @@
 
                         <a href="#"
                            class="summary url"
-                           tal:attributes="href item_link"
+                           tal:attributes="href item_link;
+                                           title item_type"
                            tal:content="item_title">
                             Item Title
                         </a>
