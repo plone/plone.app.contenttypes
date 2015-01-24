@@ -19,7 +19,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
     class=".collection.CollectionView"
-    template="templates/standard_view.pt"
+    template="templates/folder_listing.pt"
     />
 
   <browser:page
@@ -27,7 +27,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
     class=".collection.CollectionView"
-    template="templates/standard_view.pt"
+    template="templates/folder_listing.pt"
     />
 
   <!-- VIEWS FOR ANYTHING WITH THE COLLECTION BEHAVIOR.
@@ -41,7 +41,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/standard_view.pt"
+    template="templates/folder_listing.pt"
     />
 
   <browser:page
@@ -49,7 +49,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/summary_view.pt"
+    template="templates/folder_summary_view.pt"
     />
 
   <browser:page
@@ -65,7 +65,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/tabular_view.pt"
+    template="templates/folder_tabular_view.pt"
     />
 
   <browser:page

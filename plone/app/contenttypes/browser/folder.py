@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
-from Products.Five import BrowserView
-from zope.component import getMultiAdapter
 from Products.CMFPlone.PloneBatch import Batch
+from Products.CMFPlone.utils import safe_callable
+from Products.Five import BrowserView
+from plone.app.contenttypes import _
+from zope.component import getMultiAdapter
 
 
 class FolderView(BrowserView):
@@ -30,30 +32,38 @@ class FolderView(BrowserView):
         self.more_url = getattr(request, 'more_url', 'folder_contents')
 
         # TODO: eventually REMOVE
-        self.plone_layout = context.restrictedTraverse('@@plone_layout')
+        self.plone_layout = getMultiAdapter(
+            (context, request), name=u"plone_layout")
 
-        self.pas_member = context.restrictedTraverse('@@pas_member')
-
-        limit_display = getattr(request, 'limit_display', None)
-        limit_display = int(limit_display) if limit_display is not None else 20
-        b_size = getattr(request, 'b_size', None)
-        b_size = int(b_size) if b_size is not None else limit_display
-        b_start = getattr(request, 'b_start', None)
-        b_start = int(b_start) if b_start is not None else 0
-
-        contentFilter = getattr(request, 'contentFilter', None)
-        contentFilter = dict(contentFilter) if contentFilter else {}
-        contentFilter.setdefault('portal_type', self.friendly_types)
-        contentFilter.setdefault('batch', True)
-        contentFilter.setdefault('b_size', b_size)
-        contentFilter.setdefault('b_start', b_start)
-
-        self.folderContents = context.restrictedTraverse(
-            '@@folderListing')(**contentFilter)
-
-        self.batch = Batch(self.folderContents, b_size, b_start, orphan=1)
+        self.pas_member = getMultiAdapter(
+            (context, request), name=u"pas_member")
 
         self.text_class = None
+
+        limit_display = getattr(self.request, 'limit_display', None)
+        limit_display = int(limit_display) if limit_display is not None else 20
+        b_size = getattr(self.request, 'b_size', None)
+        self.b_size = int(b_size) if b_size is not None else limit_display
+        b_start = getattr(self.request, 'b_start', None)
+        self.b_start = int(b_start) if b_start is not None else 0
+
+    def _content_filter(self):
+        content_filter = getattr(self.request, 'contentFilter', None)
+        content_filter = dict(content_filter) if content_filter else {}
+        content_filter.setdefault('portal_type', self.friendly_types)
+        content_filter.setdefault('batch', True)
+        content_filter.setdefault('b_size', self.b_size)
+        content_filter.setdefault('b_start', self.b_start)
+        return content_filter
+
+    def results(self):
+        results = self.context.restrictedTraverse(
+            '@@folderListing')(**self._content_filter())
+        return results
+
+    def batch(self):
+        batch = Batch(self.results(), self.b_size, self.b_start, orphan=1)
+        return batch
 
     def normalizeString(self, text):
         return self.plone_view.normalizeString(text)
@@ -69,3 +79,43 @@ class FolderView(BrowserView):
                 'text/structured', 'text/x-rst', 'text/restructured'
             ) else 'plain'
         return text
+
+    def tabular_fields(self):
+        ret = []
+        ret.append('Title')
+        if self.show_about:
+            ret.append('Creator')
+        ret.append('Type')
+        if self.show_about:
+            ret.append('ModificationDate')
+        return ret
+
+    def tabular_fielddata(self, item, fieldname):
+        value = getattr(item, fieldname, '')
+        if safe_callable(value):
+            value = value()
+        if fieldname in [
+                'CreationDate',
+                'ModificationDate',
+                'Date',
+                'EffectiveDate',
+                'ExpirationDate',
+                'effective',
+                'expires',
+                'start',
+                'end',
+                'created',
+                'modified',
+                'last_comment_date']:
+            value = self.toLocalizedTime(value, long_format=1)
+
+        return {
+            # 'title': _(fieldname, default=fieldname),
+            'value': value
+        }
+
+    def no_items_message(self):
+        return _(
+            'description_no_items_in_folder',
+            default=u"There are currently no items in this folder."
+        )

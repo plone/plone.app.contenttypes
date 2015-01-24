@@ -19,7 +19,7 @@
         <div metal:define-slot="inside" tal:replace="structure text">The body</div>
     </div>
 
-    <tal:foldercontents define="batch view/batch">
+    <tal:results define="batch view/batch">
     <tal:listing condition="batch">
 
 
@@ -30,16 +30,10 @@
                    i18n:attributes="summary summary_content_listing;">
                 <thead>
                     <tr>
-                        <th class="nosort">&nbsp;<tal:title i18n:translate="listingheader_title"
-                          >Title</tal:title>&nbsp;</th>
                         <th class="nosort"
-                            tal:condition="view/show_about">&nbsp;<tal:title i18n:translate="listingheader_author"
-                          >Author</tal:title>&nbsp;</th>
-                        <th class="nosort">&nbsp;<tal:title i18n:translate="listingheader_type"
-                          >Type</tal:title>&nbsp;</th>
-                        <th class="nosort"
-                            tal:condition="view/show_about">&nbsp;<tal:modified i18n:translate="listingheader_modified"
-                          >Modified</tal:modified>&nbsp;</th>
+                            i18n:translate=""
+                            tal:repeat="field view/tabular_fields"
+                            tal:content="field">Field name</th>
                     </tr>
                 </thead>
 
@@ -67,8 +61,12 @@
                         tal:define="oddrow repeat/item/odd;"
                         tal:attributes="class python: oddrow and 'even' or 'odd'">
 
-                            <td>
-                                <img tal:replace="structure item_icon" />
+                        <tal:block tal:repeat="field view/tabular_fields">
+                            <td tal:condition="python:field not in ['Title', 'Creator', 'getIcon']"
+                                tal:define="field_data python:view.tabular_fielddata(item, field)">
+                                <tal:block tal:replace="field_data/value" />
+                            </td>
+                            <td tal:condition="python:field == 'Title'">
                                 <a href="#"
                                    tal:attributes="href python: item_type in view.use_view_action and item_url+'/view' or item_url;
                                                    class string:$item_wf_state_class $item_type_class;
@@ -77,28 +75,15 @@
                                     Item Title
                                 </a>
                             </td>
-
-                            <td tal:condition="view/show_about">
-                                <tal:name tal:condition="item_creator"
-                                  tal:define="author python:view.pas_member.info(item_creator)">
+                            <td tal:condition="python:field == 'Creator'"
+                                tal:define="author python:view.pas_member.info(item_creator);
+                                            name python:author['fullname'] or author['username']">
                                 <a href="#"
+                                   tal:condition="author"
                                    tal:attributes="href string:${view/navigation_root_url}/author/${item_creator}"
-                                   tal:content="author/name_or_id"
-                                   tal:omit-tag="not:author">
-                                  Bob Dobalina
-                                </a>
-                                </tal:name>
+                                   tal:content="name">Jos Henken</a>
                             </td>
-
-                            <td tal:content="item_type"
-                                i18n:translate="">
-                                Page
-                            </td>
-
-                        <td tal:condition="view/show_about"
-                            tal:content="python:view.toLocalizedTime(item_modified,long_format=1)">
-                          August 16, 2001 at 23:35:59
-                        </td>
+                        </tal:block>
 
                     </tr>
 
@@ -112,15 +97,16 @@
         <div metal:use-macro="context/batch_macros/macros/navigation" />
 
     </tal:listing>
+
     <metal:empty metal:define-slot="no_items_in_listing">
         <p class="discreet"
-           tal:condition="not: view/folderContents"
-           i18n:translate="description_no_items_in_folder">
+           tal:condition="not: view/batch"
+           tal:content="view/no_items_message">
             There are currently no items in this folder.
         </p>
     </metal:empty>
 
-    </tal:foldercontents>
+    </tal:results>
 
 </metal:block>
 </metal:content-core>
