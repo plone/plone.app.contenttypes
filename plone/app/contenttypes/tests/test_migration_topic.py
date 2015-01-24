@@ -600,7 +600,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.assertEqual(query,
                          [{'i': 'portal_type',
                            'o': 'plone.app.querystring.operation.selection.is',
-                           'v': ('Document', 'Folder')}])
+                           'v': ['Document', 'Folder']}])
 
         # Check that the resulting query does not give an error.
         self.portal.topic.getQuery()
