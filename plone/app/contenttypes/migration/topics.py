@@ -99,7 +99,6 @@ class CriterionConverter(object):
                     logger.warn("Cannot switch Type %r to portal_type.", Type)
                     continue
             new_values.append(portal_type)
-        new_values = tuple(new_values)
         if isinstance(value, dict):
             value['query'] = new_values
         else:
