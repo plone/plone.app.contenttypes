@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Read ``allow_anon_views_about`` setting from the registry instead of portal
+  properties (see https://github.com/plone/Products.CMFPlone/issues/216).
+  [jcerjak]
+
 - In the file view, render HTML5 ``<audio>`` or ``<video>`` tags for audio
   respectively video file types. Ancient browsers, which do not support that,
   just don't render these tags.
