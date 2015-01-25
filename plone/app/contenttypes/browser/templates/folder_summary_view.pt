@@ -40,7 +40,9 @@
 
                     </h2>
 
-                    <div class="documentByLine" tal:condition="python: site_properties.allowAnonymousViewAbout or not isAnon">
+                    <div class="documentByLine"
+                         tal:define="allow_anon_views_about python:context.portal_registry['plone.allow_anon_views_about'];"
+                         tal:condition="python: not isAnon or allow_anon_views_about">
                     <tal:event condition="python: item_type == 'Event'">
                         <span tal:condition="python: item_type == 'Event' and item.location"
                               i18n:translate="label_event_byline_with_location">

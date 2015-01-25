@@ -29,7 +29,8 @@
                              isAnon portal_state/anonymous;
                              normalizeString nocall: context/plone_utils/normalizeString;
                              toLocalizedTime nocall: plone_view/toLocalizedTime;
-                             show_about python:not isAnon or site_properties.allowAnonymousViewAbout;
+                             allow_anon_views_about python:context.portal_registry['plone.allow_anon_views_about'];
+                             show_about python:not isAnon or allow_anon_views_about;
                              navigation_root_url portal_state/navigation_root_url;
                              pas_member context/@@pas_member;">
         <tal:listing condition="batch">
