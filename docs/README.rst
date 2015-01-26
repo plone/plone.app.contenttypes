@@ -6,6 +6,9 @@
 .. image:: https://pypip.in/v/plone.app.contenttypes/badge.png
     :target: https://crate.io/packages/plone.app.contenttypes
 
+.. image:: https://travis-ci.org/plone/plone.app.contenttypes.svg
+    :target: https://travis-ci.org/plone/plone.app.contenttypes
+
 
 plone.app.contenttypes documentation
 ====================================
