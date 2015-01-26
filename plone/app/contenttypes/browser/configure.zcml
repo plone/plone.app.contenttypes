@@ -57,7 +57,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/all_content.pt"
+    template="templates/full_view.pt"
     />
 
   <browser:page
@@ -150,17 +150,19 @@
     name="folder_full_view"
     for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_full_view.pt"
+    class=".folder.FolderView"
+    template="templates/full_view.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="All content"
     />
 
   <browser:page
-    name="folder_full_view_item"
+    name="full_view_item"
     for="Products.CMFCore.interfaces._content.IContentish"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_full_view_item.pt"
+    class=".full_view.FullViewItem"
+    template="templates/full_view_item.pt"
     permission="zope2.View"
     />
 

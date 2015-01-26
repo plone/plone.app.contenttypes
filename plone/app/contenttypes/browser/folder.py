@@ -28,13 +28,6 @@ class FolderView(BrowserView):
         self.show_about = getattr(
             self.site_properties, 'allowAnonymousViewAbout', not self.isAnon)
 
-        # TODO: REMOVE
-        self.more_url = getattr(request, 'more_url', 'folder_contents')
-
-        # TODO: eventually REMOVE
-        self.plone_layout = getMultiAdapter(
-            (context, request), name=u"plone_layout")
-
         self.pas_member = getMultiAdapter(
             (context, request), name=u"pas_member")
 
