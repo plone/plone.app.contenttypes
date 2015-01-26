@@ -9,28 +9,11 @@
 <body>
 
 <metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core">
+<metal:block use-macro="context/@@folder_listing/macros/content-core|context/@@standard_view/macros/content-core">
 
-    <div metal:define-macro="text-field-view"
-         id="parent-fieldname-text" class="stx"
-         tal:define="text view/text"
-         tal:condition="text"
-         tal:attributes="class view/text_class">
-        <div metal:define-slot="inside" tal:replace="structure text">The body</div>
-    </div>
-
-    <tal:results define="batch view/batch">
-    <tal:listing condition="batch">
-
-        <div>
-            <article tal:repeat="item batch">
-            <tal:block tal:define="item_url item/getURL;
-                                   item_title item/Title;
-                                   item_description item/Description;
-                                   item_type item/PortalType;
-                                   item_modified item/ModificationDate;
-                                   item_creator item/Creator;
-                                   item_link python:item_type in view.use_view_action and item_url+'/view' or item_url">
+    <metal:entries fill-slot="entries">
+    <metal:block use-macro="context/@@folder_listing/macros/entries|context/@@standard_view/macros/entries">
+    <metal:entry fill-slot="entry">
 
                 <div class="tileItem visualIEFloatFix" tal:define="obj item/getObject">
 
@@ -77,23 +60,9 @@
 
                 </div>
 
-            </tal:block>
-            </article>
-        </div>
-
-        <div metal:use-macro="context/batch_macros/macros/navigation" />
-
-    </tal:listing>
-
-    <metal:empty metal:define-slot="no_items_in_listing">
-        <p class="discreet"
-           tal:condition="not: view/batch"
-           tal:content="view/no_items_message">
-            There are currently no items in this folder.
-        </p>
-    </metal:empty>
-
-    </tal:results>
+    </metal:entry>
+    </metal:block>
+    </metal:entries>
 
 </metal:block>
 </metal:content-core>
