@@ -7,6 +7,7 @@ from Products.CMFPlone.interfaces.syndication import ISyndicatable
 from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
+from plone.autoform import directives as form
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
 from zope import schema
@@ -18,6 +19,7 @@ from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from plone.app.z3cform.widget import QueryStringFieldWidget
 
 
 @implementer(IVocabularyFactory)
@@ -47,6 +49,7 @@ class ICollection(model.Schema):
         required=False,
         missing_value=''
     )
+    form.widget('query', QueryStringFieldWidget)
 
     sort_on = schema.TextLine(
         title=_(u'label_sort_on', default=u'Sort on'),
