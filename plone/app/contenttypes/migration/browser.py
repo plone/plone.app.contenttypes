@@ -213,8 +213,10 @@ class MigrateFromATContentTypes(BrowserView):
         # if there are blobnewsitems we just migrate them silently.
         migration.migrate_blobnewsitems(portal)
 
-        if migrate_references:
-            migration.restoreReferences(portal)
+        catalog.clearFindAndRebuild()
+
+        # rebuild catalog, restore references and cleanup
+        migration.restoreReferences(portal, migrate_references, content_types)
 
         # switch linkintegrity back to what it was before migrating
         site_props.manage_changeProperties(
@@ -300,10 +302,7 @@ class IATCTMigratorForm(Interface):
     migrate_references = schema.Bool(
         title=u"Migrate references?",
         description=(
-            u"Select this option to migrate all "
-            u"references to each content type. "
-            u"This will rebuild the whole catalog and "
-            u"increase the migration-time."
+            u"Select this option to migrate references."
         ),
         default=True
     )

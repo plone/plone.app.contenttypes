@@ -24,6 +24,7 @@ from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.contenttypes.migration.utils import copy_contentrules
 from plone.app.contenttypes.migration.utils import move_comments
 from plone.app.contenttypes.migration.utils import migrate_leadimage
+from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
@@ -90,10 +91,10 @@ def migrate_portlets(src_obj, dst_obj):
                             'for manager {1}'.format(key, manager))
 
 
-def refs(obj):
+def restore_refs(obj):
+    """Restore references stored in the attribute _relatedItems.
+    """
     intids = getUtility(IIntIds)
-    out = ''
-
     try:
         if not getattr(obj, 'relatedItems', None):
             obj.relatedItems = PersistentList()
@@ -105,19 +106,16 @@ def refs(obj):
             to_obj = uuidToObject(uuid)
             to_id = intids.getId(to_obj)
             obj.relatedItems.append(RelationValue(to_id))
-            out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
-        del obj._relatedItems
-
+            logger.info('Restored Relation from %s to %s' % (obj, to_obj))
     except AttributeError:
         pass
-    return out
 
 
-def backrefs(portal, obj):
+def restore_backrefs(portal, obj):
+    """Restore backreferences stored in the attribute _backrefs.
+    """
     intids = getUtility(IIntIds)
     uid_catalog = getToolByName(portal, 'uid_catalog')
-    out = ''
-
     try:
         backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
         for backrefobj in backrefobjs:
@@ -139,53 +137,51 @@ def backrefs(portal, obj):
                 path = '/'.join(obj.getPhysicalPath())
                 uid_catalog.catalog_object(obj, path)
                 backrefobj.setRelatedItems(obj)
-            out += str(
-                'Restore BackRelation from %s to %s \n' % (
-                    backrefobj,
-                    obj
-                )
-            )
-        del obj._backrefs
+            logger.info(
+                'Restored BackRelation from %s to %s' % (backrefobj, obj))
     except AttributeError:
         pass
-    return out
 
 
-def order(obj):
-    out = ''
+def restore_reforder(obj):
+    """Restore order of references stored in the attribute _relatedItemsOrder.
+    """
     if not hasattr(obj, '_relatedItemsOrder'):
         # Nothing to do
-        return out
-
+        return
     relatedItemsOrder = obj._relatedItemsOrder
     uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
     key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
     obj.relatedItems = sorted(obj.relatedItems, key=key)
-    out += str('%s ordered.' % obj)
+
+
+def cleanup_stored_refs(obj):
+    """Cleanup new dx item."""
+    if safe_hasattr(obj, '_relatedItems'):
+        del obj._relatedItems
+    if safe_hasattr(obj, '_backrefs'):
+        del obj._backrefs
+    if safe_hasattr(obj, '_relatedItemsOrder'):
     del obj._relatedItemsOrder
-    return out
 
 
-def restoreReferences(portal):
-    """ iterate over all Dexterity Objs and restore as Dexterity Reference. """
-    out = ''
+def restoreReferences(portal,
+                      migrate_references=True,
+                      content_types=DEFAULT_TYPES):
+    """Iterate over new Dexterity items and restore Dexterity References.
+    """
     catalog = getToolByName(portal, "portal_catalog")
-    # Seems that these newly created objs are not reindexed
-    catalog.clearFindAndRebuild()
     results = catalog.searchResults(
-        object_provides=IDexterityContent.__identifier__)
+        object_provides=IDexterityContent.__identifier__,
+        portal_type=content_types)
 
     for brain in results:
         obj = brain.getObject()
-
-        # refs
-        out += refs(obj)
-        # backrefs
-        out += backrefs(portal, obj)
-        # order
-        out += order(obj)
-
-    return out
+        if migrate_references:
+            restore_refs(obj)
+            restore_backrefs(portal, obj)
+            restore_reforder(obj)
+        cleanup_stored_refs(obj)
 
 
 class ReferenceMigrator(object):
