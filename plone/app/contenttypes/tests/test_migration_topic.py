@@ -11,6 +11,7 @@ from plone.app.testing import login
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 from zope.interface import implementer
+from plone.app.querystring.queryparser import parseFormquery
 
 import unittest
 
@@ -324,7 +325,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         )
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATListCriterion(self):
         # The new-style queries do not currently offer the possibility
@@ -353,7 +354,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                           'v': ('Document', 'Folder')})
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATPathCriterion(self):
         crit = self.add_criterion(
@@ -366,9 +367,14 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                          [{'i': 'path',
                            'o': 'plone.app.querystring.operation.string.path',
                            'v': self.portal.folder.UID()}])
+        # check is the query is correct
+        from plone.app.querystring.queryparser import parseFormquery
+        self.assertEqual(
+            parseFormquery(self.portal, self.portal.topic.query),
+            {'path': {'query': ['/plone/folder']}})
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATPathCriterionNonRecursive(self):
         # Topics supported non recursive search, so search at a
@@ -389,7 +395,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                            'v': self.portal.folder.UID() + '::1'}])
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATPathCriterionMultiRecursive(self):
         # Collections support multiple paths since
@@ -416,7 +422,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                           'v': self.portal.folder2.UID()})
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATPathCriterionMultiNonRecursive(self):
         # Collections support multiple paths since
@@ -443,7 +449,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                           'v': self.portal.folder2.UID() + '::1'})
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATBooleanCriterion(self):
         # Note that in standard Plone the boolean criterion is only
@@ -468,7 +474,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         )
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATDateRangeCriteria(self):
         time1 = DateTime()
@@ -512,7 +518,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.assertEqual(query[2]['v'], (time1 + 3, time1 + 5))
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATPortalTypeCriterion(self):
         self.add_criterion(
@@ -530,7 +536,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         )
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATPortalTypeCriterionOfTopic(self):
         # We migrate Topics to Collections, so we should update
@@ -548,7 +554,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                            'v': ('Collection',)}])
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATSelectionCriterion(self):
         # The new-style queries do not currently offer the possibility
@@ -583,7 +589,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                           'v': ('Document', 'Collection')})
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATSelectionCriterionForTypeTitle(self):
         # 'portal_type' is the object id of the FTI in portal_types.
@@ -603,7 +609,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                            'v': ['Document', 'Folder']}])
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATReferenceCriterion(self):
         # Note: the new criterion is disabled by default.  Also, it
@@ -625,7 +631,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         # )
 
         # Check that the resulting query does not give an error.
-        # self.portal.topic.getQuery()
+        # self.portal.topic.results
 
     def test_ATRelativePathCriterion(self):
         crit = self.add_criterion(
@@ -643,7 +649,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         )
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATRelativePathCriterionNonRecursive(self):
         # Topics supported non recursive search, so search at a specific
@@ -660,7 +666,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
               'v': '../folder'}])
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATSimpleIntCriterion(self):
         self.add_criterion('getObjPositionInParent', 'ATSimpleIntCriterion', 7)
@@ -672,7 +678,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                            'v': 7}])
 
         # Check that the resulting query does not give an error.
-        self.portal.topic.getQuery()
+        self.portal.topic.results
 
     def test_ATSimpleIntCriterionMinimum(self):
         crit = self.add_criterion(
