@@ -18,7 +18,8 @@ from plone.app.contenttypes.content import Link
 from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
-from plone.app.contenttypes.migration.patches import patched_insertForwardIndexEntry
+from plone.app.contenttypes.migration.patches import \
+    patched_insertForwardIndexEntry
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
