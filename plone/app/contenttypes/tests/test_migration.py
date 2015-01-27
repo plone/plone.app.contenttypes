@@ -974,6 +974,10 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate_documents(self.portal)
         migrate_folders(self.portal)
+
+        # rebuild catalog
+        self.portal.portal_catalog.clearFindAndRebuild()
+
         dx_folder1 = self.portal['folder1']
         dx_folder2 = self.portal['folder2']
 
