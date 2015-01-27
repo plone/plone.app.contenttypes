@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.utils import safe_unicode, safe_hasattr
 from Products.GenericSetup.context import DirectoryImportContext
 from Products.GenericSetup.utils import importObjects
@@ -142,10 +143,14 @@ def move_comments(source_object, target_object):
             logger.error('Comments exist on {0}').format(
                 target_object.absolute_url())
         target_annotations[DISCUSSION_KEY] = deepcopy(comments)
-        source_conversation = IConversation(source_object)
-        for comment in source_conversation.getComments():
-            del source_conversation[comment.comment_id]
-        del source_annotations[DISCUSSION_KEY]
+
+        # Delete comments from the portal where wthey were stored temporarily.
+        # Comments on the old objects will be removed with the objects.
+        if IPloneSiteRoot.providedBy(source_object):
+            source_conversation = IConversation(source_object)
+            for comment in source_conversation.getComments():
+                del source_conversation[comment.comment_id]
+            del source_annotations[DISCUSSION_KEY]
 
 
 def copy_contentrules(source_object, target_object):
