@@ -89,7 +89,7 @@ class FolderView(BrowserView):
         textfield = getattr(aq_base(self.context), 'text', None)
         text = getattr(textfield, 'output', None)
         if text:
-            self.text_class = 'stx' if textfield.contentType() in (
+            self.text_class = 'stx' if textfield.mimeType in (
                 'text/structured', 'text/x-rst', 'text/restructured'
             ) else 'plain'
         return text
