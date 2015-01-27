@@ -47,7 +47,7 @@ setup(name='plone.app.contenttypes',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
           'pytz',
-          'plone.app.z3cform>=1.1.0'
+          'plone.app.z3cform>=1.1.0.dev0'
       ],
       extras_require={
           'test': [
