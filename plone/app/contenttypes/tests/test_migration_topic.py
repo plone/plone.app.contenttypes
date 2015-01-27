@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
-from plone.app.contenttypes.migration.topics import migrate_topics
 from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.migration.topics import migrate_topics
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
-from plone.dexterity.content import Container
+from plone.app.querystring.queryparser import parseFormquery
 from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 from zope.interface import implementer
-from plone.app.querystring.queryparser import parseFormquery
 
 import unittest
 
@@ -368,7 +368,6 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
                            'o': 'plone.app.querystring.operation.string.path',
                            'v': self.portal.folder.UID()}])
         # check is the query is correct
-        from plone.app.querystring.queryparser import parseFormquery
         self.assertEqual(
             parseFormquery(self.portal, self.portal.topic.query),
             {'path': {'query': ['/plone/folder']}})

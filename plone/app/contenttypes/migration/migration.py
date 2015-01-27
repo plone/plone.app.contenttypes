@@ -162,7 +162,7 @@ def cleanup_stored_refs(obj):
     if safe_hasattr(obj, '_backrefs'):
         del obj._backrefs
     if safe_hasattr(obj, '_relatedItemsOrder'):
-    del obj._relatedItemsOrder
+        del obj._relatedItemsOrder
 
 
 def restoreReferences(portal,

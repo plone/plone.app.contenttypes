@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 """Patches used for migrations. These patches are applied before and removed
 after running the migration.
 """
