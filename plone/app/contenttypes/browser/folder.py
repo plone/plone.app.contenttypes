@@ -4,13 +4,23 @@ from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
 from plone.app.contenttypes import _
+from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
+from zope.component import getUtility
+
+HAS_SECURITY_SETTINGS = True
+try:
+    from Products.CMFPlone.interfaces import ISecuritySchema
+except ImportError:
+    HAS_SECURITY_SETTINGS = False
 
 
 class FolderView(BrowserView):
 
     def __init__(self, context, request):
         super(FolderView, self).__init__(context, request)
+
+        registry = getUtility(IRegistry)
 
         self.plone_view = getMultiAdapter(
             (context, request), name=u"plone")
@@ -21,12 +31,23 @@ class FolderView(BrowserView):
         self.isAnon = self.portal_state.anonymous()
         self.navigation_root_url = self.portal_state.navigation_root_url()
 
+        # BBB
         self.site_properties = context.restrictedTraverse(
             'portal_properties').site_properties
         self.use_view_action = getattr(
             self.site_properties, 'typesUseViewActionInListings', ())
-        self.show_about = getattr(
-            self.site_properties, 'allowAnonymousViewAbout', not self.isAnon)
+
+        if HAS_SECURITY_SETTINGS:
+            security_settings = registry.forInterface(
+                ISecuritySchema, prefix="plone")
+            self.show_about = getattr(
+                security_settings, 'allow_anon_views_about', False
+            ) or not self.isAnon
+        else:
+            # BBB
+            self.show_about = getattr(
+                self.site_properties, 'allowAnonymousViewAbout', False
+            ) or not self.isAnon
 
         self.pas_member = getMultiAdapter(
             (context, request), name=u"pas_member")
