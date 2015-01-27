@@ -268,7 +268,7 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTContentMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating object {0}".format(
+            "Migrating {0}".format(
                 '/'.join(self.old.getPhysicalPath())))
 
     def beforeChange_store_comments_on_portal(self):
@@ -312,7 +312,7 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTFolderMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating object {}".format('/'.join(self.old.getPhysicalPath())))
+            "Migrating {}".format('/'.join(self.old.getPhysicalPath())))
 
     def beforeChange_store_comments_on_portal(self):
         """Comments from plone.app.discussion are lost when the
