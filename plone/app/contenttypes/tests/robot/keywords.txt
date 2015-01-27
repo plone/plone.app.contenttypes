@@ -119,14 +119,14 @@ the collection should not contain
 
 fill in metadata
   Click Link  Categorization
-  Input text  name=form.widgets.IDublinCore.subjects  testcreated\nrobot
+  Input text  name=form.widgets.IDublinCore.subjects  testcreatedrobot
   Click Link  Dates
   ${currentyear}=  Get Time  year
   fill date field  form.widgets.IDublinCore.effective  2009  January  1
   fill date field  form.widgets.IDublinCore.expires  2017  December  12
   Click Link  Ownership
   Input text  name=form.widgets.IDublinCore.creators  another_creator
-  Input text  name=form.widgets.IDublinCore.contributors  contributor1\ncontributor2
+  Input text  name=form.widgets.IDublinCore.contributors  contributor1
   Input text  name=form.widgets.IDublinCore.rights  Copyright\nstatement\nhere
   Click Link  Settings
   Select from List  name=form.widgets.IAllowDiscussion.allow_discussion:list  Yes
