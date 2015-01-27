@@ -6,6 +6,7 @@ from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.contentmigration.utils import patch, undoPatch
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from datetime import timedelta
@@ -17,6 +18,7 @@ from plone.app.contenttypes.content import Link
 from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
+from plone.app.contenttypes.migration.patches import patched_insertForwardIndexEntry
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
@@ -37,6 +39,7 @@ from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import Interface
+from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
 
 import logging
 import pkg_resources
@@ -59,6 +62,11 @@ PATCH_NOTIFY = [
 # Average time to migrate one archetype object, in milliseconds.
 # This very much depends on the size of the object and system-speed
 ONE_OBJECT_MIGRATION_TIME = 500
+
+
+def pass_fn(*args, **kwargs):
+    """Empty function used for patching."""
+    pass
 
 
 class FixBaseClasses(BrowserView):
@@ -113,6 +121,9 @@ class MigrateFromATContentTypes(BrowserView):
                  from_form=False):
 
         portal = self.context
+        if content_types == 'all':
+            content_types = DEFAULT_TYPES
+
         if not from_form and migrate not in ['1', 'True', 'true', 1]:
             url1 = '{0}/@@migrate_from_atct?migrate=1'.format(
                 portal.absolute_url())
@@ -149,11 +160,17 @@ class MigrateFromATContentTypes(BrowserView):
         # switch of setModificationDate on changes
         self.patchNotifyModified()
 
+        # patch UUIDIndex
+        patch(
+            UUIDIndex,
+            'insertForwardIndexEntry',
+            patched_insertForwardIndexEntry)
+
         not_migrated = []
         migrated_types = {}
 
         for (k, v) in ATCT_LIST.items():
-            if content_types != "all" and k not in content_types:
+            if k not in content_types:
                 not_migrated.append(k)
                 continue
             # test if the ct is extended beyond blobimage and blobfile
@@ -207,6 +224,9 @@ class MigrateFromATContentTypes(BrowserView):
         # switch on setModificationDate on changes
         self.resetNotifyModified()
 
+        # unpatch UUIDIndex
+        undoPatch(UUIDIndex, 'insertForwardIndexEntry')
+
         duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
         if not_migrated:
             msg = ("The following types were not migrated: \n %s"
@@ -257,21 +277,13 @@ class MigrateFromATContentTypes(BrowserView):
         So when we migrate Documents before Folders the folders
         ModifiedDate gets changed.
         """
-        patch = lambda *args: None
         for klass in PATCH_NOTIFY:
-            old_notifyModified = getattr(klass, 'notifyModified', None)
-            klass.notifyModified = patch
-            klass.old_notifyModified = old_notifyModified
+            patch(klass, 'notifyModified', pass_fn)
 
     def resetNotifyModified(self):
         """reset notifyModified to old state"""
-
         for klass in PATCH_NOTIFY:
-            if klass.old_notifyModified is None:
-                del klass.notifyModified
-            else:
-                klass.notifyModified = klass.old_notifyModified
-            del klass.old_notifyModified
+            undoPatch(klass, 'notifyModified')
 
 
 class IATCTMigratorForm(Interface):
