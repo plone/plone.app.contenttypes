@@ -258,6 +258,7 @@ class MigrateFromATContentTypes(BrowserView):
                 'content_types': content_types,
                 'migrated_types': migrated_types,
             }
+            logger.info(msg)
             return stats
 
     def stats(self):
