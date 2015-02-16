@@ -39,7 +39,6 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
-          'plone.app.event [dexterity] < 1.2.8',
           'plone.app.dexterity < 2.1.0',  # before Plone 5
           'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
@@ -52,9 +51,19 @@ setup(name='plone.app.contenttypes',
           'Products.GenericSetup >= 1.7.5',  # allow blacklisting steps
       ],
       extras_require={
+          'pae11': [
+               'plone.app.event [dexterity] < 1.1.999',
+          ],
+          'pae12': [
+              'plone.app.event [dexterity] < 1.2.999',
+          ],
+          'pae2': [
+              'plone.app.event [dexterity]',
+          ],
           'test': [
               'archetypes.schemaextender',
               'lxml',
+              'plone.app.contenttypes [pae11]',
               'plone.app.robotframework',
               'plone.app.testing [robot] >= 4.2.4',  # we need ROBOT_TEST_LEVEL
               # 'plone.dexterity >= 2.3.0',  # fixes setting default values # NOT RELEASED YET. # noqa
