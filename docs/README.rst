@@ -44,6 +44,11 @@ For support of Plone 4.1 and 4.2 please use version 1.0.x. Please note that they
 
 The versions 1.2.x of the master-branch are compatible with Plone 5 and plone.app.widgets.
 
+You need to pin the plone.app.event version to the one, you want to use.
+plone.app.event 1.1 is officially supported and tests only pass with this
+version. However, you can also use plone.app.event 1.2.x and 2.x with Plone 4.3
+and plone.app.contenttypes 1.1.x.
+
 
 Installation
 ------------
@@ -57,6 +62,19 @@ To use plone.app.contenttypes in Plone 4.x add this line in the eggs section of 
     eggs =
         ...
         plone.app.contenttypes
+
+
+Pin the plone.app.event version to the one you want to use. Officially
+supported: 1.1.x.
+
+.. code:: ini
+
+    [buildout]
+    versions = versions
+
+    [versions]
+    plone.app.event = <= 1.1.999
+
 
 If you have a Plone site with mixed Archetypes and Dexterity content use the extra requirement ``atrefs``.
 
@@ -110,9 +128,9 @@ Dependencies
 
 * ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the rss-views because plone.app.contenttypes uses behaviors for the richtext-fields.
 
-* ``plone.app.event >= 1.1.4``. This provides the behaviors used for the event-type.
+* ``plone.app.event >= 1.1.4 and <= 1.1.999``. This provides the behaviors used for the event-type.
 
-* ``plone.app.portlets >= 2.5a1``. In older version the event-portlet will not work with the new event-type.
+* ``plone.app.portlets >= 2.5.1``. In older version the event-portlet will not work with the new event-type.
 
 These are the version-pinns for Plone 4.3.4:
 
@@ -137,8 +155,8 @@ Plone-versions before 4.3.3 need to pinn more packages:
     plone.dexterity = 2.2.1
     plone.app.dexterity = 2.0.11
     plone.schemaeditor = 1.3.5
-    plone.app.event = 1.1b1
-    plone.app.portlets = 2.5.1
+    plone.app.event = 1.1.4
+    plone.app.portlets = 2.5.2
 
 For migrations to work you need at least ``Products.contentmigration = 2.1.9`` and ``plone.app.intid`` (part of Plone since Plone 4.1.0).
 
