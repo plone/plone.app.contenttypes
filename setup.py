@@ -39,7 +39,7 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
-          'plone.app.event [dexterity] < 1.1.999',
+          'plone.app.event [dexterity]',  # You have to pin this to the desired version
           'plone.app.dexterity < 2.1.0',  # before Plone 5
           'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
