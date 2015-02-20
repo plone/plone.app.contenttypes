@@ -4,9 +4,11 @@ from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
 from plone.app.contenttypes import _
+from plone.event.interfaces import IEvent
 from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.contentprovider.interfaces import IContentProvider
 
 HAS_SECURITY_SETTINGS = True
 try:
@@ -127,6 +129,16 @@ class FolderView(BrowserView):
             # 'title': _(fieldname, default=fieldname),
             'value': value
         }
+
+    def is_event(self, obj):
+        return IEvent.providedBy(obj)
+
+    def formatted_date(self, item):
+        provider = getMultiAdapter(
+            (self.context, self.request, self),
+            IContentProvider, name='formatted_date'
+        )
+        return provider(item)
 
     def no_items_message(self):
         return _(
