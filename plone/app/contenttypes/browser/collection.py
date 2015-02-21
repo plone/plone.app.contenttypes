@@ -3,19 +3,22 @@ from Acquisition import aq_inner
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes import _
-from Products.CMFPlone.PloneBatch import Batch
 
 
 class CollectionView(FolderView):
 
-    def results(self, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super(CollectionView, self).__init__(*args, **kwargs)
         context = aq_inner(self.context)
-        wrapped = ICollection(context)
-        return wrapped.results(self.b_start, **kwargs)
+        self.collection_behavior = ICollection(context)
+        self.b_size = self.collection_behavior.item_count
 
-    def batch(self):
-        batch = Batch(self.results(), self.b_start)
-        return batch
+    def results(self, **kwargs):
+        return self.collection_behavior.results(
+            b_start=self.b_start,
+            b_size=self.b_size,
+            **kwargs
+        )
 
     def getFoldersAndImages(self, **kwargs):
         context = aq_inner(self.context)
