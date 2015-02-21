@@ -78,7 +78,8 @@ class FolderView(BrowserView):
         return results
 
     def batch(self):
-        batch = Batch(self.results(), self.b_size, self.b_start, orphan=1)
+        batch = Batch(
+            self.results(), size=self.b_size, start=self.b_start, orphan=1)
         return batch
 
     def normalizeString(self, text):
