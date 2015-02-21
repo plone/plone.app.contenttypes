@@ -19,7 +19,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
     class=".collection.CollectionView"
-    template="templates/standard_view.pt"
+    template="templates/listing.pt"
     />
 
   <browser:page
@@ -27,7 +27,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.interfaces.ICollection"
     class=".collection.CollectionView"
-    template="templates/standard_view.pt"
+    template="templates/listing.pt"
     />
 
   <!-- VIEWS FOR ANYTHING WITH THE COLLECTION BEHAVIOR.
@@ -41,7 +41,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/standard_view.pt"
+    template="templates/listing.pt"
     />
 
   <browser:page
@@ -49,7 +49,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/summary_view.pt"
+    template="templates/listing_summary.pt"
     />
 
   <browser:page
@@ -57,7 +57,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/all_content.pt"
+    template="templates/full_view.pt"
     />
 
   <browser:page
@@ -65,7 +65,7 @@
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/tabular_view.pt"
+    template="templates/listing_tabular.pt"
     />
 
   <browser:page
@@ -128,7 +128,8 @@
     name="folder_listing"
     for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_listing.pt"
+    class=".folder.FolderView"
+    template="templates/listing.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Standard view"
@@ -138,7 +139,8 @@
     name="folder_listing"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_listing.pt"
+    class=".folder.FolderView"
+    template="templates/listing.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Standard view"
@@ -148,17 +150,19 @@
     name="folder_full_view"
     for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_full_view.pt"
+    class=".folder.FolderView"
+    template="templates/full_view.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="All content"
     />
 
   <browser:page
-    name="folder_full_view_item"
+    name="full_view_item"
     for="Products.CMFCore.interfaces._content.IContentish"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_full_view_item.pt"
+    class=".full_view.FullViewItem"
+    template="templates/full_view_item.pt"
     permission="zope2.View"
     />
 
@@ -166,7 +170,8 @@
     name="folder_summary_view"
     for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_summary_view.pt"
+    class=".folder.FolderView"
+    template="templates/listing_summary.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Summary view"
@@ -176,7 +181,8 @@
     name="folder_summary_view"
     for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_summary_view.pt"
+    class=".folder.FolderView"
+    template="templates/listing_summary.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Summary view"
@@ -186,7 +192,19 @@
     name="folder_tabular_view"
     for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    template="templates/folder_tabular_view.pt"
+    class=".folder.FolderView"
+    template="templates/listing_tabular.pt"
+    permission="zope2.View"
+    menu="plone_displayviews"
+    title="Tabular view"
+    />
+
+  <browser:page
+    name="folder_tabular_view"
+    for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".folder.FolderView"
+    template="templates/listing_tabular.pt"
     permission="zope2.View"
     menu="plone_displayviews"
     title="Tabular view"
