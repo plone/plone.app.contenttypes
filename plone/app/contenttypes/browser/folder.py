@@ -38,18 +38,27 @@ class FolderView(BrowserView):
         b_start = getattr(self.request, 'b_start', None)
         self.b_start = int(b_start) if b_start is not None else 0
 
-    def _content_filter(self):
-        content_filter = getattr(self.request, 'contentFilter', None)
-        content_filter = dict(content_filter) if content_filter else {}
-        content_filter.setdefault('portal_type', self.friendly_types)
-        content_filter.setdefault('batch', True)
-        content_filter.setdefault('b_size', self.b_size)
-        content_filter.setdefault('b_start', self.b_start)
-        return content_filter
+    def results(self, **kwargs):
+        """Return a content listing based result set with contents of the
+        folder.
 
-    def results(self):
+        :param **kwargs: Any keyword argument, which can be used for catalog
+                         queries.
+        :type  **kwargs: keyword argument
+
+        :returns: plone.app.contentlisting based result set.
+        :rtype: ``plone.app.contentlisting.interfaces.IContentListing`` based
+                sequence.
+        """
+        # Extra filter
+        kwargs.update(dict(getattr(self.request, 'contentFilter', {})))
+        kwargs.setdefault('portal_type', self.friendly_types)
+        kwargs.setdefault('batch', True)
+        kwargs.setdefault('b_size', self.b_size)
+        kwargs.setdefault('b_start', self.b_start)
+
         results = self.context.restrictedTraverse(
-            '@@folderListing')(**self._content_filter())
+            '@@folderListing')(**kwargs)
         return results
 
     def batch(self):

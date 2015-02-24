@@ -14,11 +14,24 @@ class CollectionView(FolderView):
         self.b_size = self.collection_behavior.item_count
 
     def results(self, **kwargs):
-        return self.collection_behavior.results(
-            b_start=self.b_start,
-            b_size=self.b_size,
-            **kwargs
-        )
+        """Return a content listing based result set with results from the
+        collection query.
+
+        :param **kwargs: Any keyword argument, which can be used for catalog
+                         queries.
+        :type  **kwargs: keyword argument
+
+        :returns: plone.app.contentlisting based result set.
+        :rtype: ``plone.app.contentlisting.interfaces.IContentListing`` based
+                sequence.
+        """
+        # Extra filter
+        kwargs.update(dict(getattr(self.request, 'contentFilter', {})))
+        kwargs.setdefault('batch', True)
+        kwargs.setdefault('b_size', self.b_size)
+        kwargs.setdefault('b_start', self.b_start)
+
+        return self.collection_behavior.results(**kwargs)
 
     def getFoldersAndImages(self, **kwargs):
         context = aq_inner(self.context)
