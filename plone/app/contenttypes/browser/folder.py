@@ -22,35 +22,10 @@ class FolderView(BrowserView):
     def __init__(self, context, request):
         super(FolderView, self).__init__(context, request)
 
-        registry = getUtility(IRegistry)
-
         self.plone_view = getMultiAdapter(
             (context, request), name=u"plone")
-
         self.portal_state = getMultiAdapter(
             (context, request), name=u"plone_portal_state")
-        self.friendly_types = self.portal_state.friendly_types()
-        self.isAnon = self.portal_state.anonymous()
-        self.navigation_root_url = self.portal_state.navigation_root_url()
-
-        # BBB
-        self.site_properties = context.restrictedTraverse(
-            'portal_properties').site_properties
-        self.use_view_action = getattr(
-            self.site_properties, 'typesUseViewActionInListings', ())
-
-        if HAS_SECURITY_SETTINGS:
-            security_settings = registry.forInterface(
-                ISecuritySchema, prefix="plone")
-            self.show_about = getattr(
-                security_settings, 'allow_anon_views_about', False
-            ) or not self.isAnon
-        else:
-            # BBB
-            self.show_about = getattr(
-                self.site_properties, 'allowAnonymousViewAbout', False
-            ) or not self.isAnon
-
         self.pas_member = getMultiAdapter(
             (context, request), name=u"pas_member")
 
@@ -88,6 +63,38 @@ class FolderView(BrowserView):
     def toLocalizedTime(self, time, long_format=None, time_only=None):
         return self.plone_view.toLocalizedTime(time, long_format, time_only)
 
+    @property
+    def friendly_types(self):
+        return self.portal_state.friendly_types()
+
+    @property
+    def isAnon(self):
+        return self.portal_state.anonymous()
+
+    @property
+    def navigation_root_url(self):
+        return self.portal_state.navigation_root_url()
+
+    @property
+    def use_view_action(self):
+        site_props = self.context.restrictedTraverse(
+            'portal_properties').site_properties
+        return getattr(site_props, 'typesUseViewActionInListings', ())
+
+    @property
+    def show_about(self):
+        if not HAS_SECURITY_SETTINGS:
+            # BBB
+            site_props = self.context.restrictedTraverse(
+                'portal_properties').site_properties
+            show_about = getattr(site_props, 'allowAnonymousViewAbout', False)
+        else:
+            registry = getUtility(IRegistry)
+            settings = registry.forInterface(ISecuritySchema, prefix="plone")
+            show_about = getattr(settings, 'allow_anon_views_about', False)
+        return show_about or not self.isAnon
+
+    @property
     def text(self):
         textfield = getattr(aq_base(self.context), 'text', None)
         text = getattr(textfield, 'output', None)
@@ -97,6 +104,7 @@ class FolderView(BrowserView):
             ) else 'plain'
         return text
 
+    @property
     def tabular_fields(self):
         ret = []
         ret.append('Title')
@@ -141,6 +149,7 @@ class FolderView(BrowserView):
         )
         return provider(item)
 
+    @property
     def no_items_message(self):
         return _(
             'description_no_items_in_folder',
