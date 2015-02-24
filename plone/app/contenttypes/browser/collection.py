@@ -7,11 +7,11 @@ from plone.app.contenttypes import _
 
 class CollectionView(FolderView):
 
-    def __call__(self):
+    def __init__(self, *args, **kwargs):
+        super(CollectionView, self).__init__(*args, **kwargs)
         context = aq_inner(self.context)
         self.collection_behavior = ICollection(context)
         self.b_size = self.collection_behavior.item_count
-        return super(CollectionView, self).__call__()
 
     def results(self, **kwargs):
         return self.collection_behavior.results(
