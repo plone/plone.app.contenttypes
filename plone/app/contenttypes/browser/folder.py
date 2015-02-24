@@ -19,9 +19,8 @@ except ImportError:
 
 class FolderView(BrowserView):
 
-    def __call__(self):
-        context = self.context
-        request = self.request
+    def __init__(self, context, request):
+        super(FolderView, self).__init__(context, request)
 
         registry = getUtility(IRegistry)
 
@@ -63,7 +62,6 @@ class FolderView(BrowserView):
         self.b_size = int(b_size) if b_size is not None else limit_display
         b_start = getattr(self.request, 'b_start', None)
         self.b_start = int(b_start) if b_start is not None else 0
-        return super(FolderView, self).__call__()
 
     def _content_filter(self):
         content_filter = getattr(self.request, 'contentFilter', None)
