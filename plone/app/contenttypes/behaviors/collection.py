@@ -187,8 +187,7 @@ class Collection(object):
                            name='plone.app.contenttypes.metadatafields')
         for field in vocab(self.context):
             _mapping[field.value] = (field.value, field.title)
-        ret = [_mapping[field] for field in self.customViewFields]
-        return ret
+        return [_mapping[field] for field in self.customViewFields]
 
     # Getters and setters for our fields.
 

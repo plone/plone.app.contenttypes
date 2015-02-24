@@ -88,9 +88,8 @@
          metal:use-macro="here/batch_macros/macros/navigation" />
 
     <tal:listing condition="otherContents"
-                 define="folderContents otherContents;
-                         view nocall:here/@@folder_listing">
-        <metal:listing metal:use-macro="view/macros/listing">
+                 define="folderContents otherContents">
+        <metal:listing metal:use-macro="here/folder_listing/macros/listing">
             <metal:empty metal:fill-slot="no_items_in_listing"></metal:empty>
         </metal:listing>
 
