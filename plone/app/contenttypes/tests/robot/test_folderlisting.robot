@@ -27,6 +27,9 @@ Scenario: Test listing views
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/folder_full_view
     Then Listing should list contained content in detail
 
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_album/album_view
+    Then Album should list contained images and albums
+
 
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/collection_view
     Then Listing should list all content
@@ -39,6 +42,9 @@ Scenario: Test listing views
 
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/all_content
     Then Listing should list all content in detail
+
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/album_view
+    Then Album should list all images and albums
 
 
 *** Keywords ***
@@ -91,6 +97,16 @@ Listing should list contained content in detail
   Page Should Contain  Test Sub Album Image 3
   Xpath Should Match X Times  //img[@title="Test Sub Album Image 3"]  0
 
+Album should list contained images and albums
+  Page Should Contain  Test Album Image 1
+  Xpath Should Match X Times  //img[@title="Test Album Image 1"]  1
+  Page Should Contain  Test Album Image 2
+  Xpath Should Match X Times  //img[@title="Test Album Image 2"]  1
+  Page Should Contain  Test Album Image 3
+  Xpath Should Match X Times  //img[@title="Test Album Image 3"]  1
+  Page Should Contain  Test Sub Album
+
+
 Listing should list all content
   Page Should Contain  Test Document
   Page Should Contain  Test News Item
@@ -138,6 +154,25 @@ Listing should list all content in detail
   Xpath Should Match X Times  //img[@title="Test Sub Album Image 2"]  1
   Page Should Contain  Test Sub Album Image 3
   Xpath Should Match X Times  //img[@title="Test Sub Album Image 3"]  1
+
+Album should list all images and albums
+  Page Should Contain  Test Image
+  Xpath Should Match X Times  //img[@title="Test Image"]  1
+  Page Should Contain  Test Album Image 1
+  Xpath Should Match X Times  //img[@title="Test Album Image 1"]  1
+  Page Should Contain  Test Album Image 2
+  Xpath Should Match X Times  //img[@title="Test Album Image 2"]  1
+  Page Should Contain  Test Album Image 3
+  Xpath Should Match X Times  //img[@title="Test Album Image 3"]  1
+  Page Should Contain  Test Sub Album Image 1
+  Xpath Should Match X Times  //img[@title="Test Sub Album Image 1"]  1
+  Page Should Contain  Test Sub Album Image 2
+  Xpath Should Match X Times  //img[@title="Test Sub Album Image 2"]  1
+  Page Should Contain  Test Sub Album Image 3
+  Xpath Should Match X Times  //img[@title="Test Sub Album Image 3"]  1
+  Page Should Contain  Test Album
+  Page Should Contain  Test Sub Album
+
 
 
 Setup Testcontent

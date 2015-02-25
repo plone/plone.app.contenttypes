@@ -145,36 +145,6 @@ class Collection(object):
             limit=limit, brains=brains, custom_query=custom_query
         )
 
-    def getFoldersAndImages(self):
-        catalog = getToolByName(self.context, 'portal_catalog')
-        results = self.results(batch=False)
-
-        _mapping = {'results': results, 'images': {}}
-        portal_atct = getToolByName(self.context, 'portal_atct', None)
-        image_types = getattr(portal_atct, 'image_types', ['Image'])
-
-        filtered_results = []
-        for item in results:
-            item_path = item.getPath()
-            if item.isPrincipiaFolderish:
-                query = {
-                    'portal_type': image_types,
-                    'path': item_path,
-                }
-                _mapping['images'][item_path] = IContentListing(catalog(query))
-            elif item.portal_type in image_types:
-                _mapping['images'][item_path] = [item, ]
-            else:
-                continue
-            filtered_results.append(item)
-
-        _mapping['total_number_of_images'] = sum(map(
-            len,
-            _mapping['images'].values()
-        ))
-        _mapping['results'] = filtered_results
-        return _mapping
-
     def selectedViewFields(self):
         """Returns a list of all metadata fields from the catalog that were
            selected.

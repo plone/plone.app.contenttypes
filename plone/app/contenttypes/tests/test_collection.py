@@ -74,9 +74,6 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.assertEqual(self.collection.selectedViewFields(),
                          [('Title', 'Title'), ('Description', 'Description')])
 
-    def test_getFoldersAndImages(self):
-        pass
-
     def test_bbb_setQuery(self):
         self.collection.setQuery(query)
         self.assertEqual(self.collection.query, query)
@@ -361,79 +358,6 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
                                   custom_query={'portal_type': 'Document',
                                                 'id': 'bla'})
         self.assertEqual(len(results), 0)
-
-    def test_getFoldersAndImages(self):
-        portal = self.layer['portal']
-        login(portal, 'admin')
-        # add a collection, so we can add a query to it
-        portal.invokeFactory("Collection",
-                             "collection",
-                             title="New Collection")
-
-        # add example folder and a subfolder to it, both with same id
-        portal.invokeFactory("Folder",
-                             "folder1",
-                             title="Folder1")
-        folder = portal['folder1']
-
-        folder.invokeFactory("Folder",
-                             "folder1",
-                             title="Folder1")
-        subfolder = folder['folder1']
-        # add example image into folder and its subfolder
-        folder.invokeFactory("Image",
-                             "image",
-                             title="Image example")
-
-        subfolder.invokeFactory("Image",
-                                "another_image",
-                                title="Image example")
-        query = [{
-            'i': 'Type',
-            'o': 'plone.app.querystring.operation.string.is',
-            'v': 'Folder',
-        }]
-        collection = portal['collection']
-        wrapped = ICollection_behavior(collection)
-        wrapped.query = query
-        imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
-        # The current implementation for getFoldersAndImages will return
-        # another_image under subfolder and also under folder
-        self.assertEqual(imagecount, 3)
-
-    def test_getFoldersAndImages_returning_images(self):
-        portal = self.layer['portal']
-        login(portal, 'admin')
-        # add a collection, so we can add a query to it
-        portal.invokeFactory("Collection",
-                             "collection",
-                             title="New Collection")
-
-        # add example folder
-        portal.invokeFactory("Folder",
-                             "folder1",
-                             title="Folder1")
-        folder = portal['folder1']
-
-        # add example image into this folder
-        folder.invokeFactory("Image",
-                             "image",
-                             title="Image example")
-
-        # add another image into the portal root
-        portal.invokeFactory("Image",
-                             "image",
-                             title="Image example")
-        query = [{
-            'i': 'Type',
-            'o': 'plone.app.querystring.operation.string.is',
-            'v': 'Image',
-        }]
-        collection = portal['collection']
-        wrapped = ICollection_behavior(collection)
-        wrapped.query = query
-        imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
-        self.assertEqual(imagecount, 2)
 
     def test_respect_navigation_root(self):
         portal = self.layer['portal']

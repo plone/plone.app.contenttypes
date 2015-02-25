@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IImage
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes import _
@@ -33,10 +35,21 @@ class CollectionView(FolderView):
 
         return self.collection_behavior.results(**kwargs)
 
-    def getFoldersAndImages(self, **kwargs):
-        context = aq_inner(self.context)
-        wrapped = ICollection(context)
-        return wrapped.getFoldersAndImages(**kwargs)
+    @property
+    def album_results(self):
+        """Get results to display an album with subalbums.
+        """
+        results = self.results()
+        images = []
+        folders = []
+        for it in results:
+            # TODO: potentially expensive!
+            ob = it.getObject()
+            if IImage.providedBy(ob):
+                images.append(it)
+            elif IFolder.providedBy(ob):
+                folders.append(it)
+        return {'images': images, 'folders': folders}
 
     def tabular_fields(self):
         """Returns a list of all metadata fields from the catalog that were
