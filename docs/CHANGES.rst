@@ -7,11 +7,12 @@ Changelog
 - Refactor full_view and incorporate fixes from collective.fullview to
   1) display the default views of it's items, 2) be recursively callable
   and 3) have the same templates for folder and collections.
-  [thet] 
+  [thet]
 
-- Refactor folder_listing, folder_summary_view, folder_tabular_view for folders
-  and standard_view (collection_view), summary_view and tabular_view for
-  collections to use the same templates and base view class.
+- Refactor folder_listing, folder_summary_view, folder_tabular_view and
+  folder_album_view for folders as well as standard_view (collection_view),
+  summary_view, tabular_view and thumbnail_view for collections to use the same
+  templates and base view class.
   [thet]
 
 - In the file view, render HTML5 ``<audio>`` or ``<video>`` tags for audio

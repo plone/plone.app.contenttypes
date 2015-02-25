@@ -69,11 +69,11 @@
     />
 
   <browser:page
-    name="thumbnail_view"
+    name="album_view"
     permission="zope2.View"
     for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
     class=".collection.CollectionView"
-    template="templates/thumbnail_view.pt"
+    template="templates/listing_album.pt"
     />
 
   <!-- COLLECTION MENU ITEMS -->
@@ -98,8 +98,8 @@
       action="tabular_view"
       />
     <browser:menuItem
-      title="Thumbnail view"
-      action="thumbnail_view"
+      title="Album view"
+      action="album_view"
       />
   </browser:menuItems>
 
@@ -211,24 +211,12 @@
     />
 
   <browser:page
-    name="folder_album_view"
+    name="album_view"
     for="plone.dexterity.interfaces.IDexterityContainer"
     layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    class=".album_view.AlbumView"
-    template="templates/folder_album_view.pt"
+    class=".folder.FolderView"
+    template="templates/listing_album.pt"
     permission="zope2.View"
-    />
-
-  <!-- BBB -->
-  <browser:page
-    name="atct_album_view"
-    for="plone.dexterity.interfaces.IDexterityContainer"
-    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-    class=".album_view.AlbumView"
-    template="templates/folder_album_view.pt"
-    permission="zope2.View"
-    menu="plone_displayviews"
-    title="Album"
     />
 
   <browser:page
@@ -293,5 +281,32 @@
 
   <!-- Query string widget -->
   <adapter factory=".widgets.QueryStringFieldWidget" />
+
+  <!-- BBB -->
+  <browser:page
+    name="folder_album_view"
+    for="plone.dexterity.interfaces.IDexterityContainer"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".folder.FolderView"
+    template="templates/listing_album.pt"
+    permission="zope2.View"
+    />
+  <browser:page
+    name="atct_album_view"
+    for="plone.dexterity.interfaces.IDexterityContainer"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    class=".folder.FolderView"
+    template="templates/listing_album.pt"
+    permission="zope2.View"
+    menu="plone_displayviews"
+    title="Album"
+    />
+  <browser:page
+    name="thumbnail_view"
+    permission="zope2.View"
+    for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
+    class=".collection.CollectionView"
+    template="templates/listing_album.pt"
+    />
 
 </configure>

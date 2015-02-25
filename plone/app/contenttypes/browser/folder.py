@@ -4,6 +4,8 @@ from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
 from plone.app.contenttypes import _
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IImage
 from plone.event.interfaces import IEvent
 from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
@@ -157,6 +159,20 @@ class FolderView(BrowserView):
             IContentProvider, name='formatted_date'
         )
         return provider(item)
+
+    @property
+    def album_results(self):
+        """Get results to display an album with subalbums.
+        """
+        images = self.results(
+            batch=False,
+            object_provides=IImage.__identifier__
+        )
+        folders = self.results(
+            batch=False,
+            object_provides=IFolder.__identifier__
+        )
+        return {'images': images, 'folders': folders}
 
     @property
     def no_items_message(self):
