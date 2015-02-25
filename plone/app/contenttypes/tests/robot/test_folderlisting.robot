@@ -157,7 +157,7 @@ Listing should list all content in detail
 
 Album should list all images and albums
   Page Should Contain  Test Image
-  Xpath Should Match X Times  //img[@title="Test Image"]  1
+  Xpath Should Match X Times  //img[@title="Test Image"]  2
   Page Should Contain  Test Album Image 1
   Xpath Should Match X Times  //img[@title="Test Album Image 1"]  1
   Page Should Contain  Test Album Image 2
