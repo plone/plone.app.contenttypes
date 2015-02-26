@@ -5,7 +5,6 @@
       lang="en"
       metal:use-macro="here/main_template/macros/master"
       i18n:domain="plone">
-
 <body>
 
 <metal:content-core fill-slot="content-core">
@@ -23,52 +22,52 @@
   </div>
 
   <tal:images tal:repeat="image images">
-  <div class="photoAlbumEntry">
-    <a tal:attributes="href string:${image/getURL}/view;
-                       title image/Description">
-      <span class="photoAlbumEntryWrapper">
-        <img tal:define="ob image/getObject;
-                         scale ob/@@images;
-                         img_tag python:scale.scale('image', scale='thumb').tag()"
-            tal:replace="structure img_tag" />
-      </span>
-      <span class="photoAlbumEntryTitle" tal:content="image/Title">
-          Title
-      </span>
-    </a>
-  </div>
+    <div class="photoAlbumEntry">
+      <a tal:attributes="href string:${image/getURL}/view;
+                         title image/Description">
+        <span class="photoAlbumEntryWrapper">
+          <img tal:define="ob image/getObject;
+                           scale ob/@@images;
+                           img_tag python:scale.scale('image', scale='thumb').tag()"
+              tal:replace="structure img_tag" />
+        </span>
+        <span class="photoAlbumEntryTitle" tal:content="image/Title">
+            Title
+        </span>
+      </a>
+    </div>
   </tal:images>
-  
-  <div class="visualClear"></div>
+
+  <div class="visualClear"><!-- --></div>
 
   <tal:albums tal:repeat="album albums">
-  <div class="photoAlbumEntry photoAlbumFolder"
-      tal:define="ob album/getObject;
-                  subalbum_view nocall:ob/@@album_view;
-                  subalbum_results subalbum_view/album_results;
-                  subalbum_images subalbum_results/images;
-                  number_of_images python:len(subalbum_images);
-                  random python:modules['random'];
-                  random_image python:number_of_images and random.choice(subalbum_images).getObject() or None">
-    <a tal:attributes="href album/getURL;
-                       title album/Description">
-      <span class="photoAlbumEntryWrapper">
-        <tal:block condition="number_of_images">
-        <img tal:define="scale random_image/@@images;
-                         img_tag python:scale.scale('image', scale='thumb').tag()"
-             tal:replace="structure img_tag" />
-        </tal:block>
-      </span>
-      <span class="photoAlbumEntryTitle">
-        <tal:title content="album/Title">Title</tal:title>
-        (<tal:number content="number_of_images" />)
-      </span>
-    </a>
-  </div>
+    <div class="photoAlbumEntry photoAlbumFolder"
+        tal:define="ob album/getObject;
+                    subalbum_view nocall:ob/@@album_view;
+                    subalbum_results subalbum_view/album_results;
+                    subalbum_images subalbum_results/images;
+                    number_of_images python:len(subalbum_images);
+                    random python:modules['random'];
+                    random_image python:number_of_images and random.choice(subalbum_images).getObject() or None">
+      <a tal:attributes="href album/getURL;
+                         title album/Description">
+        <span class="photoAlbumEntryWrapper">
+          <tal:block condition="number_of_images">
+            <img tal:define="scale random_image/@@images;
+                             img_tag python:scale.scale('image', scale='thumb').tag()"
+                 tal:replace="structure img_tag" />
+          </tal:block>
+        </span>
+        <span class="photoAlbumEntryTitle">
+          <tal:title content="album/Title">Title</tal:title>
+          (<tal:number content="number_of_images" />)
+        </span>
+      </a>
+    </div>
   </tal:albums>
 
-  <div class="visualClear"></div>
-  
+  <div class="visualClear"><!-- --></div>
+
   <div metal:use-macro="context/batch_macros/macros/navigation" />
 
   <metal:empty metal:define-slot="no_items_in_listing">
@@ -79,8 +78,8 @@
     </p>
   </metal:empty>
 
-
 </metal:main_macro>
 </metal:content-core>
+
 </body>
 </html>

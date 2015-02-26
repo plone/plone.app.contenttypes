@@ -1,69 +1,53 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      lang="en"
-      i18n:domain="plone">
-
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    i18n:domain="plone">
 <head>
-
-    <metal:block tal:define="dummy python:request.RESPONSE.setHeader('Content-Type', 'text/html;;charset=utf-8')" />
-
-    <title tal:content="context/Title">
-        Title
-    </title>
-
-    <style type="text/css" media="screen">
+  <metal:block tal:define="dummy python:request.RESPONSE.setHeader('Content-Type', 'text/html;;charset=utf-8')" />
+  <title tal:content="context/Title">Title</title>
+  <style type="text/css" media="screen">
     body {
-        background-color: white;
-        color: black;
-        font-family: Helvetica, Arial, sans-serif;
-        font-size: 14px;
-        padding:0;
-        margin:0;
+      background-color: white;
+      color: black;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      padding:0;
+      margin:0;
     }
     a {
-        color: #08c;
-        text-decoration: none;
-        text-align:center;
+      color: #08c;
+      text-decoration: none;
+      text-align:center;
     }
-      a:hover {text-decoration:underline;}
-      a span {
-          display:block;
-          line-height:1.5em;
-          padding:12px;
-      }
-
+    a:hover {text-decoration:underline;}
+    a span {
+      display:block;
+      line-height:1.5em;
+      padding:12px;
+    }
     img {
-        border: 0;
-        display:block;
-        margin:0 auto;
+      border: 0;
+      display:block;
+      margin:0 auto;
     }
-
-    </style>
-
+  </style>
 </head>
 
 <body>
-
-<div id="content-core"
-     tal:condition="context/@@images">
-    <a href=""
-       tal:attributes="href request/HTTP_REFERER"
-       tal:condition="request/HTTP_REFERER"
-       ><span i18n:translate="label_back_to_site">Back to site</span>
-    <tal:block replace="structure context/@@images/image" />
-  </a>
-
-    <a href=""
-       tal:attributes="href context/portal_url"
-       tal:condition="not: request/HTTP_REFERER"
-       ><span i18n:translate="label_home">Home</span>
-       <tal:block replace="structure context/@@images/image" />
+  <div id="content-core" tal:condition="context/@@images">
+    <a tal:attributes="href request/HTTP_REFERER"
+        tal:condition="request/HTTP_REFERER"
+      ><span i18n:translate="label_back_to_site">Back to site</span>
+      <tal:block replace="structure context/@@images/image" />
     </a>
-</div>
-
+    <a tal:attributes="href context/portal_url"
+        tal:condition="not: request/HTTP_REFERER"
+      ><span i18n:translate="label_home">Home</span>
+      <tal:block replace="structure context/@@images/image" />
+    </a>
+  </div>
 </body>
 </html>
-
