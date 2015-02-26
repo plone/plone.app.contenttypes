@@ -23,19 +23,19 @@
         name="listing_view"
         template="templates/listing.pt"
         menu="plone_displayviews"
-        title="Listing"
+        title="Standard view"
         />
     <browser:page
         name="summary_view"
         template="templates/listing_summary.pt"
         menu="plone_displayviews"
-        title="Summary"
+        title="Summary view"
         />
     <browser:page
         name="tabular_view"
         template="templates/listing_tabular.pt"
         menu="plone_displayviews"
-        title="Tabular"
+        title="Tabular view"
         />
     <browser:page
         name="full_view"
@@ -47,7 +47,7 @@
         name="album_view"
         template="templates/listing_album.pt"
         menu="plone_displayviews"
-        title="Album"
+        title="Album view"
         />
   </browser:pages>
 
@@ -62,19 +62,19 @@
         name="listing_view"
         template="templates/listing.pt"
         menu="plone_displayviews"
-        title="Listing"
+        title="Standard view"
         />
     <browser:page
         name="summary_view"
         template="templates/listing_summary.pt"
         menu="plone_displayviews"
-        title="Summary"
+        title="Summary view"
         />
     <browser:page
         name="tabular_view"
         template="templates/listing_tabular.pt"
         menu="plone_displayviews"
-        title="Tabular"
+        title="Tabular view"
         />
     <browser:page
         name="full_view"
@@ -86,7 +86,7 @@
         name="album_view"
         template="templates/listing_album.pt"
         menu="plone_displayviews"
-        title="Album"
+        title="Album view"
         />
   </browser:pages>
 
@@ -114,13 +114,19 @@
         name="listing_view"
         template="templates/listing.pt"
         menu="plone_displayviews"
-        title="Listing"
+        title="Standard view"
         />
     <browser:page
         name="summary_view"
         template="templates/listing_summary.pt"
         menu="plone_displayviews"
-        title="Summary"
+        title="Summary view"
+        />
+    <browser:page
+        name="tabular_view"
+        template="templates/listing_tabular.pt"
+        menu="plone_displayviews"
+        title="Tabular view"
         />
     <browser:page
         name="full_view"
@@ -129,16 +135,10 @@
         title="All content"
         />
     <browser:page
-        name="tabular_view"
-        template="templates/listing_tabular.pt"
-        menu="plone_displayviews"
-        title="Tabular"
-        />
-    <browser:page
         name="album_view"
         template="templates/listing_album.pt"
         menu="plone_displayviews"
-        title="Album"
+        title="Album view"
         />
   </browser:pages>
 
