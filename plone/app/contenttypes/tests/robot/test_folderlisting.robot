@@ -159,17 +159,17 @@ Album should list all images and albums
   Page Should Contain  Test Image
   Xpath Should Match X Times  //img[@title="Test Image"]  2
   Page Should Contain  Test Album Image 1
-  Xpath Should Match X Times  //img[@title="Test Album Image 1"]  1
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 1"]  1
   Page Should Contain  Test Album Image 2
-  Xpath Should Match X Times  //img[@title="Test Album Image 2"]  1
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 2"]  1
   Page Should Contain  Test Album Image 3
-  Xpath Should Match X Times  //img[@title="Test Album Image 3"]  1
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 3"]  1
   Page Should Contain  Test Sub Album Image 1
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 1"]  1
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 1"]  1
   Page Should Contain  Test Sub Album Image 2
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 2"]  1
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 2"]  1
   Page Should Contain  Test Sub Album Image 3
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 3"]  1
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 3"]  1
   Page Should Contain  Test Album
   Page Should Contain  Test Sub Album
 
