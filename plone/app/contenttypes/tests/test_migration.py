@@ -922,7 +922,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_folder = self.portal['folder']
         self.assertTrue(IFolder.providedBy(dx_folder))
         self.assertTrue(at_folder is not dx_folder)
-        self.assertEqual(dx_folder.getLayout(), 'folder_album_view')
+        self.assertEqual(dx_folder.getLayout(), 'album_view')
 
     def test_folder_children_are_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator

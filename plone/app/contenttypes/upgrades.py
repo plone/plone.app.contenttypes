@@ -87,7 +87,7 @@ def migrate_to_richtext(context):
 
 
 def migrate_album_view(context):
-    """Migrate atct_album_view to folder_album_view."""
+    """Migrate atct_album_view to album_view."""
 
     # TODO: Don't reload the profile. Only change the settings.
     context.runImportStepFromProfile(
@@ -100,7 +100,7 @@ def migrate_album_view(context):
         obj = brain.getObject()
         current = context.getLayout()
         if current == 'atct_album_view':
-            obj.setLayout('folder_album_view')
+            obj.setLayout('album_view')
 
 
 def enable_shortname_behavior(context):

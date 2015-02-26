@@ -144,33 +144,33 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.request.set('URL', self.collection.absolute_url())
         self.request.set('ACTUAL_URL', self.collection.absolute_url())
 
-    def test_view(self):
+    def test_collection_view(self):
         view = self.collection.restrictedTraverse('@@view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_standard_view(self):
-        view = self.collection.restrictedTraverse('standard_view')
+    def test_collection_listing_view(self):
+        view = self.collection.restrictedTraverse('listing_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_summary_view(self):
+    def test_collection_summary_view(self):
         view = self.collection.restrictedTraverse('summary_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_all_content(self):
-        view = self.collection.restrictedTraverse('all_content')
+    def test_collection_full_view(self):
+        view = self.collection.restrictedTraverse('full_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_tabular_view(self):
+    def test_collection_tabular_view(self):
         view = self.collection.restrictedTraverse('tabular_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_thumbnail_view(self):
-        view = self.collection.restrictedTraverse('thumbnail_view')
+    def test_collection_album_view(self):
+        view = self.collection.restrictedTraverse('album_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
@@ -247,8 +247,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
 
-        # open all_content template
-        browser.open('%s/@@all_content' % url)
+        # open full_view template
+        browser.open('%s/@@full_view' % url)
         self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
 
@@ -258,7 +258,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue("Image example" in browser.contents)
 
         # open thumbnail_view template
-        browser.open('%s/@@thumbnail_view' % url)
+        browser.open('%s/@@album_view' % url)
         self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
 

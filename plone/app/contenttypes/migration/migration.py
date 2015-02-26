@@ -505,7 +505,7 @@ class FolderMigrator(ATCTFolderMigrator):
 
     def beforeChange_migrate_layout(self):
         if self.old.getLayout() == 'atct_album_view':
-            self.old.setLayout('folder_album_view')
+            self.old.setLayout('album_view')
 
 
 def migrate_folders(portal):

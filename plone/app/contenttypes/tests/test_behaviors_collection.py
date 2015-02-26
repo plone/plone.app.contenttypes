@@ -72,7 +72,8 @@ class CollectionBehaviorFunctionalTest(unittest.TestCase):
         )
         return browser
 
-    def test_collection_view(self):
+    def test_default_dexterity_view(self):
+        # Test the default dexterity view
         browser = self._get_browser()
         browser.open(self.portal_url + '/collectioncontainer/view')
         self.assertTrue('"v": "Collection Test Page"' in browser.contents)

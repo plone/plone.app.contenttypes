@@ -444,13 +444,13 @@ class TopicMigrator(InplaceCMFItemMigrator, ReferenceMigrator):
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
     view_methods_mapping = {
-        'folder_listing': 'standard_view',
+        'folder_listing': 'listing_view',
         'folder_summary_view': 'summary_view',
-        'folder_full_view': 'all_content',
+        'folder_full_view': 'full_view',
         'folder_tabular_view': 'tabular_view',
-        'atct_album_view': 'thumbnail_view',
-        'atct_topic_view': 'standard_view',
-        }
+        'atct_album_view': 'album_view',
+        'atct_topic_view': 'listing_view',
+    }
 
     @property
     def registry(self):
@@ -556,13 +556,13 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator, ReferenceMigrator):
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
     view_methods_mapping = {
-        'folder_listing': 'standard_view',
+        'folder_listing': 'listing_view',
         'folder_summary_view': 'summary_view',
-        'folder_full_view': 'all_content',
+        'folder_full_view': 'full_view',
         'folder_tabular_view': 'tabular_view',
-        'atct_album_view': 'thumbnail_view',
-        'atct_topic_view': 'standard_view',
-        }
+        'atct_album_view': 'album_view',
+        'atct_topic_view': 'listing_view',
+    }
 
     @property
     def registry(self):
