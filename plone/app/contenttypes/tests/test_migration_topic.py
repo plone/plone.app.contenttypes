@@ -63,7 +63,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.run_migration()
         new = ICollection(self.portal.topic)
         self.assertEqual(self.portal.topic.portal_type, 'Collection')
-        self.assertEqual(self.portal.topic.getLayout(), 'standard_view')
+        self.assertEqual(self.portal.topic.getLayout(), 'listing_view')
         self.assertEqual(new.sort_on, None)
         self.assertEqual(new.sort_reversed, None)
         self.assertEqual(new.limit, 1000)

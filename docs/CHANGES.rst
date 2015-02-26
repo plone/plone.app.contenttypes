@@ -4,12 +4,30 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-- Define ``default_page_types`` in the ``propertiestool.xml`` profile.
+- Reformatted all templates for 2 space indentation, 4 space for attributes.
+  [thet]
+
+- Register folder and collection views under the same name. Old registrations
+  are kept for BBB compatibility.
+  [thet]
+
+- Refactor full_view and incorporate fixes from collective.fullview to
+  1) display the default views of it's items, 2) be recursively callable
+  and 3) have the same templates for folder and collections.
+  [thet]
+
+- Refactor folder_listing, folder_summary_view, folder_tabular_view and
+  folder_album_view for folders as well as standard_view (collection_view),
+  summary_view, tabular_view and thumbnail_view for collections to use the same
+  templates and base view class.
   [thet]
 
 - In the file view, render HTML5 ``<audio>`` or ``<video>`` tags for audio
   respectively video file types. Ancient browsers, which do not support that,
   just don't render these tags.
+  [thet]
+
+- Define ``default_page_types`` in the ``propertiestool.xml`` profile.
   [thet]
 
 - Add ``event_listing`` to available view methods for the Folder and Collection
