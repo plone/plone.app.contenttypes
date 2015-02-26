@@ -53,7 +53,7 @@ setup(name='plone.app.contenttypes',
           'test': [
               'archetypes.schemaextender',
               'lxml',
-              'plone.app.robotframework [debug, reload] >= 0.9.9',  # create image and file content for Image, File and News Item if not given.  # noqa
+              'plone.app.robotframework [debug, reload] > 0.9.8',  # create image and file content for Image, File and News Item if not given.  # noqa
               'plone.app.testing [robot] >= 4.2.4',  # we need ROBOT_TEST_LEVEL
               # 'plone.dexterity >= 2.3.0',  # fixes setting default values # NOT RELEASED YET. # noqa
               'Products.ATContentTypes',
