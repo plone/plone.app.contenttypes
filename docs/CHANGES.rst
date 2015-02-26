@@ -4,6 +4,9 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Reformatted all templates for 2 space indentation, 4 space for attributes.
+  [thet]
+
 - Register folder and collection views under the same name. Old registrations
   are kept for BBB compatibility.
   [thet]

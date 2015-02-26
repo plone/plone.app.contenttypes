@@ -1,22 +1,18 @@
 <tal:available condition="view/available">
-<dl class="portalMessage alert-box secondary warning"
-    i18n:domain="plone">
-    <dt i18n:translate="">Warning</dt>
-    <dd>
-        <tal:manager tal:condition="not:view/can_migrate">
-            <span i18n:translate="">You can't edit this content. Ask your administrator to migrate to Dexterity!</span>
-        </tal:manager>
-        <tal:manager tal:condition="view/can_migrate">
-            <span i18n:translate="">You can't edit this content unless you
-                <a href="#" tal:attributes="href string:${context/plone_portal_state/portal_url}/@@atct_migrator">
-                    migrate the default content-types to Dexterity.
-                </a>
-            </span>
-        </tal:manager>
-    </dd>
-</dl>
-
-<style type="text/css">
-#contentview-edit {display: None;}
-</style>
+  <div class="portalMessage alert-box secondary warning" i18n:domain="plone">
+    <strong i18n:translate="">Warning</strong>
+    <tal:manager tal:condition="not:view/can_migrate">
+      <span i18n:translate="">You can't edit this content. Ask your administrator to migrate to Dexterity!</span>
+    </tal:manager>
+    <tal:manager tal:condition="view/can_migrate">
+      <span i18n:translate="">You can't edit this content unless you
+        <a href="#" tal:attributes="href string:${context/plone_portal_state/portal_url}/@@atct_migrator">
+          migrate the default content-types to Dexterity.
+        </a>
+      </span>
+    </tal:manager>
+  </div>
+  <style type="text/css">
+    #contentview-edit {display: None;}
+  </style>
 </tal:available>
