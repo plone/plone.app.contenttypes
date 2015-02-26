@@ -35,6 +35,7 @@
       <div tal:replace="structure provider:plone.abovecontentbody" />
 
       <div tal:define="view nocall:view/default_view;
+                       plone_view context/@@plone;
                        portal_state context/@@plone_portal_state;
                        context_state context/@@plone_context_state;
                        plone_layout context/@@plone_layout;
