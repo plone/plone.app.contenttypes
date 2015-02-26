@@ -15,23 +15,23 @@ Test Teardown  Close all browsers
 Scenario: Test listing views
     Given I am logged in as site owner
 
-    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/folder_listing
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/listing_view
     Then Listing should list contained content
 
-    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/folder_summary_view
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/summary_view
     Then Listing should list contained content
 
-    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/folder_tabular_view
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/tabular_view
     Then Listing should list contained content
 
-    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/folder_full_view
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/full_view
     Then Listing should list contained content in detail
 
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_album/album_view
     Then Album should list contained images and albums
 
 
-    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/collection_view
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/listing_view
     Then Listing should list all content
 
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/summary_view
@@ -40,7 +40,7 @@ Scenario: Test listing views
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/tabular_view
     Then Listing should list all content
 
-    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/all_content
+    When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/full_view
     Then Listing should list all content in detail
 
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/album_view

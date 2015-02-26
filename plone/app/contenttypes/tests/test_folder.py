@@ -131,21 +131,21 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_summary_view(self):
-        self.browser.open(self.folder_url + '/folder_summary_view')
+        self.browser.open(self.folder_url + '/summary_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_full_view(self):
-        self.browser.open(self.folder_url + '/folder_full_view')
+        self.browser.open(self.folder_url + '/full_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_tabular_view(self):
-        self.browser.open(self.folder_url + '/folder_tabular_view')
+        self.browser.open(self.folder_url + '/tabular_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_album_view(self):
-        self.browser.open(self.folder_url + '/folder_album_view')
+        self.browser.open(self.folder_url + '/album_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)

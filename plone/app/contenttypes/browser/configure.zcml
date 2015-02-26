@@ -240,7 +240,6 @@
       permission="zope2.View">
     <browser:page name="folder_listing" template="templates/listing.pt"/>
     <browser:page name="folder_full_view" template="templates/full_view.pt"/>
-    <browser:page name="full_view_item" template="templates/full_view_item.pt"/>
     <browser:page name="folder_summary_view" template="templates/listing_summary.pt"/>
     <browser:page name="folder_tabular_view" template="templates/listing_tabular.pt"/>
     <browser:page name="folder_album_view" template="templates/listing_album.pt"/>

@@ -27,14 +27,14 @@
   </property>
 
   <!-- View information -->
-  <property name="default_view">standard_view</property>
+  <property name="default_view">listing_view</property>
   <property name="default_view_fallback">False</property>
   <property name="view_methods">
-    <element value="summary_view"/>
-    <element value="full_view"/>
-    <element value="tabular_view"/>
-    <element value="album_view"/>
     <element value="listing_view"/>
+    <element value="summary_view"/>
+    <element value="tabular_view"/>
+    <element value="full_view"/>
+    <element value="album_view"/>
     <element value="event_listing"/>
   </property>
 
