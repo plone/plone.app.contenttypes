@@ -1,35 +1,28 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from DateTime import DateTime
-
-import unittest2 as unittest
-
+from plone.app.contenttypes.behaviors.collection import ICollection as ICollection_behavior  # noqa
+from plone.app.contenttypes.interfaces import ICollection
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.contenttypes.testing import set_browserlayer
+from plone.app.layout.navigation.interfaces import INavigationRoot
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import logout
+from plone.app.testing import setRoles
+from plone.app.textfield.value import RichTextValue
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.testing.z2 import Browser
+from transaction import commit
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
-from transaction import commit
-
-from plone.dexterity.interfaces import IDexterityFTI
-
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-
-from plone.testing.z2 import Browser
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, \
-    setRoles, login, logout
-
-from plone.app.contenttypes.interfaces import ICollection
-from plone.app.contenttypes.behaviors.collection import ICollection as \
-    ICollection_behavior
-
-from plone.app.layout.navigation.interfaces import INavigationRoot
-from plone.app.textfield.value import RichTextValue
 import os.path
+import unittest2 as unittest
 
 query = [{
     'i': 'Title',
@@ -140,6 +133,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.browser = Browser(self.layer['app'])
         self.portal = self.layer['portal']
         self.request = self.layer['request']
+        set_browserlayer(self.request)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         login(self.portal, TEST_USER_NAME)
         self.portal.invokeFactory('Folder', 'test-folder')
@@ -408,6 +402,7 @@ class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
+        set_browserlayer(self.request)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         login(self.portal, TEST_USER_NAME)
         self.portal.invokeFactory('Folder', 'test-folder')

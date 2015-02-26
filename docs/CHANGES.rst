@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Register folder and collection views under the same name. Old registrations
+  are kept for BBB compatibility.
+  [thet]
+
 - Refactor full_view and incorporate fixes from collective.fullview to
   1) display the default views of it's items, 2) be recursively callable
   and 3) have the same templates for folder and collections.
