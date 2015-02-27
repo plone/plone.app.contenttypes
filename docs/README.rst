@@ -13,7 +13,6 @@ plone.app.contenttypes documentation
 Introduction
 ------------
 
-
 plone.app.contenttypes provides default content types for Plone based on Dexterity. It replaces ``Products.ATContentTypes`` and provides the default-types in Plone 5. It can be used as an add-on in Plone 4.x.
 
 It contains the following types:

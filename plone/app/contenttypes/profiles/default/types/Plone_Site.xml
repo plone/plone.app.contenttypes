@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<object name="Plone Site" meta_type="Factory-based Type Information with dynamic views" i18n:domain="plone" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+  <property name="immediate_view">listing_view</property>
+  <property name="default_view">listing_view</property>
+  <property name="view_methods">
+    <element value="listing_view" />
+    <element value="summary_view" />
+    <element value="tabular_view" />
+    <element value="full_view" />
+    <element value="album_view" />
+    <element value="event_listing" />
+  </property>
+</object>
