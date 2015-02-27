@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Read ``allow_anon_views_about`` setting from the registry instead of portal
+  properties (see https://github.com/plone/Products.CMFPlone/issues/216).
+  [jcerjak]
+
 - When installing the default profile, restrict uninstalling of old types to
   old FTI based ones.
   [thet]
