@@ -22,5 +22,8 @@
  <object meta_type="Dexterity FTI" name="Image" />
  <object meta_type="Dexterity FTI" name="News Item" />
  <object meta_type="Dexterity FTI" name="Event" />
+ 
+ <object name="Plone Site"
+    meta_type="Factory-based Type Information with dynamic views"/>
 
 </object>
