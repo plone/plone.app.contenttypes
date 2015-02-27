@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- When installing the default profile, restrict uninstalling of old types to
+  old FTI based ones.
+  [thet]
+
 - Reformatted all templates for 2 space indentation, 4 space for attributes.
   [thet]
 
