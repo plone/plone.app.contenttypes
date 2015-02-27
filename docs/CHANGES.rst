@@ -29,7 +29,6 @@ Changelog
   summary_view, tabular_view and thumbnail_view for collections to use the same
   templates and base view class.
   [thet]
->>>>>>> master
 
 - In the file view, render HTML5 ``<audio>`` or ``<video>`` tags for audio
   respectively video file types. Ancient browsers, which do not support that,
