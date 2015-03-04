@@ -162,6 +162,30 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self._assert_redirect('http://nohost/plone/my-folder/my-item')
 
+    def test_mailto_type(self):
+        self.link.remoteUrl = 'mailto:stress@test.us'
+        view = self._get_link_redirect_view(self.link)
+        rendered = view()
+        self.assertTrue('href="mailto:stress@test.us"' in rendered)
+
+    def test_tel_type(self):
+        self.link.remoteUrl = 'tel:123'
+        view = self._get_link_redirect_view(self.link)
+        rendered = view()
+        self.assertTrue('href="tel:123"' in rendered)
+
+    def test_callto_type(self):
+        self.link.remoteUrl = 'callto:123'
+        view = self._get_link_redirect_view(self.link)
+        rendered = view()
+        self.assertTrue('href="callto:123"' in rendered)
+
+    def test_file_type(self):
+        self.link.remoteUrl = 'file:///tmp'
+        view = self._get_link_redirect_view(self.link)
+        rendered = view()
+        self.assertTrue('href="file:///tmp"' in rendered)
+
     def _publish(self, obj):
         portal_workflow = getToolByName(self.portal, "portal_workflow")
         portal_workflow.doActionFor(obj, 'publish')

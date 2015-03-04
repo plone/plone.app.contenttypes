@@ -32,7 +32,8 @@ class LinkRedirectView(BrowserView):
 
     def absolute_target_url(self):
         """Compute the absolute target URL."""
-        if self.context.remoteUrl.startswith('.'):
+        url = self.context.remoteUrl
+        if url.startswith('.'):
             # we just need to adapt ../relative/links, /absolute/ones work
             # anyway -> this requires relative links to start with ./ or
             # ../
@@ -41,13 +42,17 @@ class LinkRedirectView(BrowserView):
             )
             url = '/'.join([
                 context_state.canonical_object_url(),
-                self.context.remoteUrl
+                url
             ])
+        elif url.startswith('mailto:')\
+                or url.startswith('tel:')\
+                or url.startswith('callto:')\
+                or url.startswith('file:')\
+                or url.startswith('#'):
+            # Do nothing for html/html5 links
+            pass
         else:
-            url = replace_link_variables_by_paths(
-                self.context,
-                self.context.remoteUrl
-            )
+            url = replace_link_variables_by_paths(self.context, url)
             if not (url.startswith('http://') or url.startswith('https://')):
                 url = self.request.physicalPathToURL(url)
 
