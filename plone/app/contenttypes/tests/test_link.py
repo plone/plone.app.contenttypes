@@ -1,31 +1,23 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
 from Products.CMFCore.utils import getToolByName
-
-from zope.interface import alsoProvides
-from zope.component import createObject
-from zope.component import queryUtility
-from zope.component import getMultiAdapter
-from zope.event import notify
-from zope.traversing.interfaces import BeforeTraverseEvent
-
-from plone.dexterity.interfaces import IDexterityFTI
-
+from datetime import datetime
+from plone.app.contenttypes.interfaces import ILink
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.testing import logout
-from plone.testing.z2 import Browser
-
-from plone.app.contenttypes.interfaces import ILink
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
-
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.testing import logout
 from plone.app.z3cform.interfaces import IPloneFormLayer
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.testing.z2 import Browser
+from zope.component import createObject
+from zope.component import getMultiAdapter
+from zope.component import queryUtility
+from zope.event import notify
+from zope.interface import alsoProvides
+from zope.traversing.interfaces import BeforeTraverseEvent
+import unittest2 as unittest
 
 
 class LinkIntegrationTest(unittest.TestCase):
@@ -165,26 +157,65 @@ class LinkViewIntegrationTest(unittest.TestCase):
     def test_mailto_type(self):
         self.link.remoteUrl = 'mailto:stress@test.us'
         view = self._get_link_redirect_view(self.link)
+
+        logout()
         rendered = view()
         self.assertTrue('href="mailto:stress@test.us"' in rendered)
+        self._assert_response_OK()
 
     def test_tel_type(self):
         self.link.remoteUrl = 'tel:123'
         view = self._get_link_redirect_view(self.link)
+
+        logout()
         rendered = view()
         self.assertTrue('href="tel:123"' in rendered)
+        self._assert_response_OK()
 
     def test_callto_type(self):
         self.link.remoteUrl = 'callto:123'
         view = self._get_link_redirect_view(self.link)
+
+        logout()
         rendered = view()
         self.assertTrue('href="callto:123"' in rendered)
+        self._assert_response_OK()
+
+    def test_webdav_type(self):
+        self.link.remoteUrl = 'webdav://web.site/resource'
+        view = self._get_link_redirect_view(self.link)
+
+        logout()
+        rendered = view()
+        self.assertTrue('href="webdav://web.site/resource"' in rendered)
+        self._assert_response_OK()
+
+    def test_caldav_type(self):
+        self.link.remoteUrl = 'caldav://calendar.site/resource'
+        view = self._get_link_redirect_view(self.link)
+
+        logout()
+        rendered = view()
+        self.assertTrue('href="caldav://calendar.site/resource"' in rendered)
+        self._assert_response_OK()
 
     def test_file_type(self):
-        self.link.remoteUrl = 'file:///tmp'
+        self.link.remoteUrl = 'file:///some/file/on/your/system'
         view = self._get_link_redirect_view(self.link)
-        rendered = view()
-        self.assertTrue('href="file:///tmp"' in rendered)
+
+        logout()
+        self.assertTrue(view())
+        self._assert_redirect(self.link.remoteUrl)
+
+    def test_ftp_type(self):
+        self.link.remoteUrl = 'ftp://thereIsNoSuchDomain.isThere{0}'.format(
+            datetime.now().isoformat()
+        )
+        view = self._get_link_redirect_view(self.link)
+
+        logout()
+        self.assertTrue(view())
+        self._assert_redirect(self.link.remoteUrl)
 
     def _publish(self, obj):
         portal_workflow = getToolByName(self.portal, "portal_workflow")
@@ -193,6 +224,9 @@ class LinkViewIntegrationTest(unittest.TestCase):
     def _assert_redirect(self, url):
         self.assertEqual(self.response.status, 302)
         self.assertEqual(self.response.headers['location'], url)
+
+    def _assert_response_OK(self):
+        self.assertEqual(self.response.status, 200)
 
     def _get_link_redirect_view(self, obj):
         return getMultiAdapter((obj, self.request), name='link_redirect_view')
