@@ -4,8 +4,8 @@ Changelog
 1.2 (unreleased)
 ----------------
 
-- For the link_redirect_view, don't modify the urls for ``mailto:``, ``tel:``,
-  ``callto:`` and ``file:`` link types but render them as-is.
+- Improve handling of Link types with other URL schemes than ``http://`` and
+  ``https://``.
   [thet]
 
 - When installing the default profile, restrict uninstalling of old types to
