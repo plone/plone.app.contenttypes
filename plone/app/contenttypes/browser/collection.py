@@ -37,8 +37,8 @@ class CollectionView(FolderView):
 
         return self.collection_behavior.results(**kwargs)
 
-    @memoize
     @property
+    @memoize
     def _album_results(self):
         """Get results to display an album with subalbums.
         """
