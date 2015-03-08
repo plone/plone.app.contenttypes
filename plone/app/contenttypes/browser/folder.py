@@ -7,10 +7,12 @@ from plone.app.contenttypes import _
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.event.interfaces import IEvent
+from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.contentprovider.interfaces import IContentProvider
+import random
 
 HAS_SECURITY_SETTINGS = True
 try:
@@ -161,18 +163,43 @@ class FolderView(BrowserView):
         return provider(item)
 
     @property
-    def album_results(self):
-        """Get results to display an album with subalbums.
+    @memoize
+    def album_images(self):
+        """Get all images within this folder.
         """
         images = self.results(
             batch=False,
             object_provides=IImage.__identifier__
         )
-        folders = self.results(
+        return images
+
+    @property
+    @memoize
+    def album_folders(self):
+        """Get all folders within this folder.
+        """
+        images = self.results(
             batch=False,
             object_provides=IFolder.__identifier__
         )
-        return {'images': images, 'folders': folders}
+        return images
+
+    @property
+    def album_random_image(self):
+        """Get random image from this folder.
+        """
+        img = None
+        images = self.album_images
+        if images:
+            img = random.choice(images)
+        return img
+
+    @property
+    def album_number_images(self):
+        """Get number of images from this folder.
+        """
+        images = self.album_images
+        return len(images)
 
     @property
     def no_items_message(self):
