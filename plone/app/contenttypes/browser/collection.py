@@ -5,6 +5,8 @@ from plone.app.contenttypes.interfaces import IImage
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes import _
+from plone.memoize.view import memoize
+import random
 
 
 class CollectionView(FolderView):
@@ -35,8 +37,9 @@ class CollectionView(FolderView):
 
         return self.collection_behavior.results(**kwargs)
 
+    @memoize
     @property
-    def album_results(self):
+    def _album_results(self):
         """Get results to display an album with subalbums.
         """
         results = self.results()
@@ -50,6 +53,18 @@ class CollectionView(FolderView):
             elif IFolder.providedBy(ob):
                 folders.append(it)
         return {'images': images, 'folders': folders}
+
+    @property
+    def album_images(self):
+        """Get all images within this collection.
+        """
+        return self._album_results['images']
+
+    @property
+    def album_folders(self):
+        """Get all folders within this collection.
+        """
+        return self._album_results['folders']
 
     def tabular_fields(self):
         """Returns a list of all metadata fields from the catalog that were
