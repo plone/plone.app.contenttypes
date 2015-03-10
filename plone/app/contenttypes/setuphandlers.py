@@ -23,6 +23,7 @@ from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.interface import implements
+from plone.registry.interfaces import IRegistry
 
 import pkg_resources
 
@@ -107,7 +108,8 @@ def addContentToContainer(container, object, checkConstraints=True):
 
 
 def _get_locales_info(portal):
-    language = portal.Language()
+    reg = queryUtility(IRegistry, context=portal)
+    language = reg['plone.default_language']
     parts = (language.split('-') + [None, None])[:3]
     locale = locales.getLocale(*parts)
 
@@ -118,15 +120,15 @@ def _get_locales_info(portal):
     return locale.id.language, False, locale
 
 
-def _set_language_settings(portal, uses_combined_lanagage):
-    """Set the portals language settings from the given lanage codes."""
-    language = portal.Language()
-    portal_languages = getToolByName(portal, 'portal_languages')
-    portal_languages.manage_setLanguageSettings(
-        language,
-        [language],
-        setUseCombinedLanguageCodes=uses_combined_lanagage,
-        startNeutral=False)
+# def _set_language_settings(portal, uses_combined_lanagage):
+#     """Set the portals language settings from the given lanage codes."""
+#     language = portal.Language()
+#     portal_languages = getToolByName(portal, 'portal_languages')
+#     portal_languages.manage_setLanguageSettings(
+#         language,
+#         [language],
+#         setUseCombinedLanguageCodes=uses_combined_lanagage,
+#         startNeutral=False)
 
 
 # ??? Why do we only do this calendar setup when content is created?
@@ -350,7 +352,7 @@ def step_import_content(context):
     target_language, is_combined_language, locale = _get_locales_info(portal)
 
     # Set up Language specific information
-    _set_language_settings(portal, is_combined_language)
+    # _set_language_settings(portal, is_combined_language)
     _setup_calendar(locale)
     _setup_visible_ids(target_language, locale)
     _delete_at_example_content(portal)
