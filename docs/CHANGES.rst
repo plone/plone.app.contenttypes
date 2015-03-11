@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Don't try to show IContentLeadImage images, if theree none. Use the "mini"
+  scale as default scale for IContentLeadImage.
+  [thet]
+
 - Improve handling of Link types with other URL schemes than ``http://`` and
   ``https://``.
   [thet]
