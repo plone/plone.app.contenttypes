@@ -4,6 +4,11 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- In the listing view, don't repeat on the ``article`` tag, which makes it
+  impossible to override this structure. Instead, repeat on a unrendered
+  ``tal`` tag and move the article tag within.
+  [thet]
+
 - Don't try to show IContentLeadImage images, if theree none. Use the "mini"
   scale as default scale for IContentLeadImage.
   [thet]
