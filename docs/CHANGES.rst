@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.2 (unreleased)
-----------------
+1.2a6 (2015-03-13)
+------------------
 
 - In the listing view, don't repeat on the ``article`` tag, which makes it
   impossible to override this structure. Instead, repeat on a unrendered
