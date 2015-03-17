@@ -28,13 +28,6 @@ from plone.registry.interfaces import IRegistry
 import pkg_resources
 
 try:
-    pkg_resources.get_distribution('plone.multilingualbehavior')
-except pkg_resources.DistributionNotFound:
-    HAS_MULTILINGUAL = False
-else:
-    HAS_MULTILINGUAL = True
-
-try:
     DEXTERITY_WITH_CONSTRAINS = True
     from plone.app.dexterity.behaviors import constrains
 except ImportError:
@@ -190,6 +183,7 @@ def create_frontpage(portal, target_language):
         content = createContent('Document', id=frontpage_id,
                                 title=title,
                                 description=description,
+                                language=target_language
                                 )
         content = addContentToContainer(portal, content)
         front_text = None
@@ -230,7 +224,8 @@ def create_news_topic(portal, target_language):
                                  u'Site News')
         container = createContent('Folder', id=news_id,
                                   title=title,
-                                  description=description)
+                                  description=description,
+                                  language=target_language)
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -274,7 +269,8 @@ def create_events_topic(portal, target_language):
                                  u'Site Events')
         container = createContent('Folder', id=events_id,
                                   title=title,
-                                  description=description)
+                                  description=description,
+                                  language=target_language)
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -321,7 +317,8 @@ def configure_members_folder(portal, target_language):
                                  u"Site Users")
         container = createContent('Folder', id=members_id,
                                   title=title,
-                                  description=description)
+                                  description=description,
+                                  language=target_language)
         container = addContentToContainer(portal, container)
         container.setOrdering('unordered')
         container.reindexObject()
@@ -401,19 +398,19 @@ def step_setup_various(context):
     if context.readDataFile('plone.app.contenttypes_default.txt') is None:
         return
     portal = context.getSite()
-    enable_multilingual_behavior(portal)
+#     enable_multilingual_behavior(portal)
 
 
-def enable_multilingual_behavior(portal):
-    if not HAS_MULTILINGUAL:
-        return
-    types_tool = portal.portal_types
-    all_ftis = types_tool.listTypeInfo()
-    dx_ftis = [x for x in all_ftis if getattr(x, 'behaviors', False)]
-    for fti in dx_ftis:
-        behaviors = [i for i in fti.behaviors]
-        behaviors.extend([
-            'plone.multilingualbehavior.interfaces.IDexterityTranslatable',
-        ])
-        behaviors = tuple(set(behaviors))
-        fti._updateProperty('behaviors', behaviors)
+# def enable_multilingual_behavior(portal):
+#     if not HAS_MULTILINGUAL:
+#         return
+#     types_tool = portal.portal_types
+#     all_ftis = types_tool.listTypeInfo()
+#     dx_ftis = [x for x in all_ftis if getattr(x, 'behaviors', False)]
+#     for fti in dx_ftis:
+#         behaviors = [i for i in fti.behaviors]
+#         behaviors.extend([
+#             'plone.app.multilingual.dx.interfaces.IDexterityTranslatable',
+#         ])
+#         behaviors = tuple(set(behaviors))
+#         fti._updateProperty('behaviors', behaviors)
