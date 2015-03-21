@@ -2,6 +2,7 @@
 
 Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
+Resource  Products/CMFPlone/tests/robot/keywords.txt
 
 Test Setup  Run keywords  Open test browser
 Test Teardown  Close all browsers
@@ -24,8 +25,9 @@ Test Short name (id) Criterion
 
 I set the collection short name (id) criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection
-    Click Edit
+    Go to  ${PLONE_URL}/my-collection/edit
+    Wait until page contains  Edit Collection
+    patterns are loaded
 
     I set the criteria index in row 1 to the option 'Short name'
     I set the criteria operator in row 1 to the option 'Is'
