@@ -20,31 +20,16 @@ a collection
   [Arguments]  ${title}
   [Return]  ${uid}
   ${uid} =  Create content  type=Collection  title=${title}
-# Go to  ${PLONE_URL}/++add++Collection
-# Wait until page contains  Add Collection
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
 
 a document
   [Arguments]  ${title}
   [Return]  ${uid}
   ${uid} =  Create content  type=Document  title=${title}
-# Go to  ${PLONE_URL}/++add++Document
-# Wait until page contains  Add Page
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
 
 a event
   [Arguments]  ${title}
   [Return]  ${uid}
   ${uid} =  Create content  type=Event  title=${title}
-# Go to  ${PLONE_URL}/++add++Event
-# Wait until page contains  Add Event
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
 
 a file
   [Arguments]  ${title}
@@ -59,11 +44,6 @@ a folder
   [Arguments]  ${title}
   [Return]  ${uid}
   ${uid} =  Create content  type=Folder  title=${title}
-# Go to  ${PLONE_URL}/++add++Folder
-# Wait until page contains  Add Folder
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
 
 a image
   [Arguments]  ${title}
@@ -78,18 +58,13 @@ a link
   [Arguments]  ${title}
   [Return]  ${uid}
   ${uid} =  Create content  type=Link  title=${title}
-# Go to  ${PLONE_URL}/++add++Link
-# Wait until page contains  Add Link
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
+
 
 a news item
   [Arguments]  ${title}
   Go to  ${PLONE_URL}/++add++News Item
   Wait until page contains  Add News Item
   Input text  name=form.widgets.IDublinCore.title  ${title}
-  fill in metadata
   Click Button  Save
   Wait until page contains  Item created
 

@@ -1,4 +1,4 @@
-*** Settings ***
+*** Settings *****************************************************************
 
 Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
@@ -6,9 +6,8 @@ Resource  plone/app/contenttypes/tests/robot/keywords.txt
 Test Setup  Run keywords  Open test browser
 Test Teardown  Close all browsers
 
-*** Variables ***
 
-*** Test cases ***
+*** Test cases ***************************************************************
 
 Test Type Criterion
     Given I am logged in as site owner
@@ -20,12 +19,12 @@ Test Type Criterion
       And the collection should not contain  Test Document
 
 
-*** Keywords ***
+*** Keywords *****************************************************************
 
 I set the collection's type criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection
-    Click Edit
+    Go to  ${PLONE_URL}/my-collection/edit
+    Wait until page contains  Edit Collection
 
     I set the criteria index in row 1 to the option 'Type'
     I set the criteria operator in row 1 to the option 'Is'
