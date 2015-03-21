@@ -2,7 +2,6 @@
 
 Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
-Resource  Products/CMFPlone/tests/robot/keywords.txt
 
 Variables  plone/app/contenttypes/tests/robot/variables.py
 
@@ -48,20 +47,20 @@ a folder '${folder-id}' with a document '${document-title}'
 
 I set the collection's relative location criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection/edit
-    Wait until page contains  Edit Collection
-    patterns are loaded
+    Go to  ${PLONE_URL}/my-collection
+    Click Edit
+
     I set the criteria index in row 1 to the option 'Location'
     I set the criteria operator in row 1 to the option 'Relative path'
     I set the criteria value in row 1 to the text '${criterion}'
+
     Click Button  Save
     Wait until page contains  Changes saved
 
 I set the collection's absolute location criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection/edit
-    Wait until page contains  Edit Collection
-    patterns are loaded
+    Go to  ${PLONE_URL}/my-collection
+    Click Edit
 
     I set the criteria index in row 1 to the option 'Location'
     I set the criteria operator in row 1 to the option 'Absolute path'
