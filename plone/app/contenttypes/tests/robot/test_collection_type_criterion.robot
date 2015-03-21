@@ -1,3 +1,13 @@
+# ============================================================================
+# Tests for the Collection Type Criterion
+# ============================================================================
+#
+# $ bin/robot-server --reload-path src/plone.app.contenttypes plone.app.contenttypes.testing.PLONE_APP_CONTENTTYPES_ROBOT_TESTING
+#
+# $ bin/robot src/plone.app.contenttypes/plone/app/contenttypes/tests/robot/test_collection_type_criterion.robot
+#
+# ============================================================================
+
 *** Settings *****************************************************************
 
 Resource  plone/app/robotframework/keywords.robot
