@@ -1,8 +1,21 @@
 Changelog
 =========
 
-1.2 (unreleased)
-----------------
+1.2a6 (2015-03-13)
+------------------
+
+- In the listing view, don't repeat on the ``article`` tag, which makes it
+  impossible to override this structure. Instead, repeat on a unrendered
+  ``tal`` tag and move the article tag within.
+  [thet]
+
+- Don't try to show IContentLeadImage images, if theree none. Use the "mini"
+  scale as default scale for IContentLeadImage.
+  [thet]
+
+- Improve handling of Link types with other URL schemes than ``http://`` and
+  ``https://``.
+  [thet]
 
 - When installing the default profile, restrict uninstalling of old types to
   old FTI based ones.

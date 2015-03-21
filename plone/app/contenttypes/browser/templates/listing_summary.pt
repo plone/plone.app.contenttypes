@@ -14,17 +14,15 @@
     <metal:block use-macro="context/@@listing_view/macros/entries">
       <metal:entry fill-slot="entry">
 
-        <div class="tileItem visualIEFloatFix" tal:define="obj item/getObject">
+        <article class="tileItem visualIEFloatFix" tal:define="obj item/getObject">
 
-          <a tal:condition="python:getattr(obj.aq_explicit, 'image', None)"
-              tal:attributes="href item_link">
-            <div class="tileImage">
-              <img src="" alt=""
-                  tal:define="scales obj/@@images;
-                              scale python:scales.scale('image', 'thumb')"
+          <div class="tileImage" tal:condition="item_has_image">
+            <a tal:attributes="href item_link">
+              <img tal:define="scales obj/@@images;
+                               scale python:scales.scale('image', 'thumb')"
                   tal:replace="structure python:scale and scale.tag(css_class='tileImage') or None" />
-            </div>
-          </a>
+            </a>
+          </div>
 
           <h2 class="tileHeadline" metal:define-macro="listitem">
             <a class="summary url"
@@ -52,7 +50,7 @@
 
           <div class="visualClear"><!-- --></div>
 
-        </div>
+        </article>
 
       </metal:entry>
     </metal:block>
