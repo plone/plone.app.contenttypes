@@ -1,4 +1,14 @@
-*** Settings ***
+# ============================================================================
+# Tests for the Collection Location Criterion
+# ============================================================================
+#
+# $ bin/robot-server --reload-path src/plone.app.contenttypes plone.app.contenttypes.testing.PLONE_APP_CONTENTTYPES_ROBOT_TESTING
+#
+# $ bin/robot src/plone.app.contenttypes/plone/app/contenttypes/tests/robot/test_collection_location_criterion.robot
+#
+# ============================================================================
+
+*** Settings *****************************************************************
 
 Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
@@ -8,9 +18,8 @@ Variables  plone/app/contenttypes/tests/robot/variables.py
 Test Setup  Run keywords  Open test browser
 Test Teardown  Close all browsers
 
-*** Variables ***
 
-*** Test cases ***
+*** Test cases ***************************************************************
 
 Scenario: Test Relative Location Criterion
     Given I am logged in as site owner
@@ -32,7 +41,7 @@ Scenario: Test Absolute Location Criterion
       And the collection should not contain  Document outside Folder
 
 
-*** Keywords ***
+*** Keywords *****************************************************************
 
 a folder '${folder-id}' with a document '${document-title}'
     Go to  ${PLONE_URL}/++add++Folder
@@ -47,8 +56,8 @@ a folder '${folder-id}' with a document '${document-title}'
 
 I set the collection's relative location criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection
-    Click Edit
+    Go to  ${PLONE_URL}/my-collection/edit
+    Wait until page contains  Edit Collection
 
     I set the criteria index in row 1 to the option 'Location'
     I set the criteria operator in row 1 to the option 'Relative path'
@@ -59,8 +68,8 @@ I set the collection's relative location criterion to
 
 I set the collection's absolute location criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection
-    Click Edit
+    Go to  ${PLONE_URL}/my-collection/edit
+    Wait until page contains  Edit Collection
 
     I set the criteria index in row 1 to the option 'Location'
     I set the criteria operator in row 1 to the option 'Absolute path'
