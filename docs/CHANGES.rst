@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2a6 (2015-03-13)
+1.2a6 (2015-03-26)
 ------------------
 
 - In the listing view, don't repeat on the ``article`` tag, which makes it
