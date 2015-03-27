@@ -9,7 +9,7 @@ def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 long_description = \
-    read('docs', 'README.rst') + \
+    read('docs', 'README.rst') + '\n\n' + \
     read('docs', 'CHANGES.rst')
 
 setup(name='plone.app.contenttypes',
