@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2a7 (unreleased)
+1.2a7 (2015-03-27)
 ------------------
 
 - Re-relase 1.2a6. See https://github.com/plone/plone.app.contenttypes/commit/7cb74a2fcbf108acd43fe4ae3713f007db2073bf for details.
