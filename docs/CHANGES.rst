@@ -4,7 +4,8 @@ Changelog
 1.2a7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Re-relase 1.2a6. See https://github.com/plone/plone.app.contenttypes/commit/7cb74a2fcbf108acd43fe4ae3713f007db2073bf for details.
+  [timo]
 
 
 1.2a6 (2015-03-26)
