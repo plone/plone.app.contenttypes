@@ -7,6 +7,7 @@
     i18n:domain="plone">
 <head>
   <metal:block tal:define="dummy python:request.RESPONSE.setHeader('Content-Type', 'text/html;;charset=utf-8')" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title tal:content="context/Title">Title</title>
   <style type="text/css" media="screen">
     body {
@@ -16,6 +17,11 @@
       font-size: 14px;
       padding:0;
       margin:0;
+    }
+    @media screen and (max-width: 768px) {
+        body {
+          font-size: 100%;
+        }
     }
     a {
       color: #08c;
@@ -32,6 +38,7 @@
       border: 0;
       display:block;
       margin:0 auto;
+      max-width: 100%; height: auto;
     }
   </style>
 </head>
