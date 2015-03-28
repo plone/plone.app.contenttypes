@@ -4,6 +4,9 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Update image_view_fullscreen.pt for mobile friendliness.
+  [fulv]
+
 - In the listing view, don't repeat on the ``article`` tag, which makes it
   impossible to override this structure. Instead, repeat on a unrendered
   ``tal`` tag and move the article tag within.
