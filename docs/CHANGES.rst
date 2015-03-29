@@ -4,7 +4,8 @@ Changelog
 1.2a8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Update image_view_fullscreen.pt for mobile friendliness.
+  [fulv]
 
 
 1.2a7 (2015-03-27)
