@@ -3,29 +3,29 @@ from Products.CMFCore.utils import getToolByName
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from lxml import etree
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+from plone.app.contenttypes.migration.utils import add_portlet
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
-from plone.dexterity.interfaces import IDexterityContent
+from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.content import Container
+from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEventAccessor
 from plone.testing.z2 import Browser
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getSiteManager
 from zope.component import getUtility
+from zope.interface import alsoProvides
 from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
 import os.path
 import time
 import unittest2 as unittest
-from plone.app.contenttypes.migration.utils import add_portlet
 
 
 class MigrateFromATContentTypesTest(unittest.TestCase):
@@ -1200,6 +1200,11 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_document = self.portal['document']
         at_newsitem = self.portal['newsitem']
         applyProfile(self.portal, 'plone.app.contenttypes:default')
+        # At this point plone.app.z3cform is installed including it's browser
+        # layer. But we have to annotate the request to provide it, since the
+        # request was constructed before. Otherwise, @@view cannot be render
+        # it's IRichText widget.
+        alsoProvides(self.request, IPloneFormLayer)
         at_document_view = at_document.restrictedTraverse('')
         self.assertTrue(
             'http://nohost/plone/@@atct_migrator' in at_document_view()
