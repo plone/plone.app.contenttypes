@@ -4,11 +4,15 @@ from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
 from plone.app.contenttypes import _
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IImage
 from plone.event.interfaces import IEvent
+from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.contentprovider.interfaces import IContentProvider
+import random
 
 HAS_SECURITY_SETTINGS = True
 try:
@@ -22,35 +26,10 @@ class FolderView(BrowserView):
     def __init__(self, context, request):
         super(FolderView, self).__init__(context, request)
 
-        registry = getUtility(IRegistry)
-
         self.plone_view = getMultiAdapter(
             (context, request), name=u"plone")
-
         self.portal_state = getMultiAdapter(
             (context, request), name=u"plone_portal_state")
-        self.friendly_types = self.portal_state.friendly_types()
-        self.isAnon = self.portal_state.anonymous()
-        self.navigation_root_url = self.portal_state.navigation_root_url()
-
-        # BBB
-        self.site_properties = context.restrictedTraverse(
-            'portal_properties').site_properties
-        self.use_view_action = getattr(
-            self.site_properties, 'typesUseViewActionInListings', ())
-
-        if HAS_SECURITY_SETTINGS:
-            security_settings = registry.forInterface(
-                ISecuritySchema, prefix="plone")
-            self.show_about = getattr(
-                security_settings, 'allow_anon_views_about', False
-            ) or not self.isAnon
-        else:
-            # BBB
-            self.show_about = getattr(
-                self.site_properties, 'allowAnonymousViewAbout', False
-            ) or not self.isAnon
-
         self.pas_member = getMultiAdapter(
             (context, request), name=u"pas_member")
 
@@ -63,18 +42,27 @@ class FolderView(BrowserView):
         b_start = getattr(self.request, 'b_start', None)
         self.b_start = int(b_start) if b_start is not None else 0
 
-    def _content_filter(self):
-        content_filter = getattr(self.request, 'contentFilter', None)
-        content_filter = dict(content_filter) if content_filter else {}
-        content_filter.setdefault('portal_type', self.friendly_types)
-        content_filter.setdefault('batch', True)
-        content_filter.setdefault('b_size', self.b_size)
-        content_filter.setdefault('b_start', self.b_start)
-        return content_filter
+    def results(self, **kwargs):
+        """Return a content listing based result set with contents of the
+        folder.
 
-    def results(self):
+        :param **kwargs: Any keyword argument, which can be used for catalog
+                         queries.
+        :type  **kwargs: keyword argument
+
+        :returns: plone.app.contentlisting based result set.
+        :rtype: ``plone.app.contentlisting.interfaces.IContentListing`` based
+                sequence.
+        """
+        # Extra filter
+        kwargs.update(dict(getattr(self.request, 'contentFilter', {})))
+        kwargs.setdefault('portal_type', self.friendly_types)
+        kwargs.setdefault('batch', True)
+        kwargs.setdefault('b_size', self.b_size)
+        kwargs.setdefault('b_start', self.b_start)
+
         results = self.context.restrictedTraverse(
-            '@@folderListing')(**self._content_filter())
+            '@@folderListing')(**kwargs)
         return results
 
     def batch(self):
@@ -88,6 +76,38 @@ class FolderView(BrowserView):
     def toLocalizedTime(self, time, long_format=None, time_only=None):
         return self.plone_view.toLocalizedTime(time, long_format, time_only)
 
+    @property
+    def friendly_types(self):
+        return self.portal_state.friendly_types()
+
+    @property
+    def isAnon(self):
+        return self.portal_state.anonymous()
+
+    @property
+    def navigation_root_url(self):
+        return self.portal_state.navigation_root_url()
+
+    @property
+    def use_view_action(self):
+        site_props = self.context.restrictedTraverse(
+            'portal_properties').site_properties
+        return getattr(site_props, 'typesUseViewActionInListings', ())
+
+    @property
+    def show_about(self):
+        if not HAS_SECURITY_SETTINGS:
+            # BBB
+            site_props = self.context.restrictedTraverse(
+                'portal_properties').site_properties
+            show_about = getattr(site_props, 'allowAnonymousViewAbout', False)
+        else:
+            registry = getUtility(IRegistry)
+            settings = registry.forInterface(ISecuritySchema, prefix="plone")
+            show_about = getattr(settings, 'allow_anon_views_about', False)
+        return show_about or not self.isAnon
+
+    @property
     def text(self):
         textfield = getattr(aq_base(self.context), 'text', None)
         text = getattr(textfield, 'output', None)
@@ -97,6 +117,7 @@ class FolderView(BrowserView):
             ) else 'plain'
         return text
 
+    @property
     def tabular_fields(self):
         ret = []
         ret.append('Title')
@@ -131,7 +152,15 @@ class FolderView(BrowserView):
             'value': value
         }
 
+    def has_image(self, obj):
+        if getattr(obj, 'getObject', False):
+            obj = obj.getObject()
+        img = getattr(aq_base(obj), 'image', None)
+        return True if img else False
+
     def is_event(self, obj):
+        if getattr(obj, 'getObject', False):
+            obj = obj.getObject()
         return IEvent.providedBy(obj)
 
     def formatted_date(self, item):
@@ -141,6 +170,46 @@ class FolderView(BrowserView):
         )
         return provider(item)
 
+    @property
+    @memoize
+    def album_images(self):
+        """Get all images within this folder.
+        """
+        images = self.results(
+            batch=False,
+            object_provides=IImage.__identifier__
+        )
+        return images
+
+    @property
+    @memoize
+    def album_folders(self):
+        """Get all folders within this folder.
+        """
+        images = self.results(
+            batch=False,
+            object_provides=IFolder.__identifier__
+        )
+        return images
+
+    @property
+    def album_random_image(self):
+        """Get random image from this folder.
+        """
+        img = None
+        images = self.album_images
+        if images:
+            img = random.choice(images)
+        return img
+
+    @property
+    def album_number_images(self):
+        """Get number of images from this folder.
+        """
+        images = self.album_images
+        return len(images)
+
+    @property
     def no_items_message(self):
         return _(
             'description_no_items_in_folder',

@@ -62,4 +62,14 @@
       handler=".upgrades.enable_shortname_behavior"
       />
  -->
+
+  <genericsetup:upgradeStep
+      source="1103"
+      destination="1104"
+      title="Use new view names"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.use_new_view_names"
+      />
+
 </configure>

@@ -4,7 +4,6 @@ from Products.CMFPlone.browser.syndication.adapters import CollectionFeed \
     as BaseCollectionFeed
 from Products.CMFPlone.interfaces.syndication import IFeed
 from Products.CMFPlone.interfaces.syndication import ISyndicatable
-from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
@@ -13,8 +12,8 @@ from zope import schema
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from zope.interface import provider
 from zope.interface import implementer
+from zope.interface import provider
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
@@ -141,36 +140,6 @@ class Collection(object):
             sort_on=sort_on, sort_order=sort_order,
             limit=limit, brains=brains, custom_query=custom_query
         )
-
-    def getFoldersAndImages(self):
-        catalog = getToolByName(self.context, 'portal_catalog')
-        results = self.results(batch=False)
-
-        _mapping = {'results': results, 'images': {}}
-        portal_atct = getToolByName(self.context, 'portal_atct', None)
-        image_types = getattr(portal_atct, 'image_types', ['Image'])
-
-        filtered_results = []
-        for item in results:
-            item_path = item.getPath()
-            if item.isPrincipiaFolderish:
-                query = {
-                    'portal_type': image_types,
-                    'path': item_path,
-                }
-                _mapping['images'][item_path] = IContentListing(catalog(query))
-            elif item.portal_type in image_types:
-                _mapping['images'][item_path] = [item, ]
-            else:
-                continue
-            filtered_results.append(item)
-
-        _mapping['total_number_of_images'] = sum(map(
-            len,
-            _mapping['images'].values()
-        ))
-        _mapping['results'] = filtered_results
-        return _mapping
 
     def selectedViewFields(self):
         """Returns a list of all metadata fields from the catalog that were

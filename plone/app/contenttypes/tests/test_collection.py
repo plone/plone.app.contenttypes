@@ -1,35 +1,28 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from DateTime import DateTime
-
-import unittest2 as unittest
-
+from plone.app.contenttypes.behaviors.collection import ICollection as ICollection_behavior  # noqa
+from plone.app.contenttypes.interfaces import ICollection
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.contenttypes.testing import set_browserlayer
+from plone.app.layout.navigation.interfaces import INavigationRoot
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+from plone.app.testing import logout
+from plone.app.testing import setRoles
+from plone.app.textfield.value import RichTextValue
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.testing.z2 import Browser
+from transaction import commit
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
-from transaction import commit
-
-from plone.dexterity.interfaces import IDexterityFTI
-
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-
-from plone.testing.z2 import Browser
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, \
-    setRoles, login, logout
-
-from plone.app.contenttypes.interfaces import ICollection
-from plone.app.contenttypes.behaviors.collection import ICollection as \
-    ICollection_behavior
-
-from plone.app.layout.navigation.interfaces import INavigationRoot
-from plone.app.textfield.value import RichTextValue
 import os.path
+import unittest2 as unittest
 
 query = [{
     'i': 'Title',
@@ -74,9 +67,6 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.collection.customViewFields = ['Title', 'Description']
         self.assertEqual(self.collection.selectedViewFields(),
                          [('Title', 'Title'), ('Description', 'Description')])
-
-    def test_getFoldersAndImages(self):
-        pass
 
     def test_bbb_setQuery(self):
         self.collection.setQuery(query)
@@ -144,6 +134,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.browser = Browser(self.layer['app'])
         self.portal = self.layer['portal']
         self.request = self.layer['request']
+        set_browserlayer(self.request)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         login(self.portal, TEST_USER_NAME)
         self.portal.invokeFactory('Folder', 'test-folder')
@@ -154,33 +145,33 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.request.set('URL', self.collection.absolute_url())
         self.request.set('ACTUAL_URL', self.collection.absolute_url())
 
-    def test_view(self):
+    def test_collection_view(self):
         view = self.collection.restrictedTraverse('@@view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_standard_view(self):
-        view = self.collection.restrictedTraverse('standard_view')
+    def test_collection_listing_view(self):
+        view = self.collection.restrictedTraverse('listing_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_summary_view(self):
+    def test_collection_summary_view(self):
         view = self.collection.restrictedTraverse('summary_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_all_content(self):
-        view = self.collection.restrictedTraverse('all_content')
+    def test_collection_full_view(self):
+        view = self.collection.restrictedTraverse('full_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_tabular_view(self):
+    def test_collection_tabular_view(self):
         view = self.collection.restrictedTraverse('tabular_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
-    def test_thumbnail_view(self):
-        view = self.collection.restrictedTraverse('thumbnail_view')
+    def test_collection_album_view(self):
+        view = self.collection.restrictedTraverse('album_view')
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
 
@@ -257,8 +248,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
 
-        # open all_content template
-        browser.open('%s/@@all_content' % url)
+        # open full_view template
+        browser.open('%s/@@full_view' % url)
         self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
 
@@ -268,7 +259,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue("Image example" in browser.contents)
 
         # open thumbnail_view template
-        browser.open('%s/@@thumbnail_view' % url)
+        browser.open('%s/@@album_view' % url)
         self.assertTrue("Lorem collection ipsum" in browser.contents)
         self.assertTrue("Image example" in browser.contents)
 
@@ -363,79 +354,6 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
                                                 'id': 'bla'})
         self.assertEqual(len(results), 0)
 
-    def test_getFoldersAndImages(self):
-        portal = self.layer['portal']
-        login(portal, 'admin')
-        # add a collection, so we can add a query to it
-        portal.invokeFactory("Collection",
-                             "collection",
-                             title="New Collection")
-
-        # add example folder and a subfolder to it, both with same id
-        portal.invokeFactory("Folder",
-                             "folder1",
-                             title="Folder1")
-        folder = portal['folder1']
-
-        folder.invokeFactory("Folder",
-                             "folder1",
-                             title="Folder1")
-        subfolder = folder['folder1']
-        # add example image into folder and its subfolder
-        folder.invokeFactory("Image",
-                             "image",
-                             title="Image example")
-
-        subfolder.invokeFactory("Image",
-                                "another_image",
-                                title="Image example")
-        query = [{
-            'i': 'Type',
-            'o': 'plone.app.querystring.operation.string.is',
-            'v': 'Folder',
-        }]
-        collection = portal['collection']
-        wrapped = ICollection_behavior(collection)
-        wrapped.query = query
-        imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
-        # The current implementation for getFoldersAndImages will return
-        # another_image under subfolder and also under folder
-        self.assertEqual(imagecount, 3)
-
-    def test_getFoldersAndImages_returning_images(self):
-        portal = self.layer['portal']
-        login(portal, 'admin')
-        # add a collection, so we can add a query to it
-        portal.invokeFactory("Collection",
-                             "collection",
-                             title="New Collection")
-
-        # add example folder
-        portal.invokeFactory("Folder",
-                             "folder1",
-                             title="Folder1")
-        folder = portal['folder1']
-
-        # add example image into this folder
-        folder.invokeFactory("Image",
-                             "image",
-                             title="Image example")
-
-        # add another image into the portal root
-        portal.invokeFactory("Image",
-                             "image",
-                             title="Image example")
-        query = [{
-            'i': 'Type',
-            'o': 'plone.app.querystring.operation.string.is',
-            'v': 'Image',
-        }]
-        collection = portal['collection']
-        wrapped = ICollection_behavior(collection)
-        wrapped.query = query
-        imagecount = wrapped.getFoldersAndImages()['total_number_of_images']
-        self.assertEqual(imagecount, 2)
-
     def test_respect_navigation_root(self):
         portal = self.layer['portal']
         login(portal, 'admin')
@@ -485,6 +403,7 @@ class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
+        set_browserlayer(self.request)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         login(self.portal, TEST_USER_NAME)
         self.portal.invokeFactory('Folder', 'test-folder')

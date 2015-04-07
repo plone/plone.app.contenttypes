@@ -72,13 +72,14 @@ class CollectionBehaviorFunctionalTest(unittest.TestCase):
         )
         return browser
 
-    def test_collection_view(self):
+    def test_collection_default_dexterity_view(self):
+        # Test the default dexterity view
         browser = self._get_browser()
         browser.open(self.portal_url + '/collectioncontainer/view')
         self.assertTrue(
             'v:records" value="Collection Test Page"' in browser.contents)
 
-    def test_tabular_view(self):
+    def test_collection_tabular_view(self):
         browser = self._get_browser()
         browser.open(self.portal_url + '/collectioncontainer/tabular_view')
         # search from here:

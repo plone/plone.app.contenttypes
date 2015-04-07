@@ -4,14 +4,42 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Update image_view_fullscreen.pt for mobile friendliness.
+  [fulv]
+
+- In the listing view, don't repeat on the ``article`` tag, which makes it
+  impossible to override this structure. Instead, repeat on a unrendered
+  ``tal`` tag and move the article tag within.
+  [thet]
+
+- Don't try to show IContentLeadImage images, if theree none. Use the "mini"
+  scale as default scale for IContentLeadImage.
+  [thet]
+
+- Improve handling of Link types with other URL schemes than ``http://`` and
+  ``https://``.
+  [thet]
+
+- When installing the default profile, restrict uninstalling of old types to
+  old FTI based ones.
+  [thet]
+
+- Reformatted all templates for 2 space indentation, 4 space for attributes.
+  [thet]
+
+- Register folder and collection views under the same name. Old registrations
+  are kept for BBB compatibility.
+  [thet]
+
 - Refactor full_view and incorporate fixes from collective.fullview to
   1) display the default views of it's items, 2) be recursively callable
   and 3) have the same templates for folder and collections.
-  [thet] 
+  [thet]
 
-- Refactor folder_listing, folder_summary_view, folder_tabular_view for folders
-  and standard_view (collection_view), summary_view and tabular_view for
-  collections to use the same templates and base view class.
+- Refactor folder_listing, folder_summary_view, folder_tabular_view and
+  folder_album_view for folders as well as standard_view (collection_view),
+  summary_view, tabular_view and thumbnail_view for collections to use the same
+  templates and base view class.
   [thet]
 
 - In the file view, render HTML5 ``<audio>`` or ``<video>`` tags for audio

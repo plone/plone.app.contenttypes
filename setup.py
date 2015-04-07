@@ -9,7 +9,7 @@ def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 long_description = \
-    read('docs', 'README.rst') + \
+    read('docs', 'README.rst') + '\n\n' + \
     read('docs', 'CHANGES.rst')
 
 setup(name='plone.app.contenttypes',
@@ -55,7 +55,7 @@ setup(name='plone.app.contenttypes',
           'test': [
               'archetypes.schemaextender',
               'lxml',
-              'plone.app.robotframework',
+              'plone.app.robotframework [debug, reload] > 0.9.8',  # create image and file content for Image, File and News Item if not given.  # noqa
               'plone.app.testing [robot] >= 4.2.4',  # we need ROBOT_TEST_LEVEL
               # 'plone.dexterity >= 2.3.0',  # fixes setting default values # NOT RELEASED YET. # noqa
               'Products.ATContentTypes',
