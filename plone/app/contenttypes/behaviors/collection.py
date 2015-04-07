@@ -4,7 +4,6 @@ from Products.CMFPlone.browser.syndication.adapters import CollectionFeed \
     as BaseCollectionFeed
 from Products.CMFPlone.interfaces.syndication import IFeed
 from Products.CMFPlone.interfaces.syndication import ISyndicatable
-from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
@@ -13,8 +12,8 @@ from zope import schema
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from zope.interface import provider
 from zope.interface import implementer
+from zope.interface import provider
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary

@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
-from plone.app.contenttypes.interfaces import IFolder
-from plone.app.contenttypes.interfaces import IImage
+from plone.app.contenttypes import _
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.browser.folder import FolderView
-from plone.app.contenttypes import _
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IImage
 from plone.memoize.view import memoize
-import random
 
 
 class CollectionView(FolderView):
