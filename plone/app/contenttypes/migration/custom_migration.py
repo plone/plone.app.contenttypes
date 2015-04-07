@@ -30,11 +30,12 @@ class CustomMigrationForm(BrowserView):
     dx_metadata_fields.append('exclude_from_nav')
 
     def __call__(self):
-        # check that we can actually access this form, aka the current user has an advice to add or edit
+        # check that we can actually access this form,
+        # aka the current user has an advice to add or edit
         form = self.request.form
         cancelled = form.get('form.button.Cancel', False)
         submitted = form.get('form.button.Migrate', False)
-        test = form.get('form.button.Test', False)
+        # test = form.get('form.button.Test', False)
         if submitted:
             # proceed, call the migration methdd
             results = self.migrate()
@@ -43,11 +44,15 @@ class CustomMigrationForm(BrowserView):
                 res_type = migration_result.get('type')
                 res_infos = migration_result.get('infos')
                 if res_infos.get('errors'):
-                    messages.add(u'Error when migrating "%s" type. Check the log for other informations.' % res_type, type=u"error")
+                    messages.add(
+                        u'Error when migrating "%s" type. Check the '
+                        u'log for other informations.'
+                        % res_type, type=u"error")
                 else:
-                    msg = translate('Migration applied succesfully for %s "%s" items.' % (res_infos.get('counter'),
-                                                                                          res_type),
-                                domain='plone.app.contenttypes')
+                    msg = translate(
+                        'Migration applied succesfully for %s "%s" items.'
+                        % (res_infos.get('counter'), res_type),
+                        domain='plone.app.contenttypes')
                     messages.add(msg, type=u"info")
         elif cancelled:
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
@@ -59,16 +64,20 @@ class CustomMigrationForm(BrowserView):
         return at_types
 
     def getATFTIs(self):
-        '''Returns a list of all AT types with existing instances (including default-types).'''
+        '''Returns a list of all AT types with existing instances
+        (including default-types).
+        '''
         results = []
         archetype_tool = getToolByName(self.context, 'archetype_tool', None)
-        # if we do not have archetype_tool, it means that we have no registered AT types
+        # if we do not have archetype_tool, it means that we have
+        # no registered AT types
         if not archetype_tool:
             return results
 
         typesTool = getToolByName(self.context, 'portal_types')
         catalog = getToolByName(self.context, 'portal_catalog')
-        registeredTypeNames = [registered['name'] for registered in archetype_tool.listRegisteredTypes()]
+        registeredTypeNames = [registered['name'] for registered
+                               in archetype_tool.listRegisteredTypes()]
         for fti in typesTool.listTypeInfo():
             ftiId = fti.getId()
             if hasattr(fti, 'content_meta_type') and \
@@ -137,9 +146,10 @@ class CustomMigrationForm(BrowserView):
         for field in schema.fields():
             if not field.getName() in self.at_metadata_fields:
                 translated_label = translate(field.widget.label)
-                results.append({'id': field.getName(),
-                                'title': '%s (%s)' % (translated_label, field.getType()),
-                                'type': field.getType()})
+                results.append(
+                    {'id': field.getName(),
+                     'title': '%s (%s)' % (translated_label, field.getType()),
+                     'type': field.getType()})
         return results
 
     def getFieldsForATTypeWithoutFTI(self, typename):
@@ -157,9 +167,10 @@ class CustomMigrationForm(BrowserView):
             field = obj.schema._fields[field_name]
             if not field.getName() in self.at_metadata_fields:
                 translated_label = translate(field.widget.label)
-                results.append({'id': field.getName(),
-                                'title': '%s (%s)' % (translated_label, field.getType()),
-                                'type': field.getType()})
+                results.append(
+                    {'id': field.getName(),
+                     'title': '%s (%s)' % (translated_label, field.getType()),
+                     'type': field.getType()})
         return results
 
     def getFieldsForDXType(self, typename):
@@ -176,9 +187,11 @@ class CustomMigrationForm(BrowserView):
                 if fieldName in self.dx_metadata_fields:
                     continue
                 translated_title = translate(field.title)
-                results.append({'id': fieldName,
-                                'title': '%s (%s)' % (translated_title, field.__class__.__name__),
-                                'type': field.__class__.__name__})
+                class_name = field.__class__.__name__
+                results.append(
+                    {'id': fieldName,
+                     'title': '%s (%s)' % (translated_title, class_name),
+                     'type': field.__class__.__name__})
         return results
 
     def getPossibleTargetField(self, fieldtype):
@@ -189,35 +202,39 @@ class CustomMigrationForm(BrowserView):
 
     def migrate(self, dry_run=False):
         '''Build data from self.request.form, we will build something like :
-           {'MyATPortalType': {'MyDXPortalType': ({'AT_field_name': 'fieldname1',
-                                                   'AT_field_type': 'TextField',
-                                                   'DX_field_name': 'field_name1',
-                                                   'DX_field_type': 'RichText'}, )
-                                                   }}
-           Call the migrateCustomAT migrator for each AT content_type we choose to migrate.'''
+           {'MyATPortalType':
+                {'MyDXPortalType': ({'AT_field_name': 'fieldname1',
+                                     'AT_field_type': 'TextField',
+                                     'DX_field_name': 'field_name1',
+                                     'DX_field_type': 'RichText'}, )}}
+           Call the migrateCustomAT migrator for each AT content_type
+           we choose to migrate.
+        '''
         data = {}
         form = self.request.form
         # manipulate what we receive in the form and build a useable data dict
         for k in self.request.form.keys():
             if k.startswith('dx_select_'):
-                # we found select where we choose a DX type regarding an AT type
-                # the selelect name is like 'dx_select_MyATPortalType'
+                # we found select where we choose a DX type regarding an AT
+                # type the selelect name is like 'dx_select_MyATPortalType'
                 if not form[k] or (dry_run and k != form.get('tested_type')):
                     # nothing selected in this select, continue
                     continue
                 at_typename = k[10:]
                 dx_typename = form[k]
                 data[at_typename] = {dx_typename: {}}
-                # now handle fields mapping for found DX/AT type migration definition
-                # we have 2 keys we relevant mappings, first key is the AT typename
-                # second key is a particular key like 'dx_DXPortalType__for__MyATPortalType
+                # now handle fields mapping for found DX/AT type migration
+                # definition we have 2 keys we relevant mappings, first key
+                # is the AT typename second key is a particular key like
+                # 'dx_DXPortalType__for__MyATPortalType
                 dx_key = 'dx_%s__for__%s' % (dx_typename, at_typename)
                 for at_field in form[at_typename]:
                     dx_field = form[dx_key][form[at_typename].index(at_field)]
                     if not dx_field:
                         continue
                     at_field_name, at_field_type = at_field.split('__type__')
-                    if not hasattr(data[at_typename][dx_typename], at_field_name):
+                    if not hasattr(
+                            data[at_typename][dx_typename], at_field_name):
                         data[at_typename][dx_typename] = []
 
                     dx_field_name, dx_field_type = dx_field.split('__type__')
@@ -227,11 +244,16 @@ class CustomMigrationForm(BrowserView):
                                   'DX_field_type': dx_field_type, }
                     data[at_typename][dx_typename].append(field_data)
 
-        # now that the data dict contains relevant information, we can call the custom migrator
+        # now that the data dict contains relevant information, we can call
+        # the custom migrator
         migration_results = []
         for at_typename, dx_mappings in data.items():
             for k, v in dx_mappings.items():
-                res = migrateCustomAT(fields_mapping=v, src_type=at_typename, dst_type=dx_typename, dry_run=dry_run)
+                res = migrateCustomAT(
+                    fields_mapping=v,
+                    src_type=at_typename,
+                    dst_type=dx_typename,
+                    dry_run=dry_run)
                 migration_results.append({'type': at_typename,
                                           'infos': res})
         return migration_results
@@ -251,6 +273,7 @@ class DisplayDXFields(CustomMigrationForm):
         '''
         return self.index()
 
+
 class TestMigration(CustomMigrationForm):
 
     def __call__(self):
@@ -266,10 +289,11 @@ class TestMigration(CustomMigrationForm):
             res_infos = migration_result.get('infos')
             if res_infos.get('errors'):
                 response['status'] = 'error'
-                response['message'] = "Impossible migrating to this content type with this configuration"
+                response['message'] = "Migrating to this content type is impossible with this configuration"  # noqa
             else:
                 response['status'] = 'success'
                 response['message'] = "Testing migration succesful"
-        #i need to fix the response header because in case of success, it is set to text/html
+        # I need to fix the response header because in case of success,
+        # it is set to text/html
         self.request.response.setHeader("Content-type", "application/json")
         return json.dumps(response)

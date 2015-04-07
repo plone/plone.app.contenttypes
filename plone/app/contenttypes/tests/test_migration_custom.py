@@ -90,15 +90,17 @@ class MigrateFieldsTest(unittest.TestCase):
 
     def test_migrate_imagefield(self):
         test_image_data = self.get_test_image_data()
-        at_newsitem_id = self.portal.invokeFactory('News Item',
-                                                'foo',
-                                                title="Foo news",
-                                                image=test_image_data)
+        at_newsitem_id = self.portal.invokeFactory(
+            'News Item',
+            'foo',
+            title="Foo news",
+            image=test_image_data)
         # register p.a.contenttypes profile
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        dx_newsitem_id = self.portal.invokeFactory('News Item',
-                                                'bar',
-                                                title="Bar news")
+        dx_newsitem_id = self.portal.invokeFactory(
+            'News Item',
+            'bar',
+            title="Bar news")
         at_newsitem = self.portal[at_newsitem_id]
         dx_newsitem = self.portal[dx_newsitem_id]
         self.assertEqual(dx_newsitem.image, None)
@@ -116,7 +118,7 @@ class MigrateFieldsTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         dx_file_id = self.portal.invokeFactory('File',
                                                'bar',
-                                                title="Bar file")
+                                               title="Bar file")
         at_file = self.portal[at_file_id]
         dx_file = self.portal[dx_file_id]
         self.assertEqual(dx_file.file, None)
@@ -187,8 +189,7 @@ class MigrateCustomATTest(unittest.TestCase):
         return at_document
 
     def test_migrate_extended_document(self):
-        from plone.app.contenttypes.migration.migration import\
-            migrateCustomAT
+        from plone.app.contenttypes.migration.migration import migrateCustomAT
         from plone.app.contenttypes.interfaces import INewsItem
         at_document = self.createCustomATDocument('foo-document')
         qi = self.portal.portal_quickinstaller
@@ -198,16 +199,19 @@ class MigrateCustomATTest(unittest.TestCase):
             profile='plone.app.contenttypes:default',
             blacklistedSteps=['typeinfo'])
         installTypeIfNeeded("News Item")
-        fields_mapping = ({'AT_field_name': 'textExtended',
-                           'AT_field_type': 'TextField',
-                           'DX_field_name': 'text',
-                           'DX_field_type': 'TextField', },
-                           {'AT_field_name': 'stringExtended',
-                           'AT_field_type': 'StringField',
-                           'DX_field_name': 'title',
-                           'DX_field_type': 'StringField', },)
+        fields_mapping = (
+            {'AT_field_name': 'textExtended',
+             'AT_field_type': 'Products.Archetypes.Field.TextField',
+             'DX_field_name': 'text',
+             'DX_field_type': 'TextField', },
+            {'AT_field_name': 'stringExtended',
+             'AT_field_type': 'StringField',
+             'DX_field_name': 'title',
+             'DX_field_type': 'StringField', },
+        )
         # migrate extended AT Document to default DX News Item
-        migrateCustomAT(fields_mapping, src_type='Document', dst_type='News Item')
+        migrateCustomAT(
+            fields_mapping, src_type='Document', dst_type='News Item')
         dx_newsitem = self.portal['foo-document']
         self.assertTrue(INewsItem.providedBy(dx_newsitem))
         self.assertTrue(dx_newsitem is not at_document)
