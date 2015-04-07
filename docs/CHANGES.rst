@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Fix batching views to use the b_start parameter again from the url to call
+  the correct bath section.
+  [fredvd]
+
 - Update image_view_fullscreen.pt for mobile friendliness.
   [fulv]
 
