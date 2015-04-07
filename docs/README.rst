@@ -235,7 +235,7 @@ The migration-form will warn you if you have subtopics in your site and your Col
        <property name="klass">my.package.content.FolderishCollection</property>
       </object>
 
-   If you really need it you could add the functionality to inherit search terms to your own folderish Collections by extending the colelction-behavior as shown here: https://github.com/plone/plone.app.contenttypes/commit/366cc1a911c81954645ec6aabce925df4a297c63
+   If you really need it you could add the functionality to inherit search terms to your own folderish Collections by extending the collection-behavior as shown here: https://github.com/plone/plone.app.contenttypes/commit/366cc1a911c81954645ec6aabce925df4a297c63
 
 
 Migrating content that is translated with LinguaPlone
@@ -291,10 +291,10 @@ In Plone 5.x plone.app.contenttypes used the build-in widgets from plone.app.wid
 In Plone 4.x plone.app.contenttypes uses the old z3c.form-widgets by default. All widgets work as they used to with Archetypes except for the keywords-widget for which a simple linesfield is used (read `How to override widgets` on how to change that). You can also use plone.app.widgets to make use of the new widgets (not all functionality is guaranteed to work though).
 
 
-How to use with plone.app.widgets
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+How to use with the widgets from Plone 5
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can It is recommended to use ``plone.app.widgets`` to switch to the widgets that will be used in Plone 5.
+In Plone 5 the new widgets are automatically used. To use them in Plone 4 use `plone.app.widgets <https://pypi.python.org/pypi/plone.app.widgets>`_ (branch 1.x).
 
 
 How to override widgets
