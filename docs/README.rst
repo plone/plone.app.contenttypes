@@ -38,11 +38,11 @@ The main difference from a users perspective is that these types are extendable 
 Compatibility
 -------------
 
-Version 1.1b3 is tested with Plone 4.3.x. The versions of branch 1.1.x will stay compatible with Plone 4.3.x.
+The versions 1.2.x (derived from the branch `master <https://github.com/plone/plone.app.contenttypes/tree/master>`_) are compatible with Plone 5.
+
+The versions 1.1.x (derived from the branch `1.1.x <https://github.com/plone/plone.app.contenttypes/tree/1.1.x>`_) are compatible with Plone 4.3.x. These versions and do not use plone.app.widgets.
 
 For support of Plone 4.1 and 4.2 please use version 1.0.x. Please note that they do not provide the full functionality.
-
-The versions 1.2.x of the master-branch are compatible with Plone 5 and plone.app.widgets.
 
 You need to pin the plone.app.event version to the one, you want to use.
 plone.app.event 1.1 is officially supported and tests only pass with this
@@ -108,6 +108,8 @@ Archetypes-based content provided by add-ons (e.g. Products.PloneFormGen) will s
 
 If you install plone.app.contenttypes on a fresh site (i.e. when no content has been edited or added) the usual default-content (Events, News, Members...) will be created as dexterity-content.
 
+To install plone.app.contenttypes without replacing the type-definitions of existing types please read the section `Migrating only certain types`.
+
 
 Uninstalling
 ------------
@@ -116,7 +118,7 @@ Uninstalling the default-types is not supported in Plone 5. If you really want t
 
 * Go to the ZMI
 * In portal_types delete the default-types
-* In portal_setup navigate to the tab 'import', select the profile 'Archetypes Content Types for Plone' and install all step including dependencies.
+* In portal_setup navigate to the tab 'import', select the profile 'Archetypes Content Types for Plone' and install all steps including dependencies.
 
 Any content you created based on plone.app.contenttypes will no longer be editable until you reinstall plone.app.contenttypes.
 
@@ -204,6 +206,8 @@ There is also a view ``/@@pac_installer`` that allows you to install plone.app.c
 Migrating Topics
 ^^^^^^^^^^^^^^^^
 
+To get migrated topics with path-criteria to work you need at least ``plone.app.querystring >= 1.3.1``.
+
 Topics are migrated to Collections. However, the old type Topic had support for Subtopics, a feature that does not exit in Collections. Subtopics are nested Topics that inherited search terms from their parents. Since Collections are not folderish (i.e. they cannot contain content) Subtopics cannot be migrated unless Collections are made folderish (i.e. that they can contain content). Also the feature that search terms can be inherited from parents does not exist for Collections.
 
 The migration-form will warn you if you have subtopics in your site and your Collections are not folderish. You then have several options:
@@ -231,7 +235,7 @@ The migration-form will warn you if you have subtopics in your site and your Col
        <property name="klass">my.package.content.FolderishCollection</property>
       </object>
 
-   If you really need it you could add the functionality to inherit search terms to your own folderish Collections by extending the behavior like in the example at https://github.com/plone/plone.app.contenttypes/commit/366cc1a911c81954645ec6aabce925df4a297c63
+   If you really need it you could add the functionality to inherit search terms to your own folderish Collections by extending the colelction-behavior as shown here: https://github.com/plone/plone.app.contenttypes/commit/366cc1a911c81954645ec6aabce925df4a297c63
 
 
 Migrating content that is translated with LinguaPlone
@@ -262,7 +266,7 @@ To keep the data you would need to write a custom migration for your types dexte
 Migrating images created with collective.contentleadimage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`collective.contentleadimage <https://pypi.python.org/pypi/collective.contentleadimage/>`_ was a popular addon that allows you to add images to any content in your site by extending the default types. To make sure these images are kept during migration you have to enable the behavior "Lead Image" on all those types where you want to migrate images added using collective.contentleadimage.
+`collective.contentleadimage <https://pypi.python.org/pypi/collective.contentleadimage/>`_ was a popular addon that allows you to add images to any content in your site by extending the default types. Since it only supports Archetypes it does no longer work. To make sure these images are kept during migration you have to enable the behavior "Lead Image" on all those types where you want to migrate images added using collective.contentleadimage.
 
 The old types that use leadimages are listed in the navigation-form with the comment *"extended fields: 'leadImage', 'leadImage_caption'"*. The migration-form informs you which new types have the behavior enabled and which do not. Depending on the way you installed plone.app.contenttypes you might have to first install these types by (re-)installing plone.app.contenttypes.
 
@@ -270,25 +274,27 @@ The old types that use leadimages are listed in the navigation-form with the com
 Migrating custom content
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Custom content-types will not be touched by the migration plone.app.contenttypes and will continue to work as expected.
+Custom content-types (archetypes and dexterity) will not be touched by the migration plone.app.contenttypes and will continue to work as expected.
 
 Future versions of plone.app.contenttypes will have with a form that allows you to migrate old custom Archetypes-content to Dexterity (you'll still have to create the Dexterity-types before migrating).
 
 If you want to migrate your custom types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
 
+Please make sure you are aware of the many helpers and patches that allow you to migrate comments, portlets, references etc. These are partly used in the base-class of the migration (``plone.app.contenttypes.migration.migration.ATCTContentMigrator`` and ``plone.app.contenttypes.migration.migration.ATCTFolderMigrator``) and partly in the migration-view ``plone.app.contenttypes.migration.browser.MigrateFromATContentTypes``.
+
 
 Widgets
 -------
 
-When used in Plone 4.x plone.app.contenttypes uses the default z3c.form widgets. All widgets work as they used to with Archetypes except for the keywords-widget for which a simple linesfield is used.
+In Plone 5.x plone.app.contenttypes used the build-in widgets from plone.app.widgets.
 
-It is recommended to use ``plone.app.widgets`` to switch to the widgets that will be used in Plone 5.
+In Plone 4.x plone.app.contenttypes uses the old z3c.form-widgets by default. All widgets work as they used to with Archetypes except for the keywords-widget for which a simple linesfield is used (read `How to override widgets` on how to change that). You can also use plone.app.widgets to make use of the new widgets (not all functionality is guaranteed to work though).
 
 
 How to use with plone.app.widgets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TODO
+You can It is recommended to use ``plone.app.widgets`` to switch to the widgets that will be used in Plone 5.
 
 
 How to override widgets
@@ -446,11 +452,11 @@ TODO
 Differences to Products.ATContentTypes
 --------------------------------------
 
-- The image of the News Item is not a field on the contenttype but a behavior that can add a image to any contenttypes (similar to http://pypi.python.org/pypi/collective.contentleadimage)
+- The image of the News Item is not a field on the contenttype but a behavior that can add a image to any contenttypes (similar to http://pypi.python.org/pypi/collective.contentleadimage).
 - All richtext-fields are also provided by a reuseable behavior.
 - The functionality to transform (rotate and flip) images has been removed.
-- There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
-- The link on the image of the newsitem triggers an overlay
+- There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``.
+- The link on the image of the newsitem triggers an overlay.
 - The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
 - The keywords-widget is not implemented and is replaced by a simple lines-widget unless you override it or use plone.app.widgets. Please see the section on widgets.
 
@@ -517,4 +523,3 @@ Contributors
 * Kees Hink <keeshink@gmail.com>
 * Roman Kozlovskyi <krzroman@gmail.com>
 * Bogdan Girman <bogdan.girman@gmail.com>
-* Martin Opstad Reistadbakk <martin@blaastolen.com>
