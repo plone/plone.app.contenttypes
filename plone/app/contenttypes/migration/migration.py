@@ -99,7 +99,7 @@ def restore_refs(obj):
         if not getattr(obj, 'relatedItems', None):
             obj.relatedItems = PersistentList()
 
-        elif type(obj.relatedItems) != type(PersistentList()):
+        elif not isinstance(obj.relatedItems, PersistentList):
             obj.relatedItems = PersistentList(obj.relatedItems)
 
         for uuid in obj._relatedItems:
@@ -124,7 +124,7 @@ def restore_backrefs(portal, obj):
                 relitems = getattr(backrefobj, 'relatedItems', None)
                 if not relitems:
                     backrefobj.relatedItems = PersistentList()
-                elif type(relitems) != type(PersistentList()):
+                elif not isinstance(obj.relatedItems, PersistentList):
                     backrefobj.relatedItems = PersistentList(
                         obj.relatedItems
                     )

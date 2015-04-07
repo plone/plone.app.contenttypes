@@ -14,6 +14,7 @@ from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
+from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -23,9 +24,7 @@ from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.interface import implements
-from plone.registry.interfaces import IRegistry
 
-import pkg_resources
 
 try:
     DEXTERITY_WITH_CONSTRAINS = True
@@ -397,7 +396,7 @@ def _delete_at_example_content(portal):
 def step_setup_various(context):
     if context.readDataFile('plone.app.contenttypes_default.txt') is None:
         return
-    portal = context.getSite()
+#    portal = context.getSite()
 #     enable_multilingual_behavior(portal)
 
 
