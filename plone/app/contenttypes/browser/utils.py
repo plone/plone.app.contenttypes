@@ -31,8 +31,11 @@ class Utils(BrowserView):
         )
         portal_url = pstate.portal_url()
         mtr = getToolByName(context, "mimetypes_registry")
-        mime = list(mtr.lookup(content_file.contentType))
-        mime.append(mtr.lookupExtension(content_file.filename))
+        mime = []
+        if content_file.contentType:
+            mime.append(mtr.lookup(content_file.contentType))
+        if content_file.filename:
+            mime.append(mtr.lookupExtension(content_file.filename))
         mime.append(mtr.lookup("application/octet-stream")[0])
         icon_paths = [m.icon_path for m in mime if hasattr(m, 'icon_path')]
         if icon_paths:

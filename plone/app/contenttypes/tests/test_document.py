@@ -1,27 +1,22 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
-from zope.interface import alsoProvides
-from zope.component import createObject
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
-
+from plone.app.contenttypes.interfaces import IDocument
+from plone.app.contenttypes.testing import \
+    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+from plone.app.contenttypes.testing import \
+    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
-from plone.app.textfield.value import RichTextValue
-
-from plone.app.contenttypes.interfaces import IDocument
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
-
 from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.textfield.value import RichTextValue
 from plone.app.z3cform.interfaces import IPloneFormLayer
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.testing.z2 import Browser
+from zope.component import createObject
+from zope.component import queryUtility
+from zope.interface import alsoProvides
+
+import transaction
+import unittest2 as unittest
 
 
 class DocumentIntegrationTest(unittest.TestCase):
@@ -78,12 +73,17 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.request.set('ACTUAL_URL', document.absolute_url())
         alsoProvides(self.request, IPloneFormLayer)
         view = document.restrictedTraverse('@@view')
-
-        self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
-        self.assertTrue('My Document' in view())
-        self.assertTrue('This is my document.' in view())
-        self.assertTrue('Lorem ipsum' in view())
+        output = view()
+        self.assertTrue(output)
+        self.assertTrue('My Document' in output)
+        self.assertTrue('This is my document.' in output)
+        self.assertTrue('Lorem ipsum' in output)
+
+    def tearDown(self):
+        if 'document' in self.portal.objectIds():
+            self.portal.manage_delObjects(ids='document')
+            transaction.commit()
 
 
 class DocumentFunctionalTest(unittest.TestCase):

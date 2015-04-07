@@ -1,36 +1,35 @@
 # -*- coding: utf-8 -*-
-from Products.ATContentTypes.interfaces.document import IATDocument
-from Products.ATContentTypes.interfaces.event import IATEvent
-from Products.ATContentTypes.interfaces.file import IATFile
-from Products.ATContentTypes.interfaces.folder import IATFolder
-from Products.ATContentTypes.interfaces.image import IATImage
-from Products.ATContentTypes.interfaces.link import IATLink
-from Products.ATContentTypes.interfaces.news import IATNewsItem
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.CMFPlone.utils import safe_unicode, safe_hasattr
 from Products.GenericSetup.context import DirectoryImportContext
 from Products.GenericSetup.utils import importObjects
 from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaModifier
-from plone.app.blob.interfaces import IATBlobFile
-from plone.app.blob.interfaces import IATBlobImage
-from plone.app.contenttypes.migration import migration
+from copy import deepcopy
+from plone.app.contentrules.api import assign_rule
+from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
+from plone.app.discussion.interfaces import IConversation
+from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.namedfile.file import NamedBlobImage
+from plone.portlets.interfaces import IPortletAssignmentMapping
+from plone.portlets.interfaces import IPortletManager
+from zope.annotation.interfaces import IAnnotations
 from zope.component import getGlobalSiteManager
+from zope.component import getMultiAdapter
+from zope.component import getUtility
 from zope.component.hooks import getSite
+
+import logging
 import os
 import pkg_resources
 
-try:
-    pkg_resources.get_distribution('plone.app.collection')
-except pkg_resources.DistributionNotFound:
-    ICollection = None
-    HAS_APP_COLLECTION = False
-else:
-    HAS_APP_COLLECTION = True
-    from plone.app.collection.interfaces import ICollection
+logger = logging.getLogger(__name__)
 
 # Is there a multilingual addon?
 try:
@@ -47,83 +46,6 @@ if not HAS_MULTILINGUAL:
         HAS_MULTILINGUAL = False
     else:
         HAS_MULTILINGUAL = True
-
-ATCT_LIST = {
-    "Folder": {
-        'iface': IATFolder,
-        'migrator': migration.migrate_folders,
-        'extended_fields': [],
-        'type_name': 'Folder',
-        'old_meta_type': 'ATFolder',
-    },
-    "Document": {
-        'iface': IATDocument,
-        'migrator': migration.migrate_documents,
-        'extended_fields': [],
-        'type_name': 'Document',
-        'old_meta_type': 'ATDocument',
-    },
-    # File without blobs
-    "File": {
-        'iface': IATFile,
-        'migrator': migration.migrate_files,
-        'extended_fields': [],
-        'type_name': 'File',
-        'old_meta_type': 'ATFile',
-    },
-    # Image without blobs
-    "Image": {
-        'iface': IATImage,
-        'migrator': migration.migrate_images,
-        'extended_fields': [],
-        'type_name': 'Image',
-        'old_meta_type': 'ATImage',
-    },
-    "News Item": {
-        'iface': IATNewsItem,
-        'migrator': migration.migrate_newsitems,
-        'extended_fields': [],
-        'type_name': 'News Item',
-        'old_meta_type': 'ATNewsItem',
-    },
-    "Link": {
-        'iface': IATLink,
-        'migrator': migration.migrate_links,
-        'extended_fields': [],
-        'type_name': 'Link',
-        'old_meta_type': 'ATLink',
-    },
-    "Event": {
-        'iface': IATEvent,
-        'migrator': migration.migrate_events,
-        'extended_fields': [],
-        'type_name': 'Event',
-        'old_meta_type': 'ATEvent',
-    },
-    "BlobImage": {
-        'iface': IATBlobImage,
-        'migrator': migration.migrate_blobimages,
-        'extended_fields': ['image'],
-        'type_name': 'Image',
-        'old_meta_type': 'ATBlob',
-    },
-    "BlobFile": {
-        'iface': IATBlobFile,
-        'migrator': migration.migrate_blobfiles,
-        'extended_fields': ['file'],
-        'type_name': 'File',
-        'old_meta_type': 'ATBlob',
-    },
-}
-
-if HAS_APP_COLLECTION:
-    ATCT_LIST["Collection"] = {
-        'iface': ICollection,
-        'migrator': migration.migrate_collections,
-        'extended_fields': [],
-        'type_name': 'Collection',
-        'old_meta_type': 'Collection',
-    }
 
 
 def isSchemaExtended(iface):
@@ -190,7 +112,8 @@ def installTypeIfNeeded(type_name):
     if IDexterityFTI.providedBy(fti):
         # the dx-type is already installed
         return
-    tt.manage_delObjects(type_name)
+    if fti:
+        tt.manage_delObjects(type_name)
     tt.manage_addTypeInformation('Dexterity FTI', id=type_name)
     dx_fti = tt.getTypeInfo(type_name)
     ps = getToolByName(portal, 'portal_setup')
@@ -199,3 +122,94 @@ def installTypeIfNeeded(type_name):
     environ = DirectoryImportContext(ps, profile_path)
     parent_path = 'types/'
     importObjects(dx_fti, parent_path, environ)
+
+
+def add_portlet(context, assignment, portlet_key, columnName):
+    column = getUtility(IPortletManager, columnName)
+    assignmentmapping = getMultiAdapter((context, column),
+                                        IPortletAssignmentMapping)
+    assignmentmapping[portlet_key] = assignment
+
+
+def move_comments(source_object, target_object):
+    """Move comments by copying the annotation to the target
+    and then removing the comments from the source (not the annotation).
+    """
+    source_annotations = IAnnotations(source_object)
+    comments = source_annotations.get(DISCUSSION_KEY, None)
+    if comments is not None:
+        target_annotations = IAnnotations(target_object)
+        if target_annotations.get(DISCUSSION_KEY, None) is not None:
+            logger.error('Comments exist on {0}').format(
+                target_object.absolute_url())
+        target_annotations[DISCUSSION_KEY] = deepcopy(comments)
+
+        # Delete comments from the portal where wthey were stored temporarily.
+        # Comments on the old objects will be removed with the objects.
+        if IPloneSiteRoot.providedBy(source_object):
+            source_conversation = IConversation(source_object)
+            for comment in source_conversation.getComments():
+                del source_conversation[comment.comment_id]
+            del source_annotations[DISCUSSION_KEY]
+
+
+def copy_contentrules(source_object, target_object):
+    """Copy contentrules.
+    """
+    source_assignable = IRuleAssignmentManager(source_object, None)
+    if source_assignable is not None:
+        try:
+            IRuleAssignmentManager(target_object)
+        except TypeError:
+            logger.info("Cound not assign contentrules to {0}".format(
+                target_object.absolute_url()))
+            return
+        for rule_id in source_assignable:
+            assign_rule(target_object, rule_id)
+
+
+def migrate_leadimage(source_object, target_object):
+    """ Migrate images added using collective.contentleadimage to the
+    ILeadImage-behavior of plone.app.contenttypes if it is enabled.
+    """
+    OLD_LEADIMAGE_FIELD_NAME = 'leadImage'
+    OLD_CAPTION_FIELD_NAME = 'leadImage_caption'
+    NEW_LEADIMAGE_FIELD_NAME = 'image'
+    NEW_CAPTION_FIELD_NAME = 'image_caption'
+
+    old_leadimage_field = source_object.getField(OLD_LEADIMAGE_FIELD_NAME)
+    if not old_leadimage_field:
+        # skip if old content has no field
+        return
+
+    if ILeadImage(target_object, None) is None:
+        # skip if new content does not have the LeadImage-behavior enabled
+        logger.info("Target does not have the behavior 'Lead Image' enabled. "
+                    "Could not migrate collective.leadimage fields.")
+        return
+
+    old_image = old_leadimage_field.get(source_object)
+    if not old_image:
+        # skip if image-field is empty
+        return
+
+    filename = safe_unicode(old_image.filename)
+    old_image_data = old_image.data
+    if safe_hasattr(old_image_data, 'data'):
+        # handle relstorage
+        old_image_data = old_image_data.data
+
+    # construct the new image
+    namedblobimage = NamedBlobImage(data=old_image_data,
+                                    filename=filename)
+
+    # set new field on destination object
+    setattr(target_object, NEW_LEADIMAGE_FIELD_NAME, namedblobimage)
+
+    # handle image caption field
+    caption_field = source_object.getField(OLD_CAPTION_FIELD_NAME, None)
+    if caption_field:
+        setattr(target_object,
+                (NEW_CAPTION_FIELD_NAME),
+                safe_unicode(caption_field.get(source_object)))
+    logger.info("Migrating contentlead image %s" % filename)

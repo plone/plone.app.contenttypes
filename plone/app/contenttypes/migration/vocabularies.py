@@ -1,11 +1,117 @@
 # -*- coding: utf-8 -*-
+from Products.ATContentTypes.interfaces.document import IATDocument
+from Products.ATContentTypes.interfaces.event import IATEvent
+from Products.ATContentTypes.interfaces.file import IATFile
+from Products.ATContentTypes.interfaces.folder import IATFolder
+from Products.ATContentTypes.interfaces.image import IATImage
+from Products.ATContentTypes.interfaces.link import IATLink
+from Products.ATContentTypes.interfaces.news import IATNewsItem
+from Products.ATContentTypes.interfaces.topic import IATTopic
 from Products.CMFCore.utils import getToolByName
+from plone.app.blob.interfaces import IATBlobFile
+from plone.app.blob.interfaces import IATBlobImage
 from plone.app.contenttypes import _
-from plone.app.contenttypes.migration.utils import ATCT_LIST
+from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.migration.topics import migrate_topics
 from zope.interface import implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
+
+import pkg_resources
+
+try:
+    pkg_resources.get_distribution('plone.app.collection')
+except pkg_resources.DistributionNotFound:
+    ICollection = None
+    HAS_APP_COLLECTION = False
+else:
+    HAS_APP_COLLECTION = True
+    from plone.app.collection.interfaces import ICollection
+
+ATCT_LIST = {
+    "Folder": {
+        'iface': IATFolder,
+        'migrator': migration.migrate_folders,
+        'extended_fields': [],
+        'type_name': 'Folder',
+        'old_meta_type': 'ATFolder',
+    },
+    "Document": {
+        'iface': IATDocument,
+        'migrator': migration.migrate_documents,
+        'extended_fields': [],
+        'type_name': 'Document',
+        'old_meta_type': 'ATDocument',
+    },
+    # File without blobs
+    "File": {
+        'iface': IATFile,
+        'migrator': migration.migrate_files,
+        'extended_fields': [],
+        'type_name': 'File',
+        'old_meta_type': 'ATFile',
+    },
+    # Image without blobs
+    "Image": {
+        'iface': IATImage,
+        'migrator': migration.migrate_images,
+        'extended_fields': [],
+        'type_name': 'Image',
+        'old_meta_type': 'ATImage',
+    },
+    "News Item": {
+        'iface': IATNewsItem,
+        'migrator': migration.migrate_newsitems,
+        'extended_fields': [],
+        'type_name': 'News Item',
+        'old_meta_type': 'ATNewsItem',
+    },
+    "Link": {
+        'iface': IATLink,
+        'migrator': migration.migrate_links,
+        'extended_fields': [],
+        'type_name': 'Link',
+        'old_meta_type': 'ATLink',
+    },
+    "Event": {
+        'iface': IATEvent,
+        'migrator': migration.migrate_events,
+        'extended_fields': [],
+        'type_name': 'Event',
+        'old_meta_type': 'ATEvent',
+    },
+    "BlobImage": {
+        'iface': IATBlobImage,
+        'migrator': migration.migrate_blobimages,
+        'extended_fields': ['image'],
+        'type_name': 'Image',
+        'old_meta_type': 'ATBlob',
+    },
+    "BlobFile": {
+        'iface': IATBlobFile,
+        'migrator': migration.migrate_blobfiles,
+        'extended_fields': ['file'],
+        'type_name': 'File',
+        'old_meta_type': 'ATBlob',
+    },
+    "Topic": {
+        'iface': IATTopic,
+        'migrator': migrate_topics,
+        'extended_fields': [],
+        'type_name': 'Collection',
+        'old_meta_type': 'ATTopic',
+    },
+}
+
+if HAS_APP_COLLECTION:
+    ATCT_LIST["Collection"] = {
+        'iface': ICollection,
+        'migrator': migration.migrate_collections,
+        'extended_fields': [],
+        'type_name': 'Collection',
+        'old_meta_type': 'Collection',
+    }
 
 
 def get_terms(context, counter, ext_dict, show_extended):
@@ -106,3 +212,20 @@ class ExtendedTypesVocabulary(object):
         extended fields.
         """
         return results(context, show_extended=True)
+
+
+class ChangedBaseClasses(object):
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        """Return a vocabulary with all changed base classes."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            list_of_changed_base_class_names
+        list_of_class_names = list_of_changed_base_class_names(context) or {}
+        return SimpleVocabulary(
+            [SimpleVocabulary.createTerm(
+                class_name, class_name,
+                '{0} ({1})'.format(
+                    class_name, list_of_class_names[class_name]))
+             for class_name in list_of_class_names.keys()]
+        )

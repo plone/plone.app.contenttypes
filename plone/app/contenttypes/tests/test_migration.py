@@ -2,16 +2,25 @@
 from Products.CMFCore.utils import getToolByName
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+from lxml import etree
+from plone.app.contenttypes.migration.utils import add_portlet
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.app.z3cform.interfaces import IPloneFormLayer
+from plone.dexterity.content import Container
+from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEventAccessor
+from plone.testing.z2 import Browser
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getSiteManager
 from zope.component import getUtility
+from zope.interface import alsoProvides
 from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
 import os.path
@@ -913,7 +922,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_folder = self.portal['folder']
         self.assertTrue(IFolder.providedBy(dx_folder))
         self.assertTrue(at_folder is not dx_folder)
-        self.assertEqual(dx_folder.getLayout(), 'folder_album_view')
+        self.assertEqual(dx_folder.getLayout(), 'album_view')
 
     def test_folder_children_are_migrated(self):
         from plone.app.contenttypes.migration.migration import FolderMigrator
@@ -965,6 +974,10 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate_documents(self.portal)
         migrate_folders(self.portal)
+
+        # rebuild catalog
+        self.portal.portal_catalog.clearFindAndRebuild()
+
         dx_folder1 = self.portal['folder1']
         dx_folder2 = self.portal['folder2']
 
@@ -1120,7 +1133,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate(self.portal, DocumentMigrator)
         dx_document = self.portal["document"]
-        self.assertEqual(dx_document.meta_type, 'Dexterity Item')
+        self.assertTrue(IDexterityContent.providedBy(dx_document))
 
     def test_migrate_xx_functions(self):
         from Products.ATContentTypes.content.image import ATImage
@@ -1138,6 +1151,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             migrate_folders,
             migrate_events,
         )
+        from plone.app.contenttypes.migration.topics import migrate_topics
 
         # create all content types
         self.portal.invokeFactory('Document', 'document')
@@ -1151,6 +1165,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.createATCTBlobNewsItem('blobnewsitem')
         self.portal.invokeFactory('Folder', 'folder')
         self.portal.invokeFactory('Event', 'event')
+        self.portal.invokeFactory('Topic', 'topic')
 
         # migrate all
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -1165,6 +1180,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         migrate_blobnewsitems(self.portal)
         migrate_folders(self.portal)
         migrate_events(self.portal)
+        migrate_topics(self.portal)
 
         # assertions
         cat = self.catalog
@@ -1173,7 +1189,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_contents = cat(object_provides='plone.dexterity'
                           '.interfaces.IDexterityContent')
         self.assertEqual(len(at_contents), 0)
-        self.assertEqual(len(dx_contents), 11)
+        self.assertEqual(len(dx_contents), 12)
 
     def test_warning_for_uneditable_content(self):
         set_browserlayer(self.request)
@@ -1184,6 +1200,11 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_document = self.portal['document']
         at_newsitem = self.portal['newsitem']
         applyProfile(self.portal, 'plone.app.contenttypes:default')
+        # At this point plone.app.z3cform is installed including it's browser
+        # layer. But we have to annotate the request to provide it, since the
+        # request was constructed before. Otherwise, @@view cannot be render
+        # it's IRichText widget.
+        alsoProvides(self.request, IPloneFormLayer)
         at_document_view = at_document.restrictedTraverse('')
         self.assertTrue(
             'http://nohost/plone/@@atct_migrator' in at_document_view()
@@ -1280,3 +1301,268 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         )
         results = migration_view()
         self.assertIn('@@migrate_from_atct?migrate=1', results)
+
+    def test_portlets_are_migrated(self):
+        """add portlets and see if they're still available on the migrated
+        content including portlet settings.
+        """
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+        from plone.app.contenttypes.migration.migration import FolderMigrator
+        from plone.portlet.static.static import Assignment as StaticAssignment
+        from plone.portlets.constants import GROUP_CATEGORY
+        from plone.portlets.interfaces import ILocalPortletAssignmentManager
+        from plone.portlets.interfaces import IPortletAssignmentMapping
+        from plone.portlets.interfaces import IPortletAssignmentSettings
+        from plone.portlets.interfaces import IPortletManager
+
+        def get_portlets(context, columnName):
+            column = getUtility(IPortletManager, columnName)
+            mapping = getMultiAdapter((context, column),
+                                      IPortletAssignmentMapping)
+            return mapping
+
+        # create an ATDocument
+        self.portal.invokeFactory('Document', 'document')
+        at_document = self.portal['document']
+        at_document.setText(u'Tütensuppe with some portlet')
+        at_document.setContentType('chemical/x-gaussian-checkpoint')
+
+        # add a portlet
+        portlet = StaticAssignment(u"Sample Portlet",
+                                   "<p>Yay! I get migrated!</p>")
+        add_portlet(at_document, portlet, 'static-portlet',
+                    u'plone.leftcolumn')
+
+        # disable group portlets for right columns
+        right_column = getUtility(IPortletManager, u'plone.rightcolumn')
+        localsettings = getMultiAdapter((at_document, right_column),
+                                        ILocalPortletAssignmentManager)
+        localsettings.setBlacklistStatus(GROUP_CATEGORY, True)
+
+        # hide our portlet
+        settings = IPortletAssignmentSettings(portlet)
+        settings['visible'] = False
+
+        # add another portlet type that is not available when doing the
+        # migration and make sure it got ignored in the migration
+        broken = StaticAssignment(u"Fake broken portlet",
+                                  "<p>Ouch! I'm broken</p>")
+        # ZODB.broken will add an ___Broken_state__ attribute if a portlet's
+        # module is no longer available
+        broken.__Broken_state__ = True
+        add_portlet(at_document, broken, 'broken-portlet', u'plone.leftcolumn')
+
+        # add a folder
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+
+        # add a portlet to the folder
+        portlet2 = StaticAssignment(u"Sample Folder Portlet",
+                                    "<p>Do I get migrated?</p>")
+        add_portlet(at_folder, portlet2, 'static-portlet',
+                    u'plone.rightcolumn')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+        folder_migrator = self.get_migrator(at_folder, FolderMigrator)
+        folder_migrator.migrate()
+
+        # assertions
+        dx_document = self.portal['document']
+
+        # portlet is available
+        self.failUnless('static-portlet' in get_portlets(dx_document,
+                                                         u'plone.leftcolumn'))
+        # broken portlets don't get copied
+        self.failIf('broken-portlet' in get_portlets(dx_document,
+                                                     u'plone.leftcolumn'))
+
+        # block portlets settings copied
+        right_column = getUtility(IPortletManager, u'plone.rightcolumn')
+        localsettings = getMultiAdapter((dx_document, right_column),
+                                        ILocalPortletAssignmentManager)
+        self.assertTrue(localsettings.getBlacklistStatus(GROUP_CATEGORY))
+
+        # hide portlets settings survived
+        assignment = get_portlets(dx_document,
+                                  u'plone.leftcolumn')['static-portlet']
+        settings = IPortletAssignmentSettings(assignment)
+        self.assertFalse(settings['visible'])
+
+        dx_folder = self.portal['folder']
+        self.failUnless('static-portlet' in get_portlets(dx_folder,
+                                                         u'plone.rightcolumn'))
+
+    def test_comments_are_migrated(self):
+        """add some comments and check that it is correctly migrated.
+
+        XXX fixme : original comment id is not kept, comments are created
+        with new ids...
+        """
+        from zope.component import createObject
+        from plone.app.discussion.interfaces import IConversation
+        from plone.app.contenttypes.migration.migration import DocumentMigrator
+
+        # create an ATDocument
+        self.portal.invokeFactory('Document', 'document')
+        at_document = self.portal['document']
+        at_document.setText(u'Document with some comments')
+
+        # add some comments to the document
+        at_conversation = IConversation(at_document)
+        new_comment = createObject('plone.Comment')
+        new_comment.text = u"Hey Dude! Ä is not ascii."
+        at_conversation.addComment(new_comment)
+        at_comments = at_conversation.getComments()
+        at_comment = [i for i in at_comments][0]
+        at_plone_uuid = getattr(at_comment, '_plone.uuid')
+        at_comment_id = getattr(at_comment, 'comment_id')
+
+        # migrate
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        migrator = self.get_migrator(at_document, DocumentMigrator)
+        migrator.migrate()
+
+        dx_document = self.portal['document']
+
+        # no more comments on the portal
+        portal_conversation = IConversation(self.portal)
+        self.failIf(portal_conversation)
+        # comments were migrated
+        dx_conversation = IConversation(dx_document)
+        self.failUnless(len(dx_conversation) == 1)
+        dx_comments = dx_conversation.getComments()
+        dx_comment = [i for i in dx_comments][0]
+        dx_comment_id = getattr(dx_comment, 'comment_id')
+        self.assertEqual(dx_comment_id, at_comment_id)
+        dx_plone_uuid = getattr(dx_comment, '_plone.uuid')
+        self.assertEqual(dx_plone_uuid, at_plone_uuid)
+        self.assertEqual(
+            dx_comment.getText(),
+            '<p>Hey Dude! \xc3\x84 is not ascii.</p>')
+
+
+class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+
+        applyProfile(self.portal, 'plone.app.dexterity:testing')
+
+        self.portal.acl_users.userFolderAddUser('admin',
+                                                'secret',
+                                                ['Manager'],
+                                                [])
+        login(self.portal, 'admin')
+
+        # Add default content
+        self.portal.invokeFactory('Document', 'item')
+
+        # Change Document conent type to folderish
+        portal_types = getToolByName(self.portal, 'portal_types')
+        portal_types['Document'].klass = 'plone.dexterity.content.Container'
+        portal_types['Document'].allowed_content_types = ('Document',)
+
+    def test_dxmigration_migrate_item_to_container_class_is_changed(self):
+        """Check that base class was changed."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            migrate_base_class_to_new_class
+        migrate_base_class_to_new_class(self.portal.item)
+        self.assertTrue(isinstance(self.portal.item, Container))
+
+    def test_dxmigration_migrate_item_to_container_add_object_inside(self):
+        """Check that after migrate base class it can add items inside object.
+        """
+        from plone.app.contenttypes.migration.dxmigration import \
+            migrate_base_class_to_new_class
+        migrate_base_class_to_new_class(self.portal.item)
+        self.portal.item.invokeFactory('Document', 'doc')
+        self.assertEqual(
+            len(self.portal.item.folderlistingFolderContents()), 1)
+
+    def test_dxmigration_migrate_list_of_objects_with_changed_base_class(self):
+        """Check list of objects with changed classes."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            list_of_objects_with_changed_base_class
+        # We have already one changed object
+        objects = [i for i in
+                   list_of_objects_with_changed_base_class(self.portal)]
+        self.assertEqual(len(objects), 1)
+
+    def test_dxmigration_migrate_list_of_changed_base_class_names(self):
+        """Check list of changed base class names."""
+        from plone.app.contenttypes.migration.dxmigration import \
+            list_of_changed_base_class_names
+        # We have already one changed object
+        names = [i for i in list_of_changed_base_class_names(self.portal)]
+        self.assertEqual(len(names), 1)
+
+    def test_dxmigration_migrate_vocabulary_changed_base_classes(self):
+        """Check vocabulary of changed base class names."""
+        # We have already one changed object
+        name = 'plone.app.contenttypes.migration.changed_base_classes'
+        factory = getUtility(IVocabularyFactory, name)
+        vocabulary = factory(self.portal)
+        self.assertEqual(len(vocabulary), 1)
+
+
+class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        app = self.layer['app']
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+
+        self.portal_url = self.portal.absolute_url()
+        self.manage_document_url = '{0}/{1}/{2}/{3}'.format(
+            self.portal_url,
+            'portal_types',
+            'Document',
+            'manage_propertiesForm',
+        )
+
+        self.browser = Browser(app)
+        self.browser.handleErrors = False
+        self.browser.addHeader(
+            'Authorization',
+            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+        )
+
+        # Add default content
+        self.browser.open(self.portal_url)
+        self.browser.getLink('Page').click()
+        self.browser.getControl(name='form.widgets.IDublinCore.title')\
+            .value = "My item"
+        self.browser.getControl(name='form.widgets.IShortName.id')\
+            .value = "item"
+        self.browser.getControl('Save').click()
+
+        # Change Document conent type to folderish
+        self.browser.open(self.manage_document_url)
+        self.browser.getControl(name='klass:string') \
+            .value = 'plone.app.contenttypes.content.Collection'
+        self.browser.getControl('Save Changes').click()
+        self.browser.open(
+            '{0}/@@base_class_migrator_form'.format(self.portal_url))
+        self.good_info_message_template = 'There are {0} objects migrated.'
+
+    def test_dxmigration_migrate_check_migration_form_view(self):
+        """Check base class migrator view of changed base class names."""
+        html = etree.HTML(self.browser.contents)
+        checkboxes = html.xpath('//form//*[@name="{0}"]'.format(
+            'form.widgets.changed_base_classes:list'))
+        self.assertEqual(len(checkboxes), 1)
+
+    def test_dxmigration_migrate_check_migration_successful_message(self):
+        """Check base class migrator view of changed base class names."""
+        self.browser.getControl(
+            name='form.widgets.changed_base_classes:list').value = ['true']
+        self.browser.getControl('Update').click()
+        self.assertIn(
+            self.good_info_message_template.format(1), self.browser.contents)

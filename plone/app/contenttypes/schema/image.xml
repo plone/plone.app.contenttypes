@@ -16,7 +16,7 @@
     <field name="image" type="plone.namedfile.field.NamedBlobImage"
         marshal:primary="true">
       <description />
-      <title i18n:translate="Image">Image</title>
+      <title i18n:translate="label_image">Image</title>
     </field>
   </schema>
 </model>

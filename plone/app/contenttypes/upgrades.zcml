@@ -23,6 +23,7 @@
 
   <!-- We still need Archetypes to use Products.contentmigrator -->
   <configure zcml:condition="installed Products.Archetypes">
+  <configure zcml:condition="installed archetypes.schemaextender">
   <genericsetup:upgradeStep
       source="1001"
       destination="1100"
@@ -31,6 +32,7 @@
       profile="plone.app.contenttypes:default"
       handler=".migration.dxmigration.migrate_to_pa_event"
       />
+  </configure>
   </configure>
 
   <genericsetup:upgradeStep
@@ -58,6 +60,15 @@
       description=""
       profile="plone.app.contenttypes:default"
       handler=".upgrades.enable_shortname_behavior"
+      />
+
+  <genericsetup:upgradeStep
+      source="1103"
+      destination="1104"
+      title="Use new view names"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.use_new_view_names"
       />
 
 </configure>

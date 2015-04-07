@@ -14,6 +14,7 @@ from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
+from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -24,14 +25,6 @@ from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.interface import implements
 
-import pkg_resources
-
-try:
-    pkg_resources.get_distribution('plone.multilingualbehavior')
-except pkg_resources.DistributionNotFound:
-    HAS_MULTILINGUAL = False
-else:
-    HAS_MULTILINGUAL = True
 
 try:
     DEXTERITY_WITH_CONSTRAINS = True
@@ -107,7 +100,8 @@ def addContentToContainer(container, object, checkConstraints=True):
 
 
 def _get_locales_info(portal):
-    language = portal.Language()
+    reg = queryUtility(IRegistry, context=portal)
+    language = reg['plone.default_language']
     parts = (language.split('-') + [None, None])[:3]
     locale = locales.getLocale(*parts)
 
@@ -118,15 +112,15 @@ def _get_locales_info(portal):
     return locale.id.language, False, locale
 
 
-def _set_language_settings(portal, uses_combined_lanagage):
-    """Set the portals language settings from the given lanage codes."""
-    language = portal.Language()
-    portal_languages = getToolByName(portal, 'portal_languages')
-    portal_languages.manage_setLanguageSettings(
-        language,
-        [language],
-        setUseCombinedLanguageCodes=uses_combined_lanagage,
-        startNeutral=False)
+# def _set_language_settings(portal, uses_combined_lanagage):
+#     """Set the portals language settings from the given lanage codes."""
+#     language = portal.Language()
+#     portal_languages = getToolByName(portal, 'portal_languages')
+#     portal_languages.manage_setLanguageSettings(
+#         language,
+#         [language],
+#         setUseCombinedLanguageCodes=uses_combined_lanagage,
+#         startNeutral=False)
 
 
 # ??? Why do we only do this calendar setup when content is created?
@@ -188,6 +182,7 @@ def create_frontpage(portal, target_language):
         content = createContent('Document', id=frontpage_id,
                                 title=title,
                                 description=description,
+                                language=target_language
                                 )
         content = addContentToContainer(portal, content)
         front_text = None
@@ -228,7 +223,8 @@ def create_news_topic(portal, target_language):
                                  u'Site News')
         container = createContent('Folder', id=news_id,
                                   title=title,
-                                  description=description)
+                                  description=description,
+                                  language=target_language)
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -272,7 +268,8 @@ def create_events_topic(portal, target_language):
                                  u'Site Events')
         container = createContent('Folder', id=events_id,
                                   title=title,
-                                  description=description)
+                                  description=description,
+                                  language=target_language)
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -319,7 +316,8 @@ def configure_members_folder(portal, target_language):
                                  u"Site Users")
         container = createContent('Folder', id=members_id,
                                   title=title,
-                                  description=description)
+                                  description=description,
+                                  language=target_language)
         container = addContentToContainer(portal, container)
         container.setOrdering('unordered')
         container.reindexObject()
@@ -350,7 +348,7 @@ def step_import_content(context):
     target_language, is_combined_language, locale = _get_locales_info(portal)
 
     # Set up Language specific information
-    _set_language_settings(portal, is_combined_language)
+    # _set_language_settings(portal, is_combined_language)
     _setup_calendar(locale)
     _setup_visible_ids(target_language, locale)
     _delete_at_example_content(portal)
@@ -398,20 +396,20 @@ def _delete_at_example_content(portal):
 def step_setup_various(context):
     if context.readDataFile('plone.app.contenttypes_default.txt') is None:
         return
-    portal = context.getSite()
-    enable_multilingual_behavior(portal)
+#    portal = context.getSite()
+#     enable_multilingual_behavior(portal)
 
 
-def enable_multilingual_behavior(portal):
-    if not HAS_MULTILINGUAL:
-        return
-    types_tool = portal.portal_types
-    all_ftis = types_tool.listTypeInfo()
-    dx_ftis = [x for x in all_ftis if getattr(x, 'behaviors', False)]
-    for fti in dx_ftis:
-        behaviors = [i for i in fti.behaviors]
-        behaviors.extend([
-            'plone.multilingualbehavior.interfaces.IDexterityTranslatable',
-        ])
-        behaviors = tuple(set(behaviors))
-        fti._updateProperty('behaviors', behaviors)
+# def enable_multilingual_behavior(portal):
+#     if not HAS_MULTILINGUAL:
+#         return
+#     types_tool = portal.portal_types
+#     all_ftis = types_tool.listTypeInfo()
+#     dx_ftis = [x for x in all_ftis if getattr(x, 'behaviors', False)]
+#     for fti in dx_ftis:
+#         behaviors = [i for i in fti.behaviors]
+#         behaviors.extend([
+#             'plone.app.multilingual.dx.interfaces.IDexterityTranslatable',
+#         ])
+#         behaviors = tuple(set(behaviors))
+#         fti._updateProperty('behaviors', behaviors)

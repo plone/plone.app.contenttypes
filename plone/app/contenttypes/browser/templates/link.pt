@@ -1,38 +1,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      lang="en"
-      metal:use-macro="context/main_template/macros/master"
-      i18n:domain="plone">
-
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
 <body>
 
-    <metal:header fill-slot="header">
-        <div class="portalMessage info"
-            tal:define="redirect_links context/portal_properties/site_properties/redirect_links|nothing;"
-            tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
-            <strong i18n:translate="">Info</strong>
-            <span tal:omit-tag=""
-                i18n:translate="message_permissions_blocking_link_redirect">
-              You see this page because you have permission to edit this link.
-              Others will be immediately redirected to the link's target URL.
-            </span>
-        </div>
-    </metal:header>
+<metal:header fill-slot="header">
+  <div class="portalMessage info"
+      tal:define="redirect_links context/portal_properties/site_properties/redirect_links|nothing;"
+      tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
+    <strong i18n:translate="">Info</strong>
+    <span tal:omit-tag=""
+        i18n:translate="message_permissions_blocking_link_redirect">
+      You see this page because you have permission to edit this link.
+      Others will be immediately redirected to the link's target URL.
+    </span>
+  </div>
+</metal:header>
 
-    <metal:content-core fill-slot="content-core">
-        <metal:block define-macro="content-core">
-        <p tal:define="portal_url context/@@plone_portal_state/portal_url;
-                       navigation_root_url context/@@plone_portal_state/navigation_root_url;
-                       url view/absolute_target_url">
-            <span i18n:translate="link_address">The link address is:</span>
-            <a href="#" tal:attributes="href url"
-                        tal:content="context/remoteUrl">remote url</a>
-        </p>
-        </metal:block>
-    </metal:content-core>
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core">
+  <p tal:define="portal_url portal_state/portal_url;
+                 navigation_root_url portal_state/navigation_root_url;
+                 url view/absolute_target_url">
+    <span i18n:translate="link_address">The link address is:</span>
+    <a tal:attributes="href url" tal:content="context/remoteUrl">remote url</a>
+  </p>
+</metal:block>
+</metal:content-core>
 
 </body>
 </html>
-

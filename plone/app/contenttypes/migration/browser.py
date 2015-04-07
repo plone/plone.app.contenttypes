@@ -6,18 +6,29 @@ from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.contentmigration.utils import patch, undoPatch
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from datetime import timedelta
+from plone.app.contenttypes.content import Document
+from plone.app.contenttypes.content import File
+from plone.app.contenttypes.content import Folder
+from plone.app.contenttypes.content import Image
+from plone.app.contenttypes.content import Link
+from plone.app.contenttypes.content import NewsItem
+from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
-from plone.app.contenttypes.migration.utils import ATCT_LIST
+from plone.app.contenttypes.migration.patches import \
+    patched_insertForwardIndexEntry
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from z3c.form import button
@@ -29,20 +40,19 @@ from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.interface import Interface
+from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
+
 import logging
+import pkg_resources
+
+try:
+    pkg_resources.get_distribution('collective.contentleadimage')
+except pkg_resources.DistributionNotFound:
+    HAS_CONTENTLEADIMAGE = False
+else:
+    HAS_CONTENTLEADIMAGE = True
 
 logger = logging.getLogger(__name__)
-
-# Schema Extender allowed interfaces
-
-from plone.app.contenttypes.content import (
-    Document,
-    File,
-    Folder,
-    Image,
-    Link,
-    NewsItem,
-)
 
 PATCH_NOTIFY = [
     DexterityContent,
@@ -53,6 +63,11 @@ PATCH_NOTIFY = [
 # Average time to migrate one archetype object, in milliseconds.
 # This very much depends on the size of the object and system-speed
 ONE_OBJECT_MIGRATION_TIME = 500
+
+
+def pass_fn(*args, **kwargs):
+    """Empty function used for patching."""
+    pass
 
 
 class FixBaseClasses(BrowserView):
@@ -107,6 +122,9 @@ class MigrateFromATContentTypes(BrowserView):
                  from_form=False):
 
         portal = self.context
+        if content_types == 'all':
+            content_types = DEFAULT_TYPES
+
         if not from_form and migrate not in ['1', 'True', 'true', 1]:
             url1 = '{0}/@@migrate_from_atct?migrate=1'.format(
                 portal.absolute_url())
@@ -143,11 +161,17 @@ class MigrateFromATContentTypes(BrowserView):
         # switch of setModificationDate on changes
         self.patchNotifyModified()
 
+        # patch UUIDIndex
+        patch(
+            UUIDIndex,
+            'insertForwardIndexEntry',
+            patched_insertForwardIndexEntry)
+
         not_migrated = []
         migrated_types = {}
 
         for (k, v) in ATCT_LIST.items():
-            if content_types != "all" and k not in content_types:
+            if k not in content_types:
                 not_migrated.append(k)
                 continue
             # test if the ct is extended beyond blobimage and blobfile
@@ -190,8 +214,10 @@ class MigrateFromATContentTypes(BrowserView):
         # if there are blobnewsitems we just migrate them silently.
         migration.migrate_blobnewsitems(portal)
 
-        if migrate_references:
-            migration.restoreReferences(portal)
+        catalog.clearFindAndRebuild()
+
+        # rebuild catalog, restore references and cleanup
+        migration.restoreReferences(portal, migrate_references, content_types)
 
         # switch linkintegrity back to what it was before migrating
         site_props.manage_changeProperties(
@@ -200,6 +226,9 @@ class MigrateFromATContentTypes(BrowserView):
 
         # switch on setModificationDate on changes
         self.resetNotifyModified()
+
+        # unpatch UUIDIndex
+        undoPatch(UUIDIndex, 'insertForwardIndexEntry')
 
         duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
         if not_migrated:
@@ -230,6 +259,7 @@ class MigrateFromATContentTypes(BrowserView):
                 'content_types': content_types,
                 'migrated_types': migrated_types,
             }
+            logger.info(msg)
             return stats
 
     def stats(self):
@@ -237,7 +267,7 @@ class MigrateFromATContentTypes(BrowserView):
         query = {}
         catalog = self.context.portal_catalog
         if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] ='all'
+            query['Language'] = 'all'
         for brain in catalog(query):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
@@ -251,21 +281,13 @@ class MigrateFromATContentTypes(BrowserView):
         So when we migrate Documents before Folders the folders
         ModifiedDate gets changed.
         """
-        patch = lambda *args: None
         for klass in PATCH_NOTIFY:
-            old_notifyModified = getattr(klass, 'notifyModified', None)
-            klass.notifyModified = patch
-            klass.old_notifyModified = old_notifyModified
+            patch(klass, 'notifyModified', pass_fn)
 
     def resetNotifyModified(self):
         """reset notifyModified to old state"""
-
         for klass in PATCH_NOTIFY:
-            if klass.old_notifyModified is None:
-                del klass.notifyModified
-            else:
-                klass.notifyModified = klass.old_notifyModified
-            del klass.old_notifyModified
+            undoPatch(klass, 'notifyModified')
 
 
 class IATCTMigratorForm(Interface):
@@ -282,10 +304,7 @@ class IATCTMigratorForm(Interface):
     migrate_references = schema.Bool(
         title=u"Migrate references?",
         description=(
-            u"Select this option to migrate all "
-            u"references to each content type. "
-            u"This will rebuild the whole catalog and "
-            u"increase the migration-time."
+            u"Select this option to migrate references."
         ),
         default=True
     )
@@ -362,6 +381,76 @@ ATCTMigrator = wrap_form(
 )
 
 
+class IBaseClassMigratorForm(Interface):
+
+    changed_base_classes = schema.List(
+        title=u'Changed base classes',
+        description=u'Select changed base classes you want to migrate',
+        value_type=schema.Choice(
+            vocabulary='plone.app.contenttypes.migration.changed_base_classes',
+        ),
+        required=True,
+    )
+    migrate_to_folderish = schema.Bool(
+        title=u"Migrate to folderish type?",
+        description=(
+            u"Select this option if you changed a type from being "
+            u"itemish to being folderish but the class of the type is still "
+            u"the same."
+        ),
+        default=False,
+    )
+
+
+class BaseClassMigratorForm(form.Form):
+
+    fields = field.Fields(IBaseClassMigratorForm)
+    fields['changed_base_classes'].widgetFactory = CheckBoxFieldWidget
+    ignoreContext = True
+    enableCSRFProtection = True
+
+    @button.buttonAndHandler(u'Update', name='update')
+    def handle_migrate(self, action):
+        data, errors = self.extractData()
+
+        if errors:
+            return
+
+        changed_base_classes = data.get('changed_base_classes', [])
+        if not changed_base_classes:
+            return
+
+        migrate_to_folderish = data.get('changed_base_classes', False)
+        catalog = getToolByName(self.context, "portal_catalog")
+        migrated = []
+        not_migrated = []
+        for brain in catalog():
+            obj = brain.getObject()
+            old_class_name = dxmigration.get_old_class_name_string(obj)
+            if old_class_name in changed_base_classes:
+                if dxmigration.migrate_base_class_to_new_class(
+                        obj, migrate_to_folderish=migrate_to_folderish):
+                    migrated.append(obj)
+                else:
+                    not_migrated.append(obj)
+
+        messages = IStatusMessage(self.request)
+        info_message_template = 'There are {0} objects migrated.'
+        warn_message_template = 'There are not {0} objects migrated.'
+        if migrated:
+            msg = info_message_template.format(len(migrated))
+            messages.addStatusMessage(msg, type='info')
+        if not_migrated:
+            msg = warn_message_template.format(len(not_migrated))
+            messages.addStatusMessage(msg, type='warn')
+        self.request.response.redirect(self.request['ACTUAL_URL'])
+
+
+BaseClassMigrator = wrap_form(
+    BaseClassMigratorForm,
+)
+
+
 class ATCTMigratorHelpers(BrowserView):
 
     def objects_to_be_migrated(self):
@@ -390,6 +479,91 @@ class ATCTMigratorHelpers(BrowserView):
         """
         existing = queryUtility(ILocalBrowserLayerType, name='LinguaPlone')
         return bool(existing)
+
+    def site_has_subtopics(self):
+        """Check if there are subtopics. Since Collections are itemish by
+        default the migration of subtopics would fail Collections are changed
+        to be folderish.
+        """
+        catalog = getToolByName(self.context, "portal_catalog")
+        query = {'meta_type': 'ATTopic'}
+        results = []
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            query['Language'] = 'all'
+        brains = catalog(query)
+        for brain in brains:
+            for item in catalog(path={'query': brain.getPath(), 'depth': 1}):
+                results.append(item.getURL())
+        if results:
+            results = set(results)
+            paths = "\n".join(results)
+            logger.info("Found {0} subtopics at: \n{1}".format(
+                len(results), paths))
+            return results
+
+    def collections_are_folderish(self):
+        """Since Collections are itemish by default the migration would fail
+        if there are any subtopics. As a workaround we allow to migrate to
+        custom folderish Collections. The custom Collections have to fulfill
+        the following criteria:
+        1. The id if the type has to be Collection (not collection). You can
+           change a type's id in portal_types
+        2. The type has to have the collection-behavior.
+
+        This much can even be done ttw. For the views of collections
+        to work the base-class of the Collections also has to implement the
+        interface `plone.app.contenttypes.interfaces.ICollection`.
+
+        This is what such a class would look like:
+
+            from plone.app.contenttypes.behaviors.collection import ICollection
+            from plone.dexterity.content import Container
+            from zope.interface import implementer
+
+            @implementer(ICollection)
+            class FolderishCollection(Container):
+                pass
+
+        You can either use a completely new fti or overwrite the default fti
+        like this:
+
+            <?xml version="1.0"?>
+            <object name="Collection" meta_type="Dexterity FTI">
+             <property name="klass">my.package.content.FolderishCollection
+             </property>
+            </object>
+
+        """
+        fti = queryUtility(IDexterityFTI, name="Collection")
+        if fti and fti.content_meta_type == "Dexterity Container":
+            return True
+        # test for lowercase ttw-type
+        fti = queryUtility(IDexterityFTI, name="collection")
+        behavior = 'plone.app.contenttypes.behaviors.collection.ICollection'
+        if fti and behavior in fti.behaviors:
+            logger.warn("You are trying to migrate topic to collection. "
+                        "Instead you need a type 'Collection'.")
+
+    def has_contentleadimage(self):
+        return HAS_CONTENTLEADIMAGE
+
+    def installed_types(self):
+        """Which types are already Dexterity and which are not."""
+        results = {}
+        results['installed_with_behavior'] = []
+        results['installed_without_behavior'] = []
+        results['not_installed'] = []
+        behavior = 'plone.app.contenttypes.behaviors.leadimage.ILeadImage'
+        for type_name in DEFAULT_TYPES:
+            fti = queryUtility(IDexterityFTI, name=type_name)
+            if fti:
+                if behavior in fti.behaviors:
+                    results['installed_with_behavior'].append(type_name)
+                else:
+                    results['installed_without_behavior'].append(type_name)
+            else:
+                results['not_installed'].append(type_name)
+        return results
 
 
 class ATCTMigratorResults(BrowserView):

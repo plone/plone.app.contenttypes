@@ -23,6 +23,9 @@ from plone.app.contenttypes.testing import (
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.z3cform.interfaces import IPloneFormLayer
 
+from plone.namedfile.file import NamedFile
+from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+
 
 class FileIntegrationTest(unittest.TestCase):
 
@@ -78,6 +81,37 @@ class FileIntegrationTest(unittest.TestCase):
         self.assertEqual(view.request.response.status, 200)
         self.assertTrue('My File' in view())
         self.assertTrue('This is my file.' in view())
+
+    def test_view_no_video_audio_tag(self):
+        self.portal.invokeFactory('File', 'file')
+        file = self.portal['file']
+        file.file = NamedFile()
+        file.file.contentType = 'application/pdf'
+        alsoProvides(self.request, IPloneAppContenttypesLayer)
+        view = file.restrictedTraverse('@@file_view')
+        rendered = view()
+        self.assertTrue('</audio>' not in rendered)
+        self.assertTrue('</video>' not in rendered)
+
+    def test_view_video_tag(self):
+        self.portal.invokeFactory('File', 'file')
+        file = self.portal['file']
+        file.file = NamedFile()
+        file.file.contentType = 'audio/mp3'
+        alsoProvides(self.request, IPloneAppContenttypesLayer)
+        view = file.restrictedTraverse('@@file_view')
+        rendered = view()
+        self.assertTrue('</audio>' in rendered)
+
+    def test_view_audio_tag(self):
+        self.portal.invokeFactory('File', 'file')
+        file = self.portal['file']
+        file.file = NamedFile()
+        file.file.contentType = 'video/ogv'
+        alsoProvides(self.request, IPloneAppContenttypesLayer)
+        view = file.restrictedTraverse('@@file_view')
+        rendered = view()
+        self.assertTrue('</video>' in rendered)
 
 
 class FileFunctionalTest(unittest.TestCase):

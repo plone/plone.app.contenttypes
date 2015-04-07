@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
 from plone.dexterity.fti import DexterityFTI
+from plone.dexterity.content import Item
+from plone.app.contenttypes.interfaces import IEvent
+from zope.interface import implementer
+
+
+@implementer(IEvent)
+class Event(Item):
+    """Dummy subclass for old ``Event`` portal type
+    """
 
 
 def create1_0EventType(portal):
@@ -20,7 +29,7 @@ def create1_0EventType(portal):
     fti.view_methods = ("event_view", )
     fti.default_view_fallback = False
     fti.add_permission = "plone.app.contenttypes.addEvent"
-    fti.klass = "plone.app.contenttypes.content.Event"
+    fti.klass = "plone.app.contenttypes.tests.oldtypes.Event"
     fti.behaviors = (
         "plone.app.contenttypes.interfaces.IEvent",
         "plone.app.dexterity.behaviors.metadata.IDublinCore",

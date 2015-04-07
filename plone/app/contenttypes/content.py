@@ -14,6 +14,8 @@ from zope.interface import implementer
 
 @implementer(ICollection)
 class Collection(Item):
+    """Convenience subclass for ``Collection`` portal type
+    """
     # BBB
 
     def listMetaDataFields(self, exclude=True):
@@ -57,41 +59,41 @@ class Collection(Item):
 
 @implementer(IDocument)
 class Document(Item):
-    """Convinience Item subclass for ``Document`` portal type
+    """Convenience subclass for ``Document`` portal type
     """
 
 
 @implementer(IFile)
 class File(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convenience subclass for ``File`` portal type
     """
 
 
 @implementer(IFolder)
 class Folder(Container):
-    """Convinience subclass for ``File`` portal type
+    """Convenience subclass for ``Folder`` portal type
     """
 
 
 @implementer(IImage)
 class Image(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convenience subclass for ``Image`` portal type
     """
 
 
 @implementer(ILink)
 class Link(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convenience subclass for ``Link`` portal type
     """
 
 
 @implementer(INewsItem)
 class NewsItem(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convenience subclass for ``News Item`` portal type
     """
 
 
 @implementer(IEvent)
 class Event(Item):
-    """Convinience subclass for ``File`` portal type
+    """Convenience subclass for ``Event`` portal type
     """

@@ -44,6 +44,15 @@ class PloneAppContenttypes(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
+
+        # install and enable referenceablebehavior on Documents to be able to
+        # test controlpanel to enable plone.app.linkintegrity checks
+        # XXX Disabled as it is causing test errors in comments
+        # see https://github.com/plone/Products.CMFPlone/issues/255
+        # applyProfile(portal, 'plone.app.referenceablebehavior:default')
+        # portal.portal_types.Document.behaviors += \
+        #   ('plone.app.referenceablebehavior.referenceable.IReferenceable',)
+
         mtr = portal.mimetypes_registry
         mime_doc = mtr.lookup('application/msword')[0]
         mime_doc.icon_path = 'custom.png'
@@ -78,6 +87,7 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         z2.installProduct(app, 'Products.Archetypes')
         z2.installProduct(app, 'Products.ATContentTypes')
         z2.installProduct(app, 'plone.app.blob')
+
         # prepare installing plone.app.collection
         try:
             pkg_resources.get_distribution('plone.app.collection')
@@ -111,6 +121,9 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         profiles = [x['id'] for x in portal.portal_setup.listProfileInfo()]
         if 'Products.ATContentTypes:default' in profiles:
             applyProfile(portal, 'Products.ATContentTypes:default')
+
+        # enable old Topic
+        portal.portal_types.Topic.global_allow = True
 
         # install plone.app.collections manually if profile is available
         # (this is only needed for Plone >= 5)

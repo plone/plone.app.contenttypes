@@ -1,36 +1,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      lang="en"
-      metal:use-macro="context/main_template/macros/master"
-      i18n:domain="plone">
-
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
 <body>
 
-    <metal:content-core fill-slot="content-core">
-        <metal:block define-macro="content-core"
-                     tal:define="content_type context/file/contentType|nothing;
-                                 v python:context.restrictedTraverse('contenttype_utils');">
-            <p>
-                <a tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}">
-                    <img tal:attributes="src python: v.getMimeTypeIcon(context.file);
-                                         alt content_type;" border="0"  />
-                    <tal:name tal:content="context/file/filename" >Filename</tal:name>
-                </a>
-                <span class="discreet"
-                      tal:define="size context/file/getSize;
-                                  kb python:size/1024">
-                      &mdash; <span tal:replace="kb" /> KB</span>
-            </p>
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core"
+    tal:define="content_type context/file/contentType|nothing;
+                download_url string:${context/absolute_url}/@@download/file/${context/file/filename}">
+  <p>
+    <a tal:attributes="href download_url">
+      <img tal:attributes="src view/get_mimetype_icon;
+                           alt content_type;" border="0" />
+      <tal:name tal:content="context/file/filename" >Filename</tal:name>
+    </a>
+    <span class="discreet"
+        tal:define="size context/file/getSize;
+                    kb python:size/1024">
+      &mdash; <span tal:replace="kb" /> KB</span>
+  </p>
 
-            <div tal:condition="python: content_type.startswith('text')">
-                <h2 i18n:translate="heading_file_contents">File contents</h2>
-                <pre tal:content="context/file/data|nothing" />
-            </div>
-        </metal:block>
-    </metal:content-core>
+  <video tal:condition="view/is_videotype" controls="controls">
+    <source tal:attributes="src download_url; type content_type"></source>
+  </video>
+
+  <audio tal:condition="view/is_audiotype" controls="controls">
+    <source tal:attributes="src download_url; type content_type"></source>
+  </audio>
+
+  <div tal:condition="python: content_type.startswith('text')">
+    <h2 i18n:translate="heading_file_contents">File contents</h2>
+    <pre tal:content="context/file/data|nothing" />
+  </div>
+
+</metal:block>
+</metal:content-core>
 
 </body>
-
 </html>

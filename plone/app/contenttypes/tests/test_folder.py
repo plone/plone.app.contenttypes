@@ -16,6 +16,7 @@ from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 )
+from plone.app.contenttypes.tests.test_image import dummy_image
 
 from plone.app.testing import TEST_USER_ID, setRoles
 
@@ -130,21 +131,28 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_summary_view(self):
-        self.browser.open(self.folder_url + '/folder_summary_view')
+        self.browser.open(self.folder_url + '/summary_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_full_view(self):
-        self.browser.open(self.folder_url + '/folder_full_view')
+        self.browser.open(self.folder_url + '/full_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_tabular_view(self):
-        self.browser.open(self.folder_url + '/folder_tabular_view')
+        self.browser.open(self.folder_url + '/tabular_view')
         self.assertTrue('My Folder' in self.browser.contents)
         self.assertTrue('Document 1' in self.browser.contents)
 
     def test_folder_album_view(self):
-        self.browser.open(self.folder_url + '/folder_album_view')
+        self.folder.invokeFactory('Image', id='image1', title='Image 1')
+        img1 = self.folder['image1']
+        img1.image = dummy_image()
+        import transaction
+        transaction.commit()
+        self.browser.open(self.folder_url + '/album_view')
         self.assertTrue('My Folder' in self.browser.contents)
-        self.assertTrue('Document 1' in self.browser.contents)
+        self.assertIn(
+            '<img src="http://nohost/plone/folder/image1/@@images',
+            self.browser.contents)

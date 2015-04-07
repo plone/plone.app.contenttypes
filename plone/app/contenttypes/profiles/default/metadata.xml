@@ -1,10 +1,11 @@
 <metadata>
- <version>1103</version>
+ <version>1104</version>
  <dependencies>
   <dependency>profile-plone.app.dexterity:default</dependency>
   <dependency>profile-plone.app.event:default</dependency>
   <dependency>profile-plone.app.relationfield:default</dependency>
   <dependency>profile-plone.app.versioningbehavior:default</dependency>
+  <dependency>profile-plone.app.z3cform:default</dependency>
   <!-- XXX: For some reason the p.a.d gs workflow is not applied correctly. -->
   <dependency>profile-plone.app.discussion:default</dependency>
  </dependencies>

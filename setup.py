@@ -2,14 +2,14 @@ from setuptools import setup, find_packages
 
 import os
 
-version = '1.2a5.dev0'
+version = '1.2a8.dev0'
 
 
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 long_description = \
-    read('docs', 'README.rst') + \
+    read('docs', 'README.rst') + '\n\n' + \
     read('docs', 'CHANGES.rst')
 
 setup(name='plone.app.contenttypes',
@@ -47,13 +47,15 @@ setup(name='plone.app.contenttypes',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
           'pytz',
+          'plone.app.z3cform>=1.1.0.dev0'
       ],
       extras_require={
           'test': [
               'archetypes.schemaextender',
               'lxml',
-              'plone.app.robotframework',
+              'plone.app.robotframework [debug, reload] > 0.9.8',  # create image and file content for Image, File and News Item if not given.  # noqa
               'plone.app.testing [robot] >= 4.2.4',  # we need ROBOT_TEST_LEVEL
+              # 'plone.dexterity >= 2.3.0',  # fixes setting default values # NOT RELEASED YET. # noqa
               'Products.ATContentTypes',
               'Products.contentmigration >= 2.1.8.dev0',
           ],

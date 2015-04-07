@@ -7,37 +7,48 @@ only in the setuptools extra_requiers [migrate_atct]. Importing this
 module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
 '''
+from Products.ATContentTypes.interfaces.interfaces import IATContentType
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from Products.CMFPlone.utils import safe_hasattr
+from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
+from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
+from Products.contentmigration.basemigrator.walker import CatalogWalker
+from Products.contentmigration.walker import CustomQueryWalker
+from copy import deepcopy
 from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
+from plone.app.contenttypes.migration.utils import add_portlet
+from plone.app.contenttypes.migration.utils import copy_contentrules
+from plone.app.contenttypes.migration.utils import migrate_leadimage
+from plone.app.contenttypes.migration.utils import move_comments
+from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.ATContentTypes.interfaces.interfaces import IATContentType
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode, safe_hasattr
-from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
-from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
-from Products.contentmigration.basemigrator.walker import CatalogWalker
-from Products.contentmigration.walker import CustomQueryWalker
-import transaction
+from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
+from plone.portlets.interfaces import IPortletAssignmentMapping
+from plone.portlets.interfaces import IPortletManager
 from z3c.relationfield import RelationValue
+from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
+from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.component.hooks import getSite
-from zope.interface import implementer
 from zope.interface import Interface
+from zope.interface import implementer
 from zope.intid.interfaces import IIntIds
 import logging
-
+import transaction
 logger = logging.getLogger(__name__)
 
 
@@ -128,7 +139,7 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     if safe_hasattr(old_file_data, 'data'):
         old_file_data = old_file_data.data
     namedblobfile = NamedBlobFile(data=old_file_data,
-                                    filename=filename)
+                                  filename=filename)
     setattr(dst_obj, dst_fieldname, namedblobfile)
     logger.info("Migrating file %s" % filename)
 
@@ -151,34 +162,66 @@ def migrate(portal, migrator):
     return walker
 
 
-def refs(obj):
-    intids = getUtility(IIntIds)
-    out = ''
+def migrate_portlets(src_obj, dst_obj):
+    """Copy portlets for all available portletmanagers from one object
+    to another.
+    Also takes blocked portlet settings into account, keeps hidden portlets
+    hidden and skips broken assignments.
+    """
 
+    # also take custom portlet managers into account
+    managers = [reg.name for reg in getSiteManager().registeredUtilities()
+                if reg.provided == IPortletManager]
+    # faster, but no custom managers
+    # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
+
+    # copy information which categories are hidden for which manager
+    blacklist_status = IAnnotations(src_obj).get(
+        CONTEXT_BLACKLIST_STATUS_KEY, None)
+    if blacklist_status is not None:
+        IAnnotations(dst_obj)[CONTEXT_BLACKLIST_STATUS_KEY] = \
+            deepcopy(blacklist_status)
+
+    # copy all portlet assignments (visibilty is stored as annotation
+    # on the assignments and gets copied here too)
+    for manager in managers:
+        column = getUtility(IPortletManager, manager)
+        mappings = getMultiAdapter((src_obj, column),
+                                   IPortletAssignmentMapping)
+        for key, assignment in mappings.items():
+            # skip possibly broken portlets here
+            if not hasattr(assignment, '__Broken_state__'):
+                add_portlet(dst_obj, assignment, key, manager)
+            else:
+                logger.warn(u'skipping broken portlet assignment {0} '
+                            'for manager {1}'.format(key, manager))
+
+
+def restore_refs(obj):
+    """Restore references stored in the attribute _relatedItems.
+    """
+    intids = getUtility(IIntIds)
     try:
         if not getattr(obj, 'relatedItems', None):
             obj.relatedItems = PersistentList()
 
-        elif type(obj.relatedItems) != type(PersistentList()):
+        elif not isinstance(obj.relatedItems, PersistentList):
             obj.relatedItems = PersistentList(obj.relatedItems)
 
         for uuid in obj._relatedItems:
             to_obj = uuidToObject(uuid)
             to_id = intids.getId(to_obj)
             obj.relatedItems.append(RelationValue(to_id))
-            out += str('Restore Relation from %s to %s \n' % (obj, to_obj))
-        del obj._relatedItems
-
+            logger.info('Restored Relation from %s to %s' % (obj, to_obj))
     except AttributeError:
         pass
-    return out
 
 
-def backrefs(portal, obj):
+def restore_backrefs(portal, obj):
+    """Restore backreferences stored in the attribute _backrefs.
+    """
     intids = getUtility(IIntIds)
     uid_catalog = getToolByName(portal, 'uid_catalog')
-    out = ''
-
     try:
         backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
         for backrefobj in backrefobjs:
@@ -187,7 +230,7 @@ def backrefs(portal, obj):
                 relitems = getattr(backrefobj, 'relatedItems', None)
                 if not relitems:
                     backrefobj.relatedItems = PersistentList()
-                elif type(relitems) != type(PersistentList()):
+                elif not isinstance(obj.relatedItems, PersistentList):
                     backrefobj.relatedItems = PersistentList(
                         obj.relatedItems
                     )
@@ -200,53 +243,51 @@ def backrefs(portal, obj):
                 path = '/'.join(obj.getPhysicalPath())
                 uid_catalog.catalog_object(obj, path)
                 backrefobj.setRelatedItems(obj)
-            out += str(
-                'Restore BackRelation from %s to %s \n' % (
-                    backrefobj,
-                    obj
-                )
-            )
-        del obj._backrefs
+            logger.info(
+                'Restored BackRelation from %s to %s' % (backrefobj, obj))
     except AttributeError:
         pass
-    return out
 
 
-def order(obj):
-    out = ''
+def restore_reforder(obj):
+    """Restore order of references stored in the attribute _relatedItemsOrder.
+    """
     if not hasattr(obj, '_relatedItemsOrder'):
         # Nothing to do
-        return out
-
+        return
     relatedItemsOrder = obj._relatedItemsOrder
     uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
     key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
     obj.relatedItems = sorted(obj.relatedItems, key=key)
-    out += str('%s ordered.' % obj)
-    del obj._relatedItemsOrder
-    return out
 
 
-def restoreReferences(portal):
-    """ iterate over all Dexterity Objs and restore as Dexterity Reference. """
-    out = ''
+def cleanup_stored_refs(obj):
+    """Cleanup new dx item."""
+    if safe_hasattr(obj, '_relatedItems'):
+        del obj._relatedItems
+    if safe_hasattr(obj, '_backrefs'):
+        del obj._backrefs
+    if safe_hasattr(obj, '_relatedItemsOrder'):
+        del obj._relatedItemsOrder
+
+
+def restoreReferences(portal,
+                      migrate_references=True,
+                      content_types=DEFAULT_TYPES):
+    """Iterate over new Dexterity items and restore Dexterity References.
+    """
     catalog = getToolByName(portal, "portal_catalog")
-    # Seems that these newly created objs are not reindexed
-    catalog.clearFindAndRebuild()
     results = catalog.searchResults(
-        object_provides=IDexterityContent.__identifier__)
+        object_provides=IDexterityContent.__identifier__,
+        portal_type=content_types)
 
     for brain in results:
         obj = brain.getObject()
-
-        # refs
-        out += refs(obj)
-        # backrefs
-        out += backrefs(portal, obj)
-        # order
-        out += order(obj)
-
-    return out
+        if migrate_references:
+            restore_refs(obj)
+            restore_backrefs(portal, obj)
+            restore_reforder(obj)
+        cleanup_stored_refs(obj)
 
 
 class ReferenceMigrator(object):
@@ -333,9 +374,15 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTContentMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating object %s" %
-            '/'.join(self.old.getPhysicalPath())
-        )
+            "Migrating {0}".format(
+                '/'.join(self.old.getPhysicalPath())))
+
+    def beforeChange_store_comments_on_portal(self):
+        """Comments from plone.app.discussion are lost when the
+           old object is renamed...
+           We save the comments in a safe place..."""
+        portal = getToolByName(self.old, 'portal_url').getPortalObject()
+        move_comments(self.old, portal)
 
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
@@ -344,8 +391,24 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
     def migrate_custom(self):
         """Get all ICustomMigrator registered migrators and run the migration.
         """
-        for _, migrator in getAdapters((self.old, ), ICustomMigrator):
+        for _, migrator in getAdapters((self.old,), ICustomMigrator):
             migrator.migrate(self.old, self.new)
+
+    def migrate_portlets(self):
+        migrate_portlets(self.old, self.new)
+
+    def migrate_contentrules(self):
+        copy_contentrules(self.old, self.new)
+
+    def migrate_leadimage(self):
+        migrate_leadimage(self.old, self.new)
+
+    def last_migrate_comments(self):
+        """Migrate the plone.app.discussion comments.
+           Comments were stored on the portal, get them and
+           Copy the conversations from old to new object."""
+        portal = getToolByName(self.old, 'portal_url').getPortalObject()
+        move_comments(portal, self.new)
 
 
 class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
@@ -355,9 +418,14 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTFolderMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating object %s" %
-            '/'.join(self.old.getPhysicalPath())
-        )
+            "Migrating {}".format('/'.join(self.old.getPhysicalPath())))
+
+    def beforeChange_store_comments_on_portal(self):
+        """Comments from plone.app.discussion are lost when the
+           old object is renamed...
+           We save the comments in a safe place..."""
+        portal = getToolByName(self.old, 'portal_url').getPortalObject()
+        move_comments(self.old, portal)
 
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
@@ -366,8 +434,24 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
     def migrate_custom(self):
         """Get all ICustomMigrator registered migrators and run the migration.
         """
-        for _, migrator in getAdapters((self.old, ), ICustomMigrator):
+        for _, migrator in getAdapters((self.old,), ICustomMigrator):
             migrator.migrate(self.old, self.new)
+
+    def migrate_portlets(self):
+        migrate_portlets(self.old, self.new)
+
+    def migrate_contentrules(self):
+        copy_contentrules(self.old, self.new)
+
+    def migrate_leadimage(self):
+        migrate_leadimage(self.old, self.new)
+
+    def last_migrate_comments(self):
+        """Migrate the plone.app.discussion comments.
+           Comments were stored on the portal, get them and
+           Copy the conversations from old to new object."""
+        portal = getToolByName(self.old, 'portal_url').getPortalObject()
+        move_comments(portal, self.new)
 
 
 class DocumentMigrator(ATCTContentMigrator):
@@ -527,7 +611,7 @@ class FolderMigrator(ATCTFolderMigrator):
 
     def beforeChange_migrate_layout(self):
         if self.old.getLayout() == 'atct_album_view':
-            self.old.setLayout('folder_album_view')
+            self.old.setLayout('album_view')
 
 
 def migrate_folders(portal):
@@ -630,7 +714,14 @@ def migrate_events(portal):
     migrate(portal, DXEventMigrator)
 
 
-def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderish=False, dry_run=False):
+def makeCustomATMigrator(
+    context,
+    src_type,
+    dst_type,
+    fields_mapping,
+    is_folderish=False,
+    dry_run=False
+):
     """ generate a migrator for the given at-based folderish portal type """
 
     base_class = ATCTContentMigrator
@@ -662,7 +753,8 @@ def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderi
             if there is an error with the fields, an exception will be raised.
             """
             if self.dry_run_mode:
-                view = getMultiAdapter((self.new, self.new.REQUEST), name="view")
+                view = getMultiAdapter(
+                    (self.new, self.new.REQUEST), name="view")
                 view()
 
     return CustomATMigrator
@@ -670,8 +762,9 @@ def makeCustomATMigrator(context, src_type, dst_type, fields_mapping, is_folderi
 
 def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     """
-    Try to get types infos from archetype_tool, then set a migrator an pass it given values.
-    There is a dry_run mode that allows to check the success of a migration without committing.
+    Try to get types infos from archetype_tool, then set a migrator an pass it
+    given values. There is a dry_run mode that allows to check the success of
+    a migration without committing.
     """
     portal = getSite()
     archetype_tool = getToolByName(portal, 'archetype_tool', None)
