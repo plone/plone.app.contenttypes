@@ -16,7 +16,7 @@ from plone.app.z3cform.widget import RichTextFieldWidget
 class IRichText(model.Schema):
 
     text = RichTextField(
-        title=_(u'Text', default=u'Text'),
+        title=_(u'Text'),
         description=u"",
         required=False,
     )
