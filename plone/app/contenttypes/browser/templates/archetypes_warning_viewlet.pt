@@ -6,7 +6,8 @@
     </tal:manager>
     <tal:manager tal:condition="view/can_migrate">
       <span i18n:translate="">You can't edit this content unless you
-        <a href="#" tal:attributes="href string:${context/plone_portal_state/portal_url}/@@atct_migrator">
+        <a href="#" i18n:name="migrate" i18n:translate=""
+          tal:attributes="href string:${context/plone_portal_state/portal_url}/@@atct_migrator">
           migrate the default content-types to Dexterity.
         </a>
       </span>

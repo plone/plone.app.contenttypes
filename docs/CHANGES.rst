@@ -4,6 +4,9 @@ Changelog
 1.2a8 (unreleased)
 ------------------
 
+- I18n fixes.
+  [vincentfretin]
+
 - Fix ``test_warning_for_uneditable_content`` to work with recent browser layer
   changes in ``plone.app.z3cform``.
   [thet]
