@@ -4,6 +4,9 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- I18n fixes.
+  [vincentfretin]
+
 - Don't batch the already batched collection results. Fixes #221.
   [thet]
 
