@@ -18,8 +18,7 @@
     <div metal:define-slot="inside" tal:replace="structure text">The body</div>
   </div>
 
-  <tal:results define="b_start python:request.get('b_start', 0);
-                       batch python:view.results(b_start=b_start);">
+  <tal:results define="batch view/batch">
     <tal:listing condition="batch">
 
       <div metal:use-macro="context/batch_macros/macros/navigation" />

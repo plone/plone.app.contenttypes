@@ -19,8 +19,7 @@
   </div>
 
   <metal:listingmacro define-macro="listing">
-    <tal:results define="b_start python:request.get('b_start', 0);
-                         batch python:view.results(b_start=b_start);">
+    <tal:results define="batch view/batch">
       <tal:listing condition="batch">
         <div class="entries" metal:define-slot="entries">
           <tal:repeat repeat="item batch" metal:define-macro="entries">
