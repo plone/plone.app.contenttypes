@@ -145,14 +145,13 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
 
 
 # this mapping is needed to use the right migration method
-# we use the full field type path as it is retrieved from the field
+# we use the full field type path as it is retrieved from the target-field
 # (field.getType()), to avoid conflict.
 # TODO In the __future__ we should have a more dynamic way to configure this
 # mapping
-FIELDS_MAPPING = {'Products.Archetypes.Field.TextField': migrate_richtextfield,
-                  'Products.Archetypes.Field.FileField': migrate_filefield,
-                  'plone.app.blob.field.FileField': migrate_filefield,
-                  'Products.Archetypes.Field.ImageField': migrate_imagefield}
+FIELDS_MAPPING = {'RichText': migrate_richtextfield,
+                  'NamedBlobFile': migrate_filefield,
+                  'NamedBlobImage': migrate_imagefield}
 
 
 def migrate(portal, migrator):
@@ -739,9 +738,11 @@ def makeCustomATMigrator(
                 at_fieldname = fields_dict.get('AT_field_name')
                 at_fieldtype = fields_dict.get('AT_field_type')
                 dx_fieldname = fields_dict.get('DX_field_name')
+                dx_fieldtype = fields_dict.get('DX_field_type')
                 migration_field_method = migrate_simplefield
-                if at_fieldtype in FIELDS_MAPPING:
-                    migration_field_method = FIELDS_MAPPING[at_fieldtype]
+                if dx_fieldtype in FIELDS_MAPPING:
+                    # Richtext, Image and File have custom migraton_methods
+                    migration_field_method = FIELDS_MAPPING[dx_fieldtype]
                 migration_field_method(src_obj=self.old,
                                        dst_obj=self.new,
                                        src_fieldname=at_fieldname,
