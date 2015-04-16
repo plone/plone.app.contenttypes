@@ -56,7 +56,7 @@ class FolderView(BrowserView):
                 sequence.
         """
         # Extra filter
-        kwargs.update(dict(getattr(self.request, 'contentFilter', {})))
+        kwargs.update(self.request.get('contentFilter', {}))
         kwargs.setdefault('portal_type', self.friendly_types)
         kwargs.setdefault('batch', True)
         kwargs.setdefault('b_size', self.b_size)
