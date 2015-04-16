@@ -4,14 +4,14 @@ Changelog
 1.2a8 (unreleased)
 ------------------
 
+- Don't batch the already batched collection results. Fixes #221.
+  [thet]
+
 - I18n fixes.
   [vincentfretin]
 
 - Fix ``test_warning_for_uneditable_content`` to work with recent browser layer
   changes in ``plone.app.z3cform``.
-  [thet]
-
-- Don't batch the already batched collection results. Fixes #221.
   [thet]
 
 - Update image_view_fullscreen.pt for mobile friendliness.
