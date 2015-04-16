@@ -4,6 +4,9 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Don't batch the already batched collection results. Fixes #221.
+  [thet]
+
 - Update image_view_fullscreen.pt for mobile friendliness.
   [fulv]
 

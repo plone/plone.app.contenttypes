@@ -61,13 +61,16 @@ class FolderView(BrowserView):
         kwargs.setdefault('b_size', self.b_size)
         kwargs.setdefault('b_start', self.b_start)
 
-        results = self.context.restrictedTraverse(
-            '@@folderListing')(**kwargs)
+        results = self.context.restrictedTraverse('@@folderListing')(**kwargs)
         return results
 
     def batch(self):
         batch = Batch(
-            self.results(), size=self.b_size, start=self.b_start, orphan=1)
+            self.results(),
+            size=self.b_size,
+            start=self.b_start,
+            orphan=1
+        )
         return batch
 
     def normalizeString(self, text):
