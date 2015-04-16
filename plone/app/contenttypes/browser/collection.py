@@ -16,6 +16,7 @@ class CollectionView(FolderView):
         self.collection_behavior = ICollection(context)
         self.b_size = self.collection_behavior.item_count
 
+    @memoize
     def results(self, **kwargs):
         """Return a content listing based result set with results from the
         collection query.
