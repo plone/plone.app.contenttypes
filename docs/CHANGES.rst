@@ -11,6 +11,9 @@ Changelog
   changes in ``plone.app.z3cform``.
   [thet]
 
+- Don't batch the already batched collection results. Fixes #221.
+  [thet]
+
 - Update image_view_fullscreen.pt for mobile friendliness.
   [fulv]
 

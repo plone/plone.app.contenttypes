@@ -34,7 +34,12 @@ class CollectionView(FolderView):
         kwargs.setdefault('b_size', self.b_size)
         kwargs.setdefault('b_start', self.b_start)
 
-        return self.collection_behavior.results(**kwargs)
+        results = self.collection_behavior.results(**kwargs)
+        return results
+
+    def batch(self):
+        # collection is already batched.
+        return self.results()
 
     @property
     @memoize
