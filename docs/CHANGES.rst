@@ -4,6 +4,11 @@ Changelog
 1.2a8 (unreleased)
 ------------------
 
+- Cache the results of the collection and folder view on the request. The
+  results might be called again by other packages to extract information on the
+  result list.
+  [thet]
+
 - Don't batch the already batched collection results. Fixes #221.
   [thet]
 

@@ -42,6 +42,7 @@ class FolderView(BrowserView):
         b_start = getattr(self.request, 'b_start', None)
         self.b_start = int(b_start) if b_start is not None else 0
 
+    @memoize
     def results(self, **kwargs):
         """Return a content listing based result set with contents of the
         folder.
