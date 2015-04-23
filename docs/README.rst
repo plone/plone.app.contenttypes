@@ -248,13 +248,13 @@ The old types that use leadimages are listed in the navigation-form with the com
 Migrating custom content
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-During normal migrations with ``/@@atct_migrator`` custom content-types will not be migrated and will continue to work as expected.
+During migrations of the default types any custom content-types will not be migrated and will continue to work as expected.
 
-To migrate these to Dexterity plone.app.contenttypes contains a migration form (``/@@custom_migration``) that allows you to migrate any (custom or default) Archetypes-type to any (custom or default) Dexterity-type. The only requirement is that the Dexterity-type you want to migrate to has to exist. It makes no difference if the type you are migrating is still registered in portal_types or is already removed or replaced.
+To help you migrating these to Dexterity plone.app.contenttypes contains a migration form (``/@@custom_migration``) that allows you to migrate any (custom or default) Archetypes-type to any (custom or default) Dexterity-type. The only requirement is that the Dexterity-type you want to migrate to has to exist and that the class of a old type are still present. It makes no difference if the type you are migrating is still registered in portal_types or is already removed or replaced by a dexterity-version using the same name.
 
 In the form ``/@@custom_migration`` you can select a Dexterity-type for any Archetypes-types that exists in the portal. You can then map the source-types fields to the targets fields. You can also choose to ignore fields. You have to take care that the values can be migrated (since there is no validation for that), e.g. it would make no sense to migrate a ImageField to a TextField. There are build-in methods for most field-types, custom or rarely used fields might not migrate properly (you can create a issue if you miss a migration that is not yet supported).
 
-After you map the fields you can then test the configuration. During a test one item will be test-migrated and Plone checks if the migrated item will be accessible without throwing a errors.
+After you map the fields you can test the configuration. During a test one item will be test-migrated and Plone checks if the migrated item will be accessible without throwing a errors. After the test any changes will be rolled back.
 
 
 Widgets
