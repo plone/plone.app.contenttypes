@@ -63,8 +63,12 @@ def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
         at_value = getattr(src_obj, src_fieldname, None)
         if at_value and hasattr(at_value, '__call__'):
             at_value = at_value()
+    if isinstance(at_value, tuple):
+        at_value = tuple(safe_unicode(i) for i in at_value)
+    if isinstance(at_value, list):
+        at_value = [safe_unicode(i) for i in at_value]
     if at_value:
-        setattr(dst_obj, dst_fieldname, at_value)
+        setattr(dst_obj, dst_fieldname, safe_unicode(at_value))
 
 
 def migrate_richtextfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
