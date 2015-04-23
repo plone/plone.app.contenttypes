@@ -30,6 +30,7 @@ from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
@@ -787,20 +788,32 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     a migration without committing.
     """
     portal = getSite()
-    archetype_tool = getToolByName(portal, 'archetype_tool', None)
-    src_type_infos = None
-    if not archetype_tool:
-        return
-    # get the src meta_type from the portal_type
+
+    # if the type still exists get the src_meta_type from the portal_type
     portal_types = getToolByName(portal, 'portal_types')
-    src_meta_type = getattr(portal_types, src_type).content_meta_type
-    # lookup registered type in archetype_tool with
-    # meta_type because several portal_types can use same meta_type
-    for info in archetype_tool.listRegisteredTypes():
-        if info.get('meta_type') == src_meta_type:
-            src_type_infos = info
-    klass = src_type_infos.get('klass', None)
-    is_folderish = klass.isPrincipiaFolderish if klass else False
+    fti = portal_types.get(src_type, None)
+    # Check if the fti was removed or replaced by a DX-implementation
+    if fti is None or IDexterityFTI.providedBy(fti):
+        # Get the needed info from an instance of the type
+        catalog = portal.portal_catalog
+        brain = catalog(portal_type=src_type, sort_limit=1)[0]
+        src_obj = brain.getObject()
+        if IDexterityContent.providedBy(src_obj):
+            logger.error(
+                '%s should not be dexterity object!' % src_obj.absolute_url())
+        is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
+        src_meta_type = src_obj.meta_type
+    else:
+        # Get info from at-fti
+        src_meta_type = fti.content_meta_type
+        archetype_tool = getToolByName(portal, 'archetype_tool', None)
+        for info in archetype_tool.listRegisteredTypes():
+            # lookup registered type in archetype_tool with meta_type
+            # because several portal_types can use same meta_type
+            if info.get('meta_type') == src_meta_type:
+                klass = info.get('klass', None)
+                is_folderish = klass.isPrincipiaFolderish
+
     migrator = makeCustomATMigrator(context=portal,
                                     src_type=src_type,
                                     dst_type=dst_type,
