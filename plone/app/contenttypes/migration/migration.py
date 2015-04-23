@@ -144,6 +144,19 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     logger.info("Migrating file %s" % filename)
 
 
+def migrate_datetimefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """Migrate a datefield."""
+    old_value = src_obj.getField(src_fieldname).get(src_obj)
+    if old_value == '':
+        return
+    if src_obj.getField('timezone', None) is not None:
+        old_timezone = src_obj.getField('timezone').get(src_obj)
+    else:
+        old_timezone = default_timezone(fallback='UTC')
+    new_value = datetime_fixer(old_value.asdatetime(), old_timezone)
+    setattr(dst_obj, dst_fieldname, new_value)
+
+
 # this mapping is needed to use the right migration method
 # we use the full field type path as it is retrieved from the target-field
 # (field.getType()), to avoid conflict.
@@ -151,7 +164,9 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
 # mapping
 FIELDS_MAPPING = {'RichText': migrate_richtextfield,
                   'NamedBlobFile': migrate_filefield,
-                  'NamedBlobImage': migrate_imagefield}
+                  'NamedBlobImage': migrate_imagefield,
+                  'Datetime': migrate_datetimefield,
+                  'Date': migrate_datetimefield}
 
 
 def migrate(portal, migrator):
