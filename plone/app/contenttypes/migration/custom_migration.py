@@ -1,15 +1,20 @@
 # -*- coding: UTF-8 -*-
-from zope.i18n import translate
+from Products.ATContentTypes.content.schemata import ATContentTypeSchema
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
+from plone.app.contenttypes import _
+from plone.app.contenttypes.migration.migration import migrateCustomAT
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import iterSchemataForType
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.ATContentTypes.content.schemata import ATContentTypeSchema
-from Products.statusmessages.interfaces import IStatusMessage
-from plone.app.contenttypes.migration.migration import migrateCustomAT
+from zope.i18n import translate
 import json
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 HAS_EXTENDER = True
 try:
@@ -206,8 +211,8 @@ class CustomMigrationForm(BrowserView):
                 {'MyDXPortalType': (
                     {'AT_field_name': 'fieldname1',
                      'AT_field_type': 'Products.Archetypes.Field.TextField',
-                                     'DX_field_name': 'field_name1',
-                                     'DX_field_type': 'RichText'}, )}}
+                     'DX_field_name': 'field_name1',
+                     'DX_field_type': 'RichText'}, )}}
         Call the migrateCustomAT migrator for each AT content_type we choose
         to migrate.
         '''
@@ -247,13 +252,13 @@ class CustomMigrationForm(BrowserView):
         migration_results = []
         for at_typename in data:
             fields_mapping = data[at_typename]['field_mapping']
-                res = migrateCustomAT(
+            res = migrateCustomAT(
                 fields_mapping=fields_mapping,
-                    src_type=at_typename,
+                src_type=at_typename,
                 dst_type=data[at_typename]['target_type'],
-                    dry_run=dry_run)
-                migration_results.append({'type': at_typename,
-                                          'infos': res})
+                dry_run=dry_run)
+            migration_results.append({'type': at_typename,
+                                      'infos': res})
         return migration_results
 
 
@@ -280,18 +285,26 @@ class TestMigration(CustomMigrationForm):
         Returns a json response with the result.
         This view is called by a js.
         '''
-        results = self.migrate(dry_run=True)
         response = {}
-        if results:
-            migration_result = results[0]
-            res_infos = migration_result.get('infos')
-            if res_infos.get('errors'):
-                response['status'] = 'error'
-                response['message'] = "Migrating to this content type is impossible with this configuration"  # noqa
-            else:
-                response['status'] = 'success'
-                response['message'] = "Testing migration succesful"
-        # I need to fix the response header because in case of success,
-        # it is set to text/html
-        self.request.response.setHeader("Content-type", "application/json")
+        error_msg = _(u'Migrating to this content type is impossible with '
+                      u'this configuration')
+        try:
+            results = self.migrate(dry_run=True)
+        except Exception, e:
+            trace = traceback.format_exc()
+            msg = "Test-Migration failed: %s\n%s\n" % (e, trace)
+            logger.error(msg)
+            response['status'] = 'error'
+            response['message'] = msg
+            return json.dumps(response)
+
+        migration_result = results[0]
+        res_infos = migration_result.get('infos')
+        if res_infos.get('errors'):
+            response['status'] = 'error'
+            response['message'] = error_msg
+        else:
+            response['status'] = 'success'
+            response['message'] = 'Testing migration succesful'
+        self.request.response.setHeader('Content-type', 'application/json')
         return json.dumps(response)
