@@ -500,3 +500,4 @@ Contributors
 * Andrea Cecchi <andrea.cecchi@redturtle.it>
 * Bogdan Girman <bogdan.girman@gmail.com>
 * Martin Opstad Reistadbakk <martin@blaastolen.com>
+* Florent Michon <fmichon@atreal.fr>
