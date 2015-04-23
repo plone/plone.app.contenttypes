@@ -780,7 +780,8 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     for info in archetype_tool.listRegisteredTypes():
         if info.get('meta_type') == src_meta_type:
             src_type_infos = info
-    is_folderish = src_type_infos.get('klass').isPrincipiaFolderish
+    klass = src_type_infos.get('klass', None)
+    is_folderish = klass.isPrincipiaFolderish if klass else False
     migrator = makeCustomATMigrator(context=portal,
                                     src_type=src_type,
                                     dst_type=dst_type,

@@ -44,7 +44,7 @@
           $.ajax({
             url: '@@display_dx_fields',
             dataType: 'html',
-            data: {at_typename:at_typename,
+            data: {at_typename: at_typename,
                    dx_typename: dx_typename},
             cache: false,
             success: function(data) {

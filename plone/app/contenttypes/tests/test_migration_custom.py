@@ -203,7 +203,7 @@ class MigrateCustomATTest(unittest.TestCase):
             {'AT_field_name': 'textExtended',
              'AT_field_type': 'Products.Archetypes.Field.TextField',
              'DX_field_name': 'text',
-             'DX_field_type': 'TextField', },
+             'DX_field_type': 'RichText', },
             {'AT_field_name': 'stringExtended',
              'AT_field_type': 'StringField',
              'DX_field_name': 'title',
