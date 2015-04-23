@@ -10,8 +10,8 @@ you catch ImportErrors
 from Products.ATContentTypes.interfaces.interfaces import IATContentType
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
 from Products.CMFPlone.utils import safe_hasattr
+from Products.CMFPlone.utils import safe_unicode
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
@@ -756,7 +756,6 @@ def makeCustomATMigrator(
         def migrate_schema_fields(self):
             for fields_dict in fields_mapping:
                 at_fieldname = fields_dict.get('AT_field_name')
-                at_fieldtype = fields_dict.get('AT_field_type')
                 dx_fieldname = fields_dict.get('DX_field_name')
                 dx_fieldtype = fields_dict.get('DX_field_type')
                 migration_field_method = migrate_simplefield

@@ -255,7 +255,6 @@ class MigrateCustomATTest(unittest.TestCase):
         at_event.setText('Tütensuppe')
         at_event.setContentType('text/plain')
 
-        oldTZ = os.environ.get('TZ', None)
         os.environ['TZ'] = 'Asia/Tbilisi'
 
         qi = self.portal.portal_quickinstaller
@@ -372,13 +371,15 @@ class MigrateCustomATTest(unittest.TestCase):
         dx_event = self.portal['event']
         self.assertTrue(IEvent.providedBy(dx_event))
         self.assertTrue(dx_event is not at_event)
-        self.assertEquals(safe_unicode(at_event.getText()), dx_event.text.output)
+        self.assertEquals(safe_unicode(
+            at_event.getText()), dx_event.text.output)
         self.assertEquals(at_event.eventUrl, dx_event.event_url)
         self.assertEquals(at_event.contactEmail, dx_event.contact_email)
         self.assertEquals(at_event.contactName, dx_event.contact_name)
         self.assertEquals(at_event.contactPhone, dx_event.contact_phone)
         self.assertEquals(at_event.attendees, dx_event.attendees)
         self.assertEquals(
-            dx_event.start, timezone.localize(datetime.strptime(start, FORMAT)))
+            dx_event.start,
+            timezone.localize(datetime.strptime(start, FORMAT)))
         self.assertEquals(
             dx_event.end, timezone.localize(datetime.strptime(end, FORMAT)))
