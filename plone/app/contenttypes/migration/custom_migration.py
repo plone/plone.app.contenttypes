@@ -196,7 +196,7 @@ class CustomMigrationForm(BrowserView):
                 results.append(
                     {'id': fieldName,
                      'title': '%s (%s)' % (translated_title, class_name),
-                     'type': field.__class__.__name__})
+                     'type': class_name})
         return results
 
     def getPossibleTargetField(self, fieldtype):
