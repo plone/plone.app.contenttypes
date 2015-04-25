@@ -20,6 +20,8 @@ Changelog
 - Update image_view_fullscreen.pt for mobile friendliness.
   [fulv]
 
+- Removed dependency on CMFDefault
+  [tomgross]
 
 1.2a7 (2015-03-27)
 ------------------
