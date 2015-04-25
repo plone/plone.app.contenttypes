@@ -2,7 +2,7 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_inner
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.utils import bodyfinder
+from Products.CMFPlone.utils import bodyfinder
 from Products.CMFPlone.interfaces import INonInstallable
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
