@@ -255,6 +255,7 @@ class MigrateCustomATTest(unittest.TestCase):
         at_event.setText('Tütensuppe')
         at_event.setContentType('text/plain')
 
+        oldTZ = os.environ.get('TZ', None)
         os.environ['TZ'] = 'Asia/Tbilisi'
 
         qi = self.portal.portal_quickinstaller
@@ -276,6 +277,11 @@ class MigrateCustomATTest(unittest.TestCase):
         )
         # migrate ATCTEvent to default DX News Item
         migrateCustomAT(fields_mapping, src_type='Event', dst_type='News Item')
+        if oldTZ:
+            os.environ['TZ'] = oldTZ
+        else:
+            del os.environ['TZ']
+
         dx_newsitem = self.portal['event']
         self.assertTrue(INewsItem.providedBy(dx_newsitem))
         self.assertTrue(dx_newsitem is not at_event)
@@ -321,6 +327,7 @@ class MigrateCustomATTest(unittest.TestCase):
         at_event.setText('Tütensuppe')
         at_event.setContentType('text/plain')
 
+        oldTZ = os.environ.get('TZ', None)
         TZ = 'Asia/Tbilisi'
         os.environ['TZ'] = TZ
         timezone = pytz.timezone(TZ)
@@ -383,3 +390,7 @@ class MigrateCustomATTest(unittest.TestCase):
             timezone.localize(datetime.strptime(start, FORMAT)))
         self.assertEquals(
             dx_event.end, timezone.localize(datetime.strptime(end, FORMAT)))
+        if oldTZ:
+            os.environ['TZ'] = oldTZ
+        else:
+            del os.environ['TZ']
