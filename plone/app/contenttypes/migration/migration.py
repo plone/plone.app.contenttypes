@@ -10,10 +10,12 @@ you catch ImportErrors
 from Products.ATContentTypes.interfaces.interfaces import IATContentType
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode, safe_hasattr
+from Products.CMFPlone.utils import safe_hasattr
+from Products.CMFPlone.utils import safe_unicode
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
+from Products.contentmigration.walker import CustomQueryWalker
 from copy import deepcopy
 from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
@@ -22,12 +24,13 @@ from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
 from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.contenttypes.migration.utils import copy_contentrules
-from plone.app.contenttypes.migration.utils import move_comments
 from plone.app.contenttypes.migration.utils import migrate_leadimage
+from plone.app.contenttypes.migration.utils import move_comments
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.textfield.value import RichTextValue
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
@@ -41,12 +44,134 @@ from zope.component import getAdapters
 from zope.component import getMultiAdapter
 from zope.component import getSiteManager
 from zope.component import getUtility
+from zope.component.hooks import getSite
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.intid.interfaces import IIntIds
-
 import logging
+import transaction
 logger = logging.getLogger(__name__)
+
+
+def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    migrate a generic simple field (like a string field or a date field)
+    """
+    field = src_obj.getField(src_fieldname)
+    if field:
+        at_value = field.get(src_obj)
+    else:
+        at_value = getattr(src_obj, src_fieldname, None)
+        if at_value and hasattr(at_value, '__call__'):
+            at_value = at_value()
+    if isinstance(at_value, tuple):
+        at_value = tuple(safe_unicode(i) for i in at_value)
+    if isinstance(at_value, list):
+        at_value = [safe_unicode(i) for i in at_value]
+    if at_value:
+        setattr(dst_obj, dst_fieldname, safe_unicode(at_value))
+
+
+def migrate_richtextfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    migrate a rich text field.
+    This field needs some extra stuffs like keep the same mimetype.
+    """
+    field = src_obj.getField(src_fieldname)
+    raw_text = ''
+    if field:
+        mime_type = field.getContentType(src_obj)
+        raw_text = safe_unicode(field.getRaw(src_obj))
+    else:
+        at_value = getattr(src_obj, src_fieldname, None)
+        if at_value:
+            mime_type = at_value.mimetype
+            raw_text = safe_unicode(at_value.raw)
+
+    if raw_text.strip() == '':
+            return
+    richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
+                             outputMimeType='text/x-html-safe')
+    setattr(dst_obj, dst_fieldname, richtext)
+
+
+def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    migrate an image field.
+    This field needs to be migrated with an NamedBlobImage instance.
+    """
+    # get old image data and filename
+    old_image = src_obj.getField(src_fieldname).get(src_obj)
+    if old_image == '':
+        return
+    filename = safe_unicode(old_image.filename)
+    old_image_data = old_image.data
+    if safe_hasattr(old_image_data, 'data'):
+        old_image_data = old_image_data.data
+
+    # create the new image field
+    namedblobimage = NamedBlobImage(data=old_image_data,
+                                    filename=filename)
+
+    # set new field on destination object
+    setattr(dst_obj, dst_fieldname, namedblobimage)
+
+    # handle a possible image caption field
+    # postulate is the old caption field name is ending by 'Caption'
+    # and the new field name is ending by '_caption'
+    # is this postulate correct ?
+    # should this field not be handle by itself because it will appear in the
+    # old field list ?
+    caption_field = src_obj.getField('%sCaption' % src_fieldname, None)
+    if caption_field:
+        setattr(dst_obj,
+                ('%s_caption' % dst_fieldname),
+                safe_unicode(caption_field.get(src_obj)))
+
+    logger.info("Migrating image %s" % filename)
+
+
+def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """
+    migrate a file field.
+    This field needs to be migrated with an NamedBlobFile instance.
+    """
+    old_file = src_obj.getField(src_fieldname).get(src_obj)
+    if old_file == '':
+        return
+    filename = safe_unicode(old_file.filename)
+    old_file_data = old_file.data
+    if safe_hasattr(old_file_data, 'data'):
+        old_file_data = old_file_data.data
+    namedblobfile = NamedBlobFile(data=old_file_data,
+                                  filename=filename)
+    setattr(dst_obj, dst_fieldname, namedblobfile)
+    logger.info("Migrating file %s" % filename)
+
+
+def migrate_datetimefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """Migrate a datefield."""
+    old_value = src_obj.getField(src_fieldname).get(src_obj)
+    if old_value == '':
+        return
+    if src_obj.getField('timezone', None) is not None:
+        old_timezone = src_obj.getField('timezone').get(src_obj)
+    else:
+        old_timezone = default_timezone(fallback='UTC')
+    new_value = datetime_fixer(old_value.asdatetime(), old_timezone)
+    setattr(dst_obj, dst_fieldname, new_value)
+
+
+# this mapping is needed to use the right migration method
+# we use the full field type path as it is retrieved from the target-field
+# (field.getType()), to avoid conflict.
+# TODO In the __future__ we should have a more dynamic way to configure this
+# mapping
+FIELDS_MAPPING = {'RichText': migrate_richtextfield,
+                  'NamedBlobFile': migrate_filefield,
+                  'NamedBlobImage': migrate_imagefield,
+                  'Datetime': migrate_datetimefield,
+                  'Date': migrate_datetimefield}
 
 
 def migrate(portal, migrator):
@@ -606,3 +731,113 @@ def migrate_events(portal):
     migrate(portal, DXOldEventMigrator)
     migrate(portal, EventMigrator)
     migrate(portal, DXEventMigrator)
+
+
+def makeCustomATMigrator(
+    context,
+    src_type,
+    dst_type,
+    fields_mapping,
+    is_folderish=False,
+    dry_run=False
+):
+    """ generate a migrator for the given at-based folderish portal type """
+
+    base_class = ATCTContentMigrator
+    if is_folderish:
+        base_class = ATCTFolderMigrator
+
+    class CustomATMigrator(base_class):
+
+        src_portal_type = src_type
+        dst_portal_type = dst_type
+        dry_run_mode = dry_run
+
+        def migrate_schema_fields(self):
+            for fields_dict in fields_mapping:
+                at_fieldname = fields_dict.get('AT_field_name')
+                dx_fieldname = fields_dict.get('DX_field_name')
+                dx_fieldtype = fields_dict.get('DX_field_type')
+                migration_field_method = migrate_simplefield
+                if dx_fieldtype in FIELDS_MAPPING:
+                    # Richtext, Image and File have custom migraton_methods
+                    migration_field_method = FIELDS_MAPPING[dx_fieldtype]
+                migration_field_method(src_obj=self.old,
+                                       dst_obj=self.new,
+                                       src_fieldname=at_fieldname,
+                                       dst_fieldname=dx_fieldname)
+
+        def last_migrate_check(self):
+            """
+            BBB to be checked
+            if there is an error with the fields, an exception will be raised.
+            """
+            if self.dry_run_mode:
+                view = getMultiAdapter(
+                    (self.new, self.new.REQUEST), name="view")
+                view()
+
+    return CustomATMigrator
+
+
+def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
+    """
+    Try to get types infos from archetype_tool, then set a migrator an pass it
+    given values. There is a dry_run mode that allows to check the success of
+    a migration without committing.
+    """
+    portal = getSite()
+
+    # if the type still exists get the src_meta_type from the portal_type
+    portal_types = getToolByName(portal, 'portal_types')
+    fti = portal_types.get(src_type, None)
+    # Check if the fti was removed or replaced by a DX-implementation
+    if fti is None or IDexterityFTI.providedBy(fti):
+        # Get the needed info from an instance of the type
+        catalog = portal.portal_catalog
+        brain = catalog(portal_type=src_type, sort_limit=1)[0]
+        src_obj = brain.getObject()
+        if IDexterityContent.providedBy(src_obj):
+            logger.error(
+                '%s should not be dexterity object!' % src_obj.absolute_url())
+        is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
+        src_meta_type = src_obj.meta_type
+    else:
+        # Get info from at-fti
+        src_meta_type = fti.content_meta_type
+        archetype_tool = getToolByName(portal, 'archetype_tool', None)
+        for info in archetype_tool.listRegisteredTypes():
+            # lookup registered type in archetype_tool with meta_type
+            # because several portal_types can use same meta_type
+            if info.get('meta_type') == src_meta_type:
+                klass = info.get('klass', None)
+                is_folderish = klass.isPrincipiaFolderish
+
+    migrator = makeCustomATMigrator(context=portal,
+                                    src_type=src_type,
+                                    dst_type=dst_type,
+                                    fields_mapping=fields_mapping,
+                                    is_folderish=is_folderish,
+                                    dry_run=dry_run)
+    if migrator:
+        migrator.src_meta_type = src_meta_type
+        migrator.dst_meta_type = ''
+        walker_settings = {'portal': portal,
+                           'migrator': migrator,
+                           'src_portal_type': src_type,
+                           'dst_portal_type': dst_type,
+                           'src_meta_type': src_meta_type,
+                           'dst_meta_type': '',
+                           'use_savepoint': True}
+        if dry_run:
+            walker_settings['limit'] = 1
+        walker = CustomQueryWalker(**walker_settings)
+        walker.go()
+        walker_infos = {'errors': walker.errors,
+                        'msg': walker.getOutput().splitlines(),
+                        'counter': walker.counter}
+        for error in walker.errors:
+            logger.error(error.get('message'))
+        if dry_run:
+            transaction.abort()
+        return walker_infos

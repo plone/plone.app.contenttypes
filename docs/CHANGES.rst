@@ -109,6 +109,13 @@ Changelog
 1.2a5 (2014-10-23)
 ------------------
 
+- Add custom migration for AT-Types that were removed from portal_types.
+  [pbauer]
+
+- Added helper view for migration custom AT types to available DX types,
+  see issue #133.
+  [gbastien]
+
 - Code modernization: sorted imports, use decorators, utf8 headers.
   [jensens]
 
@@ -162,6 +169,9 @@ Changelog
   sort order correctly.
   [maurits]
 
+- Added migration method that allows to migrate custom AT types to
+  available DX types (#133)
+  [cekk]
 
 1.2a3 (2014-04-19)
 ------------------
