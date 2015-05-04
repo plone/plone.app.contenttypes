@@ -4,6 +4,9 @@ Changelog
 1.2a8 (unreleased)
 ------------------
 
+- Follow best practice for CHANGES.rst.
+  [timo]
+
 - Add migrations from custom AT types to available DX types (fix #133).
   [gbastien, cekk, tiazma, flohcim, pbauer]
 
@@ -25,6 +28,7 @@ Changelog
 
 - Removed dependency on CMFDefault
   [tomgross]
+
 
 1.2a7 (2015-03-27)
 ------------------
