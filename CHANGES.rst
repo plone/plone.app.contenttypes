@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2a8 (unreleased)
+1.2a8 (2015-05-04)
 ------------------
 
 - Follow best practice for CHANGES.rst.
