@@ -78,3 +78,10 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.assertTrue('image.jpg' in self.browser.contents)
 
         self.assertTrue('<div class="leadImage">' in self.browser.contents)
+
+        # But doesn't show up on folder_contents
+        self.browser.open(self.portal_url + '/leadimagedoc/folder_contents')
+        self.assertTrue('<div class="leadImage">' not in self.browser.contents)
+        # nor @@folder_contents
+        self.browser.open(self.portal_url + '/leadimagedoc/@@folder_contents')
+        self.assertTrue('<div class="leadImage">' not in self.browser.contents)

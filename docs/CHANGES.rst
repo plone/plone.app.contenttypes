@@ -4,6 +4,9 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Don't show LeadImageViewlet on folder_contents view.
+  [thet]
+
 - Fix ``contentFilter`` for collections.
   [thet]
 
