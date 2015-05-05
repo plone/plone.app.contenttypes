@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.interfaces import INewsItem
+from plone.app.layout.globals.interfaces import IViewView
 from plone.app.layout.viewlets import ViewletBase
 
 
@@ -11,5 +12,5 @@ class LeadImageViewlet(ViewletBase):
         self.context = ILeadImage(self.context)
         self.available = True if self.context.image else False
         if INewsItem.providedBy(self.context)\
-                or 'folder_contents' in self.request.URL:
+                or not IViewView.providedBy(self.view):
             self.available = False
