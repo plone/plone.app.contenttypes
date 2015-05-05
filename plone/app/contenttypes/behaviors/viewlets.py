@@ -10,5 +10,6 @@ class LeadImageViewlet(ViewletBase):
     def update(self):
         self.context = ILeadImage(self.context)
         self.available = True if self.context.image else False
-        if INewsItem.providedBy(self.context):
+        if INewsItem.providedBy(self.context)\
+                or 'folder_contents' in self.request.URL:
             self.available = False

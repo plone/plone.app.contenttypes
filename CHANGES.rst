@@ -4,7 +4,8 @@ Changelog
 1.2a9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Don't show LeadImageViewlet on folder_contents view.
+  [thet]
 
 
 1.2a8 (2015-05-04)
