@@ -19,6 +19,7 @@
   <browser:viewlet
     name="contentleadimage"
     for=".leadimage.ILeadImage"
+    view="plone.app.layout.globals.interfaces.IViewView"
     class=".viewlets.LeadImageViewlet"
     manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle"
     template="leadimage.pt"

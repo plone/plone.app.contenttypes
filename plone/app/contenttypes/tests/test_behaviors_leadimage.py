@@ -28,9 +28,9 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.request = self.layer['request']
         self.portal_url = self.portal.absolute_url()
         setRoles(self.portal, TEST_USER_ID, ['Contributor'])
-        fti = DexterityFTI('leadimagedocument')
-        self.portal.portal_types._setObject('leadimagedocument', fti)
-        fti.klass = 'plone.dexterity.content.Item'
+        fti = DexterityFTI('leadimagefolder')
+        self.portal.portal_types._setObject('leadimagefolder', fti)
+        fti.klass = 'plone.dexterity.content.Container'
         fti.behaviors = (
             'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
         )
@@ -40,9 +40,9 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         from plone.app.contenttypes.behaviors.leadimage import ILeadImage
         alsoProvides(self.request, ILeadImage)
         self.portal.invokeFactory(
-            'leadimagedocument',
-            id='leadimagedoc',
-            title=u'Document with a lead image'
+            'leadimagefolder',
+            id='leadimagefolder',
+            title=u'Folder with a lead image'
         )
         import transaction
         transaction.commit()
@@ -55,12 +55,12 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         )
 
     def test_lead_image_in_edit_form(self):
-        self.browser.open(self.portal_url + '/leadimagedoc/edit')
+        self.browser.open(self.portal_url + '/leadimagefolder/edit')
         self.assertTrue('Lead Image' in self.browser.contents)
         self.assertTrue('Lead Image Caption' in self.browser.contents)
 
     def test_lead_image_viewlet_shows_up(self):
-        self.browser.open(self.portal_url + '/leadimagedoc/edit')
+        self.browser.open(self.portal_url + '/leadimagefolder/edit')
         # Image upload
         file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
         file_ctl = self.browser.getControl(
@@ -80,5 +80,5 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.assertTrue('<div class="leadImage">' in self.browser.contents)
 
         # But doesn't show up on folder_contents, which is not a default view
-        self.browser.open(self.portal_url + '/leadimagedoc/@@full_view_item')
+        self.browser.open(self.portal_url + '/leadimagefolder/folder_contents')
         self.assertTrue('<div class="leadImage">' not in self.browser.contents)
