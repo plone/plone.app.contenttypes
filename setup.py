@@ -47,6 +47,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.relationfield',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
+          'plone.app.lockingbehavior',
           'pytz',
           'plone.app.z3cform>=1.1.0.dev0'
       ],
