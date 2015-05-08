@@ -4,6 +4,9 @@ Changelog
 1.2a9 (unreleased)
 ------------------
 
+- Default to using locking support on Page, Collection, Event and News Item types
+  [vangheem]
+
 - Show the LeadImageViewlet only on default views.
   [thet]
 
