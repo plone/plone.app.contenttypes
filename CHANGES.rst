@@ -4,6 +4,9 @@ Changelog
 1.2a9 (unreleased)
 ------------------
 
+- provide table of contents for document view
+  [vangheem]
+
 - Default to using locking support on Page, Collection, Event and News Item types
   [vangheem]
 
