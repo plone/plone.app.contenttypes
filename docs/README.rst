@@ -426,7 +426,14 @@ Differences to Products.ATContentTypes
 - There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
 - The link on the image of the newsitem triggers an overlay
 - The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
-- The keywords-widget is not implemented and is replaced by a simple lines-widget unless you override it or use plone.app.widgets. Please see the section on widgets.
+- The views for Folders and Collections changed their names and now share a common implementation (since version 1.2a8):
+
+  - ``folder_listing_view`` (Folders) and ``collection_view`` (Collections) -> ``listing_view`` (Folders and Collections)
+  - ``folder_summary_view`` (Folders) and ``summary_view`` (Collections) -> ``summary_view`` (Folders and Collections)
+  - ``folder_tabular_view`` (Folders) and ``tabular_view`` (Collections) -> ``tabular_view`` (Folders and Collections)
+  - ``folder_full_view`` (Folders) and ``all_content`` (Collections) -> ``full_view`` (Folders and Collections)
+  - ``atct_album_view`` (Folders) and ``thumbnail_view`` (Collections) -> ``album_view`` (Folders and Collections)
+
 
 
 Toubleshooting
