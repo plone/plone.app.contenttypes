@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2a9 (unreleased)
+1.2a9 (2015-05-13)
 ------------------
 
 - provide table of contents for document view
