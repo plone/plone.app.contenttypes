@@ -205,7 +205,9 @@ class Collection(object):
         self.context.customViewFields = value
 
     def _get_customViewFields(self):
-        return getattr(self.context, 'customViewFields', [])
+        # Note: in corner cases customViewFields might be None, but we
+        # always want a list.
+        return getattr(self.context, 'customViewFields', []) or []
 
     customViewFields = property(_get_customViewFields, _set_customViewFields)
 

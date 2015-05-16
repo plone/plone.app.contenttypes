@@ -4,7 +4,9 @@ Changelog
 1.2a10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix possible error setting fields for tabular_view for
+  collections.  Issue #209.
+  [maurits]
 
 
 1.2a9 (2015-05-13)
