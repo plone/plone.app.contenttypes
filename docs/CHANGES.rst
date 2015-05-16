@@ -4,6 +4,10 @@ Changelog
 1.2 (unreleased)
 ----------------
 
+- Fix possible error setting fields for tabular_view for
+  collections.  Issue #209.
+  [maurits]
+
 - Show the LeadImageViewlet only on default views.
   [thet]
 
