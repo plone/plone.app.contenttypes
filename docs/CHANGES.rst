@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2 (unreleased)
+1.1 (unreleased)
 ----------------
 
 - Fix possible error setting fields for tabular_view for
@@ -92,10 +92,6 @@ Changelog
 - Keep portlets when migrating AT to DX (fixes #161)
   [frisi, gbastien, petschki]
 
-
-1.2a5 (2014-10-23)
-------------------
-
 - Code modernization: sorted imports, use decorators, utf8 headers.
   [jensens]
 
@@ -106,10 +102,6 @@ Changelog
   theme. This is the work done in the GSOC Barceloneta theme project. Fix
   several templates.
   [albertcasado, sneridagh]
-
-
-1.2a4 (2014-09-17)
-------------------
 
 - Include translated content into migration-information (see #170)
   [pbauer]
@@ -149,22 +141,11 @@ Changelog
   sort order correctly.
   [maurits]
 
-
-1.2a3 (2014-04-19)
-------------------
-
 - Adapt to changes of plone.app.event 2.0.
   [thet]
 
 - Fix issue when mimetype can be None.
   [pbauer]
-
-
-1.2a2 (2014-04-13)
-------------------
-
-- Enable IShortName for all default-types.
-  [pbauer, mikejmets]
 
 - Add form to install pac and forward to dx_migration
   after a successful migration to Plone 5
@@ -203,10 +184,6 @@ Changelog
 - Use Plone 4 based @@atct_migrator and @@atct_migrator_results template
   structure.
   [thet]
-
-
-1.2a1 (2014-02-22)
-------------------
 
 - Fix viewlet warning about ineditable content (fixes #130)
   [pbauer]
