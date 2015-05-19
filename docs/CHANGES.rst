@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.1 (unreleased)
-----------------
+1.1b4 (2015-05-19)
+------------------
 
 - Fix possible error setting fields for tabular_view for
   collections.  Issue #209.
