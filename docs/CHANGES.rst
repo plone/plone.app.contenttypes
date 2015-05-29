@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1b5 (unreleased)
+1.1b5 (2015-05-29)
 ------------------
 
 - Keep additional view_methods when migrating to new view_methods. Fixes #231.
