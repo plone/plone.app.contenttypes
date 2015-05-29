@@ -175,10 +175,15 @@ def use_new_view_names(context):
             obj = brain.getObject()
             current = context.getLayout()
             if current in view_map.keys():
-                obj.setLayout(view_map[current])
-                logger.info("Set view to {} for {}".format(
-                    view_map[current], obj.absolute_url()
-                ))
+                if not obj.getDefaultPage():
+                    obj.setLayout(view_map[current])
+                    logger.info("Set view to {} for {}".format(
+                        view_map[current], obj.absolute_url()
+                    ))
+                else:
+                    logger.info("Default Page detected, don't change {}".format(
+                        obj.absolute_url()
+                    ))
 
     folder_view_map = {  # OLD : NEW
         'folder_listing': 'listing_view',
