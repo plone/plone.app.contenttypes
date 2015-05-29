@@ -125,26 +125,65 @@ def migrate_album_view(context):
 #         fti._updateProperty('behaviors', behaviors)
 
 
-def use_new_view_names(context):
+def use_new_view_names(context):  # noqa
     """Migrate old view names to new view names."""
 
-    # TODO: Don't reload the profile. Only change the settings.
-    context.runImportStepFromProfile(
-        'profile-plone.app.contenttypes:default',
-        'typeinfo',
-    )
+    # Don't reload the profile. Only change the settings.
+    portal_types = getToolByName(context, 'portal_types')
+    types_to_fix = ['Folder', 'Collection', 'Plone Site']
+    outdated_methods = [
+        'folder_listing',
+        'folder_full_view',
+        'folder_summary_view',
+        'folder_tabular_view',
+        'folder_album_view',
+        'atct_album_view',
+        'standard_view',
+        'collection_view',
+        'all_content',
+        'thumbnail_view',
+    ]
+    new_methods = [
+        'listing_view',
+        'summary_view',
+        'tabular_view',
+        'full_view',
+        'album_view',
+        'event_listing',
+    ]
+    for ctype in types_to_fix:
+        fti = portal_types.get(ctype)
+        view_methods = [i for i in fti.getAvailableViewMethods(None)]
+        changed = False
+        for method in outdated_methods:
+            if method in view_methods:
+                view_methods.remove(method)
+                changed = True
+        for method in new_methods:
+            if method not in view_methods:
+                view_methods.append(method)
+                changed = True
+        if changed:
+            fti.manage_changeProperties(view_methods=tuple(view_methods))
+            logger.info("Updated view_methods for {}".format(ctype))
+
     catalog = getToolByName(context, 'portal_catalog')
     search = catalog.unrestrictedSearchResults
 
     def _fixup(portal_type, view_map):
         for brain in search(portal_type=portal_type):
             obj = brain.getObject()
-            current = context.getLayout()
+            current = obj.getLayout()
             if current in view_map.keys():
+                default_page = obj.getDefaultPage()
                 obj.setLayout(view_map[current])
                 logger.info("Set view to {} for {}".format(
                     view_map[current], obj.absolute_url()
                 ))
+                if default_page:
+                    # any defaultPage is switched of by setLayout
+                    # and needs to set again
+                    obj.setDefaultPage(default_page)
 
     folder_view_map = {  # OLD : NEW
         'folder_listing': 'listing_view',
