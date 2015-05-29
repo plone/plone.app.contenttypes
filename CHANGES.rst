@@ -4,6 +4,12 @@ Changelog
 1.2a10 (unreleased)
 -------------------
 
+- Keep additional view_methods when migrating to new view_methods. Fixes #231.
+  [pbauer]
+
+- Fix upgrade-step to use new view_methods.
+  [pbauer]
+
 - Fix possible error setting fields for tabular_view for
   collections.  Issue #209.
   [maurits]
