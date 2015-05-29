@@ -125,7 +125,7 @@ def migrate_album_view(context):
 #         fti._updateProperty('behaviors', behaviors)
 
 
-def use_new_view_names(context):
+def use_new_view_names(context):  # noqa
     """Migrate old view names to new view names."""
 
     # Don't reload the profile. Only change the settings.
@@ -175,10 +175,15 @@ def use_new_view_names(context):
             obj = brain.getObject()
             current = obj.getLayout()
             if current in view_map.keys():
+                default_page = obj.getDefaultPage()
                 obj.setLayout(view_map[current])
                 logger.info("Set view to {} for {}".format(
                     view_map[current], obj.absolute_url()
                 ))
+                if default_page:
+                    # any defaultPage is switched of by setLayout
+                    # and needs to set again
+                    obj.setDefaultPage(default_page)
 
     folder_view_map = {  # OLD : NEW
         'folder_listing': 'listing_view',
