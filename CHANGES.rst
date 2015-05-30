@@ -10,6 +10,9 @@ Changelog
 1.2b1 (2015-05-30)
 ------------------
 
+- use modal pattern for news item image instead of jquery tools
+  [vangheem]
+
 - Keep additional view_methods when migrating to new view_methods. Fixes #231.
   [pbauer]
 
