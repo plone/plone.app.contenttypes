@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 import os
 
-version = '1.2b2'
+version = 'y.dev0'
 
 
 def read(*rnames):
