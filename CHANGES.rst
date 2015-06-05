@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2b2 (unreleased)
+1.2b2 (2015-06-05)
 ------------------
 
 - use modal pattern for news item image instead of jquery tools
