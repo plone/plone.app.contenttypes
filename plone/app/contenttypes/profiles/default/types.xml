@@ -23,6 +23,31 @@
  <object name="Topic" remove="True"
     meta_type="Factory-based Type Information with dynamic views"/>
 
+ <!-- We also remove old Criteria types if they exist.
+      These were used in Topics (old style collections) removed above -->
+ <object name="ATBooleanCriterion"
+    meta_type="Factory-based Type Information"  remove="True"/>
+ <object name="ATCurrentAuthorCriterion"
+    meta_type="Factory-based Type Information"  remove="True"/>
+ <object name="ATDateCriteria" meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATDateRangeCriterion"
+    meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATListCriterion" meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATPathCriterion" meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATRelativePathCriterion"
+    meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATPortalTypeCriterion"
+    meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATReferenceCriterion"
+    meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATSelectionCriterion"
+    meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATSimpleIntCriterion"
+    meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATSimpleStringCriterion"
+    meta_type="Factory-based Type Information" remove="True"/>
+ <object name="ATSortCriterion" meta_type="Factory-based Type Information" remove="True"/>
+
  <object meta_type="Dexterity FTI" name="Collection" />
  <object meta_type="Dexterity FTI" name="Document" />
  <object meta_type="Dexterity FTI" name="Folder" />
@@ -31,7 +56,7 @@
  <object meta_type="Dexterity FTI" name="Image" />
  <object meta_type="Dexterity FTI" name="News Item" />
  <object meta_type="Dexterity FTI" name="Event" />
- 
+
  <object name="Plone Site"
     meta_type="Factory-based Type Information with dynamic views"/>
 
