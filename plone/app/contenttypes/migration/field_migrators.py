@@ -102,8 +102,10 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     old_file_data = old_file.data
     if safe_hasattr(old_file_data, 'data'):
         old_file_data = old_file_data.data
-    namedblobfile = NamedBlobFile(data=old_file_data,
-                                  filename=filename)
+    namedblobfile = NamedBlobFile(
+        contentType=old_file.content_type,
+        data=old_file_data,
+        filename=filename)
     setattr(dst_obj, dst_fieldname, namedblobfile)
     logger.info("Migrating file %s" % filename)
 
