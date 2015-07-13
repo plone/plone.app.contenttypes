@@ -940,10 +940,10 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
     def test_relations_are_migrated(self):
         from plone.app.contenttypes.migration.migration import (
-            restoreReferences,
             migrate_documents,
-            migrate_folders
+            migrate_folders,
         )
+        from plone.app.contenttypes.migration.utils import restoreReferences
 
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
