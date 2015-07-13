@@ -9,8 +9,6 @@ you catch ImportErrors
 '''
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_hasattr
-from Products.CMFPlone.utils import safe_unicode
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
@@ -20,18 +18,20 @@ from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
 from plone.app.contenttypes.migration.utils import copy_contentrules
-from plone.app.contenttypes.migration.utils import datetime_fixer
 from plone.app.contenttypes.migration.utils import migrate_leadimage
 from plone.app.contenttypes.migration.utils import move_comments
 from plone.app.contenttypes.migration.utils import migrate_portlets
-from plone.app.contenttypes.migration.field_migrators import migrate_simplefield
 from plone.app.contenttypes.migration.field_migrators import FIELDS_MAPPING
-from plone.app.textfield.value import RichTextValue
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_datetimefield
+from plone.app.contenttypes.migration.field_migrators import migrate_filefield
+from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_richtextfield
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_simplefield
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.event.utils import default_timezone
-from plone.namedfile.file import NamedBlobFile
-from plone.namedfile.file import NamedBlobImage
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
@@ -40,6 +40,7 @@ from zope.interface import Interface
 from zope.interface import implementer
 import logging
 import transaction
+
 logger = logging.getLogger(__name__)
 
 
@@ -222,14 +223,7 @@ class DocumentMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        field = self.old.getField('text')
-        mime_type = field.getContentType(self.old)
-        raw_text = safe_unicode(field.getRaw(self.old))
-        if raw_text.strip() == '':
-            return
-        richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
-                                 outputMimeType='text/x-html-safe')
-        self.new.text = richtext
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
 
 
 def migrate_documents(portal):
@@ -244,12 +238,7 @@ class FileMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        old_file = self.old.getField('file').get(self.old)
-        filename = safe_unicode(old_file.filename)
-        namedblobfile = NamedBlobFile(contentType=old_file.content_type,
-                                      data=old_file.data,
-                                      filename=filename)
-        self.new.file = namedblobfile
+        migrate_filefield(self.old, self.new, 'file', 'file')
 
 
 def migrate_files(portal):
@@ -276,13 +265,7 @@ class ImageMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        old_image = self.old.getField('image').get(self.old)
-        if old_image == '':
-            return
-        filename = safe_unicode(old_image.filename)
-        namedblobimage = NamedBlobImage(data=old_image.data,
-                                        filename=filename)
-        self.new.image = namedblobimage
+        migrate_imagefield(self.old, self.new, 'image', 'image')
 
 
 def migrate_images(portal):
@@ -309,15 +292,14 @@ class LinkMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        remoteUrl = self.old.getField('remoteUrl').get(self.old)
-        self.new.remoteUrl = remoteUrl
+        migrate_simplefield(self.old, self.new, 'remoteUrl', 'remoteUrl')
 
 
 def migrate_links(portal):
     return migrate(portal, LinkMigrator)
 
 
-class NewsItemMigrator(DocumentMigrator):
+class NewsItemMigrator(ATCTContentMigrator):
 
     src_portal_type = 'News Item'
     src_meta_type = 'ATNewsItem'
@@ -325,22 +307,9 @@ class NewsItemMigrator(DocumentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        # migrate the text
-        super(NewsItemMigrator, self).migrate_schema_fields()
-
-        # migrate the rest of the Schema
-        old_image = self.old.getField('image').get(self.old)
-        if old_image == '':
-            return
-        filename = safe_unicode(old_image.filename)
-        old_image_data = old_image.data
-        if safe_hasattr(old_image_data, 'data'):
-            old_image_data = old_image_data.data
-        namedblobimage = NamedBlobImage(data=old_image_data,
-                                        filename=filename)
-        self.new.image = namedblobimage
-        self.new.image_caption = safe_unicode(
-            self.old.getField('imageCaption').get(self.old))
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+        migrate_imagefield(self.old, self.new, 'image', 'image')
+        migrate_simplefield(self.old, self.new, 'imageCaption', 'imageCaption')
 
 
 def migrate_newsitems(portal):
@@ -378,7 +347,7 @@ def migrate_folders(portal):
     return migrate(portal, FolderMigrator)
 
 
-class CollectionMigrator(DocumentMigrator):
+class CollectionMigrator(ATCTContentMigrator):
     """Migrator for at-based collections provided by plone.app.collection
     to
     """
@@ -389,16 +358,16 @@ class CollectionMigrator(DocumentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        # migrate the richtext
-        super(CollectionMigrator, self).migrate_schema_fields()
-
-        # migrate the rest of the schema into the behavior
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
         wrapped = ICollection(self.new)
+        # using migrate_simplefield on 'query' returns the ContentListing obj
         wrapped.query = self.old.query
-        wrapped.sort_on = self.old.sort_on
-        wrapped.sort_reversed = self.old.sort_reversed
-        wrapped.limit = self.old.limit
-        wrapped.customViewFields = self.old.customViewFields
+        migrate_simplefield(self.old, wrapped, 'sort_on', 'sort_on')
+        migrate_simplefield(
+            self.old, wrapped, 'sort_reversed', 'sort_reversed')
+        migrate_simplefield(self.old, wrapped, 'limit', 'limit')
+        migrate_simplefield(
+            self.old, wrapped, 'customViewFields', 'customViewFields')
 
 
 def migrate_collections(portal):
@@ -414,58 +383,20 @@ class EventMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        old_start = self.old.getField('startDate').get(self.old)
-        old_end = self.old.getField('endDate').get(self.old)
-        old_location = self.old.getField('location').get(self.old)
-        old_attendees = self.old.getField('attendees').get(self.old)
-        old_eventurl = self.old.getField('eventUrl').get(self.old)
-        old_contactname = self.old.getField('contactName').get(self.old)
-        old_contactemail = self.old.getField('contactEmail').get(self.old)
-        old_contactphone = self.old.getField('contactPhone').get(self.old)
-        old_text_field = self.old.getField('text')
-        raw_text = safe_unicode(old_text_field.getRaw(self.old))
-        mime_type = old_text_field.getContentType(self.old)
-        if raw_text.strip() == '':
-            raw_text = ''
-        old_richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
-                                     outputMimeType='text/x-html-safe')
-
-        wholeDay = None
-        if self.old.getField('wholeDay'):
-            wholeDay = self.old.getField('wholeDay').get(self.old)
-
-        openEnd = None
-        if self.old.getField('openEnd'):
-            openEnd = self.old.getField('openEnd').get(self.old)
-
-        recurrence = None
-        if self.old.getField('recurrence'):
-            recurrence = self.old.getField('recurrence').get(self.old)
-
-        if self.old.getField('timezone'):
-            old_timezone = self.old.getField('timezone').get(self.old)
-        else:
-            old_timezone = default_timezone(fallback='UTC')
-
-        # IEventBasic
-        self.new.start = datetime_fixer(old_start.asdatetime(), old_timezone)
-        self.new.end = datetime_fixer(old_end.asdatetime(), old_timezone)
-
-        if wholeDay is not None:
-            self.new.whole_day = wholeDay  # IEventBasic
-        if openEnd is not None:
-            self.new.open_end = openEnd  # IEventBasic
-        if recurrence is not None:
-            self.new.recurrence = recurrence  # IEventRecurrence
-
-        self.new.location = old_location  # IEventLocation
-        self.new.attendees = old_attendees  # IEventAttendees
-        self.new.event_url = old_eventurl  # IEventContact
-        self.new.contact_name = old_contactname  # IEventContact
-        self.new.contact_email = old_contactemail  # IEventContact
-        self.new.contact_phone = old_contactphone  # IEventContact
-        # Copy the entire richtext object, not just it's representation
-        self.new.text = old_richtext
+        migrate_datetimefield(self.old, self.new, 'startDate', 'start')
+        migrate_datetimefield(self.old, self.new, 'endDate', 'end')
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+        migrate_simplefield(self.old, self.new, 'location', 'location')
+        migrate_simplefield(self.old, self.new, 'attendees', 'attendees')
+        migrate_simplefield(self.old, self.new, 'eventUrl', 'event_url')
+        migrate_simplefield(self.old, self.new, 'contactName', 'contact_name')
+        migrate_simplefield(
+            self.old, self.new, 'contactEmail', 'contact_email')
+        migrate_simplefield(
+            self.old, self.new, 'contactPhone', 'contact_phone')
+        migrate_simplefield(self.old, self.new, 'wholeDay', 'whole_day')
+        migrate_simplefield(self.old, self.new, 'openEnd', 'open_end')
+        migrate_simplefield(self.old, self.new, 'recurrence', 'recurrence')
 
 
 def migrate_events(portal):
