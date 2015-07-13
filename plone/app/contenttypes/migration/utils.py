@@ -2,7 +2,7 @@
 from Products.ATContentTypes.interfaces.interfaces import IATContentType
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.CMFPlone.utils import safe_unicode, safe_hasattr
+from Products.CMFPlone.utils import safe_hasattr
 from Products.GenericSetup.context import DirectoryImportContext
 from Products.GenericSetup.utils import importObjects
 from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
@@ -14,13 +14,15 @@ from persistent.list import PersistentList
 from plone.app.contentrules.api import assign_rule
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_simplefield
 from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
 from plone.app.discussion.interfaces import IConversation
 from plone.app.uuid.utils import uuidToObject
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.namedfile.file import NamedBlobImage
 from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
 from plone.portlets.interfaces import IPortletAssignmentMapping
 from plone.portlets.interfaces import IPortletManager
@@ -35,7 +37,6 @@ from zope.intid.interfaces import IIntIds
 import logging
 import os
 import pkg_resources
-import pytz
 
 logger = logging.getLogger(__name__)
 
@@ -185,8 +186,7 @@ def migrate_leadimage(source_object, target_object):
     NEW_LEADIMAGE_FIELD_NAME = 'image'
     NEW_CAPTION_FIELD_NAME = 'image_caption'
 
-    old_leadimage_field = source_object.getField(OLD_LEADIMAGE_FIELD_NAME)
-    if not old_leadimage_field:
+    if not source_object.getField(OLD_LEADIMAGE_FIELD_NAME):
         # skip if old content has no field
         return
 
@@ -196,31 +196,21 @@ def migrate_leadimage(source_object, target_object):
                     "Could not migrate collective.leadimage fields.")
         return
 
-    old_image = old_leadimage_field.get(source_object)
-    if not old_image:
-        # skip if image-field is empty
-        return
-
-    filename = safe_unicode(old_image.filename)
-    old_image_data = old_image.data
-    if safe_hasattr(old_image_data, 'data'):
-        # handle relstorage
-        old_image_data = old_image_data.data
-
-    # construct the new image
-    namedblobimage = NamedBlobImage(data=old_image_data,
-                                    filename=filename)
-
-    # set new field on destination object
-    setattr(target_object, NEW_LEADIMAGE_FIELD_NAME, namedblobimage)
+    # handle image field
+    migrate_imagefield(
+        source_object,
+        target_object,
+        OLD_LEADIMAGE_FIELD_NAME,
+        NEW_LEADIMAGE_FIELD_NAME)
 
     # handle image caption field
-    caption_field = source_object.getField(OLD_CAPTION_FIELD_NAME, None)
-    if caption_field:
-        setattr(target_object,
-                (NEW_CAPTION_FIELD_NAME),
-                safe_unicode(caption_field.get(source_object)))
-    logger.info("Migrating contentlead image %s" % filename)
+    migrate_simplefield(
+        source_object,
+        target_object,
+        OLD_CAPTION_FIELD_NAME,
+        NEW_CAPTION_FIELD_NAME)
+    logger.info(
+        "Migrating contentlead image for." % target_object.absolute_url())
 
 
 def migrate_portlets(src_obj, dst_obj):
@@ -349,11 +339,3 @@ def restoreReferences(portal,
             restore_backrefs(portal, obj)
             restore_reforder(obj)
         cleanup_stored_refs(obj)
-
-
-def datetime_fixer(dt, zone):
-    timezone = pytz.timezone(zone)
-    if dt.tzinfo is None:
-        return timezone.localize(dt)
-    else:
-        return timezone.normalize(dt)
