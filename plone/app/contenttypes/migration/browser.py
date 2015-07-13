@@ -23,6 +23,7 @@ from plone.app.contenttypes.migration.patches import \
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.migration.utils import restoreReferences
 from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
@@ -217,7 +218,7 @@ class MigrateFromATContentTypes(BrowserView):
         catalog.clearFindAndRebuild()
 
         # rebuild catalog, restore references and cleanup
-        migration.restoreReferences(portal, migrate_references, content_types)
+        restoreReferences(portal, migrate_references, content_types)
 
         # switch linkintegrity back to what it was before migrating
         site_props.manage_changeProperties(

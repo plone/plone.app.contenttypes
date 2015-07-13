@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from Products.CMFPlone.utils import safe_unicode
 from datetime import datetime
-from plone.app.contenttypes.migration.migration import migrate_filefield
-from plone.app.contenttypes.migration.migration import migrate_imagefield
-from plone.app.contenttypes.migration.migration import migrate_simplefield
+from plone.app.contenttypes.migration.field_migrators import migrate_filefield
+from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
+from plone.app.contenttypes.migration.field_migrators import migrate_simplefield
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING

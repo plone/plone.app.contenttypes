@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Products.ATContentTypes.interfaces.interfaces import IATContentType
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.utils import safe_unicode, safe_hasattr
@@ -9,25 +10,32 @@ from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaModifier
 from copy import deepcopy
+from persistent.list import PersistentList
 from plone.app.contentrules.api import assign_rule
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
 from plone.app.discussion.interfaces import IConversation
+from plone.app.uuid.utils import uuidToObject
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
+from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.namedfile.file import NamedBlobImage
+from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
 from plone.portlets.interfaces import IPortletAssignmentMapping
 from plone.portlets.interfaces import IPortletManager
+from z3c.relationfield import RelationValue
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getGlobalSiteManager
 from zope.component import getMultiAdapter
+from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.component.hooks import getSite
-
+from zope.intid.interfaces import IIntIds
 import logging
 import os
 import pkg_resources
+import pytz
 
 logger = logging.getLogger(__name__)
 
@@ -213,3 +221,139 @@ def migrate_leadimage(source_object, target_object):
                 (NEW_CAPTION_FIELD_NAME),
                 safe_unicode(caption_field.get(source_object)))
     logger.info("Migrating contentlead image %s" % filename)
+
+
+def migrate_portlets(src_obj, dst_obj):
+    """Copy portlets for all available portletmanagers from one object
+    to another.
+    Also takes blocked portlet settings into account, keeps hidden portlets
+    hidden and skips broken assignments.
+    """
+
+    # also take custom portlet managers into account
+    managers = [reg.name for reg in getSiteManager().registeredUtilities()
+                if reg.provided == IPortletManager]
+    # faster, but no custom managers
+    # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
+
+    # copy information which categories are hidden for which manager
+    blacklist_status = IAnnotations(src_obj).get(
+        CONTEXT_BLACKLIST_STATUS_KEY, None)
+    if blacklist_status is not None:
+        IAnnotations(dst_obj)[CONTEXT_BLACKLIST_STATUS_KEY] = \
+            deepcopy(blacklist_status)
+
+    # copy all portlet assignments (visibilty is stored as annotation
+    # on the assignments and gets copied here too)
+    for manager in managers:
+        column = getUtility(IPortletManager, manager)
+        mappings = getMultiAdapter((src_obj, column),
+                                   IPortletAssignmentMapping)
+        for key, assignment in mappings.items():
+            # skip possibly broken portlets here
+            if not hasattr(assignment, '__Broken_state__'):
+                add_portlet(dst_obj, assignment, key, manager)
+            else:
+                logger.warn(u'skipping broken portlet assignment {0} '
+                            'for manager {1}'.format(key, manager))
+
+
+def restore_refs(obj):
+    """Restore references stored in the attribute _relatedItems.
+    """
+    intids = getUtility(IIntIds)
+    try:
+        if not getattr(obj, 'relatedItems', None):
+            obj.relatedItems = PersistentList()
+
+        elif not isinstance(obj.relatedItems, PersistentList):
+            obj.relatedItems = PersistentList(obj.relatedItems)
+
+        for uuid in obj._relatedItems:
+            to_obj = uuidToObject(uuid)
+            to_id = intids.getId(to_obj)
+            obj.relatedItems.append(RelationValue(to_id))
+            logger.info('Restored Relation from %s to %s' % (obj, to_obj))
+    except AttributeError:
+        pass
+
+
+def restore_backrefs(portal, obj):
+    """Restore backreferences stored in the attribute _backrefs.
+    """
+    intids = getUtility(IIntIds)
+    uid_catalog = getToolByName(portal, 'uid_catalog')
+    try:
+        backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
+        for backrefobj in backrefobjs:
+            # Dexterity and
+            if IDexterityContent.providedBy(backrefobj):
+                relitems = getattr(backrefobj, 'relatedItems', None)
+                if not relitems:
+                    backrefobj.relatedItems = PersistentList()
+                elif not isinstance(obj.relatedItems, PersistentList):
+                    backrefobj.relatedItems = PersistentList(
+                        obj.relatedItems
+                    )
+                to_id = intids.getId(obj)
+                backrefobj.relatedItems.append(RelationValue(to_id))
+
+            # Archetypes
+            elif IATContentType.providedBy(backrefobj):
+                # reindex UID so we are able to set the reference
+                path = '/'.join(obj.getPhysicalPath())
+                uid_catalog.catalog_object(obj, path)
+                backrefobj.setRelatedItems(obj)
+            logger.info(
+                'Restored BackRelation from %s to %s' % (backrefobj, obj))
+    except AttributeError:
+        pass
+
+
+def restore_reforder(obj):
+    """Restore order of references stored in the attribute _relatedItemsOrder.
+    """
+    if not hasattr(obj, '_relatedItemsOrder'):
+        # Nothing to do
+        return
+    relatedItemsOrder = obj._relatedItemsOrder
+    uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
+    key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
+    obj.relatedItems = sorted(obj.relatedItems, key=key)
+
+
+def cleanup_stored_refs(obj):
+    """Cleanup new dx item."""
+    if safe_hasattr(obj, '_relatedItems'):
+        del obj._relatedItems
+    if safe_hasattr(obj, '_backrefs'):
+        del obj._backrefs
+    if safe_hasattr(obj, '_relatedItemsOrder'):
+        del obj._relatedItemsOrder
+
+
+def restoreReferences(portal,
+                      migrate_references=True,
+                      content_types=DEFAULT_TYPES):
+    """Iterate over new Dexterity items and restore Dexterity References.
+    """
+    catalog = getToolByName(portal, "portal_catalog")
+    results = catalog.searchResults(
+        object_provides=IDexterityContent.__identifier__,
+        portal_type=content_types)
+
+    for brain in results:
+        obj = brain.getObject()
+        if migrate_references:
+            restore_refs(obj)
+            restore_backrefs(portal, obj)
+            restore_reforder(obj)
+        cleanup_stored_refs(obj)
+
+
+def datetime_fixer(dt, zone):
+    timezone = pytz.timezone(zone)
+    if dt.tzinfo is None:
+        return timezone.localize(dt)
+    else:
+        return timezone.normalize(dt)

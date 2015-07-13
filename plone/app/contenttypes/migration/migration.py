@@ -7,7 +7,6 @@ only in the setuptools extra_requiers [migrate_atct]. Importing this
 module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
 '''
-from Products.ATContentTypes.interfaces.interfaces import IATContentType
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_hasattr
@@ -16,162 +15,32 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.walker import CustomQueryWalker
-from copy import deepcopy
 from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
-from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
-from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.contenttypes.migration.utils import copy_contentrules
+from plone.app.contenttypes.migration.utils import datetime_fixer
 from plone.app.contenttypes.migration.utils import migrate_leadimage
 from plone.app.contenttypes.migration.utils import move_comments
-from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.app.contenttypes.migration.utils import migrate_portlets
+from plone.app.contenttypes.migration.field_migrators import migrate_simplefield
+from plone.app.contenttypes.migration.field_migrators import FIELDS_MAPPING
 from plone.app.textfield.value import RichTextValue
-from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
-from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
-from plone.portlets.interfaces import IPortletAssignmentMapping
-from plone.portlets.interfaces import IPortletManager
-from z3c.relationfield import RelationValue
-from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
-from zope.component import getSiteManager
-from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.interface import Interface
 from zope.interface import implementer
-from zope.intid.interfaces import IIntIds
 import logging
 import transaction
 logger = logging.getLogger(__name__)
-
-
-def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    """
-    migrate a generic simple field (like a string field or a date field)
-    """
-    field = src_obj.getField(src_fieldname)
-    if field:
-        at_value = field.get(src_obj)
-    else:
-        at_value = getattr(src_obj, src_fieldname, None)
-        if at_value and hasattr(at_value, '__call__'):
-            at_value = at_value()
-    if isinstance(at_value, tuple):
-        at_value = tuple(safe_unicode(i) for i in at_value)
-    if isinstance(at_value, list):
-        at_value = [safe_unicode(i) for i in at_value]
-    if at_value:
-        setattr(dst_obj, dst_fieldname, safe_unicode(at_value))
-
-
-def migrate_richtextfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    """
-    migrate a rich text field.
-    This field needs some extra stuffs like keep the same mimetype.
-    """
-    field = src_obj.getField(src_fieldname)
-    raw_text = ''
-    if field:
-        mime_type = field.getContentType(src_obj)
-        raw_text = safe_unicode(field.getRaw(src_obj))
-    else:
-        at_value = getattr(src_obj, src_fieldname, None)
-        if at_value:
-            mime_type = at_value.mimetype
-            raw_text = safe_unicode(at_value.raw)
-
-    if raw_text.strip() == '':
-            return
-    richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
-                             outputMimeType='text/x-html-safe')
-    setattr(dst_obj, dst_fieldname, richtext)
-
-
-def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    """
-    migrate an image field.
-    This field needs to be migrated with an NamedBlobImage instance.
-    """
-    # get old image data and filename
-    old_image = src_obj.getField(src_fieldname).get(src_obj)
-    if old_image == '':
-        return
-    filename = safe_unicode(old_image.filename)
-    old_image_data = old_image.data
-    if safe_hasattr(old_image_data, 'data'):
-        old_image_data = old_image_data.data
-
-    # create the new image field
-    namedblobimage = NamedBlobImage(data=old_image_data,
-                                    filename=filename)
-
-    # set new field on destination object
-    setattr(dst_obj, dst_fieldname, namedblobimage)
-
-    # handle a possible image caption field
-    # postulate is the old caption field name is ending by 'Caption'
-    # and the new field name is ending by '_caption'
-    # is this postulate correct ?
-    # should this field not be handle by itself because it will appear in the
-    # old field list ?
-    caption_field = src_obj.getField('%sCaption' % src_fieldname, None)
-    if caption_field:
-        setattr(dst_obj,
-                ('%s_caption' % dst_fieldname),
-                safe_unicode(caption_field.get(src_obj)))
-
-    logger.info("Migrating image %s" % filename)
-
-
-def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    """
-    migrate a file field.
-    This field needs to be migrated with an NamedBlobFile instance.
-    """
-    old_file = src_obj.getField(src_fieldname).get(src_obj)
-    if old_file == '':
-        return
-    filename = safe_unicode(old_file.filename)
-    old_file_data = old_file.data
-    if safe_hasattr(old_file_data, 'data'):
-        old_file_data = old_file_data.data
-    namedblobfile = NamedBlobFile(data=old_file_data,
-                                  filename=filename)
-    setattr(dst_obj, dst_fieldname, namedblobfile)
-    logger.info("Migrating file %s" % filename)
-
-
-def migrate_datetimefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
-    """Migrate a datefield."""
-    old_value = src_obj.getField(src_fieldname).get(src_obj)
-    if old_value == '':
-        return
-    if src_obj.getField('timezone', None) is not None:
-        old_timezone = src_obj.getField('timezone').get(src_obj)
-    else:
-        old_timezone = default_timezone(fallback='UTC')
-    new_value = datetime_fixer(old_value.asdatetime(), old_timezone)
-    setattr(dst_obj, dst_fieldname, new_value)
-
-
-# this mapping is needed to use the right migration method
-# we use the full field type path as it is retrieved from the target-field
-# (field.getType()), to avoid conflict.
-# TODO In the __future__ we should have a more dynamic way to configure this
-# mapping
-FIELDS_MAPPING = {'RichText': migrate_richtextfield,
-                  'NamedBlobFile': migrate_filefield,
-                  'NamedBlobImage': migrate_imagefield,
-                  'Datetime': migrate_datetimefield,
-                  'Date': migrate_datetimefield}
 
 
 def migrate(portal, migrator):
@@ -179,134 +48,6 @@ def migrate(portal, migrator):
     to have its output after migration"""
     walker = CatalogWalker(portal, migrator)()
     return walker
-
-
-def migrate_portlets(src_obj, dst_obj):
-    """Copy portlets for all available portletmanagers from one object
-    to another.
-    Also takes blocked portlet settings into account, keeps hidden portlets
-    hidden and skips broken assignments.
-    """
-
-    # also take custom portlet managers into account
-    managers = [reg.name for reg in getSiteManager().registeredUtilities()
-                if reg.provided == IPortletManager]
-    # faster, but no custom managers
-    # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
-
-    # copy information which categories are hidden for which manager
-    blacklist_status = IAnnotations(src_obj).get(
-        CONTEXT_BLACKLIST_STATUS_KEY, None)
-    if blacklist_status is not None:
-        IAnnotations(dst_obj)[CONTEXT_BLACKLIST_STATUS_KEY] = \
-            deepcopy(blacklist_status)
-
-    # copy all portlet assignments (visibilty is stored as annotation
-    # on the assignments and gets copied here too)
-    for manager in managers:
-        column = getUtility(IPortletManager, manager)
-        mappings = getMultiAdapter((src_obj, column),
-                                   IPortletAssignmentMapping)
-        for key, assignment in mappings.items():
-            # skip possibly broken portlets here
-            if not hasattr(assignment, '__Broken_state__'):
-                add_portlet(dst_obj, assignment, key, manager)
-            else:
-                logger.warn(u'skipping broken portlet assignment {0} '
-                            'for manager {1}'.format(key, manager))
-
-
-def restore_refs(obj):
-    """Restore references stored in the attribute _relatedItems.
-    """
-    intids = getUtility(IIntIds)
-    try:
-        if not getattr(obj, 'relatedItems', None):
-            obj.relatedItems = PersistentList()
-
-        elif not isinstance(obj.relatedItems, PersistentList):
-            obj.relatedItems = PersistentList(obj.relatedItems)
-
-        for uuid in obj._relatedItems:
-            to_obj = uuidToObject(uuid)
-            to_id = intids.getId(to_obj)
-            obj.relatedItems.append(RelationValue(to_id))
-            logger.info('Restored Relation from %s to %s' % (obj, to_obj))
-    except AttributeError:
-        pass
-
-
-def restore_backrefs(portal, obj):
-    """Restore backreferences stored in the attribute _backrefs.
-    """
-    intids = getUtility(IIntIds)
-    uid_catalog = getToolByName(portal, 'uid_catalog')
-    try:
-        backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
-        for backrefobj in backrefobjs:
-            # Dexterity and
-            if IDexterityContent.providedBy(backrefobj):
-                relitems = getattr(backrefobj, 'relatedItems', None)
-                if not relitems:
-                    backrefobj.relatedItems = PersistentList()
-                elif not isinstance(obj.relatedItems, PersistentList):
-                    backrefobj.relatedItems = PersistentList(
-                        obj.relatedItems
-                    )
-                to_id = intids.getId(obj)
-                backrefobj.relatedItems.append(RelationValue(to_id))
-
-            # Archetypes
-            elif IATContentType.providedBy(backrefobj):
-                # reindex UID so we are able to set the reference
-                path = '/'.join(obj.getPhysicalPath())
-                uid_catalog.catalog_object(obj, path)
-                backrefobj.setRelatedItems(obj)
-            logger.info(
-                'Restored BackRelation from %s to %s' % (backrefobj, obj))
-    except AttributeError:
-        pass
-
-
-def restore_reforder(obj):
-    """Restore order of references stored in the attribute _relatedItemsOrder.
-    """
-    if not hasattr(obj, '_relatedItemsOrder'):
-        # Nothing to do
-        return
-    relatedItemsOrder = obj._relatedItemsOrder
-    uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
-    key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
-    obj.relatedItems = sorted(obj.relatedItems, key=key)
-
-
-def cleanup_stored_refs(obj):
-    """Cleanup new dx item."""
-    if safe_hasattr(obj, '_relatedItems'):
-        del obj._relatedItems
-    if safe_hasattr(obj, '_backrefs'):
-        del obj._backrefs
-    if safe_hasattr(obj, '_relatedItemsOrder'):
-        del obj._relatedItemsOrder
-
-
-def restoreReferences(portal,
-                      migrate_references=True,
-                      content_types=DEFAULT_TYPES):
-    """Iterate over new Dexterity items and restore Dexterity References.
-    """
-    catalog = getToolByName(portal, "portal_catalog")
-    results = catalog.searchResults(
-        object_provides=IDexterityContent.__identifier__,
-        portal_type=content_types)
-
-    for brain in results:
-        obj = brain.getObject()
-        if migrate_references:
-            restore_refs(obj)
-            restore_backrefs(portal, obj)
-            restore_reforder(obj)
-        cleanup_stored_refs(obj)
 
 
 class ReferenceMigrator(object):
