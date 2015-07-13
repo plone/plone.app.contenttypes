@@ -234,7 +234,9 @@ class CustomMigrationForm(BrowserView):
                 # definition we have 2 keys we relevant mappings, first key
                 # is the AT typename second key is a particular key like
                 # 'dx_DXPortalType__for__MyATPortalType
-                dx_key = 'dx_%s__for__%s' % (dx_typename, at_typename)
+                safe_dx = dx_typename.replace('_space_', '')
+                safe_at = at_typename.replace('_space_', '')
+                dx_key = 'dx_%s__for__%s' % (safe_dx, safe_at)
                 for at_field in form[at_typename]:
                     dx_field = form[dx_key][form[at_typename].index(at_field)]
                     if not dx_field:
@@ -268,8 +270,8 @@ class DisplayDXFields(CustomMigrationForm):
 
     def __init__(self, context, request):
         CustomMigrationForm.__init__(self, context, request)
-        self.at_typename = request.get('at_typename')
-        self.dx_typename = request.get('dx_typename')
+        self.at_typename = request.form.get('at_typename')
+        self.dx_typename = request.form.get('dx_typename')
 
     def __call__(self):
         '''

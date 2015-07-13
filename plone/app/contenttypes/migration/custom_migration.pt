@@ -41,14 +41,15 @@
     <script type="text/javascript">
         // function that toggle an icon by calling the p_viewName view
         function getDXFields(at_typename, dx_typename) {
+          at_safe = at_typename.replace(' ', '_space_');
           $.ajax({
             url: '@@display_dx_fields',
             dataType: 'html',
-            data: {at_typename: at_typename,
-                   dx_typename: dx_typename},
+            data: {'at_typename': at_typename,
+                   'dx_typename': dx_typename},
             cache: false,
             success: function(data) {
-                var $div = $('#hook_at_fti_' + at_typename);
+                var $div = $('#hook_at_fti_' + at_safe);
                 $div.empty();
                 $div.html(data);
               },
@@ -97,25 +98,27 @@
                   tal:attributes="action python:context.absolute_url() + '/@@custom_migration'">
             <table>
                 <tr tal:repeat="at_type at_types">
-                <p tal:content="at_type"></p>
+                  <tal:block tal:define="safe_at_id python:at_type['id'].replace(' ', '_space_')">
                     <td valign="top">
                         <p tal:content="at_type/title" style="font-weight: bold;">AT content type title</p>
                         <tal:block repeat="field python: view.getFieldsForATType(at_type)">
                             <p tal:content="field/title">Field name</p>
-                            <input type="hidden" tal:attributes="name string:${at_type/id}:list;
+                            <input type="hidden" tal:attributes="name string:${safe_at_id}:list;
                                                                  value string:${field/id}__type__${field/type};" />
                         </tal:block>
                     </td>
                     <td valign="top">
                         <select tal:attributes="onChange string:javascript:getDXFields(at_typename='${at_type/id}', this.value);
-                                                name string:dx_select_${at_type/id};"
+                                                name string:dx_select_${safe_at_id};"
                                 class="selectedType">
                             <option value="" selected="selected">Do not migrate</option>
                             <option tal:repeat="dx_type view/getDXFTIs"
                                     tal:attributes="value dx_type/id"
                                     tal:content="dx_type/title">DX type name</option>
                         </select>
-                        <div id="hook_at_fti" class="field fieldsMapping" tal:attributes="id string:hook_at_fti_${at_type/id}" />
+                        <div id="hook_at_fti_News_Item"
+                             class="field fieldsMapping"
+                             tal:attributes="id string:hook_at_fti_${safe_at_id}" />
                         <br />
                         <div class="testConfig">
                             <input type="submit"
@@ -126,6 +129,7 @@
                                    i18n:domain="plone"/>&nbsp;
                         </div>
                     </td>
+                  </tal:block>
                 </tr>
             </table>
             <div>
