@@ -4,13 +4,14 @@ Changelog
 1.2b3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Use generic field_migrators in all migrations.
+  [pbauer]
 
 
 1.2b2 (2015-06-05)
 ------------------
 
-- use modal pattern for news item image instead of jquery tools
+- Use modal pattern for news item image instead of jquery tools.
   [vangheem]
 
 
@@ -31,7 +32,7 @@ Changelog
 1.2a9 (2015-05-13)
 ------------------
 
-- provide table of contents for document view
+- Provide table of contents for document view.
   [vangheem]
 
 - Default to using locking support on Page, Collection, Event and News Item types
