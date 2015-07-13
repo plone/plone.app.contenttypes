@@ -1,0 +1,13 @@
+<tal:block tal:define="dx_typename view/dx_typename;
+                       at_typename view/at_typename;
+                       safe_dx_typename python:dx_typename.replace(' ', '_space_');
+                       safe_at_typename python:at_typename.replace(' ', '_space_')">
+<tal:loop repeat="at_field python: view.getFieldsForATTypeWithoutFTI(at_typename)">
+    <select tal:attributes="name string:dx_${safe_dx_typename}__for__${safe_at_typename}:list;">
+        <option value="">Do not migrate</option>
+        <option tal:repeat="dx_field python: view.getFieldsForDXType(dx_typename)"
+                tal:attributes="value string:${dx_field/id}__type__${dx_field/type};"
+                tal:content="string:${dx_field/title}">DX field name</option>
+    </select>
+</tal:loop>
+</tal:block>
