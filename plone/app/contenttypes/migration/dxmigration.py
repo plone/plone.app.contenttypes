@@ -4,8 +4,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
+from plone.app.contenttypes.migration.field_migrators import datetime_fixer
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
-from plone.app.contenttypes.migration.utils import datetime_fixer
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone

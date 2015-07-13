@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from Products.CMFPlone.utils import safe_unicode, safe_hasattr
-from plone.app.contenttypes.migration.utils import datetime_fixer
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from plone.app.textfield.value import RichTextValue
 import logging
+import pytz
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +121,14 @@ def migrate_datetimefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
         old_timezone = default_timezone(fallback='UTC')
     new_value = datetime_fixer(old_value.asdatetime(), old_timezone)
     setattr(dst_obj, dst_fieldname, new_value)
+
+
+def datetime_fixer(dt, zone):
+    timezone = pytz.timezone(zone)
+    if dt.tzinfo is None:
+        return timezone.localize(dt)
+    else:
+        return timezone.normalize(dt)
 
 
 # This mapping is needed to get the right migration method
