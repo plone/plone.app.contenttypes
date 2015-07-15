@@ -46,6 +46,9 @@ class CriterionConverter(object):
 
     def get_operation(self, value, index, criterion):
         # Get dotted operation method.  This may depend on value.
+        # if index == 'Subject':
+        #
+        #     return "%s.operation.%s" % (prefix, 'selection.any')
         return "%s.operation.%s" % (prefix, self.operator_code)
 
     def get_alt_operation(self, value, index, criterion):
@@ -279,13 +282,26 @@ class ATCurrentAuthorCriterionConverter(CriterionConverter):
 
 class ATSelectionCriterionConverter(CriterionConverter):
     operator_code = 'selection.is'
+    # alt_operator_code = 'selection.any'
+
+    def get_operation(self, value, index, criterion):
+        # Get dotted operation method.  This may depend on value.
+        if index == 'Subject':
+            if value['operator'] == 'and':
+                suffix = 'all'
+            else:
+                suffix = 'any'
+            return "%s.operation.selection.%s" % (prefix, suffix)
+        else:
+            return "%s.operation.%s" % (prefix, self.operator_code)
 
     def get_query_value(self, value, index, criterion):
         values = value['query']
-        if value.get('operator') == 'and' and len(values) > 1:
+        if value.get('operator') == 'and' and len(values) > 1 and \
+                index != 'Subject':
             logger.warn("Cannot handle selection operator 'and'. Using 'or'. "
                         "%r", value)
-        values = value['query']
+
         # Special handling for portal_type=Topic.
         if index == 'portal_type' and 'Topic' in values:
             values = list(values)
@@ -692,4 +708,4 @@ CONVERTERS = {
     'ATSelectionCriterion': ATSelectionCriterionConverter(),
     'ATSimpleIntCriterion': ATSimpleIntCriterionConverter(),
     'ATSimpleStringCriterion': ATSimpleStringCriterionConverter(),
-    }
+}
