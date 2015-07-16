@@ -2,10 +2,12 @@
 from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.DublinCore import DefaultDublinCoreImpl
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.DublinCore import DefaultDublinCoreImpl
+from Products.CMFPlone.interfaces import IEditingSchema
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
 from Products.contentmigration.utils import patch, undoPatch
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
@@ -30,6 +32,7 @@ from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.registry.interfaces import IRegistry
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from z3c.form import button
@@ -39,9 +42,9 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
 from zope.component import getMultiAdapter
+from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import Interface
-from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
 
 import logging
 import pkg_resources
@@ -155,9 +158,21 @@ class MigrateFromATContentTypes(BrowserView):
         # switch linkintegrity temp off
         ptool = queryUtility(IPropertiesTool)
         site_props = getattr(ptool, 'site_properties', None)
-        link_integrity = site_props.getProperty('enable_link_integrity_checks',
-                                                False)
-        site_props.manage_changeProperties(enable_link_integrity_checks=False)
+        link_integrity_in_props = False
+        if site_props and site_props.hasProperty(
+                'enable_link_integrity_checks'):
+            link_integrity_in_props = True
+            link_integrity = site_props.getProperty(
+                'enable_link_integrity_checks', False)
+            site_props.manage_changeProperties(
+                enable_link_integrity_checks=False)
+        else:
+            # Plone 5
+            registry = getUtility(IRegistry)
+            editing_settings = registry.forInterface(
+                IEditingSchema, prefix='plone')
+            link_integrity = editing_settings.enable_link_integrity_checks
+            editing_settings.enable_link_integrity_checks = False
 
         # switch of setModificationDate on changes
         self.patchNotifyModified()
@@ -221,9 +236,12 @@ class MigrateFromATContentTypes(BrowserView):
         restoreReferences(portal, migrate_references, content_types)
 
         # switch linkintegrity back to what it was before migrating
-        site_props.manage_changeProperties(
-            enable_link_integrity_checks=link_integrity
-        )
+        if link_integrity_in_props:
+            site_props.manage_changeProperties(
+                enable_link_integrity_checks=link_integrity
+            )
+        else:
+            editing_settings.enable_link_integrity_checks = link_integrity
 
         # switch on setModificationDate on changes
         self.resetNotifyModified()
