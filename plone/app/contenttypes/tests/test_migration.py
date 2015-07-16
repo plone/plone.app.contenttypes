@@ -1,29 +1,49 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_base
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_hasattr
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from lxml import etree
+from persistent.list import PersistentList
 from plone.app.contenttypes.migration.utils import add_portlet
+from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+from plone.app.contenttypes.migration.utils import is_referenceable
+from plone.app.contenttypes.migration.utils import restore_references
+from plone.app.contenttypes.migration.utils import store_references
+from plone.app.contenttypes.migration.migration import migrate_documents
+from plone.app.contenttypes.migration.migration import migrate_folders
+from plone.app.contenttypes.migration.migration import migrate_newsitems
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
+from plone.app.referenceablebehavior.referenceable import IReferenceable
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.app.uuid.utils import uuidToObject
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.interfaces import IEventAccessor
 from plone.namedfile.file import NamedBlobImage
 from plone.testing.z2 import Browser
+from z3c.relationfield import RelationValue
+from z3c.relationfield.index import dump
+from zc.relation.interfaces import ICatalog
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
 from zope.component import getSiteManager
 from zope.component import getUtility
+from zope.component import queryUtility
+from zope.event import notify
 from zope.interface import alsoProvides
 from zope.intid.interfaces import IIntIds
+from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
+
 import os.path
 import time
 import unittest2 as unittest
@@ -847,6 +867,9 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
+        self._enable_referenceable_for('Document')
+        self._enable_referenceable_for('News Item')
+        self._enable_referenceable_for('Folder')
 
         # we use the migration-view instead of calling the migratons by hand
         # to make sure the patch for notifyModified is used.
@@ -905,7 +928,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         dx_folder1_related = [x.to_object for x in dx_folder1.relatedItems]
         self.assertEqual(dx_folder1_related, [dx_doc2])
-
         dx_folder2_related = [x.to_object for x in dx_folder2.relatedItems]
         self.assertEqual(dx_folder2_related, [dx_doc1])
 
@@ -940,12 +962,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_child in dx_folder.contentValues())
 
     def test_relations_are_migrated(self):
-        from plone.app.contenttypes.migration.migration import (
-            migrate_documents,
-            migrate_folders,
-        )
-        from plone.app.contenttypes.migration.utils import restoreReferences
-
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
         addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
@@ -972,9 +988,13 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_doc3.setRelatedItems(at_doc1)
         at_folder1.setRelatedItems([at_doc2])
         at_folder2.setRelatedItems([at_doc1])
-
+        self.assertEqual([x for x in at_folder2.getRelatedItems()], [at_doc1])
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
+        self._enable_referenceable_for('Folder')
+        self._enable_referenceable_for('Document')
+        self._enable_referenceable_for('News Item')
+        store_references(self.portal)
         migrate_documents(self.portal)
         migrate_folders(self.portal)
 
@@ -988,8 +1008,13 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_doc2 = dx_folder2['doc2']
         dx_doc3 = self.portal['doc3']
 
+        self.assertEqual([x.to_object for x in dx_folder2.relatedItems], [])
+
         # migrate references
-        restoreReferences(self.portal)
+        restore_references(self.portal)
+
+        self.assertEqual(
+            [x.to_object for x in dx_folder2.relatedItems], [dx_doc1])
 
         # assert single references
         dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
@@ -1000,13 +1025,305 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         dx_folder1_related = [x.to_object for x in dx_folder1.relatedItems]
         self.assertEqual(dx_folder1_related, [dx_doc2])
-
         dx_folder2_related = [x.to_object for x in dx_folder2.relatedItems]
         self.assertEqual(dx_folder2_related, [dx_doc1])
 
         # assert multi references, order is restored
         dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
         self.assertEqual(dx_doc2_related, [at_newsitem, dx_doc3, dx_doc1])
+
+    def test_backrelations_are_migrated_for_unnested_content(self):
+        """relate a doc to a newsitem, migrate the newsitem but not the doc.
+        check if the relations are still in place."""
+
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+
+        # create ATFolder and ATDocument
+        self.portal.invokeFactory('News Item', 'news')
+        at_news = self.portal['news']
+        self.portal.invokeFactory('Document', 'doc')
+        at_doc = self.portal['doc']
+
+        # relate them
+        at_news.setRelatedItems([at_doc])
+
+        self.assertEqual(at_news.getRelatedItems(), [at_doc])
+        self.assertEqual(at_news.getReferences(), [at_doc])
+        self.assertEqual(at_news.getBackReferences(), [])
+        self.assertEqual(at_doc.getReferences(), [])
+        self.assertEqual(at_doc.getBackReferences(), [at_news])
+
+        # migrate content (stores references on new objects for later restore)
+        applyProfile(
+            self.portal,
+            'plone.app.contenttypes:default',
+            # blacklisted_steps=['typeinfo']
+        )
+        # installTypeIfNeeded('News Item')
+        store_references(self.portal)
+        migrate_newsitems(self.portal)
+        migrate_documents(self.portal)
+
+        # rebuild catalog
+        self.portal.portal_catalog.clearFindAndRebuild()
+
+        dx_news = self.portal['news']
+        dx_doc = self.portal['doc']
+
+        # references are not restored yet
+        self.assertEqual(dx_news.relatedItems, [])
+        self.assertEqual(at_doc.getReferences(), [])
+        self.assertEqual(at_doc.getBackReferences(), [])
+
+        # restore references
+        restore_references(self.portal)
+
+        # references should be restored
+        self.assertEqual([i.to_object for i in dx_news.relatedItems], [dx_doc])
+        self.assertEqual([i.to_object for i in dx_doc.relatedItems], [])
+        self.assertEqual(self._backrefs(dx_doc), [dx_news])
+        self.assertEqual(self._backrefs(dx_news), [])
+
+    def test_dx_at_relations_migrated_for_partially_migrated_nested(self):
+        """This fails if referenceablebehavior is not enabled
+        """
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+        IReferenceable
+        # create ATFolder and ATDocument
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+        at_folder.invokeFactory('Document', 'doc')
+        at_doc = at_folder['doc']
+
+        # relate them
+        at_folder.setRelatedItems([at_doc])
+
+        self.assertEqual(at_folder.getRelatedItems(), [at_doc])
+        self.assertEqual(at_folder.getReferences(), [at_doc])
+        self.assertEqual(at_folder.getBackReferences(), [])
+        self.assertEqual(at_doc.getReferences(), [])
+        self.assertEqual(at_doc.getBackReferences(), [at_folder])
+
+        # migrate content (stores references on new objects for later restore)
+        applyProfile(
+            self.portal,
+            'plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'])
+        installTypeIfNeeded('Folder')
+        self._enable_referenceable_for('Folder')
+
+        store_references(self.portal)
+        migrate_folders(self.portal)
+
+        # rebuild catalog
+        self.portal.portal_catalog.clearFindAndRebuild()
+
+        dx_folder = self.portal['folder']
+        at_doc = dx_folder['doc']
+        # references are not restored yet
+        self.assertEqual(dx_folder.relatedItems, [])
+        self.assertEqual(at_doc.getReferences(), [])
+        self.assertEqual(at_doc.getBackReferences(), [])
+
+        # restore references
+        restore_references(self.portal)
+
+        # references should be restored
+        self.assertEqual(
+            [i.to_object for i in dx_folder.relatedItems], [at_doc])
+        self.assertEqual(self._backrefs(at_doc), [dx_folder])
+        self.assertEqual(self._backrefs(dx_folder), [])
+        self.assertEqual(at_doc.getReferences(), [])
+        self.assertEqual(at_doc.getBackReferences(), [])
+
+    def test_at_dx_relations_migrated_for_partialy_migrated_nested(self):
+        """Fails if referenceablebehavior is not enabled"""
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+
+        # create ATFolder and ATDocument
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+        at_folder.invokeFactory('Document', 'doc')
+        at_doc = at_folder['doc']
+
+        # relate them
+        at_folder.setRelatedItems([at_doc])
+
+        self.assertEqual(at_folder.getRelatedItems(), [at_doc])
+        self.assertEqual(at_folder.getReferences(), [at_doc])
+        self.assertEqual(at_folder.getBackReferences(), [])
+        self.assertEqual(at_doc.getReferences(), [])
+        self.assertEqual(at_doc.getBackReferences(), [at_folder])
+
+        # migrate content (stores references on new objects for later restore)
+        applyProfile(
+            self.portal,
+            'plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'])
+        installTypeIfNeeded('Document')
+        store_references(self.portal)
+        migrate_documents(self.portal)
+        self._enable_referenceable_for('Document')
+
+        # rebuild catalog
+        self.portal.portal_catalog.clearFindAndRebuild()
+
+        at_folder = self.portal['folder']
+        dx_doc = at_folder['doc']
+
+        # references are not restored yet
+        # the at-folder has a broken reference now
+        # since at_doc is now <ATDocument at /plone/folder/doc_MIGRATION_>
+        self.assertNotEqual(at_folder.getRelatedItems(), [at_doc])
+        self.assertEqual(dx_doc.relatedItems, [])
+        self._backrefs(dx_doc)
+
+        # restore references
+        restore_references(self.portal)
+
+        # references should be restored
+        self.assertEqual(at_folder.getRelatedItems(), [dx_doc])
+        self.assertEqual(self._backrefs(dx_doc), [at_folder])
+        self.assertEqual(dx_doc.relatedItems, [])
+        self.assertEqual(dx_doc.relatedItems, [])
+
+    def _backrefs(self, obj):
+        from Products.Archetypes.interfaces.referenceable import IReferenceable
+        results = []
+        relation_catalog = queryUtility(ICatalog)
+        reference_catalog = getToolByName(obj, 'reference_catalog')
+        int_id = dump(obj, relation_catalog, {})
+        if int_id:
+            brels = relation_catalog.findRelations(dict(to_id=int_id))
+            for brel in brels:
+                if brel.isBroken():
+                    results.append('broken')
+                else:
+                    results.append(brel.from_object)
+        if not results:
+            if is_referenceable(obj):
+                obj = IReferenceable(obj)
+                for rel in reference_catalog.getBackReferences(obj):
+                    results.append(uuidToObject(rel.sourceUID))
+        return results
+
+    def _enable_referenceable_for(self, typename):
+        behavior = 'plone.app.referenceablebehavior.referenceable.IReferenceable'  # noqa
+        fti = queryUtility(IDexterityFTI, name=typename)
+        behaviors = list(fti.behaviors)
+        behaviors.append(behavior)
+        fti._updateProperty('behaviors', tuple(behaviors))
+
+    def test_store_references(self):
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+        intids = getUtility(IIntIds)
+
+        applyProfile(
+            self.portal,
+            'plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'])
+        installTypeIfNeeded('News Item')
+
+        # create ATFolder and ATDocument
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+        self.portal.invokeFactory('Document', 'doc')
+        at_doc = self.portal['doc']
+        # relate them
+        at_folder.setRelatedItems([at_doc])
+
+        # create DX News Items
+        self.portal.invokeFactory('News Item', 'news1')
+        dx_news1 = self.portal['news1']
+        self.portal.invokeFactory('News Item', 'news2')
+        dx_news2 = self.portal['news2']
+        dx_news1.relatedItems = PersistentList()
+        dx_news1.relatedItems.append(RelationValue(intids.getId(dx_news2)))
+        notify(ObjectModifiedEvent(dx_news1))
+        relation_catalog = queryUtility(ICatalog)
+        all_rels = [i for i in relation_catalog.findRelations()]
+        self.assertEqual(len(all_rels), 1)
+
+        self.assertEqual(at_folder.getRelatedItems(), [at_doc])
+        self.assertEqual(at_folder.getReferences(), [at_doc])
+        self.assertEqual(at_folder.getBackReferences(), [])
+        self.assertEqual(at_doc.getReferences(), [])
+        self.assertEqual(at_doc.getBackReferences(), [at_folder])
+        self.assertEqual(
+            [i.to_object for i in dx_news1.relatedItems], [dx_news2])
+
+        store_references(self.portal)
+        key = 'ALL_REFERENCES'
+        self.assertEqual(len(IAnnotations(self.portal)[key]), 2)
+
+    def test_migrate_references_with_storage_on_portal(self):
+        set_browserlayer(self.request)
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+        intids = getUtility(IIntIds)
+
+        applyProfile(
+            self.portal,
+            'plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'])
+        installTypeIfNeeded('News Item')
+        self._enable_referenceable_for('News Item')
+
+        # create ATFolder and ATDocument
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+        self.portal.invokeFactory('Document', 'doc')
+        at_doc = self.portal['doc']
+
+        # create DX News Items
+        self.portal.invokeFactory('News Item', 'news1')
+        dx_news1 = self.portal['news1']
+        self.portal.invokeFactory('News Item', 'news2')
+        dx_news2 = self.portal['news2']
+
+        # relate them
+        at_folder.setRelatedItems([at_doc])
+        dx_news1.relatedItems = PersistentList()
+        dx_news1.relatedItems.append(RelationValue(intids.getId(dx_news2)))
+        dx_news1.relatedItems.append(RelationValue(intids.getId(at_doc)))
+        at_doc.setRelatedItems([dx_news2])
+        notify(ObjectModifiedEvent(dx_news1))
+        relation_catalog = queryUtility(ICatalog)
+        all_rels = [i for i in relation_catalog.findRelations()]
+        self.assertEqual(len(all_rels), 2)
+
+        store_references(self.portal)
+        # migration_view = getMultiAdapter(
+        #     (self.portal, self.request),
+        #     name=u'migrate_from_atct'
+        # )
+        # migration_view(from_form=True, migrate_references=False)
+
+        # this is basically be the same as above
+        installTypeIfNeeded('Document')
+        installTypeIfNeeded('Folder')
+        migrate_folders(self.portal)
+        migrate_documents(self.portal)
+        self.portal.portal_catalog.clearFindAndRebuild()
+        restore_references(self.portal)
+
+        dx_folder = self.portal['folder']
+        dx_doc = self.portal['doc']
+        self.assertEqual(
+            [i.to_object for i in dx_folder.relatedItems], [dx_doc])
+        self.assertEqual(
+            [i.to_object for i in dx_doc.relatedItems], [dx_news2])
+        self.assertEqual(
+            [i.to_object for i in dx_news1.relatedItems], [dx_news2, dx_doc])
 
     def test_stats(self):
         from plone.app.contenttypes.migration.migration import DocumentMigrator
