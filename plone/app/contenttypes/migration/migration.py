@@ -7,13 +7,11 @@ only in the setuptools extra_requiers [migrate_atct]. Importing this
 module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
 '''
-from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.walker import CustomQueryWalker
-from persistent.list import PersistentList
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
@@ -53,56 +51,6 @@ def migrate(portal, migrator):
     return walker
 
 
-class ReferenceMigrator(object):
-
-    def beforeChange_relatedItemsOrder(self):
-        """ Store Archetype relations as target uids on the old archetype
-            object to restore the order later.
-            Because all relations to deleted objects will be lost, we iterate
-            over all backref objects and store the relations of the backref
-            object in advance.
-            This is automatically called by Products.contentmigration.
-        """
-        # Relations UIDs:
-        if not hasattr(self.old, "_relatedItemsOrder"):
-            relatedItems = self.old.getRelatedItems()
-            relatedItemsOrder = [item.UID() for item in relatedItems]
-            self.old._relatedItemsOrder = PersistentList(relatedItemsOrder)
-
-        # Backrefs Relations UIDs:
-        reference_cat = getToolByName(self.old, REFERENCE_CATALOG)
-        backrefs = reference_cat.getBackReferences(self.old,
-                                                   relationship="relatesTo")
-        backref_objects = map(lambda x: x.getSourceObject(), backrefs)
-        for obj in backref_objects:
-            if obj.portal_type != self.src_portal_type:
-                continue
-            if not hasattr(obj, "_relUids"):
-                relatedItems = obj.getRelatedItems()
-                relatedItemsOrder = [item.UID() for item in relatedItems]
-                obj._relatedItemsOrder = PersistentList(relatedItemsOrder)
-
-    def migrate_at_relatedItems(self):
-        """ Store Archetype relations as target uids on the dexterity object
-            for later restore. Backrelations are saved as well because all
-            relation to deleted objects would be lost.
-        """
-        # Relations:
-        relItems = self.old.getRelatedItems()
-        relUids = [item.UID() for item in relItems]
-        self.new._relatedItems = relUids
-
-        # Backrefs:
-        reference_catalog = getToolByName(self.old, REFERENCE_CATALOG)
-
-        backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
-            self.old, relationship="relatesTo")]
-        self.new._backrefs = backrefs
-
-        # Order:
-        self.new._relatedItemsOrder = self.old._relatedItemsOrder
-
-
 class ICustomMigrator(Interface):
     """Adapter implementer interface for custom migrators.
     Please note that you have to register named adapters in order to be able to
@@ -130,7 +78,7 @@ class BaseCustomMigator(object):
         return
 
 
-class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
+class ATCTContentMigrator(CMFItemMigrator):
     """Base for contentish ATCT
     """
 
@@ -174,7 +122,7 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
         move_comments(portal, self.new)
 
 
-class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
+class ATCTFolderMigrator(CMFFolderMigrator):
     """Base for folderish ATCT
     """
 
