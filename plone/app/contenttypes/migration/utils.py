@@ -42,6 +42,8 @@ from zope.component.hooks import getSite
 from zope.event import notify
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import ObjectModifiedEvent
+from Products.Five.browser import BrowserView
+import json
 
 import logging
 import os
@@ -264,6 +266,16 @@ def store_references(context):
     IAnnotations(context)[key] = all_references
     logger.info('Stored {} relations for later restore.'.format(
         len(all_references)))
+
+
+class ExportAllReferences(BrowserView):
+    """Returns all references in the portal as json.
+    """
+
+    def __call__(self):
+        data = get_all_references(self.context)
+        self.request.response.setHeader("Content-type", "application/json")
+        return json.dumps(data)
 
 
 def get_all_references(context):

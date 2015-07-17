@@ -44,6 +44,7 @@ from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import ObjectModifiedEvent
 from zope.schema.interfaces import IVocabularyFactory
 
+import json
 import os.path
 import time
 import unittest2 as unittest
@@ -1266,6 +1267,44 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         store_references(self.portal)
         key = 'ALL_REFERENCES'
         self.assertEqual(len(IAnnotations(self.portal)[key]), 2)
+
+    def test_export_references(self):
+        """Test the Browser-View @@export_all_references."""
+        # IIntIds is not registered in the test env. So register it here
+        sm = getSiteManager(self.portal)
+        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
+        intids = getUtility(IIntIds)
+        set_browserlayer(self.request)
+
+        applyProfile(
+            self.portal,
+            'plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'])
+        installTypeIfNeeded('News Item')
+
+        # create ATFolder and ATDocument
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+        self.portal.invokeFactory('Document', 'doc')
+        at_doc = self.portal['doc']
+        # relate them
+        at_folder.setRelatedItems([at_doc])
+
+        # create DX News Items
+        self.portal.invokeFactory('News Item', 'news1')
+        dx_news1 = self.portal['news1']
+        self.portal.invokeFactory('News Item', 'news2')
+        dx_news2 = self.portal['news2']
+
+        # relate them
+        dx_news1.relatedItems = PersistentList()
+        dx_news1.relatedItems.append(RelationValue(intids.getId(dx_news2)))
+        notify(ObjectModifiedEvent(dx_news1))
+
+        view = self.portal.restrictedTraverse('export_all_references')
+        result = view()
+        data = json.loads(result)
+        self.assertEqual(len(data), 2)
 
     def test_migrate_references_with_storage_on_portal(self):
         set_browserlayer(self.request)
