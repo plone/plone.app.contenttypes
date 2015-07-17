@@ -259,41 +259,43 @@ def migrate_portlets(src_obj, dst_obj):
 
 def store_references(context):
     """Store all references in the portal as a annotation on the portal."""
-    all_annotations = []
+    all_references = get_all_references(context)
     key = 'ALL_REFERENCES'
-    portal_catalog = getToolByName(context, 'portal_catalog')
+    IAnnotations(context)[key] = all_references
+    logger.info('Stored {} relations for later restore.'.format(
+        len(all_references)))
 
+
+def get_all_references(context):
+    results = []
     # Archetypes
-    # Get all data from the reference_catalog
-    reference_catalog = getToolByName(context, REFERENCE_CATALOG)
-    # query = {}
-    # if HAS_MULTILINGUAL and 'Language' in portal_catalog.indexes():
-    #     query['Language'] = 'all'
-    for brain in reference_catalog():
-        all_annotations.append({
-            'from_uuid': brain.sourceUID,
-            'to_uuid': brain.targetUID,
-            'relationship': brain.relationship,
-        })
+    # Get all data from the reference_catalog if it exists
+    reference_catalog = getToolByName(context, REFERENCE_CATALOG, None)
+    if reference_catalog is not None:
+        for brain in reference_catalog():
+            results.append({
+                'from_uuid': brain.sourceUID,
+                'to_uuid': brain.targetUID,
+                'relationship': brain.relationship,
+            })
 
     # Dexterity
     # Get all data from zc.relation (relation_catalog)
+    portal_catalog = getToolByName(context, 'portal_catalog')
     relation_catalog = queryUtility(ICatalog)
     for rel in relation_catalog.findRelations():
         from_brain = portal_catalog(path=dict(query=rel.from_path, depth=0))[0]
         to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))[0]
-        all_annotations.append({
+        results.append({
             'from_uuid': from_brain.UID,
             'to_uuid': to_brain.UID,
             'relationship': rel.from_attribute,
         })
-    IAnnotations(context)[key] = all_annotations
-    logger.info('Stored {} relations for later restore.'.format(
-        len(all_annotations)))
+    return results
 
 
 def restore_references(context):
-    """Recreate all references stored in annotations.
+    """Recreate all references stored in an annotation on the context.
 
     Iterate over the stored references and restore them all according to
     the content-types framework.
@@ -304,7 +306,6 @@ def restore_references(context):
         target_obj = uuidToObject(ref['to_uuid'])
         relationship = ref['relationship']
         link_items(context, source_obj, target_obj, relationship)
-
     del IAnnotations(context)[key]
 
 
@@ -321,10 +322,12 @@ def link_items(
     By passing a fieldname and a relationship it can be used to create
     arbitrary relations.
     """
+    # relations from AT to DX and from DX to AT are only possible through
+    # the refernceable-behavior:
+    # plone.app.referenceablebehavior.referenceable.IReferenceable
     drop_msg = """Dropping reference from %s to %s since
     plone.app.referenceablebehavior is not enabled!"""
 
-    reference_catalog = getToolByName(context, REFERENCE_CATALOG)
     if source_obj is target_obj:
         # Thou shalt not relate to yourself.
         return
@@ -336,14 +339,18 @@ def link_items(
         # plone.app.linkintegrity.handlers.modifiedArchetype
         # when the ObjectModifiedEvent is thrown.
         # TODO: This needs to be tested though!!!
+        #
+        # Also: linkintegrity until now uses the reference_catalog which is
+        # only available is Archetypes is installed.
         return
 
     # if fieldname != 'relatedItems':
         # 'relatedItems' is the default field for AT and DX
         # See plone.app.relationfield.behavior.IRelatedItems for DX and
         # Products.ATContentTypes.content.schemata.relatedItemsField for AT
-        # sourcefield_name = 'relatedItems'
-        # Mabye be we should handle custom relations somewhat different?
+        # They always use these relationships:
+        # 'relatesTo' (Archetpyes) and 'relatedItems' (Dexterity)
+        # Maybe be we should handle custom relations somewhat different?
 
     if relationship in ['relatesTo', 'relatedItems']:
         # These are the two default-relationships used by AT and DX
@@ -361,13 +368,19 @@ def link_items(
         target_type = 'AT'
 
     if source_type is 'AT':
-
+        # If there is any Archetypes-content there is also the
+        # reference_catalog and the uid_catalog.
+        # For a site without AT content these might not be there at all.
+        reference_catalog = getToolByName(context, REFERENCE_CATALOG)
+        uid_catalog = getToolByName(context, 'uid_catalog')
         if target_type is 'DX' and not is_referenceable(target_obj):
             logger.info(drop_msg % (
                 source_obj.absolute_url(), target_obj.absolute_url()))
+            return
 
-        # make sure both objects are properly indexed and referenceable
-        uid_catalog = getToolByName(context, 'uid_catalog')
+        # Make sure both objects are properly indexed and referenceable
+        # Some objects that werde just created (migrated) are not yet
+        # indexed properly.
         source_uid = IUUID(source_obj)
         target_uid = IUUID(target_obj)
         _catalog = uid_catalog._catalog
@@ -392,7 +405,7 @@ def link_items(
             # don't do anything
             return
 
-        target_uid = target_obj.UID()
+        target_uid = IUUID(target_obj)
         if not source_obj._optimizedGetObject(target_uid):
             uid_catalog = getToolByName(aq_inner(context), 'uid_catalog')
             uid_catalog.catalog_object(target_obj, target_uid)
@@ -401,6 +414,7 @@ def link_items(
         targetUIDs = [ref.targetUID for ref in reference_catalog.getReferences(
             source_obj, relationship)]
         if target_uid in targetUIDs:
+            # Replace relations since is probably broken.
             reference_catalog.deleteReference(
                 source_obj, target_uid, relationship)
 
