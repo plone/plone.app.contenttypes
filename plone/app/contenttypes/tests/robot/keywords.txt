@@ -84,12 +84,12 @@ the content area should not contain
 
 the collection should contain
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/my-collection
-  The content area should contain  ${title}
+  Wait until page contains element  xpath=//section[@id='content-core']
+  xpath should match x times  //section[@id='content-core']//*[@class='entry']//a[contains(text(), '${title}')]  1
+
 
 the collection should not contain
   [Arguments]  ${title}
-  Go to  ${PLONE_URL}/my-collection
   The content area should not contain  ${title}
 
 fill date field
