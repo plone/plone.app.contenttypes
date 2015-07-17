@@ -6,14 +6,14 @@ from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from lxml import etree
 from persistent.list import PersistentList
+from plone.app.contenttypes.migration.migration import migrate_documents
+from plone.app.contenttypes.migration.migration import migrate_folders
+from plone.app.contenttypes.migration.migration import migrate_newsitems
 from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import is_referenceable
 from plone.app.contenttypes.migration.utils import restore_references
 from plone.app.contenttypes.migration.utils import store_references
-from plone.app.contenttypes.migration.migration import migrate_documents
-from plone.app.contenttypes.migration.migration import migrate_folders
-from plone.app.contenttypes.migration.migration import migrate_newsitems
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
