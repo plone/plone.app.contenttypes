@@ -346,7 +346,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.assertEqual(len(query), 2)
         self.assertEqual(query[0],
                          {'i': 'Subject',
-                          'o': 'plone.app.querystring.operation.selection.is',
+                          'o': 'plone.app.querystring.operation.selection.any',
                           'v': ('foo', 'bar')})
         self.assertEqual(query[1],
                          {'i': 'portal_type',
@@ -580,7 +580,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.assertEqual(len(query), 2)
         self.assertEqual(query[0],
                          {'i': 'Subject',
-                          'o': 'plone.app.querystring.operation.selection.is',
+                          'o': 'plone.app.querystring.operation.selection.any',
                           'v': ('foo', 'bar')})
         self.assertEqual(query[1],
                          {'i': 'portal_type',

@@ -27,6 +27,8 @@ from plone.app.contenttypes.migration.field_migrators import \
 from plone.app.contenttypes.migration.field_migrators import migrate_filefield
 from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
 from plone.app.contenttypes.migration.field_migrators import \
+    migrate_blobimagefield
+from plone.app.contenttypes.migration.field_migrators import \
     migrate_richtextfield
 from plone.app.contenttypes.migration.field_migrators import \
     migrate_simplefield
@@ -316,7 +318,7 @@ def migrate_newsitems(portal):
     return migrate(portal, NewsItemMigrator)
 
 
-class BlobNewsItemMigrator(NewsItemMigrator):
+class BlobNewsItemMigrator(ATCTContentMigrator):
     """ Migrator for NewsItems with blobs based on the implementation in
         https://github.com/plone/plone.app.blob/pull/2
     """
@@ -325,6 +327,11 @@ class BlobNewsItemMigrator(NewsItemMigrator):
     src_meta_type = 'ATBlobContent'
     dst_portal_type = 'News Item'
     dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+        migrate_blobimagefield(self.old, self.new, 'image', 'image')
+        migrate_simplefield(self.old, self.new, 'imageCaption', 'imageCaption')
 
 
 def migrate_blobnewsitems(portal):

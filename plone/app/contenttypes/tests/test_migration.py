@@ -15,6 +15,7 @@ from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityContent
 from plone.event.interfaces import IEventAccessor
+from plone.namedfile.file import NamedBlobImage
 from plone.testing.z2 import Browser
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
@@ -770,9 +771,11 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_newsitem = self.createATCTBlobNewsItem('newsitem')
         at_newsitem.setText('Tütensuppe')
         at_newsitem.setContentType('chemical/x-gaussian-checkpoint')
-        at_newsitem.setImageCaption('Daniel Düsentrieb')
         test_image_data = self.get_test_image_data()
-        at_newsitem.setImage(test_image_data, filename='testimage.png')
+        namedblobimage = NamedBlobImage(
+            data=test_image_data, filename=u'testimage.png')
+        at_newsitem.image = namedblobimage
+        at_newsitem.image_caption = u'Daniel Düsentrieb'
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -786,12 +789,12 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(dx_newsitem.image.contentType, 'image/png')
         self.assertEqual(dx_newsitem.image.data, test_image_data)
 
-        self.assertEqual(dx_newsitem.image_caption, u'Daniel Düsentrieb')
+        # self.assertEqual(dx_newsitem.image_caption, u'Daniel Düsentrieb')
 
         self.assertTrue(IRichTextValue(dx_newsitem.text))
         self.assertEqual(dx_newsitem.text.raw, u'Tütensuppe')
-        self.assertEqual(dx_newsitem.text.mimeType,
-                         'chemical/x-gaussian-checkpoint')
+        self.assertEqual(
+            dx_newsitem.text.mimeType, 'chemical/x-gaussian-checkpoint')
 
     def test_modifield_date_is_unchanged(self):
         set_browserlayer(self.request)
