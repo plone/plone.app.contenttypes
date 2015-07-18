@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2b3 (unreleased)
+1.2b3 (2015-07-18)
 ------------------
 
 - Fix BlobNewsItemMigrator.
