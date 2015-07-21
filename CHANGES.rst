@@ -4,7 +4,8 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix i18n on custom_migration view.
+  [vincentfretin]
 
 
 1.2b3 (2015-07-18)
