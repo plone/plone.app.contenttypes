@@ -6,6 +6,34 @@ Changelog
 
 - Added ``importlib`` as dependency on Python 2.6.
   [maurits]
+- Fix i18n on custom_migration view.
+  [vincentfretin]
+
+
+1.2b3 (2015-07-18)
+------------------
+
+- Fix BlobNewsItemMigrator.
+  [MrTango]
+
+- Fix ATSelectionCriterionConverter to set the right operators.
+  [MrTango]
+
+- Fix @@custom_migraton when they type-name has a space (fixes #243).
+  [pbauer]
+
+- Get and set linkintegrity-setting with registry.
+  [pbauer]
+
+- Use generic field_migrators in all migrations.
+  [pbauer]
+
+- Remove superfluous 'for'. Fixes plone/Products.CMFPlone#669.
+  [fulv]
+
+
+1.2b2 (2015-06-05)
+------------------
 
 - Don't use <figure> and <figcaption> html5 containers for Plone 4
   compatibility. sunburst css selectors don't support figure yet in
