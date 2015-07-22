@@ -89,20 +89,8 @@ def migrate_to_richtext(context):
 
 
 def migrate_album_view(context):
-    """Migrate atct_album_view to album_view."""
-
-    # TODO: Don't reload the profile. Only change the settings.
-    context.runImportStepFromProfile(
-        'profile-plone.app.contenttypes:default',
-        'typeinfo',
-    )
-    catalog = getToolByName(context, 'portal_catalog')
-    search = catalog.unrestrictedSearchResults
-    for brain in search(portal_type='Folder'):
-        obj = brain.getObject()
-        current = context.getLayout()
-        if current == 'atct_album_view':
-            obj.setLayout('album_view')
+    """That task is now done by use_new_view_names (1103->1104)"""
+    pass
 
 
 def enable_shortname_behavior(context):

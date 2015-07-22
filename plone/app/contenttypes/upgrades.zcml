@@ -47,7 +47,7 @@
   <genericsetup:upgradeStep
       source="1101"
       destination="1102"
-      title="Update album_view"
+      title="Empty upgrade-step"
       description=""
       profile="plone.app.contenttypes:default"
       handler=".upgrades.migrate_album_view"
