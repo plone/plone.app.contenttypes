@@ -1801,58 +1801,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             dx_comment.getText(),
             '<p>Hey Dude! \xc3\x84 is not ascii.</p>')
 
-    def test_linkintegrity_relations_are_migrated(self):
-        from plone.app.contenttypes.migration.utils import migrate_linkintegrity_relations  # noqa
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
-
-        # create folders
-        self.portal.invokeFactory('Folder', 'folder1')
-        at_folder1 = self.portal['folder1']
-        self.portal.invokeFactory('Folder', 'folder2')
-        at_folder2 = self.portal['folder2']
-
-        # create ATDocuments
-        at_folder1.invokeFactory('Document', 'doc1')
-        at_doc1 = at_folder1['doc1']
-        at_folder2.invokeFactory('Document', 'doc2')
-        at_doc2 = at_folder2['doc2']
-        self.portal.invokeFactory('Document', 'doc3')
-        at_doc3 = self.portal['doc3']
-        at_folder1.invokeFactory('News Item', 'newsitem')
-        at_newsitem = at_folder1['newsitem']
-
-        # relate them
-        at_doc1.setRelatedItems([at_doc2])
-        at_doc2.setRelatedItems([at_newsitem, at_doc3, at_doc1])
-        at_doc3.setRelatedItems(at_doc1)
-        at_folder1.setRelatedItems([at_doc2])
-        at_folder2.setRelatedItems([at_doc1])
-        self.assertEqual([x for x in at_folder2.getRelatedItems()], [at_doc1])
-        # migrate content
-        applyProfile(self.portal, 'plone.app.contenttypes:default')
-        self._enable_referenceable_for('Folder')
-        self._enable_referenceable_for('Document')
-        self._enable_referenceable_for('News Item')
-        store_references(self.portal)
-        migrate_documents(self.portal)
-        migrate_folders(self.portal)
-
-        # rebuild catalog
-        self.portal.portal_catalog.clearFindAndRebuild()
-
-        dx_folder1 = self.portal['folder1']
-        dx_folder2 = self.portal['folder2']
-
-        dx_doc1 = dx_folder1['doc1']
-        dx_doc2 = dx_folder2['doc2']
-        dx_doc3 = self.portal['doc3']
-
-        self.assertEqual([x.to_object for x in dx_folder2.relatedItems], [])
-
-        # migrate references
-        restore_references(self.portal)
 
 class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
 
