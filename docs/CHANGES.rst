@@ -6,6 +6,19 @@ Changelog
 
 - Added ``importlib`` as dependency on Python 2.6.
   [maurits]
+- Remove upgrade-step that resets all behaviors. Fixes #246.
+  [pbauer]
+
+- Add convenience-view @@export_all_relations to export all relations.
+  [pbauer]
+
+- Add method link_items that allows to link any kind of item (AT/DX) with any
+  kind of relationship.
+  [pbauer]
+
+- New implementation of reference-migrations.
+  [pbauer]
+
 - Fix i18n on custom_migration view.
   [vincentfretin]
 
