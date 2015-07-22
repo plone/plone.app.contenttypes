@@ -39,9 +39,8 @@ from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.component.hooks import getSite
-from zope.event import notify
 from zope.intid.interfaces import IIntIds
-from zope.lifecycleevent import ObjectModifiedEvent
+from zope.lifecycleevent import modified
 from Products.Five.browser import BrowserView
 import json
 
@@ -399,11 +398,11 @@ def link_items(
 
         if not _catalog.indexes['UID']._index.get(source_uid, None):
             uid_catalog.catalog_object(source_obj, source_uid)
-            notify(ObjectModifiedEvent(source_obj))
+            modified(source_obj)
 
         if not _catalog.indexes['UID']._index.get(target_uid, None):
             uid_catalog.catalog_object(target_obj, target_uid)
-            notify(ObjectModifiedEvent(target_obj))
+            modified(target_obj)
 
         field = source_obj.getField(fieldname)
         accessor = field.getAccessor(source_obj)
@@ -421,7 +420,7 @@ def link_items(
         if not source_obj._optimizedGetObject(target_uid):
             uid_catalog = getToolByName(aq_inner(context), 'uid_catalog')
             uid_catalog.catalog_object(target_obj, target_uid)
-            notify(ObjectModifiedEvent(target_obj))
+            modified(target_obj)
 
         targetUIDs = [ref.targetUID for ref in reference_catalog.getReferences(
             source_obj, relationship)]
@@ -433,7 +432,7 @@ def link_items(
         existing_at_relations.append(target_obj)
         mutator = field.getMutator(source_obj)
         mutator(existing_at_relations)
-        notify(ObjectModifiedEvent(source_obj))
+        modified(source_obj)
         return
 
     if source_type is 'DX':
@@ -452,7 +451,7 @@ def link_items(
         if to_id not in [i.to_id for i in existing_dx_relations]:
             existing_dx_relations.append(RelationValue(to_id))
             setattr(source_obj, fieldname, existing_dx_relations)
-            notify(ObjectModifiedEvent(source_obj))
+            modified(source_obj)
             return
 
 
