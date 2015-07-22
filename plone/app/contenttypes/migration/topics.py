@@ -14,7 +14,6 @@ from Products.contentmigration.inplace import InplaceCMFFolderMigrator
 from Products.contentmigration.inplace import InplaceCMFItemMigrator
 from Products.contentmigration.walker import CustomQueryWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
-from plone.app.contenttypes.migration.migration import ReferenceMigrator
 from plone.app.querystring.interfaces import IQuerystringRegistryReader
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IMutableUUID
@@ -450,7 +449,7 @@ class ATSimpleIntCriterionConverter(CriterionConverter):
         return value['query']
 
 
-class TopicMigrator(InplaceCMFItemMigrator, ReferenceMigrator):
+class TopicMigrator(InplaceCMFItemMigrator):
     """Migrate Topics to Collections. Existing subtopics will be lost.
 
     The only difference to the migration below is the base-class
@@ -562,7 +561,7 @@ class TopicMigrator(InplaceCMFItemMigrator, ReferenceMigrator):
             IMutableUUID(self.new).set(str(uid))
 
 
-class FolderishTopicMigrator(InplaceCMFFolderMigrator, ReferenceMigrator):
+class FolderishTopicMigrator(InplaceCMFFolderMigrator):
     """Migrate Topics and Subtopics to folderish collections.
 
     The only difference to the migration above is the base-class

@@ -60,6 +60,7 @@ setup(name='plone.app.contenttypes',
               # 'plone.dexterity >= 2.3.0',  # fixes setting default values # NOT RELEASED YET. # noqa
               'Products.ATContentTypes',
               'Products.contentmigration >= 2.1.8.dev0',
+              'plone.app.referenceablebehavior',
           ],
           'atrefs': [
               'plone.app.referenceablebehavior',

@@ -93,6 +93,14 @@
     permission="cmf.ManagePortal"
     />
 
+  <browser:page
+    name="export_all_references"
+    for="*"
+    class=".utils.ExportAllReferences"
+    layer="..interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    />
+
   <utility
       factory=".vocabularies.ATCTypesVocabulary"
       name="plone.app.contenttypes.migration.atctypes"
