@@ -4,6 +4,16 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
+- Add convenience-view @@export_all_relations to export all relations.
+  [pbauer]
+
+- Add method link_items that allows to link any kind of item (AT/DX) with any
+  kind of relationship.
+  [pbauer]
+
+- New implementation of reference-migrations.
+  [pbauer]
+
 - Fix i18n on custom_migration view.
   [vincentfretin]
 
