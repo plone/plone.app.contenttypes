@@ -21,6 +21,8 @@ from plone.app.contenttypes.migration.field_migrators import \
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
 from plone.app.discussion.interfaces import IConversation
+from plone.app.linkintegrity.handlers import modifiedArchetype
+from plone.app.linkintegrity.handlers import modifiedDexterity
 from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
@@ -334,25 +336,13 @@ def link_items(
     arbitrary relations.
     """
     # relations from AT to DX and from DX to AT are only possible through
-    # the refernceable-behavior:
+    # the referenceable-behavior:
     # plone.app.referenceablebehavior.referenceable.IReferenceable
     drop_msg = """Dropping reference from %s to %s since
     plone.app.referenceablebehavior is not enabled!"""
 
     if source_obj is target_obj:
         # Thou shalt not relate to yourself.
-        return
-
-    if relationship is referencedRelationship:
-        # 'relatesTo' is the relationship for linkintegrity-relations.
-        # Linkintegrity-relations should automatically be (re)created by
-        # plone.app.linkintegrity.handlers.modifiedDexterity or
-        # plone.app.linkintegrity.handlers.modifiedArchetype
-        # when the ObjectModifiedEvent is thrown.
-        # TODO: This needs to be tested though!!!
-        #
-        # Also: linkintegrity until now uses the reference_catalog which is
-        # only available is Archetypes is installed.
         return
 
     # if fieldname != 'relatedItems':
@@ -377,6 +367,20 @@ def link_items(
         target_type = 'DX'
     else:
         target_type = 'AT'
+
+    if relationship is referencedRelationship:
+        # 'relatesTo' is the relationship for linkintegrity-relations.
+        # Linkintegrity-relations should automatically be (re)created by
+        # plone.app.linkintegrity.handlers.modifiedDexterity or
+        # plone.app.linkintegrity.handlers.modifiedArchetype
+        # when a ObjectModifiedEvent is thrown.
+        # These relations are only created if the source has a richtext-field
+        # with a link to the target and should not be created manually.
+        if source_type is 'AT':
+            modifiedArchetype(source_obj, None)
+        if source_type is 'DX':
+            modifiedDexterity(source_obj, None)
+        return
 
     if source_type is 'AT':
         # If there is any Archetypes-content there is also the
