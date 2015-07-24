@@ -4,7 +4,10 @@ Changelog
 1.1b6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Don't use <figure> and <figcaption> html5 containers for Plone 4
+  compatibility. sunburst css selectors don't support figure yet in
+  for example newsitem styling.
+  [fredvd]
 
 
 1.1b5 (2015-05-29)

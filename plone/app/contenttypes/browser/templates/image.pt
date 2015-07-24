@@ -9,19 +9,19 @@
 
 <metal:content-core fill-slot="content-core">
 <metal:block define-macro="content-core" tal:define="size context/image/getSize">
-  <figure class="image-product">
+  <div class="image-product">
     <a class="discreet"
         tal:attributes="href string:${context/@@plone_context_state/object_url}/image_view_fullscreen"
         tal:define="scale context/@@images;
                     img_tag python:scale.scale('image', scale='large').tag()"
         tal:on-error="string: Image cannot be displayed">
     <img tal:replace="structure img_tag" />
-    <figcaption class="discreet">
+    <div class="discreet">
       <strong class="sr-only" i18n:translate="label_click_to_view_full_image">Click to view full-size image&hellip;</strong>
       <span><tal:span i18n:translate="label_size">Size</tal:span>: <tal:span tal:replace="python:size/1024"> File size </tal:span>KB</span>
-    </figcaption>
+    </div>
     </a>
-  </figure>
+  </div>
 </metal:block>
 </metal:content-core>
 
