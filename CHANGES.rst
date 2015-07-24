@@ -4,6 +4,9 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
+- Remove upgrade-step that resets all behaviors. Fixes #246.
+  [pbauer]
+
 - Add convenience-view @@export_all_relations to export all relations.
   [pbauer]
 
