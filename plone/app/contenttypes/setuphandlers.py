@@ -347,11 +347,9 @@ def step_import_content(context):
     # Because the portal doesn't implement __contains__?
     target_language, is_combined_language, locale = _get_locales_info(portal)
 
-    # Set up Language specific information
-    # _set_language_settings(portal, is_combined_language)
     _setup_calendar(locale)
     _setup_visible_ids(target_language, locale)
-    _delete_at_example_content(portal)
+    # _delete_at_example_content(portal)
 
     # The front-page
     create_frontpage(portal, target_language)
@@ -366,50 +364,6 @@ def step_import_content(context):
     configure_members_folder(portal, target_language)
 
 
-def _delete_at_example_content(portal):
-    all_content = portal.portal_catalog()
-    if all_content:
-        expected = [
-            'front-page',
-            'news',
-            'aggregator',
-            'events',
-            'aggregator',
-            'Members'
-        ]
-        if not [i.id for i in all_content] == expected:
-            return
-        to_delete = ['front-page', 'news', 'events', 'Members']
-        for i in to_delete:
-            obj = portal[i]
-            if IDexterityContent.providedBy(obj):
-                return
-            modification_date = obj.modification_date.utcdatetime()
-            creation_date = obj.creation_date.utcdatetime()
-            delta = modification_date - creation_date
-            if delta >= timedelta(seconds=1):
-                return
-        # None of the default content is dexterity and has been modified.
-        portal.manage_delObjects(to_delete)
-
-
 def step_setup_various(context):
     if context.readDataFile('plone.app.contenttypes_default.txt') is None:
         return
-#    portal = context.getSite()
-#     enable_multilingual_behavior(portal)
-
-
-# def enable_multilingual_behavior(portal):
-#     if not HAS_MULTILINGUAL:
-#         return
-#     types_tool = portal.portal_types
-#     all_ftis = types_tool.listTypeInfo()
-#     dx_ftis = [x for x in all_ftis if getattr(x, 'behaviors', False)]
-#     for fti in dx_ftis:
-#         behaviors = [i for i in fti.behaviors]
-#         behaviors.extend([
-#             'plone.app.multilingual.dx.interfaces.IDexterityTranslatable',
-#         ])
-#         behaviors = tuple(set(behaviors))
-#         fti._updateProperty('behaviors', behaviors)
