@@ -4,6 +4,9 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
+- Setup calendar and visible ids even when no default-content gets created.
+  [pbauer]
+
 - Remove upgrade-step that resets all behaviors. Fixes #246.
   [pbauer]
 
