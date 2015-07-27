@@ -408,13 +408,11 @@ You have several options:
       </schema>
     </model>
 
-For more complex features you should create custom behaviors and/or write your own content-types. For more information on creating custom dexterity-types or custom behaviors to extend these types with read the `dexterity documentation <http://docs.plone.org/external/plone.app.dexterity/docs/>`_.
+You could alternatively override the peroperty ``model_file`` of the type-definition with a empty string and use the property ``schema`` to provide your custom python-schema.
 
+For more complex features you should always consider create custom behaviors and/or write your own content-types since that will most likely give you more flexibility and less problem when you want to upgrade to a newer version in the future.
 
-Reordering fields provided by behaviors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-TODO
+For more information on custom dexterity-types and custom behaviors please read the `dexterity documentation <http://docs.plone.org/external/plone.app.dexterity/docs/>`_.
 
 
 Differences to Products.ATContentTypes
