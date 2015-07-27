@@ -69,13 +69,13 @@ class FileIntegrationTest(unittest.TestCase):
 
     def test_view(self):
         self.portal.invokeFactory('File', 'file')
-        file = self.portal['file']
-        file.title = "My File"
-        file.description = "This is my file."
-        self.request.set('URL', file.absolute_url())
-        self.request.set('ACTUAL_URL', file.absolute_url())
+        file1 = self.portal['file']
+        file1.title = "My File"
+        file1.description = "This is my file."
+        self.request.set('URL', file1.absolute_url())
+        self.request.set('ACTUAL_URL', file1.absolute_url())
         alsoProvides(self.request, IPloneFormLayer)
-        view = file.restrictedTraverse('@@view')
+        view = file1.restrictedTraverse('@@view')
 
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
