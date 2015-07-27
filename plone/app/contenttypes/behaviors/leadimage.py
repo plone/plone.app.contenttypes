@@ -14,14 +14,14 @@ from zope.interface import provider
 class ILeadImage(model.Schema):
 
     image = namedfile.NamedBlobImage(
-        title=_(u"Lead Image"),
-        description=u"",
+        title=_(u'label_leadimage', default=u'Lead Image'),
+        description=_(u'help_leadimage', default=u''),
         required=False,
     )
 
     image_caption = schema.TextLine(
-        title=_(u"Lead Image Caption"),
-        description=u"",
+        title=_(u'label_leadimage_caption', default=u'Lead Image Caption'),
+        description=_(u'help_leadimage_caption', default=u''),
         required=False,
     )
 

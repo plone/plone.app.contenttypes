@@ -2,14 +2,13 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base, aq_inner
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import bodyfinder
 from Products.CMFPlone.interfaces import INonInstallable
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
-from datetime import timedelta
+from Products.CMFPlone.utils import bodyfinder
+from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
 from plone.dexterity.fti import IDexterityFTI
-from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
@@ -24,13 +23,6 @@ from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.interface import implements
-
-
-try:
-    DEXTERITY_WITH_CONSTRAINS = True
-    from plone.app.dexterity.behaviors import constrains
-except ImportError:
-    DEXTERITY_WITH_CONSTRAINS = False
 
 
 class HiddenProfiles(object):
@@ -112,22 +104,10 @@ def _get_locales_info(portal):
     return locale.id.language, False, locale
 
 
-# def _set_language_settings(portal, uses_combined_lanagage):
-#     """Set the portals language settings from the given lanage codes."""
-#     language = portal.Language()
-#     portal_languages = getToolByName(portal, 'portal_languages')
-#     portal_languages.manage_setLanguageSettings(
-#         language,
-#         [language],
-#         setUseCombinedLanguageCodes=uses_combined_lanagage,
-#         startNeutral=False)
-
-
-# ??? Why do we only do this calendar setup when content is created?
-def _setup_calendar(locale):
+def _setup_calendar(portal, locale):
     """Set the calendar's date system to reflect the default locale"""
     gregorian_calendar = locale.dates.calendars.get(u'gregorian', None)
-    portal_calendar = getToolByName(getSite(), "portal_calendar", None)
+    portal_calendar = getToolByName(portal, "portal_calendar", None)
     if portal_calendar is not None:
         first = 6
         if gregorian_calendar is not None:
@@ -139,8 +119,8 @@ def _setup_calendar(locale):
         portal_calendar.firstweekday = first
 
 
-def _setup_visible_ids(target_language, locale):
-    portal_properties = getToolByName(getSite(), 'portal_properties')
+def _setup_visible_ids(portal, target_language, locale):
+    portal_properties = getToolByName(portal, 'portal_properties')
     site_properties = portal_properties.site_properties
 
     # See if we have a URL normalizer
@@ -159,7 +139,6 @@ def _setup_visible_ids(target_language, locale):
 
 
 def _setup_constrains(container, allowed_types):
-    if DEXTERITY_WITH_CONSTRAINS:
         behavior = ISelectableConstrainTypes(container)
         behavior.setConstrainTypesMode(constrains.ENABLED)
         behavior.setImmediatelyAddableTypes(allowed_types)
@@ -339,77 +318,21 @@ def configure_members_folder(portal, target_language):
 
 
 def step_import_content(context):
-    """Remove existing AT-content and create DX-content instead."""
-
+    """Create default content."""
     if context.readDataFile('plone.app.contenttypes_content.txt') is None:
         return
     portal = context.getSite()
-    # Because the portal doesn't implement __contains__?
     target_language, is_combined_language, locale = _get_locales_info(portal)
-
-    # Set up Language specific information
-    # _set_language_settings(portal, is_combined_language)
-    _setup_calendar(locale)
-    _setup_visible_ids(target_language, locale)
-    _delete_at_example_content(portal)
-
-    # The front-page
     create_frontpage(portal, target_language)
-
-    # News topic
     create_news_topic(portal, target_language)
-
-    # Events topic
     create_events_topic(portal, target_language)
-
-    # configure Members folder
     configure_members_folder(portal, target_language)
-
-
-def _delete_at_example_content(portal):
-    all_content = portal.portal_catalog()
-    if all_content:
-        expected = [
-            'front-page',
-            'news',
-            'aggregator',
-            'events',
-            'aggregator',
-            'Members'
-        ]
-        if not [i.id for i in all_content] == expected:
-            return
-        to_delete = ['front-page', 'news', 'events', 'Members']
-        for i in to_delete:
-            obj = portal[i]
-            if IDexterityContent.providedBy(obj):
-                return
-            modification_date = obj.modification_date.utcdatetime()
-            creation_date = obj.creation_date.utcdatetime()
-            delta = modification_date - creation_date
-            if delta >= timedelta(seconds=1):
-                return
-        # None of the default content is dexterity and has been modified.
-        portal.manage_delObjects(to_delete)
 
 
 def step_setup_various(context):
     if context.readDataFile('plone.app.contenttypes_default.txt') is None:
         return
-#    portal = context.getSite()
-#     enable_multilingual_behavior(portal)
-
-
-# def enable_multilingual_behavior(portal):
-#     if not HAS_MULTILINGUAL:
-#         return
-#     types_tool = portal.portal_types
-#     all_ftis = types_tool.listTypeInfo()
-#     dx_ftis = [x for x in all_ftis if getattr(x, 'behaviors', False)]
-#     for fti in dx_ftis:
-#         behaviors = [i for i in fti.behaviors]
-#         behaviors.extend([
-#             'plone.app.multilingual.dx.interfaces.IDexterityTranslatable',
-#         ])
-#         behaviors = tuple(set(behaviors))
-#         fti._updateProperty('behaviors', behaviors)
+    portal = context.getSite()
+    target_language, is_combined_language, locale = _get_locales_info(portal)
+    _setup_calendar(portal, locale)
+    _setup_visible_ids(portal, target_language, locale)
