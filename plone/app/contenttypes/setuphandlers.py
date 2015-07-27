@@ -318,31 +318,21 @@ def configure_members_folder(portal, target_language):
 
 
 def step_import_content(context):
-    """Remove existing AT-content and create DX-content instead."""
-
+    """Create default content."""
     if context.readDataFile('plone.app.contenttypes_content.txt') is None:
         return
     portal = context.getSite()
-    # Because the portal doesn't implement __contains__?
     target_language, is_combined_language, locale = _get_locales_info(portal)
-
-    _setup_calendar(locale)
-    _setup_visible_ids(target_language, locale)
-    # _delete_at_example_content(portal)
-
-    # The front-page
     create_frontpage(portal, target_language)
-
-    # News topic
     create_news_topic(portal, target_language)
-
-    # Events topic
     create_events_topic(portal, target_language)
-
-    # configure Members folder
     configure_members_folder(portal, target_language)
 
 
 def step_setup_various(context):
     if context.readDataFile('plone.app.contenttypes_default.txt') is None:
         return
+    portal = context.getSite()
+    target_language, is_combined_language, locale = _get_locales_info(portal)
+    _setup_calendar(portal, locale)
+    _setup_visible_ids(portal, target_language, locale)
