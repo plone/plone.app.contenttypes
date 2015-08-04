@@ -41,10 +41,10 @@
   </property>
 
   <!-- Method aliases -->
-  <alias from="(Default)" to="(selected layout)"/>
+  <alias from="(Default)" to="(dynamic view)"/>
   <alias from="edit" to="@@edit"/>
   <alias from="sharing" to="@@sharing"/>
-  <alias from="view" to="@@view" />
+  <alias from="view" to="(selected layout)" />
 
   <!-- Actions -->
   <action title="View" action_id="view" category="object" condition_expr=""
