@@ -400,11 +400,11 @@ def link_items(
         target_uid = IUUID(target_obj)
         _catalog = uid_catalog._catalog
 
-        if not _catalog.indexes['UID']._index.get(source_uid, None):
+        if not _catalog.indexes['UID']._index.get(source_uid):
             uid_catalog.catalog_object(source_obj, source_uid)
             modified(source_obj)
 
-        if not _catalog.indexes['UID']._index.get(target_uid, None):
+        if not _catalog.indexes['UID']._index.get(target_uid):
             uid_catalog.catalog_object(target_obj, target_uid)
             modified(target_obj)
 
@@ -421,11 +421,6 @@ def link_items(
             return
 
         target_uid = IUUID(target_obj)
-        if not source_obj._optimizedGetObject(target_uid):
-            uid_catalog = getToolByName(aq_inner(context), 'uid_catalog')
-            uid_catalog.catalog_object(target_obj, target_uid)
-            modified(target_obj)
-
         targetUIDs = [ref.targetUID for ref in reference_catalog.getReferences(
             source_obj, relationship)]
         if target_uid in targetUIDs:
@@ -474,6 +469,8 @@ def is_referenceable(obj):
         is_referenceable = True
     else:
         try:
+            # This most likely the case when plone.app.referenceablebehavior
+            # is enabled.
             obj = IReferenceable(obj)
             is_referenceable = True
         except TypeError:
