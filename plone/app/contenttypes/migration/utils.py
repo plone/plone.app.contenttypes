@@ -389,8 +389,8 @@ def link_items(  # noqa
 
     if source_type == 'AT':
         # If there is any Archetypes-content there is also the
-        # reference_catalog and the uid_catalog.
-        # For a site without AT content these might not be there at all.
+        # reference_catalog. For a site without AT content this
+        # might not be there at all.
         reference_catalog = getToolByName(context, REFERENCE_CATALOG)
         uid_catalog = getToolByName(context, 'uid_catalog')
         if target_type == 'DX' and not is_referenceable(target_obj):
@@ -429,7 +429,7 @@ def link_items(  # noqa
         targetUIDs = [ref.targetUID for ref in reference_catalog.getReferences(
             source_obj, relationship)]
         if target_uid in targetUIDs:
-            # Replace relations since is probably broken.
+            # Drop relation since the old ones are most likely broken.
             reference_catalog.deleteReference(
                 source_obj, target_uid, relationship)
 

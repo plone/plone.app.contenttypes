@@ -1154,13 +1154,16 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         at_folder = self.portal['folder']
         dx_doc = at_folder['doc']
+        self.assertTrue(is_referenceable(dx_doc))
+        self.assertTrue(is_referenceable(at_folder))
 
         # references are not restored yet
         # the at-folder has a broken reference now
         # since at_doc is now <ATDocument at /plone/folder/doc_MIGRATION_>
         self.assertNotEqual(at_folder.getRelatedItems(), [at_doc])
         self.assertEqual(dx_doc.relatedItems, [])
-        self._backrefs(dx_doc)
+        # the backref is found since the reference_catalog is not purged
+        self.assertEqual(self._backrefs(dx_doc), [at_folder])
 
         # restore references
         restore_references(self.portal)
