@@ -151,8 +151,15 @@ def use_new_view_names(context):  # noqa
             if method not in view_methods:
                 view_methods.append(method)
                 changed = True
+        default_view = fti.default_view
+        if default_view in outdated_methods:
+            default_view = LISTING_VIEW_MAPPING.get(default_view)
+            changed = True
         if changed:
-            fti.manage_changeProperties(view_methods=tuple(view_methods))
+            fti.manage_changeProperties(
+                view_methods=tuple(view_methods),
+                default_view=default_view,
+            )
             logger.info("Updated view_methods for {}".format(ctype))
 
     catalog = getToolByName(context, 'portal_catalog')
