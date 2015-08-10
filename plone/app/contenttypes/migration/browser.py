@@ -29,6 +29,7 @@ from plone.app.contenttypes.migration.utils import restore_references
 from plone.app.contenttypes.migration.utils import store_references
 from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
 from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
@@ -234,6 +235,9 @@ class MigrateFromATContentTypes(BrowserView):
 
         # if there are blobnewsitems we just migrate them silently.
         migration.migrate_blobnewsitems(portal)
+
+        # make sure the view-methods on the plone site are updated
+        use_new_view_names(portal, types_to_fix=['Plone Site'])
 
         catalog.clearFindAndRebuild()
 
