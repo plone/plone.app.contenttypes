@@ -4,6 +4,20 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
+- Migrate layout using the new listing-views when migrating folders.
+  [pbauer]
+
+- Update allowed view_methods of the site-root on installing or migrating.
+  Fixes #25.
+  [pbauer]
+
+- Set default_view when updating view_methods. Fixes #250.
+  [pbauer]
+
+- Fix bug in reference-migrations where linkintegrity-relations were turned
+  into relatedItems.
+  [pbauer]
+
 - Setup calendar and visible ids even when no default-content gets created.
   [pbauer]
 
