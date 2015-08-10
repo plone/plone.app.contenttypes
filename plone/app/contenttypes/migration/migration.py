@@ -30,6 +30,7 @@ from plone.app.contenttypes.migration.field_migrators import \
     migrate_richtextfield
 from plone.app.contenttypes.migration.field_migrators import \
     migrate_simplefield
+from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import adapter
@@ -163,6 +164,22 @@ class ATCTFolderMigrator(CMFFolderMigrator):
            Copy the conversations from old to new object."""
         portal = getToolByName(self.old, 'portal_url').getPortalObject()
         move_comments(portal, self.new)
+
+    def last_migrate_layout(self):
+        """Migrate the layout (view method).
+
+        This needs to be done last, as otherwise our changes in
+        migrate_criteria may get overriden by a later call to
+        migrate_properties.
+        """
+        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        if old_layout in LISTING_VIEW_MAPPING.keys():
+            default_page = self.old.getDefaultPage()
+            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
+            if default_page:
+                # any defaultPage is switched of by setLayout
+                # and needs to set again
+                self.new.setDefaultPage(default_page)
 
 
 class DocumentMigrator(ATCTContentMigrator):
