@@ -368,7 +368,7 @@ def link_items(
     else:
         target_type = 'AT'
 
-    if relationship is referencedRelationship:
+    if relationship == referencedRelationship:
         # 'relatesTo' is the relationship for linkintegrity-relations.
         # Linkintegrity-relations should automatically be (re)created by
         # plone.app.linkintegrity.handlers.modifiedDexterity or
@@ -376,19 +376,19 @@ def link_items(
         # when a ObjectModifiedEvent is thrown.
         # These relations are only created if the source has a richtext-field
         # with a link to the target and should not be created manually.
-        if source_type is 'AT':
+        if source_type == 'AT':
             modifiedArchetype(source_obj, None)
-        if source_type is 'DX':
+        if source_type == 'DX':
             modifiedDexterity(source_obj, None)
         return
 
-    if source_type is 'AT':
+    if source_type == 'AT':
         # If there is any Archetypes-content there is also the
         # reference_catalog and the uid_catalog.
         # For a site without AT content these might not be there at all.
         reference_catalog = getToolByName(context, REFERENCE_CATALOG)
         uid_catalog = getToolByName(context, 'uid_catalog')
-        if target_type is 'DX' and not is_referenceable(target_obj):
+        if target_type == 'DX' and not is_referenceable(target_obj):
             logger.info(drop_msg % (
                 source_obj.absolute_url(), target_obj.absolute_url()))
             return
