@@ -14,6 +14,7 @@ from Products.contentmigration.inplace import InplaceCMFFolderMigrator
 from Products.contentmigration.inplace import InplaceCMFItemMigrator
 from Products.contentmigration.walker import CustomQueryWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.app.querystring.interfaces import IQuerystringRegistryReader
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IMutableUUID
@@ -458,38 +459,10 @@ class TopicMigrator(InplaceCMFItemMigrator):
     src_portal_type = 'Topic'
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
-    view_methods_mapping = {
-        'folder_listing': 'listing_view',
-        'folder_summary_view': 'summary_view',
-        'folder_full_view': 'full_view',
-        'folder_tabular_view': 'tabular_view',
-        'atct_album_view': 'album_view',
-        'atct_topic_view': 'listing_view',
-    }
 
     @property
     def registry(self):
         return self.kwargs['registry']
-
-    def last_migrate_layout(self):
-        """Migrate the layout (view method).
-
-        This needs to be done last, as otherwise our changes in
-        migrate_criteria may get overriden by a later call to
-        migrate_properties.
-        """
-        if self.old.getCustomView():
-            # Previously, the atct_topic_view had logic for showing
-            # the results in a list or in tabular form.  If
-            # getCustomView is True, this means the new object should
-            # use the tabular view.
-            self.new.setLayout('tabular_view')
-            return
-
-        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        layout = self.view_methods_mapping.get(old_layout)
-        if layout:
-            self.new.setLayout(layout)
 
     def beforeChange_criteria(self):
         """Store the criteria of the old Topic.
@@ -559,6 +532,25 @@ class TopicMigrator(InplaceCMFItemMigrator):
         uid = self.UID
         if uid and queryAdapter(self.new, IMutableUUID):
             IMutableUUID(self.new).set(str(uid))
+
+    def last_migrate_layout(self):
+        """Migrate the layout (view method).
+
+        This needs to be done last, as otherwise our changes in
+        migrate_criteria may get overriden by a later call to
+        migrate_properties.
+        """
+        if self.old.getCustomView():
+            # Previously, the atct_topic_view had logic for showing
+            # the results in a list or in tabular form.  If
+            # getCustomView is True, this means the new object should
+            # use the tabular view.
+            self.new.setLayout('tabular_view')
+            return
+
+        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        if old_layout in LISTING_VIEW_MAPPING.keys():
+            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
 
 
 class FolderishTopicMigrator(InplaceCMFFolderMigrator):
@@ -570,38 +562,10 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator):
     src_portal_type = 'Topic'
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
-    view_methods_mapping = {
-        'folder_listing': 'listing_view',
-        'folder_summary_view': 'summary_view',
-        'folder_full_view': 'full_view',
-        'folder_tabular_view': 'tabular_view',
-        'atct_album_view': 'album_view',
-        'atct_topic_view': 'listing_view',
-    }
 
     @property
     def registry(self):
         return self.kwargs['registry']
-
-    def last_migrate_layout(self):
-        """Migrate the layout (view method).
-
-        This needs to be done last, as otherwise our changes in
-        migrate_criteria may get overriden by a later call to
-        migrate_properties.
-        """
-        if self.old.getCustomView():
-            # Previously, the atct_topic_view had logic for showing
-            # the results in a list or in tabular form.  If
-            # getCustomView is True, this means the new object should
-            # use the tabular view.
-            self.new.setLayout('tabular_view')
-            return
-
-        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        layout = self.view_methods_mapping.get(old_layout)
-        if layout:
-            self.new.setLayout(layout)
 
     def beforeChange_criteria(self):
         """Store the criteria of the old Topic.
@@ -671,6 +635,30 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator):
         uid = self.UID
         if uid and queryAdapter(self.new, IMutableUUID):
             IMutableUUID(self.new).set(str(uid))
+
+    def last_migrate_layout(self):
+        """Migrate the layout (view method).
+
+        This needs to be done last, as otherwise our changes in
+        migrate_criteria may get overriden by a later call to
+        migrate_properties.
+        """
+        if self.old.getCustomView():
+            # Previously, the atct_topic_view had logic for showing
+            # the results in a list or in tabular form.  If
+            # getCustomView is True, this means the new object should
+            # use the tabular view.
+            self.new.setLayout('tabular_view')
+            return
+
+        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        if old_layout in LISTING_VIEW_MAPPING.keys():
+            default_page = self.old.getDefaultPage()
+            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
+            if default_page:
+                # any defaultPage is switched of by setLayout
+                # and needs to set again
+                self.new.setDefaultPage(default_page)
 
 
 def migrate_topics(portal):
