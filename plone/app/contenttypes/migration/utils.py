@@ -383,7 +383,7 @@ def link_items(  # noqa
         # with a link to the target and should not be created manually.
         if source_type == 'AT':
             modifiedArchetype(source_obj, None)
-        if source_type == 'DX' and is_referenceable(source_obj):
+        if source_type == 'DX':
             modifiedDexterity(source_obj, None)
         return
 
