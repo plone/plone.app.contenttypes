@@ -11,6 +11,7 @@ from plone.app.textfield.value import RichTextValue
 from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
+from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from plone.registry.interfaces import IRegistry
@@ -336,3 +337,4 @@ def step_setup_various(context):
     target_language, is_combined_language, locale = _get_locales_info(portal)
     _setup_calendar(portal, locale)
     _setup_visible_ids(portal, target_language, locale)
+    use_new_view_names(portal, types_to_fix=['Plone Site'])

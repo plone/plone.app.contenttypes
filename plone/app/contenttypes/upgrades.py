@@ -4,7 +4,24 @@ from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 import logging
+
 logger = logging.getLogger(name="plone.app.contenttypes upgrade")
+
+LISTING_VIEW_MAPPING = {  # OLD (AT and old DX) : NEW
+    'all_content': 'full_view',
+    'atct_album_view': 'album_view',
+    'atct_topic_view': 'listing_view',
+    'collection_view': 'listing_view',
+    'folder_album_view': 'album_view',
+    'folder_full_view': 'full_view',
+    'folder_listing': 'listing_view',
+    'folder_listing_view': 'listing_view',
+    'folder_summary_view': 'summary_view',
+    'folder_tabular_view': 'tabular_view',
+    'standard_view': 'listing_view',
+    'thumbnail_view': 'album_view',
+    'view': 'listing_view',
+}
 
 
 def update_fti(context):
@@ -113,12 +130,13 @@ def enable_shortname_behavior(context):
         fti._updateProperty('behaviors', behaviors)
 
 
-def use_new_view_names(context):  # noqa
+def use_new_view_names(context, types_to_fix=None):  # noqa
     """Migrate old view names to new view names."""
 
     # Don't reload the profile. Only change the settings.
     portal_types = getToolByName(context, 'portal_types')
-    types_to_fix = ['Folder', 'Collection', 'Plone Site']
+    if types_to_fix is None:
+        types_to_fix = ['Folder', 'Collection', 'Plone Site']
     outdated_methods = [
         'folder_listing',
         'folder_full_view',
@@ -179,22 +197,5 @@ def use_new_view_names(context):  # noqa
                     # any defaultPage is switched of by setLayout
                     # and needs to set again
                     obj.setDefaultPage(default_page)
-
-    folder_view_map = {  # OLD : NEW
-        'folder_listing': 'listing_view',
-        'folder_full_view': 'full_view',
-        'folder_summary_view': 'summary_view',
-        'folder_tabular_view': 'tabular_view',
-        'folder_album_view': 'album_view',
-        'atct_album_view': 'album_view',
-    }
-    collection_view_map = {  # OLD : NEW
-        'view': 'listing_view',
-        'standard_view': 'listing_view',
-        'collection_view': 'listing_view',
-        'all_content': 'full_view',
-        'thumbnail_view': 'album_view',
-    }
-    _fixup('Folder', folder_view_map)
-    _fixup('Plone Site', folder_view_map)
-    _fixup('Collection', collection_view_map)
+    for type_ in types_to_fix:
+        _fixup(type_, LISTING_VIEW_MAPPING)
