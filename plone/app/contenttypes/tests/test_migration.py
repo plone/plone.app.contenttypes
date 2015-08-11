@@ -1403,6 +1403,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         vocabulary = factory(self.portal)
         self.assertEqual((), tuple(vocabulary))
 
+    @unittest.skip('Creates test-isolation-issues. See https://github.com/plone/plone.app.contenttypes/issues/251')  # noqa
     def test_migration_extendedtypes_vocabulary_result(self):
         from archetypes.schemaextender.extender import CACHE_ENABLED
         from archetypes.schemaextender.extender import CACHE_KEY
