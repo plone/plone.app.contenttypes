@@ -4,6 +4,13 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
+- Remove obsolete collections.css
+  [pbauer]
+
+- Add plone.app.querystring as a dependency (fixes collections migrated to p5
+  and dexterity).
+  [pbauer]
+
 - Migrate layout using the new listing-views when migrating folders.
   [pbauer]
 
