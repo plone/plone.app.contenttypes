@@ -3,6 +3,7 @@ from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
+from zope.component.hooks import getSite
 import logging
 
 logger = logging.getLogger(name="plone.app.contenttypes upgrade")
@@ -132,9 +133,9 @@ def enable_shortname_behavior(context):
 
 def use_new_view_names(context, types_to_fix=None):  # noqa
     """Migrate old view names to new view names."""
-
     # Don't reload the profile. Only change the settings.
-    portal_types = getToolByName(context, 'portal_types')
+    portal = getSite()
+    portal_types = getToolByName(portal, 'portal_types')
     if types_to_fix is None:
         types_to_fix = ['Folder', 'Collection', 'Plone Site']
     outdated_methods = [
@@ -180,22 +181,24 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
             )
             logger.info("Updated view_methods for {}".format(ctype))
 
-    catalog = getToolByName(context, 'portal_catalog')
-    search = catalog.unrestrictedSearchResults
+    def _fixup(obj, view_map):
+        current = obj.getLayout()
+        if current in view_map:
+            default_page = obj.getDefaultPage()
+            obj.setLayout(view_map[current])
+            logger.info("Set view to {} for {}".format(
+                view_map[current], obj.absolute_url()
+            ))
+            if default_page:
+                # any defaultPage is switched of by setLayout
+                # and needs to set again
+                obj.setDefaultPage(default_page)
 
-    def _fixup(portal_type, view_map):
+    catalog = getToolByName(portal, 'portal_catalog')
+    search = catalog.unrestrictedSearchResults
+    for portal_type in types_to_fix:
         for brain in search(portal_type=portal_type):
             obj = brain.getObject()
-            current = obj.getLayout()
-            if current in view_map.keys():
-                default_page = obj.getDefaultPage()
-                obj.setLayout(view_map[current])
-                logger.info("Set view to {} for {}".format(
-                    view_map[current], obj.absolute_url()
-                ))
-                if default_page:
-                    # any defaultPage is switched of by setLayout
-                    # and needs to set again
-                    obj.setDefaultPage(default_page)
-    for type_ in types_to_fix:
-        _fixup(type_, LISTING_VIEW_MAPPING)
+            _fixup(obj, LISTING_VIEW_MAPPING)
+        if portal_type == 'Plone Site':
+            _fixup(context, LISTING_VIEW_MAPPING)
