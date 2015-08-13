@@ -7,12 +7,6 @@
 
   <include package="plone.app.contentmenu" />
 
-  <browser:resource
-      name="collection.css"
-      file="stylesheets/collection.css"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"/>
-
-
   <!-- VIEWS FOR PLONE SITE ROOT -->
   <browser:pages
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
