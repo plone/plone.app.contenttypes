@@ -1821,6 +1821,12 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_folder.setLayout('folder_tabular_view')
         at_folder.setDefaultPage('subdocument')
 
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+        at_folder2.invokeFactory('Document', 'subdocument2')
+        at_subdocument2 = at_folder2['subdocument2']
+        at_folder2.setLayout('folder_listing')
+
         # migrate content
         applyProfile(self.portal, 'plone.app.contenttypes:default')
 
@@ -1830,15 +1836,16 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         )
         results = migration_view(from_form=True)
         dx_folder = self.portal['folder']
+        dx_folder2 = self.portal['folder2']
 
         # test that view-methods are updated
         self.assertTrue(self.portal.getLayout(), 'summary_view')
+        self.assertTrue(dx_folder.getLayout(), 'tabular_view')
+        self.assertTrue(dx_folder2.getLayout(), 'listing_view')
         # test that defaultpage is kept
         self.assertTrue(self.portal.getDefaultPage(), 'document')
-        # test that view-methods are updated
-        self.assertTrue(dx_folder.getLayout(), 'tabular_view')
-        # test that defaultpage is kept
         self.assertTrue(dx_folder.getDefaultPage(), 'subdocument')
+        self.assertIsNone(dx_folder2.getDefaultPage())
 
 
 class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
