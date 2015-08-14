@@ -4,6 +4,9 @@ Changelog
 1.1b6 (unreleased)
 ------------------
 
+- Added ``importlib`` as dependency on Python 2.6.
+  [maurits]
+
 - Don't use <figure> and <figcaption> html5 containers for Plone 4
   compatibility. sunburst css selectors don't support figure yet in
   for example newsitem styling.

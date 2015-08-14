@@ -1,8 +1,12 @@
 from setuptools import setup, find_packages
 
 import os
+import sys
 
 version = '1.1b6.dev0'
+additional_requires = []
+if sys.version_info < (2, 7):
+    additional_requires.append('importlib')
 
 
 def read(*rnames):
@@ -50,7 +54,7 @@ setup(name='plone.app.contenttypes',
           'pytz',
           'Products.CMFQuickInstallerTool >= 3.0.7',  # allow blacklisting steps
           'Products.GenericSetup >= 1.7.5',  # allow blacklisting steps
-      ],
+      ] + additional_requires,
       extras_require={
           'test': [
               'archetypes.schemaextender',
