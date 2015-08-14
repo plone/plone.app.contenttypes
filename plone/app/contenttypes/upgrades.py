@@ -159,7 +159,11 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
         'event_listing',
     ]
     for ctype in types_to_fix:
-        fti = portal_types.get(ctype)
+        fti = queryUtility(IDexterityFTI, name=ctype)
+        if fti is None and ctype == 'Plone Site':
+            fti = portal_types.get(ctype)
+        if fti is None:
+            return
         view_methods = [i for i in fti.getAvailableViewMethods(None)]
         changed = False
         for method in outdated_methods:
