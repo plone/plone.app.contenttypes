@@ -89,6 +89,17 @@ class ATCTContentMigrator(CMFItemMigrator):
             "Migrating {0}".format(
                 '/'.join(self.old.getPhysicalPath())))
 
+    def beforeChange_store_default_page(self):
+        """If the item is the default page store that info to set it again.
+
+        Products.CMFDynamicViewFTI.browserdefault.check_default_page
+        would unset the default page during the migration.
+        """
+        context_state = getMultiAdapter(
+            (self.old, self.old.REQUEST), name=u'plone_context_state')
+        if context_state.is_default_page():
+            setattr(self.old, '_migration_is_default_page', True)
+
     def beforeChange_store_comments_on_portal(self):
         """Comments from plone.app.discussion are lost when the
            old object is renamed...
@@ -121,6 +132,12 @@ class ATCTContentMigrator(CMFItemMigrator):
            Copy the conversations from old to new object."""
         portal = getToolByName(self.old, 'portal_url').getPortalObject()
         move_comments(portal, self.new)
+
+    def last_migrate_default_page(self):
+        """If the item was the default page set it again."""
+        if getattr(self.old, '_migration_is_default_page', False):
+            parent = self.new.__parent__
+            parent.setDefaultPage(self.new.id)
 
 
 class ATCTFolderMigrator(CMFFolderMigrator):
@@ -174,7 +191,8 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         """
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
         if old_layout in LISTING_VIEW_MAPPING.keys():
-            default_page = self.old.getDefaultPage()
+            default_page = self.old.getDefaultPage() or \
+                getattr(self.old, 'default_page')
             self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
             if default_page:
                 # any defaultPage is switched of by setLayout

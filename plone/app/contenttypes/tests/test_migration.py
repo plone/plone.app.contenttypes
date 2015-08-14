@@ -1801,6 +1801,52 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             dx_comment.getText(),
             '<p>Hey Dude! \xc3\x84 is not ascii.</p>')
 
+    def test_default_pages_are_kept_during_migration(self):
+        """Check that the default pages are not lost when migrating."""
+        set_browserlayer(self.request)
+        # create some content and set default pages
+        self.portal.invokeFactory('Document', 'document')
+        at_document = self.portal['document']
+        at_document.setText(u'Document with some comments')
+
+        self.portal.invokeFactory('Folder', 'folder')
+        at_folder = self.portal['folder']
+
+        at_folder.invokeFactory('Document', 'subdocument')
+        at_subdocument = at_folder['subdocument']
+
+        self.portal.setLayout('folder_summary_view')
+        self.portal.setDefaultPage('document')
+
+        at_folder.setLayout('folder_tabular_view')
+        at_folder.setDefaultPage('subdocument')
+
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+        at_folder2.invokeFactory('Document', 'subdocument2')
+        at_subdocument2 = at_folder2['subdocument2']
+        at_folder2.setLayout('folder_listing')
+
+        # migrate content
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+
+        migration_view = getMultiAdapter(
+            (self.portal, self.request),
+            name=u'migrate_from_atct'
+        )
+        results = migration_view(from_form=True)
+        dx_folder = self.portal['folder']
+        dx_folder2 = self.portal['folder2']
+
+        # test that view-methods are updated
+        self.assertTrue(self.portal.getLayout(), 'summary_view')
+        self.assertTrue(dx_folder.getLayout(), 'tabular_view')
+        self.assertTrue(dx_folder2.getLayout(), 'listing_view')
+        # test that defaultpage is kept
+        self.assertTrue(self.portal.getDefaultPage(), 'document')
+        self.assertTrue(dx_folder.getDefaultPage(), 'subdocument')
+        self.assertIsNone(dx_folder2.getDefaultPage())
+
 
 class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
 
