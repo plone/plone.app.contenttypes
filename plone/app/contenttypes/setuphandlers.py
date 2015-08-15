@@ -269,21 +269,18 @@ def create_events_topic(portal, target_language):
         #: Sort on the Event start date
         aggregator.sort_on = u'start'
         aggregator.sort_reversed = True
-        #: Query by Type, Review State and Event start date after today
+        #: Query by Type and Review State
         aggregator.query = [
             {'i': 'portal_type',
              'o': 'plone.app.querystring.operation.selection.is',
              'v': ['Event']
-             },
-            {'i': 'start',
-             'o': 'plone.app.querystring.operation.date.afterToday',
-             'v': ''
              },
             {'i': 'review_state',
              'o': 'plone.app.querystring.operation.selection.is',
              'v': ['published']
              },
         ]
+        aggregator.setLayout('event_listing')
         _publish(aggregator)
 
 
