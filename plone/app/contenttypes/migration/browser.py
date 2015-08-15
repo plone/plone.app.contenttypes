@@ -4,7 +4,6 @@ from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.interfaces import IEditingSchema
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
@@ -30,6 +29,7 @@ from plone.app.contenttypes.migration.utils import store_references
 from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.contenttypes.upgrades import use_new_view_names
+from plone.app.controlpanel.editing import IEditingSchema
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
