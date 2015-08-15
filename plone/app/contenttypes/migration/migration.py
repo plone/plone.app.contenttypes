@@ -347,15 +347,6 @@ class CollectionMigrator(ATCTContentMigrator):
     dst_portal_type = 'Collection'
     dst_meta_type = None  # not used
 
-    view_methods_mapping = {
-        'folder_listing': 'standard_view',
-        'folder_summary_view': 'summary_view',
-        'folder_full_view': 'all_content',
-        'folder_tabular_view': 'tabular_view',
-        'atct_album_view': 'thumbnail_view',
-        'atct_topic_view': 'standard_view',
-        }
-
     def migrate_schema_fields(self):
         migrate_richtextfield(self.old, self.new, 'text', 'text')
         wrapped_new = ICollection(self.new)
@@ -411,3 +402,113 @@ def migrate_events(portal):
     migrate(portal, DXOldEventMigrator)
     migrate(portal, EventMigrator)
     migrate(portal, DXEventMigrator)
+
+
+def makeCustomATMigrator(
+    context,
+    src_type,
+    dst_type,
+    fields_mapping,
+    is_folderish=False,
+    dry_run=False
+):
+    """ generate a migrator for the given at-based folderish portal type """
+
+    base_class = ATCTContentMigrator
+    if is_folderish:
+        base_class = ATCTFolderMigrator
+
+    class CustomATMigrator(base_class):
+
+        src_portal_type = src_type
+        dst_portal_type = dst_type
+        dry_run_mode = dry_run
+
+        def migrate_schema_fields(self):
+            for fields_dict in fields_mapping:
+                at_fieldname = fields_dict.get('AT_field_name')
+                dx_fieldname = fields_dict.get('DX_field_name')
+                dx_fieldtype = fields_dict.get('DX_field_type')
+                migration_field_method = migrate_simplefield
+                if dx_fieldtype in FIELDS_MAPPING:
+                    # Richtext, Image and File have custom migraton_methods
+                    migration_field_method = FIELDS_MAPPING[dx_fieldtype]
+                migration_field_method(src_obj=self.old,
+                                       dst_obj=self.new,
+                                       src_fieldname=at_fieldname,
+                                       dst_fieldname=dx_fieldname)
+
+        def last_migrate_check(self):
+            """
+            BBB to be checked
+            if there is an error with the fields, an exception will be raised.
+            """
+            if self.dry_run_mode:
+                view = getMultiAdapter(
+                    (self.new, self.new.REQUEST), name="view")
+                view()
+
+    return CustomATMigrator
+
+
+def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
+    """
+    Try to get types infos from archetype_tool, then set a migrator an pass it
+    given values. There is a dry_run mode that allows to check the success of
+    a migration without committing.
+    """
+    portal = getSite()
+
+    # if the type still exists get the src_meta_type from the portal_type
+    portal_types = getToolByName(portal, 'portal_types')
+    fti = portal_types.get(src_type, None)
+    # Check if the fti was removed or replaced by a DX-implementation
+    if fti is None or IDexterityFTI.providedBy(fti):
+        # Get the needed info from an instance of the type
+        catalog = portal.portal_catalog
+        brain = catalog(portal_type=src_type, sort_limit=1)[0]
+        src_obj = brain.getObject()
+        if IDexterityContent.providedBy(src_obj):
+            logger.error(
+                '%s should not be dexterity object!' % src_obj.absolute_url())
+        is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
+        src_meta_type = src_obj.meta_type
+    else:
+        # Get info from at-fti
+        src_meta_type = fti.content_meta_type
+        archetype_tool = getToolByName(portal, 'archetype_tool', None)
+        for info in archetype_tool.listRegisteredTypes():
+            # lookup registered type in archetype_tool with meta_type
+            # because several portal_types can use same meta_type
+            if info.get('meta_type') == src_meta_type:
+                klass = info.get('klass', None)
+                is_folderish = klass.isPrincipiaFolderish
+
+    migrator = makeCustomATMigrator(context=portal,
+                                    src_type=src_type,
+                                    dst_type=dst_type,
+                                    fields_mapping=fields_mapping,
+                                    is_folderish=is_folderish,
+                                    dry_run=dry_run)
+    if migrator:
+        migrator.src_meta_type = src_meta_type
+        migrator.dst_meta_type = ''
+        walker_settings = {'portal': portal,
+                           'migrator': migrator,
+                           'src_portal_type': src_type,
+                           'dst_portal_type': dst_type,
+                           'src_meta_type': src_meta_type,
+                           'dst_meta_type': '',
+                           'use_savepoint': True}
+        if dry_run:
+            walker_settings['limit'] = 1
+        walker = CustomQueryWalker(**walker_settings)
+        walker.go()
+        walker_infos = {'errors': walker.errors,
+                        'msg': walker.getOutput().splitlines(),
+                        'counter': walker.counter}
+        for error in walker.errors:
+            logger.error(error.get('message'))
+        if dry_run:
+            transaction.abort()
+        return walker_infos

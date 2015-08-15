@@ -2,8 +2,8 @@
 from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.DublinCore import DefaultDublinCoreImpl
 from Products.CMFPlone.interfaces import IEditingSchema
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
