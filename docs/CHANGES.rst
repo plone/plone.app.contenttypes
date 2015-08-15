@@ -4,49 +4,82 @@ Changelog
 1.1b6 (unreleased)
 ------------------
 
-- Added ``importlib`` as dependency on Python 2.6.
-  [maurits]
+
+- Add plone.app.querystring as a dependency (fixes collections migrated to p5
+  and dexterity).
+  (backported from 1.2.x)
+  [pbauer]
+
+- Migrate layout of portal to use the new listing-views when migrating to dx.
+  (backported from 1.2.x)
+  [pbauer]
+
+- Migrate layout using the new listing-views when migrating folders,
+  collections, topics.
+  (backported from 1.2.x)
+  [pbauer]
+
+- Update allowed view_methods of the site-root on installing or migrating.
+  Fixes #25.
+  (backported from 1.2.x)
+  [pbauer]
+
+- Set default_view when updating view_methods. Fixes #250.
+  (backported from 1.2.x)
+  [pbauer]
+
+- Fix bug in reference-migrations where linkintegrity-relations were turned
+  into relatedItems.
+  (backported from 1.2.x)
+  [pbauer]
+
+- Setup calendar and visible ids even when no default-content gets created.
+  (backported from 1.2.x)
+  [pbauer]
+
 - Remove upgrade-step that resets all behaviors. Fixes #246.
+  (backported from 1.2.x)
   [pbauer]
 
 - Add convenience-view @@export_all_relations to export all relations.
+  (backported from 1.2.x)
   [pbauer]
 
 - Add method link_items that allows to link any kind of item (AT/DX) with any
   kind of relationship.
+  (backported from 1.2.x)
   [pbauer]
 
 - New implementation of reference-migrations.
+  (backported from 1.2.x)
   [pbauer]
 
-- Fix i18n on custom_migration view.
-  [vincentfretin]
-
-
-1.2b3 (2015-07-18)
-------------------
-
 - Fix BlobNewsItemMigrator.
+  (backported from 1.2.x)
   [MrTango]
 
 - Fix ATSelectionCriterionConverter to set the right operators.
+  (backported from 1.2.x)
   [MrTango]
 
 - Fix @@custom_migraton when they type-name has a space (fixes #243).
+  (backported from 1.2.x)
   [pbauer]
 
 - Get and set linkintegrity-setting with registry.
+  (backported from 1.2.x)
   [pbauer]
 
 - Use generic field_migrators in all migrations.
+  (backported from 1.2.x)
   [pbauer]
 
 - Remove superfluous 'for'. Fixes plone/Products.CMFPlone#669.
+  (backported from 1.2.x)
   [fulv]
 
-
-1.2b2 (2015-06-05)
-------------------
+- Added ``importlib`` as dependency on Python 2.6.
+  [maurits]
 
 - Don't use <figure> and <figcaption> html5 containers for Plone 4
   compatibility. sunburst css selectors don't support figure yet in
