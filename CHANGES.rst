@@ -4,6 +4,9 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
+- Use event_listung for /events/aggregator in new sites.
+  [pbauer]
+
 - Remove obsolete collections.css
   [pbauer]
 
@@ -11,7 +14,11 @@ Changelog
   and dexterity).
   [pbauer]
 
-- Migrate layout using the new listing-views when migrating folders.
+- Migrate layout of portal to use the new listing-views when migrating to dx.
+  [pbauer]
+
+- Migrate layout using the new listing-views when migrating folders,
+  collections, topics.
   [pbauer]
 
 - Update allowed view_methods of the site-root on installing or migrating.
