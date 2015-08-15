@@ -9,6 +9,7 @@ python:
 branches:
   only:
     - 1.1.x
+    - backport
 before_install:
   - mkdir -p $HOME/buildout-cache/{eggs,downloads}
   - mkdir $HOME/.buildout
