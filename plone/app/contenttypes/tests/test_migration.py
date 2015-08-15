@@ -499,6 +499,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             'v': 'Document',
         }]
         at_collection.setQuery(query)
+        at_collection.setLayout('folder_summary_view')
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate_collections(self.portal)
         dx_collection = self.portal['collection']
@@ -507,6 +508,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         wrapped = ICollectionBehavior(dx_collection)
         self.assertEqual(wrapped.query, query)
         self.assertEqual(dx_collection.text.output, "<p>Whopee</p>")
+        at_collection.setLayout('summary_view')
 
     def test_document_content_is_migrated(self):
         from plone.app.contenttypes.migration.migration import DocumentMigrator
