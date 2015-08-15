@@ -16,4 +16,4 @@ script:
 after_failure:
   - bin/csslint --version
   - bin/jshint --version
-
+sudo: false
