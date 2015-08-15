@@ -358,24 +358,25 @@ class CollectionMigrator(ATCTContentMigrator):
 
     def migrate_schema_fields(self):
         migrate_richtextfield(self.old, self.new, 'text', 'text')
-        wrapped = ICollection(self.new)
+        wrapped_new = ICollection(self.new)
         # using migrate_simplefield on 'query' returns the ContentListing obj
-        wrapped.query = self.old.query
-        migrate_simplefield(self.old, wrapped, 'sort_on', 'sort_on')
+        wrapped_new.query = self.old.query
+        migrate_simplefield(self.old, wrapped_new, 'sort_on', 'sort_on')
         migrate_simplefield(
-            self.old, wrapped, 'sort_reversed', 'sort_reversed')
-        migrate_simplefield(self.old, wrapped, 'limit', 'limit')
+            self.old, wrapped_new, 'sort_reversed', 'sort_reversed')
+        migrate_simplefield(self.old, wrapped_new, 'limit', 'limit')
         migrate_simplefield(
-            self.old, wrapped, 'customViewFields', 'customViewFields')
+            self.old, wrapped_new, 'customViewFields', 'customViewFields')
 
     def last_migrate_layout(self):
         """Migrate the layout (view method).
+
+        This needs to be done last, as otherwise our changes may get overriden
+        by a later call to migrate_properties.
         """
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        layout = self.view_methods_mapping.get(old_layout)
-        if layout:
-            self.new.setLayout(layout)
-
+        if old_layout in LISTING_VIEW_MAPPING:
+            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
 
 def migrate_collections(portal):
     return migrate(portal, CollectionMigrator)
