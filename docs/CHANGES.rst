@@ -4,6 +4,9 @@ Changelog
 1.1b6 (unreleased)
 ------------------
 
+- Add migrations from custom AT types to available DX types (fix #133).
+  (backported from 1.2.x)
+  [gbastien, cekk, tiazma, flohcim, pbauer]
 
 - Add plone.app.querystring as a dependency (fixes collections migrated to p5
   and dexterity).
