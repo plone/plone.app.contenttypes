@@ -327,6 +327,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         # Check that the resulting query does not give an error.
         self.portal.topic.results
 
+    @unittest.skip('P4 has no plone.app.querystring.operation.selection.any')
     def test_ATListCriterion(self):
         # The new-style queries do not currently offer the possibility
         # to choose if the given values should be joined with 'or' or
@@ -555,6 +556,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         # Check that the resulting query does not give an error.
         self.portal.topic.results
 
+    @unittest.skip('P4 has no plone.app.querystring.operation.selection.any')
     def test_ATSelectionCriterion(self):
         # The new-style queries do not currently offer the possibility
         # to choose if the given values should be joined with 'or' or

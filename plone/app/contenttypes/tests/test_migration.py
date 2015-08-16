@@ -821,6 +821,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(
             dx_newsitem.text.mimeType, 'chemical/x-gaussian-checkpoint')
 
+    @unittest.skip('Problem with relations of partial migrations in Plone 4')
     def test_modifield_date_is_unchanged(self):
         set_browserlayer(self.request)
 
@@ -1002,6 +1003,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         store_references(self.portal)
         migrate_documents(self.portal)
         migrate_folders(self.portal)
+        migrate_newsitems(self.portal)
 
         # rebuild catalog
         self.portal.portal_catalog.clearFindAndRebuild()
@@ -1012,6 +1014,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_doc1 = dx_folder1['doc1']
         dx_doc2 = dx_folder2['doc2']
         dx_doc3 = self.portal['doc3']
+        newsitem = dx_folder1['newsitem']
 
         self.assertEqual([x.to_object for x in dx_folder2.relatedItems], [])
 
@@ -1035,8 +1038,9 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # assert multi references, order is restored
         dx_doc2_related = [x.to_object for x in dx_doc2.relatedItems]
-        self.assertEqual(dx_doc2_related, [at_newsitem, dx_doc3, dx_doc1])
+        self.assertEqual(dx_doc2_related, [newsitem, dx_doc3, dx_doc1])
 
+    @unittest.skip('blacklisted_steps only available in Plone 5')
     def test_backrelations_are_migrated_for_unnested_content(self):
         """relate a doc to a newsitem, migrate the newsitem but not the doc.
         check if the relations are still in place."""
@@ -1091,6 +1095,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(self._backrefs(dx_doc), [dx_news])
         self.assertEqual(self._backrefs(dx_news), [])
 
+    @unittest.skip('blacklisted_steps only available in Plone 5')
     def test_dx_at_relations_migrated_for_partially_migrated_nested(self):
         """This fails if referenceablebehavior is not enabled
         """
@@ -1145,6 +1150,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(at_doc.getReferences(), [])
         self.assertEqual(at_doc.getBackReferences(), [])
 
+    @unittest.skip('blacklisted_steps only available in Plone 5')
     def test_at_dx_relations_migrated_for_partialy_migrated_nested(self):
         """Fails if referenceablebehavior is not enabled"""
         # IIntIds is not registered in the test env. So register it here
@@ -1225,6 +1231,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         behaviors.append(behavior)
         fti._updateProperty('behaviors', tuple(behaviors))
 
+    @unittest.skip('blacklisted_steps only available in Plone 5')
     def test_store_references(self):
         # IIntIds is not registered in the test env. So register it here
         sm = getSiteManager(self.portal)
@@ -1269,6 +1276,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         key = 'ALL_REFERENCES'
         self.assertEqual(len(IAnnotations(self.portal)[key]), 2)
 
+    @unittest.skip('blacklisted_steps only available in Plone 5')
     def test_export_references(self):
         """Test the Browser-View @@export_all_references."""
         # IIntIds is not registered in the test env. So register it here
@@ -1307,6 +1315,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         data = json.loads(result)
         self.assertEqual(len(data), 2)
 
+    @unittest.skip('blacklisted_steps only available in Plone 5')
     def test_migrate_references_with_storage_on_portal(self):
         set_browserlayer(self.request)
         # IIntIds is not registered in the test env. So register it here
