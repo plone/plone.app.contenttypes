@@ -402,8 +402,8 @@ def step_setup_various(context):
     portal = context.getSite()
     enable_multilingual_behavior(portal)
     target_language, is_combined_language, locale = _get_locales_info(portal)
-    _setup_calendar(portal, locale)
-    _setup_visible_ids(portal, target_language, locale)
+    _setup_calendar(locale)
+    _setup_visible_ids(target_language, locale)
     use_new_view_names(portal, types_to_fix=['Plone Site'])
 
 
