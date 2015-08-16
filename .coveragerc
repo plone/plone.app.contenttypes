@@ -1,6 +1,6 @@
 [report]
 include =
-    plone/app/*
+    plone/*
 omit =
     */test*
     */upgrades/*
