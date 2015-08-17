@@ -8,8 +8,8 @@ python:
   - 2.7
 branches:
   only:
+    - master
     - 1.1.x
-    - backport
 before_install:
   - mkdir -p $HOME/buildout-cache/{eggs,downloads}
   - mkdir $HOME/.buildout
