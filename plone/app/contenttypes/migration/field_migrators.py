@@ -96,7 +96,7 @@ def migrate_blobimagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     """
     migrate an image field.
     Actually this field needs only to copy the existing NamedBlobImage instance
-    to the new dst_obj, but we do i little more in detail and create new fields.
+    to the new dst_obj, but we do some more in detail and create new fields.
     """
     old_image = getattr(src_obj, src_fieldname)
     if old_image == '':

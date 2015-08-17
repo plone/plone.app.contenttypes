@@ -238,8 +238,12 @@ class CustomMigrationForm(BrowserView):
                 safe_at = at_typename.replace('_space_', '')
                 dx_key = 'dx_%s__for__%s' % (safe_dx, safe_at)
                 for at_field in form[at_typename]:
+                    if form.get(dx_key) is None:
+                        # No field-mappings
+                        continue
                     dx_field = form[dx_key][form[at_typename].index(at_field)]
                     if not dx_field:
+                        # Do not migrate field
                         continue
                     at_field_name, at_field_type = at_field.split('__type__')
                     dx_field_name, dx_field_type = dx_field.split('__type__')
