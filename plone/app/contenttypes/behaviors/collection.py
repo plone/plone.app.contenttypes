@@ -98,7 +98,9 @@ class Collection(object):
 
     def results(self, batch=True, b_start=0, b_size=None,
                 sort_on=None, limit=None, brains=False,
-                custom_query={}):
+                custom_query=None):
+        if custom_query is None:
+            custom_query = {}
         querybuilder = getMultiAdapter((self.context, self.context.REQUEST),
                                        name='querybuilderresults')
         sort_order = 'reverse' if self.sort_reversed else 'ascending'

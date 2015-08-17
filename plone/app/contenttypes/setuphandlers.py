@@ -12,6 +12,7 @@ from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
+from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from zope.component import getMultiAdapter
@@ -400,6 +401,10 @@ def step_setup_various(context):
         return
     portal = context.getSite()
     enable_multilingual_behavior(portal)
+    target_language, is_combined_language, locale = _get_locales_info(portal)
+    _setup_calendar(locale)
+    _setup_visible_ids(target_language, locale)
+    use_new_view_names(portal, types_to_fix=['Plone Site'])
 
 
 def enable_multilingual_behavior(portal):

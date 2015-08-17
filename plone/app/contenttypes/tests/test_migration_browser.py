@@ -97,6 +97,7 @@ class FixBaseclassesTest(unittest.TestCase):
 
         self.assertTrue(INewsItem.providedBy(self.obj))
 
+    @unittest.skip('blacklisted_steps only available in Plone 5')
     def test_install_dx_type_if_needed(self):
         from plone.app.contenttypes.migration.utils import installTypeIfNeeded
         tt = self.portal.portal_types

@@ -30,7 +30,6 @@
     title="Table of contents"
     description="Adds a table of contents"
     provides=".tableofcontents.ITableOfContents"
-    for="plone.dexterity.interfaces.IDexterityContent"
     marker=".tableofcontents.ITableOfContents"
     />
 

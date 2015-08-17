@@ -3,8 +3,26 @@ from Products.CMFCore.utils import getToolByName
 # from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
+from zope.component.hooks import getSite
 import logging
+
 logger = logging.getLogger(name="plone.app.contenttypes upgrade")
+
+LISTING_VIEW_MAPPING = {  # OLD (AT and old DX) : NEW
+    'all_content': 'full_view',
+    'atct_album_view': 'album_view',
+    'atct_topic_view': 'listing_view',
+    'collection_view': 'listing_view',
+    'folder_album_view': 'album_view',
+    'folder_full_view': 'full_view',
+    'folder_listing': 'listing_view',
+    'folder_listing_view': 'listing_view',
+    'folder_summary_view': 'summary_view',
+    'folder_tabular_view': 'tabular_view',
+    'standard_view': 'listing_view',
+    'thumbnail_view': 'album_view',
+    'view': 'listing_view',
+}
 
 
 def update_fti(context):
@@ -89,20 +107,8 @@ def migrate_to_richtext(context):
 
 
 def migrate_album_view(context):
-    """Migrate atct_album_view to album_view."""
-
-    # TODO: Don't reload the profile. Only change the settings.
-    context.runImportStepFromProfile(
-        'profile-plone.app.contenttypes:default',
-        'typeinfo',
-    )
-    catalog = getToolByName(context, 'portal_catalog')
-    search = catalog.unrestrictedSearchResults
-    for brain in search(portal_type='Folder'):
-        obj = brain.getObject()
-        current = context.getLayout()
-        if current == 'atct_album_view':
-            obj.setLayout('album_view')
+    """That task is now done by use_new_view_names (1103->1104)"""
+    pass
 
 
 # def enable_shortname_behavior(context):
@@ -125,12 +131,13 @@ def migrate_album_view(context):
 #         fti._updateProperty('behaviors', behaviors)
 
 
-def use_new_view_names(context):  # noqa
+def use_new_view_names(context, types_to_fix=None):  # noqa
     """Migrate old view names to new view names."""
-
     # Don't reload the profile. Only change the settings.
-    portal_types = getToolByName(context, 'portal_types')
-    types_to_fix = ['Folder', 'Collection', 'Plone Site']
+    portal = getSite()
+    portal_types = getToolByName(portal, 'portal_types')
+    if types_to_fix is None:
+        types_to_fix = ['Folder', 'Collection', 'Plone Site']
     outdated_methods = [
         'folder_listing',
         'folder_full_view',
@@ -152,7 +159,11 @@ def use_new_view_names(context):  # noqa
         'event_listing',
     ]
     for ctype in types_to_fix:
-        fti = portal_types.get(ctype)
+        fti = queryUtility(IDexterityFTI, name=ctype)
+        if fti is None and ctype == 'Plone Site':
+            fti = portal_types.get(ctype)
+        if fti is None:
+            return
         view_methods = [i for i in fti.getAvailableViewMethods(None)]
         changed = False
         for method in outdated_methods:
@@ -163,43 +174,35 @@ def use_new_view_names(context):  # noqa
             if method not in view_methods:
                 view_methods.append(method)
                 changed = True
+        default_view = fti.default_view
+        if default_view in outdated_methods:
+            default_view = LISTING_VIEW_MAPPING.get(default_view)
+            changed = True
         if changed:
-            fti.manage_changeProperties(view_methods=tuple(view_methods))
+            fti.manage_changeProperties(
+                view_methods=tuple(view_methods),
+                default_view=default_view,
+            )
             logger.info("Updated view_methods for {}".format(ctype))
 
-    catalog = getToolByName(context, 'portal_catalog')
-    search = catalog.unrestrictedSearchResults
+    def _fixup(obj, view_map):
+        current = obj.getLayout()
+        if current in view_map:
+            default_page = obj.getDefaultPage()
+            obj.setLayout(view_map[current])
+            logger.info("Set view to {} for {}".format(
+                view_map[current], obj.absolute_url()
+            ))
+            if default_page:
+                # any defaultPage is switched of by setLayout
+                # and needs to set again
+                obj.setDefaultPage(default_page)
 
-    def _fixup(portal_type, view_map):
+    catalog = getToolByName(portal, 'portal_catalog')
+    search = catalog.unrestrictedSearchResults
+    for portal_type in types_to_fix:
         for brain in search(portal_type=portal_type):
             obj = brain.getObject()
-            current = obj.getLayout()
-            if current in view_map.keys():
-                default_page = obj.getDefaultPage()
-                obj.setLayout(view_map[current])
-                logger.info("Set view to {} for {}".format(
-                    view_map[current], obj.absolute_url()
-                ))
-                if default_page:
-                    # any defaultPage is switched of by setLayout
-                    # and needs to set again
-                    obj.setDefaultPage(default_page)
-
-    folder_view_map = {  # OLD : NEW
-        'folder_listing': 'listing_view',
-        'folder_full_view': 'full_view',
-        'folder_summary_view': 'summary_view',
-        'folder_tabular_view': 'tabular_view',
-        'folder_album_view': 'album_view',
-        'atct_album_view': 'album_view',
-    }
-    collection_view_map = {  # OLD : NEW
-        'view': 'listing_view',
-        'standard_view': 'listing_view',
-        'collection_view': 'listing_view',
-        'all_content': 'full_view',
-        'thumbnail_view': 'album_view',
-    }
-    _fixup('Folder', folder_view_map)
-    _fixup('Plone Site', folder_view_map)
-    _fixup('Collection', collection_view_map)
+            _fixup(obj, LISTING_VIEW_MAPPING)
+        if portal_type == 'Plone Site':
+            _fixup(context, LISTING_VIEW_MAPPING)

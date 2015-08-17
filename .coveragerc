@@ -1,9 +1,6 @@
 [report]
 omit =
-    /home/*/.buildout/eggs/*
-    /usr/*
-    bin/test
-    buildout-cache/eggs/*
-    eggs/*
-    parts/*
+    */test*
 
+include =
+    plone/*

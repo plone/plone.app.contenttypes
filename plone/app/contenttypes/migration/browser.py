@@ -6,6 +6,7 @@ from Products.CMFDefault.DublinCore import DefaultDublinCoreImpl
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
 from Products.contentmigration.utils import patch, undoPatch
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
@@ -23,12 +24,17 @@ from plone.app.contenttypes.migration.patches import \
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
+from plone.app.contenttypes.migration.utils import restore_references
+from plone.app.contenttypes.migration.utils import store_references
 from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
 from plone.app.contenttypes.utils import DEFAULT_TYPES
+from plone.app.contenttypes.upgrades import use_new_view_names
+from plone.app.controlpanel.editing import IEditingSchema
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.registry.interfaces import IRegistry
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from z3c.form import button
@@ -38,9 +44,9 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
 from zope.component import getMultiAdapter
+from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import Interface
-from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
 
 import logging
 import pkg_resources
@@ -149,14 +155,30 @@ class MigrateFromATContentTypes(BrowserView):
 
         stats_before = self.stats()
         starttime = datetime.now()
+
+        # store references on the portal
+        if migrate_references:
+            store_references(portal)
         catalog = portal.portal_catalog
 
         # switch linkintegrity temp off
         ptool = queryUtility(IPropertiesTool)
         site_props = getattr(ptool, 'site_properties', None)
-        link_integrity = site_props.getProperty('enable_link_integrity_checks',
-                                                False)
-        site_props.manage_changeProperties(enable_link_integrity_checks=False)
+        link_integrity_in_props = False
+        if site_props and site_props.hasProperty(
+                'enable_link_integrity_checks'):
+            link_integrity_in_props = True
+            link_integrity = site_props.getProperty(
+                'enable_link_integrity_checks', False)
+            site_props.manage_changeProperties(
+                enable_link_integrity_checks=False)
+        else:
+            # Plone 5
+            registry = getUtility(IRegistry)
+            editing_settings = registry.forInterface(
+                IEditingSchema, prefix='plone')
+            link_integrity = editing_settings.enable_link_integrity_checks
+            editing_settings.enable_link_integrity_checks = False
 
         # switch of setModificationDate on changes
         self.patchNotifyModified()
@@ -214,15 +236,22 @@ class MigrateFromATContentTypes(BrowserView):
         # if there are blobnewsitems we just migrate them silently.
         migration.migrate_blobnewsitems(portal)
 
+        # make sure the view-methods on the plone site are updated
+        use_new_view_names(portal, types_to_fix=['Plone Site'])
+
         catalog.clearFindAndRebuild()
 
-        # rebuild catalog, restore references and cleanup
-        migration.restoreReferences(portal, migrate_references, content_types)
+        # restore references
+        if migrate_references:
+            restore_references(portal)
 
         # switch linkintegrity back to what it was before migrating
-        site_props.manage_changeProperties(
-            enable_link_integrity_checks=link_integrity
-        )
+        if link_integrity_in_props:
+            site_props.manage_changeProperties(
+                enable_link_integrity_checks=link_integrity
+            )
+        else:
+            editing_settings.enable_link_integrity_checks = link_integrity
 
         # switch on setModificationDate on changes
         self.resetNotifyModified()

@@ -12,6 +12,7 @@ from plone.app.contenttypes.testing import (
 )
 
 from plone.app.contenttypes.upgrades import update_fti
+from plone.app.contenttypes.upgrades import use_new_view_names
 
 
 class UpgradeTo1000IntegrationTest(unittest.TestCase):
@@ -131,3 +132,55 @@ class UpgradeTo1000IntegrationTest(unittest.TestCase):
             fti.model_file,
             'plone.app.contenttypes.schema:news_item.xml'
         )
+
+    def test_use_new_view_names(self):
+        old_methods = (
+            'atct_album_view',
+            'folder_summary_view',
+            'folder_tabular_view',
+            'folder_listing',
+        )
+
+        new_methods = (
+            'listing_view',
+            'summary_view',
+            'tabular_view',
+            'full_view',
+            'album_view',
+            'event_listing'
+        )
+
+        self.portal.invokeFactory('Folder', 'folder1')
+        folder = self.portal['folder1']
+        folder.setLayout('folder_summary_view')
+        folder_fti = queryUtility(IDexterityFTI, name='Folder')
+        folder_fti.manage_changeProperties(
+            view_methods=old_methods,
+            default_view='folder_summary_view',
+        )
+
+        portal_fti = self.portal.portal_types.get('Plone Site')
+        portal_fti.manage_changeProperties(
+            view_methods=old_methods,
+            default_view='folder_listing',
+        )
+        self.portal.setLayout('folder_tabular_view')
+        self.portal.setDefaultPage('folder1')
+
+        self.assertEqual(folder_fti.view_methods, old_methods)
+        self.assertEqual(folder_fti.default_view, 'folder_summary_view')
+
+        self.assertEqual(portal_fti.view_methods, old_methods)
+        self.assertEqual(portal_fti.default_view, 'folder_listing')
+
+        # run upgrade-step
+        use_new_view_names(self.portal, types_to_fix=['Folder', 'Plone Site'])
+
+        self.assertEqual(folder_fti.view_methods, new_methods)
+        self.assertEqual(folder_fti.default_view, 'summary_view')
+        self.assertEqual(folder.getLayout(), 'summary_view')
+
+        self.assertEqual(self.portal.getLayout(), 'tabular_view')
+        self.assertEqual(self.portal.getDefaultPage(), 'folder1')
+        self.assertEqual(portal_fti.default_view, 'listing_view')
+        self.assertEqual(portal_fti.view_methods, new_methods)

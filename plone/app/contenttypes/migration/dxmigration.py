@@ -4,7 +4,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
-from plone.app.contenttypes.migration import datetime_fixer
+from plone.app.contenttypes.migration.field_migrators import datetime_fixer
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
@@ -128,14 +128,13 @@ def get_portal_type_name_string(obj):
 
 
 def migrate_base_class_to_new_class(obj,
-                                    indexes=[
-                                        'is_folderish',
-                                        'object_provides',
-                                    ],
+                                    indexes=None,
                                     old_class_name='',
                                     new_class_name='',
                                     migrate_to_folderish=False,
                                     ):
+    if indexes is None:
+        indexes = ['is_folderish', 'object_provides']
     if not old_class_name:
         old_class_name = get_old_class_name_string(obj)
     if not new_class_name:

@@ -1,0 +1,154 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+<metal:block fill-slot="top_slot"
+    tal:define="dummy python:request.set('disable_border', 1);
+                disable_column_two python:request.set('disable_plone.rightcolumn', 1);
+                disable_column_two python:request.set('disable_plone.leftcolumn', 1);
+                portal_state context/@@plone_portal_state;
+                portal_url portal_state/portal_url">
+  <link rel="stylesheet" type="text/css" href="" media="screen" tal:attributes="href string:${portal_url}/++resource++pac_migrator.css">
+</metal:block>
+
+<body>
+
+<metal:custom_title fill-slot="content-title">
+  <h1 class="documentFirstHeading" i18n:translate="">Custom types migration control panel</h1>
+</metal:custom_title>
+<metal:custom_desc fill-slot="content-description">
+  <div class="documentDescription" i18n:translate="">Migrate custom Archetypes content types to any available Dexterity content types.</div>
+</metal:custom_desc>
+
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core"
+             tal:define="at_types view/getAllArchetypeTypes">
+  <div class="important">
+    <h2 i18n:translate="">Important</h2>
+    <p i18n:translate="">Before migrating your content please read the <a href="https://github.com/plone/plone.app.contenttypes#migration" i18n:name="migrationsection" i18n:translate="">migration-section in the documentation of plone.app.contenttypes</a></p>
+
+
+    <h3>Migrating content that is translated with LinguaPlone</h3>
+    <p i18n:translate="">Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlone to <a i18n:name="pam" href="http://pypi.python.org/pypi/plone.app.multilingual">plone.app.multilingual</a>. The migration from Products.LinguaPlone to plone.app.multilingual should happen before the migration from Archetypes to plone.app.contenttypes. For details on the migration see the <a i18n:name="documentation" i18n:translate="" href="http://pypi.python.org/pypi/plone.app.multilingual#linguaplone-migration">documentation</a></p>
+    <h3 i18n:translate="">Note about how long it might take</h3>
+    <p i18n:translate="">Depending of the number of archetypes in your portal, it may take a <span class="strong">really</span> long time for the migration to be done.
+      Stay calm and be patient.</p>
+    </div>
+    <script type="text/javascript">
+        // function that toggle an icon by calling the p_viewName view
+        function getDXFields(at_typename, dx_typename) {
+          at_safe = at_typename.replace(' ', '_space_');
+          $.ajax({
+            url: '@@display_dx_fields',
+            dataType: 'html',
+            data: {'at_typename': at_typename,
+                   'dx_typename': dx_typename},
+            cache: false,
+            success: function(data) {
+                var $div = $('#hook_at_fti_' + at_safe);
+                $div.empty();
+                $div.html(data);
+              },
+            error: function(jqXHR, textStatus, errorThrown) {
+              }
+            });
+        }
+        $(document).ready(function () {
+            $('input[name="form.button.Test"]').on( "click", function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                var tested_type = $this.parent().siblings('select.selectedType');
+                $this.parent().removeClass('error');
+                $this.parent().siblings('.fieldsMapping').removeClass('error');
+                $this.parent().removeClass('success');
+                $this.parent().addClass('testing');
+                $.ajax({
+                    url: '@@test_migration?' + $(this).parents('form').serialize() + '&tested_type=' + tested_type.attr('name'),
+                    dataType: 'json',
+                    success: function(data) {
+                        $this.parent().removeClass('testing');
+                        if(data.status === 'error') {
+                            $this.parent().addClass('error');
+                            $this.parent().siblings('.fieldsMapping').addClass('error');
+                        }
+                        else {
+                            $this.parent().addClass('success');
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $this.parent().removeClass('testing');
+                        $this.parent().addClass('error');
+                        $this.parent().siblings('.fieldsMapping').addClass('error');
+                    }
+                });
+            });
+        });
+    </script>
+    <tal:block condition="at_types">
+        <div id="migration-options">
+          <h2 i18n:translate="">Migrate contents</h2>
+          <div
+            class="documentDescription">
+            <p i18n:translate="">You can select which AT content type you want to migrate to an existing DX content type.</p>
+            <form id="migrateCustomATForm" method="post"
+                  tal:attributes="action python:context.absolute_url() + '/@@custom_migration'">
+            <table>
+                <tr tal:repeat="at_type at_types">
+                  <tal:block tal:define="safe_at_id python:at_type['id'].replace(' ', '_space_')">
+                    <td valign="top">
+                        <p tal:content="at_type/title" style="font-weight: bold;">AT content type title</p>
+                        <tal:block repeat="field python: view.getFieldsForATType(at_type)">
+                            <p tal:content="field/title" i18n:translate="">Field name</p>
+                            <input type="hidden" tal:attributes="name string:${safe_at_id}:list;
+                                                                 value string:${field/id}__type__${field/type};" />
+                        </tal:block>
+                    </td>
+                    <td valign="top">
+                        <select tal:attributes="onChange string:javascript:getDXFields(at_typename='${at_type/id}', this.value);
+                                                name string:dx_select_${safe_at_id};"
+                                class="selectedType">
+                            <option value="" selected="selected" i18n:translate="">Do not migrate</option>
+                            <option tal:repeat="dx_type view/getDXFTIs"
+                                    tal:attributes="value dx_type/id"
+                                    tal:content="dx_type/title"
+                                    i18n:translate="">DX type name</option>
+                        </select>
+                        <div id="hook_at_fti_News_Item"
+                             class="field fieldsMapping"
+                             tal:attributes="id string:hook_at_fti_${safe_at_id}" />
+                        <br />
+                        <div class="testConfig">
+                            <input type="submit"
+                                   name="form.button.Test"
+                                   class="context"
+                                   value="Test configuration"
+                                   i18n:attributes="value"
+                                   i18n:domain="plone"/>&nbsp;
+                        </div>
+                    </td>
+                  </tal:block>
+                </tr>
+            </table>
+            <div>
+              <br />
+              <input type="submit" name="form.button.Migrate" class="context" value="Migrate" i18n:attributes="value" i18n:domain="plone"/>&nbsp;
+              <input type="submit" name="form.button.Cancel" class="standalone" value="Cancel" i18n:attributes="value" i18n:domain="plone"/>
+            </div>
+            </form>
+          </div>
+        </div>
+    </tal:block>
+  <tal:block condition="not:at_types">
+    <div class="important">
+      <h2 i18n:translate="">Warning</h2>
+      <p i18n:translate="" class="strong">No content to migrate.</p>
+  </tal:block>
+
+</metal:block>
+</metal:content-core>
+</body>
+</html>

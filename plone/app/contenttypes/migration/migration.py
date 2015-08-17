@@ -7,45 +7,41 @@ only in the setuptools extra_requiers [migrate_atct]. Importing this
 module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
 '''
-from Products.ATContentTypes.interfaces.interfaces import IATContentType
-from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode, safe_hasattr
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
-from copy import deepcopy
-from persistent.list import PersistentList
+from Products.contentmigration.walker import CustomQueryWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
-from plone.app.contenttypes.migration import datetime_fixer
 from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
-from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.contenttypes.migration.utils import copy_contentrules
-from plone.app.contenttypes.migration.utils import move_comments
 from plone.app.contenttypes.migration.utils import migrate_leadimage
-from plone.app.contenttypes.utils import DEFAULT_TYPES
-from plone.app.textfield.value import RichTextValue
-from plone.app.uuid.utils import uuidToObject
+from plone.app.contenttypes.migration.utils import move_comments
+from plone.app.contenttypes.migration.utils import migrate_portlets
+from plone.app.contenttypes.migration.field_migrators import FIELDS_MAPPING
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_datetimefield
+from plone.app.contenttypes.migration.field_migrators import migrate_filefield
+from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_blobimagefield
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_richtextfield
+from plone.app.contenttypes.migration.field_migrators import \
+    migrate_simplefield
+from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.dexterity.interfaces import IDexterityContent
-from plone.event.utils import default_timezone
-from plone.namedfile.file import NamedBlobFile
-from plone.namedfile.file import NamedBlobImage
-from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
-from plone.portlets.interfaces import IPortletAssignmentMapping
-from plone.portlets.interfaces import IPortletManager
-from z3c.relationfield import RelationValue
-from zope.annotation.interfaces import IAnnotations
+from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
-from zope.component import getSiteManager
-from zope.component import getUtility
+from zope.component.hooks import getSite
 from zope.interface import Interface
 from zope.interface import implementer
-from zope.intid.interfaces import IIntIds
-
 import logging
+import transaction
+
 logger = logging.getLogger(__name__)
 
 
@@ -54,184 +50,6 @@ def migrate(portal, migrator):
     to have its output after migration"""
     walker = CatalogWalker(portal, migrator)()
     return walker
-
-
-def migrate_portlets(src_obj, dst_obj):
-    """Copy portlets for all available portletmanagers from one object
-    to another.
-    Also takes blocked portlet settings into account, keeps hidden portlets
-    hidden and skips broken assignments.
-    """
-
-    # also take custom portlet managers into account
-    managers = [reg.name for reg in getSiteManager().registeredUtilities()
-                if reg.provided == IPortletManager]
-    # faster, but no custom managers
-    # managers = [u'plone.leftcolumn', u'plone.rightcolumn']
-
-    # copy information which categories are hidden for which manager
-    blacklist_status = IAnnotations(src_obj).get(
-        CONTEXT_BLACKLIST_STATUS_KEY, None)
-    if blacklist_status is not None:
-        IAnnotations(dst_obj)[CONTEXT_BLACKLIST_STATUS_KEY] = \
-            deepcopy(blacklist_status)
-
-    # copy all portlet assignments (visibilty is stored as annotation
-    # on the assignments and gets copied here too)
-    for manager in managers:
-        column = getUtility(IPortletManager, manager)
-        mappings = getMultiAdapter((src_obj, column),
-                                   IPortletAssignmentMapping)
-        for key, assignment in mappings.items():
-            # skip possibly broken portlets here
-            if not hasattr(assignment, '__Broken_state__'):
-                add_portlet(dst_obj, assignment, key, manager)
-            else:
-                logger.warn(u'skipping broken portlet assignment {0} '
-                            'for manager {1}'.format(key, manager))
-
-
-def restore_refs(obj):
-    """Restore references stored in the attribute _relatedItems.
-    """
-    intids = getUtility(IIntIds)
-    try:
-        if not getattr(obj, 'relatedItems', None):
-            obj.relatedItems = PersistentList()
-
-        elif type(obj.relatedItems) != type(PersistentList()):
-            obj.relatedItems = PersistentList(obj.relatedItems)
-
-        for uuid in obj._relatedItems:
-            to_obj = uuidToObject(uuid)
-            to_id = intids.getId(to_obj)
-            obj.relatedItems.append(RelationValue(to_id))
-            logger.info('Restored Relation from %s to %s' % (obj, to_obj))
-    except AttributeError:
-        pass
-
-
-def restore_backrefs(portal, obj):
-    """Restore backreferences stored in the attribute _backrefs.
-    """
-    intids = getUtility(IIntIds)
-    uid_catalog = getToolByName(portal, 'uid_catalog')
-    try:
-        backrefobjs = [uuidToObject(uuid) for uuid in obj._backrefs]
-        for backrefobj in backrefobjs:
-            # Dexterity and
-            if IDexterityContent.providedBy(backrefobj):
-                relitems = getattr(backrefobj, 'relatedItems', None)
-                if not relitems:
-                    backrefobj.relatedItems = PersistentList()
-                elif type(relitems) != type(PersistentList()):
-                    backrefobj.relatedItems = PersistentList(
-                        obj.relatedItems
-                    )
-                to_id = intids.getId(obj)
-                backrefobj.relatedItems.append(RelationValue(to_id))
-
-            # Archetypes
-            elif IATContentType.providedBy(backrefobj):
-                # reindex UID so we are able to set the reference
-                path = '/'.join(obj.getPhysicalPath())
-                uid_catalog.catalog_object(obj, path)
-                backrefobj.setRelatedItems(obj)
-            logger.info(
-                'Restored BackRelation from %s to %s' % (backrefobj, obj))
-    except AttributeError:
-        pass
-
-
-def restore_reforder(obj):
-    """Restore order of references stored in the attribute _relatedItemsOrder.
-    """
-    if not hasattr(obj, '_relatedItemsOrder'):
-        # Nothing to do
-        return
-    relatedItemsOrder = obj._relatedItemsOrder
-    uid_position_map = dict([(y, x) for x, y in enumerate(relatedItemsOrder)])
-    key = lambda rel: uid_position_map.get(rel.to_object.UID(), 0)
-    obj.relatedItems = sorted(obj.relatedItems, key=key)
-
-
-def cleanup_stored_refs(obj):
-    """Cleanup new dx item."""
-    if safe_hasattr(obj, '_relatedItems'):
-        del obj._relatedItems
-    if safe_hasattr(obj, '_backrefs'):
-        del obj._backrefs
-    if safe_hasattr(obj, '_relatedItemsOrder'):
-        del obj._relatedItemsOrder
-
-
-def restoreReferences(portal,
-                      migrate_references=True,
-                      content_types=DEFAULT_TYPES):
-    """Iterate over new Dexterity items and restore Dexterity References.
-    """
-    catalog = getToolByName(portal, "portal_catalog")
-    results = catalog.searchResults(
-        object_provides=IDexterityContent.__identifier__,
-        portal_type=content_types)
-
-    for brain in results:
-        obj = brain.getObject()
-        if migrate_references:
-            restore_refs(obj)
-            restore_backrefs(portal, obj)
-            restore_reforder(obj)
-        cleanup_stored_refs(obj)
-
-
-class ReferenceMigrator(object):
-
-    def beforeChange_relatedItemsOrder(self):
-        """ Store Archetype relations as target uids on the old archetype
-            object to restore the order later.
-            Because all relations to deleted objects will be lost, we iterate
-            over all backref objects and store the relations of the backref
-            object in advance.
-            This is automatically called by Products.contentmigration.
-        """
-        # Relations UIDs:
-        if not hasattr(self.old, "_relatedItemsOrder"):
-            relatedItems = self.old.getRelatedItems()
-            relatedItemsOrder = [item.UID() for item in relatedItems]
-            self.old._relatedItemsOrder = PersistentList(relatedItemsOrder)
-
-        # Backrefs Relations UIDs:
-        reference_cat = getToolByName(self.old, REFERENCE_CATALOG)
-        backrefs = reference_cat.getBackReferences(self.old,
-                                                   relationship="relatesTo")
-        backref_objects = map(lambda x: x.getSourceObject(), backrefs)
-        for obj in backref_objects:
-            if obj.portal_type != self.src_portal_type:
-                continue
-            if not hasattr(obj, "_relUids"):
-                relatedItems = obj.getRelatedItems()
-                relatedItemsOrder = [item.UID() for item in relatedItems]
-                obj._relatedItemsOrder = PersistentList(relatedItemsOrder)
-
-    def migrate_at_relatedItems(self):
-        """ Store Archetype relations as target uids on the dexterity object
-            for later restore. Backrelations are saved as well because all
-            relation to deleted objects would be lost.
-        """
-        # Relations:
-        relItems = self.old.getRelatedItems()
-        relUids = [item.UID() for item in relItems]
-        self.new._relatedItems = relUids
-
-        # Backrefs:
-        reference_catalog = getToolByName(self.old, REFERENCE_CATALOG)
-
-        backrefs = [i.sourceUID for i in reference_catalog.getBackReferences(
-            self.old, relationship="relatesTo")]
-        self.new._backrefs = backrefs
-
-        # Order:
-        self.new._relatedItemsOrder = self.old._relatedItemsOrder
 
 
 class ICustomMigrator(Interface):
@@ -261,7 +79,7 @@ class BaseCustomMigator(object):
         return
 
 
-class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
+class ATCTContentMigrator(CMFItemMigrator):
     """Base for contentish ATCT
     """
 
@@ -270,6 +88,17 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
         logger.info(
             "Migrating {0}".format(
                 '/'.join(self.old.getPhysicalPath())))
+
+    def beforeChange_store_default_page(self):
+        """If the item is the default page store that info to set it again.
+
+        Products.CMFDynamicViewFTI.browserdefault.check_default_page
+        would unset the default page during the migration.
+        """
+        context_state = getMultiAdapter(
+            (self.old, self.old.REQUEST), name=u'plone_context_state')
+        if context_state.is_default_page():
+            setattr(self.old, '_migration_is_default_page', True)
 
     def beforeChange_store_comments_on_portal(self):
         """Comments from plone.app.discussion are lost when the
@@ -304,8 +133,14 @@ class ATCTContentMigrator(CMFItemMigrator, ReferenceMigrator):
         portal = getToolByName(self.old, 'portal_url').getPortalObject()
         move_comments(portal, self.new)
 
+    def last_migrate_default_page(self):
+        """If the item was the default page set it again."""
+        if getattr(self.old, '_migration_is_default_page', False):
+            parent = self.new.__parent__
+            parent.setDefaultPage(self.new.id)
 
-class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
+
+class ATCTFolderMigrator(CMFFolderMigrator):
     """Base for folderish ATCT
     """
 
@@ -347,6 +182,23 @@ class ATCTFolderMigrator(CMFFolderMigrator, ReferenceMigrator):
         portal = getToolByName(self.old, 'portal_url').getPortalObject()
         move_comments(portal, self.new)
 
+    def last_migrate_layout(self):
+        """Migrate the layout (view method).
+
+        This needs to be done last, as otherwise our changes in
+        migrate_criteria may get overriden by a later call to
+        migrate_properties.
+        """
+        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        if old_layout in LISTING_VIEW_MAPPING.keys():
+            default_page = self.old.getDefaultPage() or \
+                getattr(self.old, 'default_page')
+            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
+            if default_page:
+                # any defaultPage is switched of by setLayout
+                # and needs to set again
+                self.new.setDefaultPage(default_page)
+
 
 class DocumentMigrator(ATCTContentMigrator):
 
@@ -356,14 +208,7 @@ class DocumentMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        field = self.old.getField('text')
-        mime_type = field.getContentType(self.old)
-        raw_text = safe_unicode(field.getRaw(self.old))
-        if raw_text.strip() == '':
-            return
-        richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
-                                 outputMimeType='text/x-html-safe')
-        self.new.text = richtext
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
 
 
 def migrate_documents(portal):
@@ -378,12 +223,7 @@ class FileMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        old_file = self.old.getField('file').get(self.old)
-        filename = safe_unicode(old_file.filename)
-        namedblobfile = NamedBlobFile(contentType=old_file.content_type,
-                                      data=old_file.data,
-                                      filename=filename)
-        self.new.file = namedblobfile
+        migrate_filefield(self.old, self.new, 'file', 'file')
 
 
 def migrate_files(portal):
@@ -410,13 +250,7 @@ class ImageMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        old_image = self.old.getField('image').get(self.old)
-        if old_image == '':
-            return
-        filename = safe_unicode(old_image.filename)
-        namedblobimage = NamedBlobImage(data=old_image.data,
-                                        filename=filename)
-        self.new.image = namedblobimage
+        migrate_imagefield(self.old, self.new, 'image', 'image')
 
 
 def migrate_images(portal):
@@ -443,15 +277,14 @@ class LinkMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        remoteUrl = self.old.getField('remoteUrl').get(self.old)
-        self.new.remoteUrl = remoteUrl
+        migrate_simplefield(self.old, self.new, 'remoteUrl', 'remoteUrl')
 
 
 def migrate_links(portal):
     return migrate(portal, LinkMigrator)
 
 
-class NewsItemMigrator(DocumentMigrator):
+class NewsItemMigrator(ATCTContentMigrator):
 
     src_portal_type = 'News Item'
     src_meta_type = 'ATNewsItem'
@@ -459,29 +292,16 @@ class NewsItemMigrator(DocumentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        # migrate the text
-        super(NewsItemMigrator, self).migrate_schema_fields()
-
-        # migrate the rest of the Schema
-        old_image = self.old.getField('image').get(self.old)
-        if old_image == '':
-            return
-        filename = safe_unicode(old_image.filename)
-        old_image_data = old_image.data
-        if safe_hasattr(old_image_data, 'data'):
-            old_image_data = old_image_data.data
-        namedblobimage = NamedBlobImage(data=old_image_data,
-                                        filename=filename)
-        self.new.image = namedblobimage
-        self.new.image_caption = safe_unicode(
-            self.old.getField('imageCaption').get(self.old))
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+        migrate_imagefield(self.old, self.new, 'image', 'image')
+        migrate_simplefield(self.old, self.new, 'imageCaption', 'imageCaption')
 
 
 def migrate_newsitems(portal):
     return migrate(portal, NewsItemMigrator)
 
 
-class BlobNewsItemMigrator(NewsItemMigrator):
+class BlobNewsItemMigrator(ATCTContentMigrator):
     """ Migrator for NewsItems with blobs based on the implementation in
         https://github.com/plone/plone.app.blob/pull/2
     """
@@ -490,6 +310,11 @@ class BlobNewsItemMigrator(NewsItemMigrator):
     src_meta_type = 'ATBlobContent'
     dst_portal_type = 'News Item'
     dst_meta_type = None  # not used
+
+    def migrate_schema_fields(self):
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+        migrate_blobimagefield(self.old, self.new, 'image', 'image')
+        migrate_simplefield(self.old, self.new, 'imageCaption', 'imageCaption')
 
 
 def migrate_blobnewsitems(portal):
@@ -512,7 +337,7 @@ def migrate_folders(portal):
     return migrate(portal, FolderMigrator)
 
 
-class CollectionMigrator(DocumentMigrator):
+class CollectionMigrator(ATCTContentMigrator):
     """Migrator for at-based collections provided by plone.app.collection
     to
     """
@@ -522,35 +347,27 @@ class CollectionMigrator(DocumentMigrator):
     dst_portal_type = 'Collection'
     dst_meta_type = None  # not used
 
-    view_methods_mapping = {
-        'folder_listing': 'standard_view',
-        'folder_summary_view': 'summary_view',
-        'folder_full_view': 'all_content',
-        'folder_tabular_view': 'tabular_view',
-        'atct_album_view': 'thumbnail_view',
-        'atct_topic_view': 'standard_view',
-        }
-
     def migrate_schema_fields(self):
-        # migrate the richtext
-        super(CollectionMigrator, self).migrate_schema_fields()
-
-        # migrate the rest of the schema into the behavior
-        wrapped = ICollection(self.new)
-        wrapped.query = self.old.query
-        wrapped.sort_on = self.old.sort_on
-        wrapped.sort_reversed = self.old.sort_reversed
-        wrapped.limit = self.old.limit
-        wrapped.customViewFields = self.old.customViewFields
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+        wrapped_new = ICollection(self.new)
+        # using migrate_simplefield on 'query' returns the ContentListing obj
+        wrapped_new.query = self.old.query
+        migrate_simplefield(self.old, wrapped_new, 'sort_on', 'sort_on')
+        migrate_simplefield(
+            self.old, wrapped_new, 'sort_reversed', 'sort_reversed')
+        migrate_simplefield(self.old, wrapped_new, 'limit', 'limit')
+        migrate_simplefield(
+            self.old, wrapped_new, 'customViewFields', 'customViewFields')
 
     def last_migrate_layout(self):
         """Migrate the layout (view method).
+
+        This needs to be done last, as otherwise our changes may get overriden
+        by a later call to migrate_properties.
         """
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        layout = self.view_methods_mapping.get(old_layout)
-        if layout:
-            self.new.setLayout(layout)
-
+        if old_layout in LISTING_VIEW_MAPPING:
+            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
 
 def migrate_collections(portal):
     return migrate(portal, CollectionMigrator)
@@ -565,61 +382,133 @@ class EventMigrator(ATCTContentMigrator):
     dst_meta_type = None  # not used
 
     def migrate_schema_fields(self):
-        old_start = self.old.getField('startDate').get(self.old)
-        old_end = self.old.getField('endDate').get(self.old)
-        old_location = self.old.getField('location').get(self.old)
-        old_attendees = self.old.getField('attendees').get(self.old)
-        old_eventurl = self.old.getField('eventUrl').get(self.old)
-        old_contactname = self.old.getField('contactName').get(self.old)
-        old_contactemail = self.old.getField('contactEmail').get(self.old)
-        old_contactphone = self.old.getField('contactPhone').get(self.old)
-        old_text_field = self.old.getField('text')
-        raw_text = safe_unicode(old_text_field.getRaw(self.old))
-        mime_type = old_text_field.getContentType(self.old)
-        if raw_text.strip() == '':
-            raw_text = ''
-        old_richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
-                                     outputMimeType='text/x-html-safe')
-
-        wholeDay = None
-        if self.old.getField('wholeDay'):
-            wholeDay = self.old.getField('wholeDay').get(self.old)
-
-        openEnd = None
-        if self.old.getField('openEnd'):
-            openEnd = self.old.getField('openEnd').get(self.old)
-
-        recurrence = None
-        if self.old.getField('recurrence'):
-            recurrence = self.old.getField('recurrence').get(self.old)
-
-        if self.old.getField('timezone'):
-            old_timezone = self.old.getField('timezone').get(self.old)
-        else:
-            old_timezone = default_timezone(fallback='UTC')
-
-        # IEventBasic
-        self.new.start = datetime_fixer(old_start.asdatetime(), old_timezone)
-        self.new.end = datetime_fixer(old_end.asdatetime(), old_timezone)
-
-        if wholeDay is not None:
-            self.new.whole_day = wholeDay  # IEventBasic
-        if openEnd is not None:
-            self.new.open_end = openEnd  # IEventBasic
-        if recurrence is not None:
-            self.new.recurrence = recurrence  # IEventRecurrence
-
-        self.new.location = old_location  # IEventLocation
-        self.new.attendees = old_attendees  # IEventAttendees
-        self.new.event_url = old_eventurl  # IEventContact
-        self.new.contact_name = old_contactname  # IEventContact
-        self.new.contact_email = old_contactemail  # IEventContact
-        self.new.contact_phone = old_contactphone  # IEventContact
-        # Copy the entire richtext object, not just it's representation
-        self.new.text = old_richtext
+        migrate_datetimefield(self.old, self.new, 'startDate', 'start')
+        migrate_datetimefield(self.old, self.new, 'endDate', 'end')
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+        migrate_simplefield(self.old, self.new, 'location', 'location')
+        migrate_simplefield(self.old, self.new, 'attendees', 'attendees')
+        migrate_simplefield(self.old, self.new, 'eventUrl', 'event_url')
+        migrate_simplefield(self.old, self.new, 'contactName', 'contact_name')
+        migrate_simplefield(
+            self.old, self.new, 'contactEmail', 'contact_email')
+        migrate_simplefield(
+            self.old, self.new, 'contactPhone', 'contact_phone')
+        migrate_simplefield(self.old, self.new, 'wholeDay', 'whole_day')
+        migrate_simplefield(self.old, self.new, 'openEnd', 'open_end')
+        migrate_simplefield(self.old, self.new, 'recurrence', 'recurrence')
 
 
 def migrate_events(portal):
     migrate(portal, DXOldEventMigrator)
     migrate(portal, EventMigrator)
     migrate(portal, DXEventMigrator)
+
+
+def makeCustomATMigrator(
+    context,
+    src_type,
+    dst_type,
+    fields_mapping,
+    is_folderish=False,
+    dry_run=False
+):
+    """ generate a migrator for the given at-based folderish portal type """
+
+    base_class = ATCTContentMigrator
+    if is_folderish:
+        base_class = ATCTFolderMigrator
+
+    class CustomATMigrator(base_class):
+
+        src_portal_type = src_type
+        dst_portal_type = dst_type
+        dry_run_mode = dry_run
+
+        def migrate_schema_fields(self):
+            for fields_dict in fields_mapping:
+                at_fieldname = fields_dict.get('AT_field_name')
+                dx_fieldname = fields_dict.get('DX_field_name')
+                dx_fieldtype = fields_dict.get('DX_field_type')
+                migration_field_method = migrate_simplefield
+                if dx_fieldtype in FIELDS_MAPPING:
+                    # Richtext, Image and File have custom migraton_methods
+                    migration_field_method = FIELDS_MAPPING[dx_fieldtype]
+                migration_field_method(src_obj=self.old,
+                                       dst_obj=self.new,
+                                       src_fieldname=at_fieldname,
+                                       dst_fieldname=dx_fieldname)
+
+        def last_migrate_check(self):
+            """
+            BBB to be checked
+            if there is an error with the fields, an exception will be raised.
+            """
+            if self.dry_run_mode:
+                view = getMultiAdapter(
+                    (self.new, self.new.REQUEST), name="view")
+                view()
+
+    return CustomATMigrator
+
+
+def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
+    """
+    Try to get types infos from archetype_tool, then set a migrator an pass it
+    given values. There is a dry_run mode that allows to check the success of
+    a migration without committing.
+    """
+    portal = getSite()
+
+    # if the type still exists get the src_meta_type from the portal_type
+    portal_types = getToolByName(portal, 'portal_types')
+    fti = portal_types.get(src_type, None)
+    # Check if the fti was removed or replaced by a DX-implementation
+    if fti is None or IDexterityFTI.providedBy(fti):
+        # Get the needed info from an instance of the type
+        catalog = portal.portal_catalog
+        brain = catalog(portal_type=src_type, sort_limit=1)[0]
+        src_obj = brain.getObject()
+        if IDexterityContent.providedBy(src_obj):
+            logger.error(
+                '%s should not be dexterity object!' % src_obj.absolute_url())
+        is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
+        src_meta_type = src_obj.meta_type
+    else:
+        # Get info from at-fti
+        src_meta_type = fti.content_meta_type
+        archetype_tool = getToolByName(portal, 'archetype_tool', None)
+        for info in archetype_tool.listRegisteredTypes():
+            # lookup registered type in archetype_tool with meta_type
+            # because several portal_types can use same meta_type
+            if info.get('meta_type') == src_meta_type:
+                klass = info.get('klass', None)
+                is_folderish = klass.isPrincipiaFolderish
+
+    migrator = makeCustomATMigrator(context=portal,
+                                    src_type=src_type,
+                                    dst_type=dst_type,
+                                    fields_mapping=fields_mapping,
+                                    is_folderish=is_folderish,
+                                    dry_run=dry_run)
+    if migrator:
+        migrator.src_meta_type = src_meta_type
+        migrator.dst_meta_type = ''
+        walker_settings = {'portal': portal,
+                           'migrator': migrator,
+                           'src_portal_type': src_type,
+                           'dst_portal_type': dst_type,
+                           'src_meta_type': src_meta_type,
+                           'dst_meta_type': '',
+                           'use_savepoint': True}
+        if dry_run:
+            walker_settings['limit'] = 1
+        walker = CustomQueryWalker(**walker_settings)
+        walker.go()
+        walker_infos = {'errors': walker.errors,
+                        'msg': walker.getOutput().splitlines(),
+                        'counter': walker.counter}
+        for error in walker.errors:
+            logger.error(error.get('message'))
+        if dry_run:
+            transaction.abort()
+        return walker_infos
