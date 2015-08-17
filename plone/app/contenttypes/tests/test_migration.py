@@ -13,6 +13,7 @@ from plone.app.contenttypes.migration.utils import is_referenceable
 from plone.app.contenttypes.migration.utils import restore_references
 from plone.app.contenttypes.migration.utils import store_references
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.app.referenceablebehavior.referenceable import IReferenceable
@@ -42,6 +43,7 @@ from zope.schema.interfaces import IVocabularyFactory
 import json
 import os.path
 import time
+import transaction
 import unittest2 as unittest
 
 
@@ -1972,3 +1974,124 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
         self.browser.getControl('Update').click()
         self.assertIn(
             self.good_info_message_template.format(1), self.browser.contents)
+
+
+class MigrationFunctionalTests(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        app = self.layer['app']
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        self.request['URL'] = self.portal.absolute_url()
+        self.catalog = getToolByName(self.portal, "portal_catalog")
+        self.portal.acl_users.userFolderAddUser('admin',
+                                                'secret',
+                                                ['Manager'],
+                                                [])
+        login(self.portal, 'admin')
+        self.portal.portal_workflow.setDefaultChain(
+            "simple_publication_workflow")
+        self.portal_url = self.portal.absolute_url()
+
+        self.browser = Browser(app)
+        self.browser.handleErrors = False
+        self.browser.addHeader(
+            'Authorization',
+            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+        )
+
+    def tearDown(self):
+        try:
+            applyProfile(self.portal, 'plone.app.contenttypes:uninstall')
+        except KeyError:
+            pass
+
+    def test_pac_installer_cancel(self):
+        qi = self.portal.portal_quickinstaller
+        portal_types = self.portal.portal_types
+        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.browser.getControl('Cancel').click()
+        self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
+        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertEqual(self.browser.url, self.portal_url)
+
+    def test_pac_installer_without_content(self):
+        qi = self.portal.portal_quickinstaller
+        portal_types = self.portal.portal_types
+        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
+        self.assertIn('proceed to the migration-form?', self.browser.contents)
+        self.browser.getControl('Install').click()
+        self.assertTrue(IDexterityFTI.providedBy(portal_types['Document']))
+        self.assertTrue(IDexterityFTI.providedBy(portal_types['News Item']))
+        self.assertTrue(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertIn('Migration control panel', self.browser.contents)
+        self.assertIn('No content to migrate.', self.browser.contents)
+
+    def test_pac_installer_with_content(self):
+        # add some at content:
+        self.portal.invokeFactory('Document', 'doc1')
+        transaction.commit()
+        qi = self.portal.portal_quickinstaller
+        portal_types = self.portal.portal_types
+        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
+        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertIn('proceed to the migration-form?', self.browser.contents)
+        self.browser.getControl('Install').click()
+        self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
+        self.assertTrue(IDexterityFTI.providedBy(portal_types['News Item']))
+        self.assertTrue(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertIn('Migration control panel', self.browser.contents)
+        self.assertIn('You currently have <span class="strong">1</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
+
+    def test_atct_migration_form(self):
+        # setup session
+        # taken from Products.Sessions.tests.testSessionDataManager._populate
+        tf_name = 'temp_folder'
+        idmgr_name = 'browser_id_manager'
+        toc_name = 'temp_transient_container'
+        sdm_name = 'session_data_manager'
+        from Products.Sessions.BrowserIdManager import BrowserIdManager
+        from Products.Sessions.SessionDataManager import SessionDataManager
+        from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder  # noqa
+        from Products.Transience.Transience import TransientObjectContainer
+        bidmgr = BrowserIdManager(idmgr_name)
+        tf = MountedTemporaryFolder(tf_name, title="Temporary Folder")
+        toc = TransientObjectContainer(
+            toc_name,
+            title='Temporary Transient Object Container',
+            timeout_mins=20)
+        session_data_manager = SessionDataManager(
+            id=sdm_name,
+            path=tf_name+'/'+toc_name,
+            title='Session Data Manager',
+            requestName='TESTOFSESSION')
+        self.portal._setObject(idmgr_name, bidmgr)
+        self.portal._setObject(sdm_name, session_data_manager)
+        self.portal._setObject(tf_name, tf)
+        transaction.commit()
+        self.portal.temp_folder._setObject(toc_name, toc)
+
+        # add some at content:
+        self.portal.invokeFactory('Document', 'doc1')
+        transaction.commit()
+        qi = self.portal.portal_quickinstaller
+        portal_types = self.portal.portal_types
+        from zExceptions import NotFound
+        self.assertRaises(NotFound, self.browser.open, '%s/@@atct_migrator' % self.portal_url)  # noqa
+        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.browser.getControl('Install').click()
+        self.assertIn('You currently have <span class="strong">1</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
+
+        self.browser.getControl(name='form.widgets.content_types:list').value = ['Document']  # noqa
+        self.assertEqual(self.browser.getControl(name='form.widgets.migrate_references:list').value, ['selected'])  # noqa
+        self.browser.getControl(name='form.buttons.migrate').click()
+        self.assertIn('Congratulations! You migrated from Archetypes to Dexterity.', self.browser.contents)  # noqa
+        msg = "<td>ATDocument</td>\n      <td>Document</td>\n      <td>1</td>"
+        self.assertIn(msg, self.browser.contents)
