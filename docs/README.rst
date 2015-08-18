@@ -1,13 +1,13 @@
 .. contents::
 
-.. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
-    :target: https://crate.io/packages/plone.app.contenttypes
+.. image:: https://api.travis-ci.org/plone/plone.app.contenttypes.png?branch=1.1.x
+    :target: http://travis-ci.org/plone/plone.app.contenttypes
 
-.. image:: https://pypip.in/v/plone.app.contenttypes/badge.png
-    :target: https://crate.io/packages/plone.app.contenttypes
+.. image:: https://img.shields.io/badge/pypi-1.1b5-red.svg
+    :target: https://pypi.python.org/pypi/plone.app.contenttypes/1.1b5
 
-.. image:: https://travis-ci.org/plone/plone.app.contenttypes.svg?branch=1.1.x
-    :target: https://travis-ci.org/plone/plone.app.contenttypes
+ .. image:: https://coveralls.io/repos/plone/plone.app.contenttypes/badge.svg?branch=1.1.x&service=github
+    :target: https://coveralls.io/github/plone/plone.app.contenttypes?branch=1.1.x
 
 
 plone.app.contenttypes documentation
@@ -134,7 +134,7 @@ Dependencies
 
 * ``plone.app.portlets >= 2.5.1``. In older version the event-portlet will not work with the new event-type.
 
-These are the version-pinns for Plone 4.3.4:
+These are the version-pinns for Plone 4.3.6:
 
 .. code:: ini
 
@@ -142,9 +142,9 @@ These are the version-pinns for Plone 4.3.4:
     versions = versions
 
     [versions]
-    plone.app.event = 1.1.4
+    plone.app.event = <= 1.1.999
 
-Plone 4.3.3 also needs ``plone.app.portlets = 2.5.2``
+Plone 4.3.x also needs ``plone.app.portlets = 2.5.2``
 
 Plone-versions before 4.3.3 need to pinn more packages:
 
@@ -274,27 +274,21 @@ The old types that use leadimages are listed in the navigation-form with the com
 Migrating custom content
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Custom content-types (archetypes and dexterity) will not be touched by the migration plone.app.contenttypes and will continue to work as expected.
+During migrations of the default types any custom content-types will not be migrated and will continue to work as expected.
 
-Future versions of plone.app.contenttypes will have with a form that allows you to migrate old custom Archetypes-content to Dexterity (you'll still have to create the Dexterity-types before migrating).
+To help you migrating these types to Dexterity plone.app.contenttypes contains a migration form (``/@@custom_migration``) that allows you to migrate any (custom or default) Archetypes-type to any (custom or default) Dexterity-type. The only requirement is that the Dexterity-type you want to migrate to has to exist and that the class of the old type is still present. It makes no difference if the type you are migrating from is still registered in portal_types or is already removed or replaced by a dexterity-version using the same name.
 
-If you want to migrate your custom types to Dexterity before this feature is completed you might want to have a look at the code of plone.app.contenttypes.migration.migration.NewsItemMigrator as a blueprint for a migration.
+In the form ``/@@custom_migration`` you can select a Dexterity-type for any Archetypes-types that exists in the portal. You can then map the source-types fields to the targets fields. You can also choose to ignore fields. You have to take care that the values can be migrated (since there is no validation for that), e.g. it would make no sense to migrate a ImageField to a TextField. There are build-in methods for most field-types, custom or rarely used fields might not migrate properly (you can create a issue if you miss a migration that is not yet supported).
 
-Please make sure you are aware of the many helpers and patches that allow you to migrate comments, portlets, references etc. These are partly used in the base-class of the migration (``plone.app.contenttypes.migration.migration.ATCTContentMigrator`` and ``plone.app.contenttypes.migration.migration.ATCTFolderMigrator``) and partly in the migration-view ``plone.app.contenttypes.migration.browser.MigrateFromATContentTypes``.
+After you map the fields you can test the configuration. During a test one item will be test-migrated and Plone checks if the migrated item will be accessible without throwing a errors. After the test any changes will be rolled back.
 
 
 Widgets
 -------
 
-In Plone 5.x plone.app.contenttypes used the build-in widgets from plone.app.widgets.
+When used in Plone 4.x plone.app.contenttypes uses the default z3c.form widgets. All widgets work as they used to with Archetypes except for the keywords-widget for which a simple linesfield is used. Replacing that with a nicer implementation is explained below.
 
-In Plone 4.x plone.app.contenttypes uses the old z3c.form-widgets by default. All widgets work as they used to with Archetypes except for the keywords-widget for which a simple linesfield is used (read `How to override widgets` on how to change that). You can also use plone.app.widgets to make use of the new widgets (not all functionality is guaranteed to work though).
-
-
-How to use with the widgets from Plone 5
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In Plone 5 the new widgets are automatically used. To use them in Plone 4 use `plone.app.widgets <https://pypi.python.org/pypi/plone.app.widgets>`_ (branch 1.x).
+It is also possible to use `plone.app.widgets <https://pypi.python.org/pypi/plone.app.widgets>`_ to switch to the widgets that are used in Plone 5.
 
 
 How to override widgets
@@ -452,13 +446,19 @@ TODO
 Differences to Products.ATContentTypes
 --------------------------------------
 
-- The image of the News Item is not a field on the contenttype but a behavior that can add a image to any contenttypes (similar to http://pypi.python.org/pypi/collective.contentleadimage).
+- The image of the News Item is not a field on the contenttype but a behavior that can add a image to any contenttypes (similar to http://pypi.python.org/pypi/collective.contentleadimage)
 - All richtext-fields are also provided by a reuseable behavior.
 - The functionality to transform (rotate and flip) images has been removed.
-- There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``.
-- The link on the image of the newsitem triggers an overlay.
+- There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
+- The link on the image of the newsitem triggers an overlay
 - The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
-- The keywords-widget is not implemented and is replaced by a simple lines-widget unless you override it or use plone.app.widgets. Please see the section on widgets.
+- The views for Folders and Collections changed their names and now share a common implementation (since version 1.1b4):
+
+  - ``folder_listing_view`` (Folders) and ``collection_view`` (Collections) -> ``listing_view`` (Folders and Collections)
+  - ``folder_summary_view`` (Folders) and ``summary_view`` (Collections) -> ``summary_view`` (Folders and Collections)
+  - ``folder_tabular_view`` (Folders) and ``tabular_view`` (Collections) -> ``tabular_view`` (Folders and Collections)
+  - ``folder_full_view`` (Folders) and ``all_content`` (Collections) -> ``full_view`` (Folders and Collections)
+  - ``atct_album_view`` (Folders) and ``thumbnail_view`` (Collections) -> ``album_view`` (Folders and Collections)
 
 
 Toubleshooting
@@ -522,4 +522,8 @@ Contributors
 * David Glick <david@glicksoftware.com>
 * Kees Hink <keeshink@gmail.com>
 * Roman Kozlovskyi <krzroman@gmail.com>
+* Gauthier Bastien <gauthier.bastien@imio.be>
+* Andrea Cecchi <andrea.cecchi@redturtle.it>
 * Bogdan Girman <bogdan.girman@gmail.com>
+* Martin Opstad Reistadbakk <martin@blaastolen.com>
+* Florent Michon <fmichon@atreal.fr>
