@@ -6,7 +6,7 @@
 .. image:: https://img.shields.io/badge/pypi-1.1b5-red.svg
     :target: https://pypi.python.org/pypi/plone.app.contenttypes/1.1b5
 
- .. image:: https://coveralls.io/repos/plone/plone.app.contenttypes/badge.svg?branch=1.1.x&service=github
+.. image:: https://coveralls.io/repos/plone/plone.app.contenttypes/badge.svg?branch=1.1.x&service=github
     :target: https://coveralls.io/github/plone/plone.app.contenttypes?branch=1.1.x
 
 
