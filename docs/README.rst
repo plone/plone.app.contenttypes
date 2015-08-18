@@ -1,10 +1,16 @@
 .. contents::
 
-.. image:: https://pypip.in/d/plone.app.contenttypes/badge.png
+.. image:: https://api.travis-ci.org/plone/plone.app.contenttypes.png?branch=master
+    :target: http://travis-ci.org/plone/plone.app.contenttypes
+
+.. image:: https://img.shields.io/pypi/dm/plone.app.contenttypes.svg
     :target: https://crate.io/packages/plone.app.contenttypes
 
-.. image:: https://pypip.in/v/plone.app.contenttypes/badge.png
+.. image:: https://img.shields.io/pypi/v/plone.app.contenttypes.svg
     :target: https://crate.io/packages/plone.app.contenttypes
+
+.. image:: https://img.shields.io/coveralls/plone/plone.app.contenttypes/master.svg
+    :target: https://coveralls.io/github/plone/plone.app.contenttypes?branch=master
 
 
 plone.app.contenttypes documentation
