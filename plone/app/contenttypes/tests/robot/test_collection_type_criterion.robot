@@ -10,7 +10,7 @@ Test Teardown  Close all browsers
 
 *** Test cases ***
 
-Test Type Criterion
+Test Short name (id) Criterion
     Given I am logged in as site owner
       And a document  Test Document
       And a news_item  Test News Item
@@ -24,13 +24,11 @@ Test Type Criterion
 
 I set the collection's type criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection
-    Click Edit
+    Click Link  Edit
+    Wait Until Page Contains Element  xpath=//select[@name="addindex"]
+    Select From List  xpath=//select[@name="addindex"]  Type
 
-    I set the criteria index in row 1 to the option 'Type'
-    I set the criteria operator in row 1 to the option 'Is'
-    I set the criteria value in row 1 to the options '${criterion}'
-
-    Sleep  1
+    Click Element  xpath=//span[@class='arrowDownAlternative']
+    Select Checkbox  ${criterion}
     Click Button  Save
     Wait until page contains  Changes saved

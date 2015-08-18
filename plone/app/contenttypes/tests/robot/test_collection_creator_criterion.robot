@@ -1,49 +1,45 @@
-*** Settings *****************************************************************
+*** Settings ***
 
 Resource  plone/app/robotframework/keywords.robot
-Resource  plone/app/robotframework/saucelabs.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
-Library  Remote  ${PLONE_URL}/RobotRemote
+Test Setup  Run keywords  Open test browser
+Test Teardown  Close all browsers
 
-Test Setup  Open SauceLabs test browser
-Test Teardown  Run keywords  Report test status  Close all browsers
+*** Variables ***
 
+*** Test cases ***
 
-*** Test cases ***************************************************************
-
-Scenario: Test Creator Criterions
+Scenario: Test Creator Criterion
     Given a site owner document  Site Owner Document
       And a test user document  Test User Document
-      and a logged in site administrator
-      and a collection  My Collection
-     When I set the collection's creator criterion to  ${SITE_OWNER_NAME}
-     Then the collection should not contain  Test User Document
-      And the collection should contain  Site Owner Document
+      And a collection  My Collection
+     When I set the collection's creator criterion to  ${TEST_USER_ID}
+     Then the collection should contain  Test User Document
+      And the collection should not contain  Site Owner Document
 
 
-*** Keywords *****************************************************************
+*** Keywords ***
 
 a site owner document
     [Arguments]  ${title}
-    a logged in site owner
+    Log in as site owner
     a document  ${title}
-    Disable autologin
 
 a test user document
     [Arguments]  ${title}
-    a logged in test user
+    Log in as test user
     a document  ${title}
-    Disable autologin
+    Log out
+    Log in as site owner
 
 I set the collection's creator criterion to
     [Arguments]  ${criterion}
-    Go to  ${PLONE_URL}/my-collection
-    Click Edit
-    Wait until page contains  Edit Collection
-    I set the criteria index in row 1 to the option 'Creator'
-    I set the criteria operator in row 1 to the option 'Is'
-    I set the criteria value in row 1 to the text '${criterion}'
-
+    Click Link  Edit
+    Wait Until Page Contains Element  xpath=//select[@name="addindex"]
+    Select From List  xpath=//select[@name="addindex"]  Creator
+    Wait Until Page Contains Element  xpath=//select[@class='queryoperator']
+    Select From List  xpath=//select[@class='queryoperator']  Is
+    Input Text  name=form.widgets.ICollection.query.v:records  ${criterion}
     Click Button  Save
     Wait until page contains  Changes saved

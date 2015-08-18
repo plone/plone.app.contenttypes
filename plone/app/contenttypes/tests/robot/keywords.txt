@@ -1,16 +1,9 @@
-*** Settings ***
-
-Library  Remote  ${PLONE_URL}/RobotRemote
-
 Variables  plone/app/contenttypes/tests/robot/variables.py
 
 *** Keywords ***
 
 I am logged in as site owner
-  Enable autologin as  Site Administrator
-
-Click Edit
-  Click Link  xpath=//a[contains(., "Edit")]
+  Log in as site owner
 
 # ----------------------------------------------------------------------------
 # Content
@@ -18,33 +11,27 @@ Click Edit
 
 a collection
   [Arguments]  ${title}
-  [Return]  ${uid}
-  ${uid} =  Create content  type=Collection  title=${title}
-# Go to  ${PLONE_URL}/++add++Collection
-# Wait until page contains  Add Collection
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
+  Go to  ${PLONE_URL}/++add++Collection
+  Wait until page contains  Add Collection
+  Input text  name=form.widgets.IDublinCore.title  ${title}
+  Click Button  Save
+  Wait until page contains  Item created
 
 a document
   [Arguments]  ${title}
-  [Return]  ${uid}
-  ${uid} =  Create content  type=Document  title=${title}
-# Go to  ${PLONE_URL}/++add++Document
-# Wait until page contains  Add Page
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
+  Go to  ${PLONE_URL}/++add++Document
+  Wait until page contains  Add Page
+  Input text  name=form.widgets.IDublinCore.title  ${title}
+  Click Button  Save
+  Wait until page contains  Item created
 
 a event
   [Arguments]  ${title}
-  [Return]  ${uid}
-  ${uid} =  Create content  type=Event  title=${title}
-# Go to  ${PLONE_URL}/++add++Event
-# Wait until page contains  Add Event
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
+  Go to  ${PLONE_URL}/++add++Event
+  Wait until page contains  Add Event
+  Input text  name=form.widgets.IDublinCore.title  ${title}
+  Click Button  Save
+  Wait until page contains  Item created
 
 a file
   [Arguments]  ${title}
@@ -57,13 +44,11 @@ a file
 
 a folder
   [Arguments]  ${title}
-  [Return]  ${uid}
-  ${uid} =  Create content  type=Folder  title=${title}
-# Go to  ${PLONE_URL}/++add++Folder
-# Wait until page contains  Add Folder
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
+  Go to  ${PLONE_URL}/++add++Folder
+  Wait until page contains  Add Folder
+  Input text  name=form.widgets.IDublinCore.title  ${title}
+  Click Button  Save
+  Wait until page contains  Item created
 
 a image
   [Arguments]  ${title}
@@ -76,13 +61,11 @@ a image
 
 a link
   [Arguments]  ${title}
-  [Return]  ${uid}
-  ${uid} =  Create content  type=Link  title=${title}
-# Go to  ${PLONE_URL}/++add++Link
-# Wait until page contains  Add Link
-# Input text  name=form.widgets.IDublinCore.title  ${title}
-# Click Button  Save
-# Wait until page contains  Item created
+  Go to  ${PLONE_URL}/++add++Link
+  Wait until page contains  Add Link
+  Input text  name=form.widgets.IDublinCore.title  ${title}
+  Click Button  Save
+  Wait until page contains  Item created
 
 a news item
   [Arguments]  ${title}
@@ -109,12 +92,12 @@ the content area should not contain
 
 the collection should contain
   [Arguments]  ${title}
-  Wait until page contains element  xpath=//section[@id='content-core']
-  xpath should match x times  //section[@id='content-core']//*[@class='entry']//a[contains(text(), '${title}')]  1
-
+  Go to  ${PLONE_URL}/my-collection
+  The content area should contain  ${title}
 
 the collection should not contain
   [Arguments]  ${title}
+  Go to  ${PLONE_URL}/my-collection
   The content area should not contain  ${title}
 
 fill in metadata
@@ -136,27 +119,7 @@ fill date field
   [Arguments]  ${fieldid}  ${year}=2012  ${month}=January  ${day}=10
   [Documentation]  Fill in the specified date field (such as effective/expiration date in the "dates" metadata tab) with the specified date.
   ...  Month must be specified by name.
-  Click Element  xpath=//div[@data-fieldname="${fieldid}"]//input[contains(@class,"pattern-pickadate-date")]
-  Select from list  css=div[data-fieldname="${fieldid}"] .picker__select--month  ${month}
-  Select from list  css=div[data-fieldname="${fieldid}"] select.picker__select--year  ${year}
-  Click Element  xpath=//div[@data-fieldname="${fieldid}"]//div[contains(@class, 'picker__day')][contains(text(), "${day}")]
-
-I set the criteria ${type} in row ${number} to the option '${label}'
-  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Wait until page contains element  css=.select2-input.select2-focused
-  Input text  css=.select2-input.select2-focused  ${label}\n
-# Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
-
-I set the criteria ${type} in row ${number} to the options '${label}'
-  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
-  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
-  Wait until page contains element  css=.select2-input.select2-focused
-  Input text  css=.select2-input.select2-focused  ${label}\n
-# Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
-
-I set the criteria ${type} in row ${number} to the text '${label}'
-  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Input text  css=${criteria_row} .querystring-criteria-value input  ${label}\t
+  Click Link  xpath=//div[@data-fieldname="${fieldid}"]//a[contains(@class,"caltrigger")]
+  Select from list  id=calmonth  ${month}
+  Select from list  id=calyear  ${year}
+  Click Link  xpath=//div[@class='calweek']//a[contains(text(), "${day}")]

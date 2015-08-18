@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
-from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
 from plone.app.event.testing import PAEvent_FIXTURE
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import FunctionalTesting
@@ -64,11 +63,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
         login(portal, 'admin')
         portal.portal_workflow.setDefaultChain("simple_publication_workflow")
         setRoles(portal, TEST_USER_ID, ['Manager'])
-        portal.invokeFactory(
-            "Folder",
-            id=TEST_FOLDER_ID,
-            title=u"Test Folder"
-        )
 
     def tearDownPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:uninstall')
