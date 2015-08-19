@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
-from Acquisition import aq_inner
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.interfaces.referenceable import IReferenceable
 from Products.CMFCore.utils import getToolByName
@@ -322,7 +321,7 @@ def restore_references(context):
     del IAnnotations(context)[key]
 
 
-def link_items(
+def link_items(  # noqa
     context,
     source_obj,
     target_obj,

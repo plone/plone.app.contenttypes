@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from Acquisition import aq_base
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_hasattr
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from lxml import etree
@@ -23,7 +21,6 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.app.uuid.utils import uuidToObject
-from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
@@ -38,7 +35,6 @@ from zope.component import getMultiAdapter
 from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.interface import alsoProvides
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
 from zope.schema.interfaces import IVocabularyFactory
@@ -47,7 +43,6 @@ import json
 import os.path
 import time
 import unittest2 as unittest
-from plone.app.contenttypes.migration.utils import add_portlet
 
 
 class MigrateFromATContentTypesTest(unittest.TestCase):
@@ -1822,7 +1817,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_folder = self.portal['folder']
 
         at_folder.invokeFactory('Document', 'subdocument')
-        at_subdocument = at_folder['subdocument']
 
         self.portal.setLayout('folder_summary_view')
         self.portal.setDefaultPage('document')
@@ -1833,7 +1827,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.portal.invokeFactory('Folder', 'folder2')
         at_folder2 = self.portal['folder2']
         at_folder2.invokeFactory('Document', 'subdocument2')
-        at_subdocument2 = at_folder2['subdocument2']
         at_folder2.setLayout('folder_listing')
 
         # migrate content
@@ -1843,7 +1836,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             (self.portal, self.request),
             name=u'migrate_from_atct'
         )
-        results = migration_view(from_form=True)
+        migration_view(from_form=True)
         dx_folder = self.portal['folder']
         dx_folder2 = self.portal['folder2']
 

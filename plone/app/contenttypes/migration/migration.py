@@ -369,6 +369,7 @@ class CollectionMigrator(ATCTContentMigrator):
         if old_layout in LISTING_VIEW_MAPPING:
             self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
 
+
 def migrate_collections(portal):
     return migrate(portal, CollectionMigrator)
 

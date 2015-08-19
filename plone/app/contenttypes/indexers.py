@@ -75,9 +75,10 @@ def SearchableText_file(obj):
                                            transformed_value.getData())
     except (ConflictError, KeyboardInterrupt):
         raise
-    except:
+    except Exception, msg:
         logger.exception('exception while trying to convert '
-                         'blob contents to "text/plain" for %r', obj)
+                         'blob contents to "text/plain" for %r. Error: %s',
+                         (obj, str(msg)))
         return SearchableText(obj)
 
 
