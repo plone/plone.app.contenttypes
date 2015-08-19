@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Products.Five.browser import BrowserView
 from Products.CMFCore.utils import getToolByName
 from zope.publisher.interfaces.browser import IBrowserView

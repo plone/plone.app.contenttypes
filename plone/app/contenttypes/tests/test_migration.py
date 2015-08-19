@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from Acquisition import aq_base
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_hasattr
 from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from lxml import etree
@@ -1817,7 +1815,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_folder = self.portal['folder']
 
         at_folder.invokeFactory('Document', 'subdocument')
-        at_subdocument = at_folder['subdocument']
 
         self.portal.setLayout('folder_summary_view')
         self.portal.setDefaultPage('document')
@@ -1828,7 +1825,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.portal.invokeFactory('Folder', 'folder2')
         at_folder2 = self.portal['folder2']
         at_folder2.invokeFactory('Document', 'subdocument2')
-        at_subdocument2 = at_folder2['subdocument2']
         at_folder2.setLayout('folder_listing')
 
         # migrate content
@@ -1838,7 +1834,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             (self.portal, self.request),
             name=u'migrate_from_atct'
         )
-        results = migration_view(from_form=True)
+        migration_view(from_form=True)
         dx_folder = self.portal['folder']
         dx_folder2 = self.portal['folder2']
 
@@ -2081,8 +2077,6 @@ class MigrationFunctionalTests(unittest.TestCase):
         # add some at content:
         self.portal.invokeFactory('Document', 'doc1')
         transaction.commit()
-        qi = self.portal.portal_quickinstaller
-        portal_types = self.portal.portal_types
         from zExceptions import NotFound
         self.assertRaises(NotFound, self.browser.open, '%s/@@atct_migrator' % self.portal_url)  # noqa
         self.browser.open('%s/@@pac_installer' % self.portal_url)
