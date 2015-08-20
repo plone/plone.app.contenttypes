@@ -40,11 +40,11 @@ The main difference from a users perspective is that these types are extendable 
 Compatibility
 -------------
 
-Version 1.1b3 is tested with Plone 4.3.x. The versions of branch 1.1.x will stay compatible with Plone 4.3.x.
+The versions 1.2.x (build from the master-branch) are used in Plone 5.
 
-For support of Plone 4.1 and 4.2 please use version 1.0.x. Please note that they do not provide the full functionality.
+Version 1.1b5 and later are tested with Plone 4.3.x. The versions build from the branch 1.1.x will stay compatible with Plone 4.3.x.
 
-The versions 1.2.x of the master-branch are compatible with Plone 5 and plone.app.widgets.
+For support of Plone 4.1 and 4.2 please use versions 1.0.x. Please note that they do not provide the full functionality.
 
 
 Installation
