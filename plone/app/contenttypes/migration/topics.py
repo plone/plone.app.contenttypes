@@ -273,7 +273,7 @@ class ATDateCriteriaConverter(CriterionConverter):
 class ATSimpleStringCriterionConverter(CriterionConverter):
     operator_code = 'string.contains'
     # review_state could be a string criterion, but should become a selection.
-    alt_operator_code = 'selection.is'
+    alt_operator_code = 'selection.any'
 
 
 class ATCurrentAuthorCriterionConverter(CriterionConverter):
@@ -281,7 +281,7 @@ class ATCurrentAuthorCriterionConverter(CriterionConverter):
 
 
 class ATSelectionCriterionConverter(CriterionConverter):
-    operator_code = 'selection.is'
+    operator_code = 'selection.any'
     # alt_operator_code = 'selection.any'
 
     def get_operation(self, value, index, criterion):
@@ -399,7 +399,7 @@ class ATDateRangeCriterionConverter(CriterionConverter):
 
 
 class ATPortalTypeCriterionConverter(CriterionConverter):
-    operator_code = 'selection.is'
+    operator_code = 'selection.any'
 
     def get_query_value(self, value, index, criterion):
         # Special handling for portal_type=Topic.
