@@ -130,8 +130,14 @@ def installTypeIfNeeded(type_name):
     tt = getToolByName(portal, 'portal_types')
     fti = tt.getTypeInfo(type_name)
     if IDexterityFTI.providedBy(fti):
-        # the dx-type is already installed
-        return
+        # The dx-type is already installed, so keep it.  But this
+        # might be an old dexterity type of Collection, in which case
+        # it is better to replace it.
+        if type_name != 'Collection':
+            return
+        if fti.klass == 'plone.app.contenttypes.content.Collection':
+            # If the klass is fine, we are happy.
+            return
     if fti:
         tt.manage_delObjects(type_name)
     tt.manage_addTypeInformation('Dexterity FTI', id=type_name)
