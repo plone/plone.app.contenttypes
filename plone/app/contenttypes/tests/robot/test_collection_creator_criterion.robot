@@ -53,7 +53,8 @@ I set the collection's creator criterion to
 
     I set the criteria index in row 1 to the option 'Creator'
     I set the criteria operator in row 1 to the option 'Any'
-    I set the criteria value in row 1 to the text '${criterion}'
+    I set the criteria value in row 1 to the options '${criterion}'
 
+    Sleep  1
     Click Button  Save
     Wait until page contains  Changes saved
