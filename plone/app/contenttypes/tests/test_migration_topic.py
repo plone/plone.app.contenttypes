@@ -547,10 +547,11 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         query = self.portal.topic.query
-        self.assertEqual(query,
-                         [{'i': 'portal_type',
-                           'o': 'plone.app.querystring.operation.selection.any',
-                           'v': ('Collection',)}])
+        self.assertEqual(
+            query,
+            [{'i': 'portal_type',
+              'o': 'plone.app.querystring.operation.selection.any',
+              'v': ('Collection',)}])
 
         # Check that the resulting query does not give an error.
         self.portal.topic.results
@@ -602,10 +603,11 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         self.run_migration()
         query = self.portal.topic.query
-        self.assertEqual(query,
-                         [{'i': 'portal_type',
-                           'o': 'plone.app.querystring.operation.selection.any',
-                           'v': ['Document', 'Folder']}])
+        self.assertEqual(
+            query,
+            [{'i': 'portal_type',
+              'o': 'plone.app.querystring.operation.selection.any',
+              'v': ['Document', 'Folder']}])
 
         # Check that the resulting query does not give an error.
         self.portal.topic.results
