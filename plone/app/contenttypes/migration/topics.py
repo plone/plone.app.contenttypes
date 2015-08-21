@@ -46,9 +46,6 @@ class CriterionConverter(object):
 
     def get_operation(self, value, index, criterion):
         # Get dotted operation method.  This may depend on value.
-        # if index == 'Subject':
-        #
-        #     return "%s.operation.%s" % (prefix, 'selection.any')
         return "%s.operation.%s" % (prefix, self.operator_code)
 
     def get_alt_operation(self, value, index, criterion):
@@ -288,6 +285,10 @@ class ATSelectionCriterionConverter(CriterionConverter):
         # Get dotted operation method.  This may depend on value.
         if index == 'Subject':
             if value['operator'] == 'and':
+                # Subject is currently the only index that supports
+                # this, because for others it makes no sense.  See
+                # allowed operations in registry.xml in
+                # plone.app.querystring.
                 suffix = 'all'
             else:
                 suffix = 'any'
