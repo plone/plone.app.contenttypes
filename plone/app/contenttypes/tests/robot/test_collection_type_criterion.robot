@@ -37,7 +37,7 @@ I set the collection's type criterion to
     Wait until page contains  Edit Collection
 
     I set the criteria index in row 1 to the option 'Type'
-    I set the criteria operator in row 1 to the option 'Is'
+    I set the criteria operator in row 1 to the option 'Any'
     I set the criteria value in row 1 to the options '${criterion}'
 
     Sleep  1
