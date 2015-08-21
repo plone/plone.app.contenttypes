@@ -279,7 +279,7 @@ class ATCurrentAuthorCriterionConverter(CriterionConverter):
 
 class ATSelectionCriterionConverter(CriterionConverter):
     operator_code = 'selection.any'
-    # alt_operator_code = 'selection.any'
+    alt_operator_code = 'selection.is'
 
     def get_operation(self, value, index, criterion):
         # Get dotted operation method.  This may depend on value.
