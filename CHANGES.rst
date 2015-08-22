@@ -4,6 +4,15 @@ Changelog
 1.2b4 (unreleased)
 ------------------
 
+- Test Creator criterion with Any selection.
+  [mvanrees]
+
+- Selection criterion converter: allow selection.is alternative operation.
+  [mvanrees]
+
+- Fixed corner case in topic migration.
+  [mvanrees]
+
 - Use event_listung for /events/aggregator in new sites.
   [pbauer]
 
