@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2b4 (unreleased)
+1.2b4 (2015-08-22)
 ------------------
 
 - Test Creator criterion with Any selection.
