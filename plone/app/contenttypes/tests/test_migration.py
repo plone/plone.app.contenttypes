@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from five.intid.intid import IntIds
-from five.intid.site import addUtility
 from lxml import etree
 from persistent.list import PersistentList
 from plone.app.contenttypes.migration.migration import migrate_documents
@@ -16,7 +14,6 @@ from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TES
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
-from plone.app.referenceablebehavior.referenceable import IReferenceable
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
@@ -34,7 +31,6 @@ from z3c.relationfield.index import dump
 from zc.relation.interfaces import ICatalog
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getMultiAdapter
-from zope.component import getSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import alsoProvides
@@ -821,10 +817,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     def test_modifield_date_is_unchanged(self):
         set_browserlayer(self.request)
 
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
-
         # create folders
         self.portal.invokeFactory('Folder', 'folder1')
         at_folder1 = self.portal['folder1']
@@ -964,10 +956,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_child in dx_folder.contentValues())
 
     def test_relations_are_migrated(self):
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
-
         # create folders
         self.portal.invokeFactory('Folder', 'folder1')
         at_folder1 = self.portal['folder1']
@@ -1038,10 +1026,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         """relate a doc to a newsitem, migrate the newsitem but not the doc.
         check if the relations are still in place."""
 
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
-
         # create ATFolder and ATDocument
         self.portal.invokeFactory('News Item', 'news')
         at_news = self.portal['news']
@@ -1091,10 +1075,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     def test_dx_at_relations_migrated_for_partially_migrated_nested(self):
         """This fails if referenceablebehavior is not enabled
         """
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
-        IReferenceable
         # create ATFolder and ATDocument
         self.portal.invokeFactory('Folder', 'folder')
         at_folder = self.portal['folder']
@@ -1144,10 +1124,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
     def test_at_dx_relations_migrated_for_partialy_migrated_nested(self):
         """Fails if referenceablebehavior is not enabled"""
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
-
         # create ATFolder and ATDocument
         self.portal.invokeFactory('Folder', 'folder')
         at_folder = self.portal['folder']
@@ -1178,13 +1154,16 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         at_folder = self.portal['folder']
         dx_doc = at_folder['doc']
+        self.assertTrue(is_referenceable(dx_doc))
+        self.assertTrue(is_referenceable(at_folder))
 
         # references are not restored yet
         # the at-folder has a broken reference now
         # since at_doc is now <ATDocument at /plone/folder/doc_MIGRATION_>
         self.assertNotEqual(at_folder.getRelatedItems(), [at_doc])
         self.assertEqual(dx_doc.relatedItems, [])
-        self._backrefs(dx_doc)
+        # the backref is found since the reference_catalog is not purged
+        self.assertEqual(self._backrefs(dx_doc), [at_folder])
 
         # restore references
         restore_references(self.portal)
@@ -1192,7 +1171,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         # references should be restored
         self.assertEqual(at_folder.getRelatedItems(), [dx_doc])
         self.assertEqual(self._backrefs(dx_doc), [at_folder])
-        self.assertEqual(dx_doc.relatedItems, [])
         self.assertEqual(dx_doc.relatedItems, [])
 
     def _backrefs(self, obj):
@@ -1223,9 +1201,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         fti._updateProperty('behaviors', tuple(behaviors))
 
     def test_store_references(self):
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
         intids = getUtility(IIntIds)
 
         applyProfile(
@@ -1268,9 +1243,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
     def test_export_references(self):
         """Test the Browser-View @@export_all_references."""
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
         intids = getUtility(IIntIds)
         set_browserlayer(self.request)
 
@@ -1306,9 +1278,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
     def test_migrate_references_with_storage_on_portal(self):
         set_browserlayer(self.request)
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
         intids = getUtility(IIntIds)
 
         applyProfile(
@@ -1434,6 +1403,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         vocabulary = factory(self.portal)
         self.assertEqual((), tuple(vocabulary))
 
+    @unittest.skip('Creates test-isolation-issues. See https://github.com/plone/plone.app.contenttypes/issues/251')  # noqa
     def test_migration_extendedtypes_vocabulary_result(self):
         from archetypes.schemaextender.extender import CACHE_ENABLED
         from archetypes.schemaextender.extender import CACHE_KEY
@@ -1589,10 +1559,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         from plone.app.contenttypes.interfaces import IDocument
         from plone.app.contenttypes.interfaces import ICollection
 
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
-
         # create folders
         self.portal.invokeFactory('Folder', 'folder1')
         at_folder1 = self.portal['folder1']
@@ -1651,9 +1617,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
     def test_migration_view_confirmation(self):
         set_browserlayer(self.request)
-        # IIntIds is not registered in the test env. So register it here
-        sm = getSiteManager(self.portal)
-        addUtility(sm, IIntIds, IntIds, ofs_name='intids', findroot=False)
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migration_view = getMultiAdapter(
             (self.portal, self.request),

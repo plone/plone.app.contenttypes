@@ -45,14 +45,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
 
-        # install and enable referenceablebehavior on Documents to be able to
-        # test controlpanel to enable plone.app.linkintegrity checks
-        # XXX Disabled as it is causing test errors in comments
-        # see https://github.com/plone/Products.CMFPlone/issues/255
-        # applyProfile(portal, 'plone.app.referenceablebehavior:default')
-        # portal.portal_types.Document.behaviors += \
-        #   ('plone.app.referenceablebehavior.referenceable.IReferenceable',)
-
         mtr = portal.mimetypes_registry
         mime_doc = mtr.lookup('application/msword')[0]
         mime_doc.icon_path = 'custom.png'
@@ -104,6 +96,8 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
             plone.app.contenttypes,
             context=configurationContext
         )
+        import plone.app.referenceablebehavior
+        self.loadZCML(package=plone.app.referenceablebehavior)
 
     def tearDownZope(self, app):
         try:
@@ -129,6 +123,8 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         # (this is only needed for Plone >= 5)
         if 'plone.app.collection:default' in profiles:
             applyProfile(portal, 'plone.app.collection:default')
+
+        applyProfile(portal, 'plone.app.referenceablebehavior:default')
 
 
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
