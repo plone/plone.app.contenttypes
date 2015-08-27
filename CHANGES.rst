@@ -4,7 +4,11 @@ Changelog
 1.2b5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- In ``FolderView`` based views, don't include the ``portal_types`` query, if
+  ``object_provides`` is set in the ``results`` method keyword arguments. Fixes
+  a case, where no Album Images were shown, when portal_state's
+  ``friendly_types`` didn't include the ``Image`` type.
+  [thet]
 
 
 1.2b4 (2015-08-22)
