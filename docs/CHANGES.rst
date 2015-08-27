@@ -7,6 +7,30 @@ Changelog
 - Add migrations from custom AT types to available DX types (fix #133).
   (backported from 1.2.x)
   [gbastien, cekk, tiazma, flohcim, pbauer]
+- In ``FolderView`` based views, don't include the ``portal_types`` query, if
+  ``object_provides`` is set in the ``results`` method keyword arguments. Fixes
+  a case, where no Album Images were shown, when portal_state's
+  ``friendly_types`` didn't include the ``Image`` type.
+  [thet]
+
+
+1.2b4 (2015-08-22)
+------------------
+
+- Test Creator criterion with Any selection.
+  [mvanrees]
+
+- Selection criterion converter: allow selection.is alternative operation.
+  [mvanrees]
+
+- Fixed corner case in topic migration.
+  [mvanrees]
+
+- Use event_listung for /events/aggregator in new sites.
+  [pbauer]
+
+- Remove obsolete collections.css
+  [pbauer]
 
 - Add plone.app.querystring as a dependency (fixes collections migrated to p5
   and dexterity).
