@@ -56,7 +56,8 @@ class FolderView(BrowserView):
         """
         # Extra filter
         kwargs.update(self.request.get('contentFilter', {}))
-        kwargs.setdefault('portal_type', self.friendly_types)
+        if 'object_provides' not in kwargs:  # object_provides is more specific
+            kwargs.setdefault('portal_type', self.friendly_types)
         kwargs.setdefault('batch', True)
         kwargs.setdefault('b_size', self.b_size)
         kwargs.setdefault('b_start', self.b_start)
