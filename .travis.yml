@@ -12,16 +12,12 @@ branches:
     - 1.1.x
 before_install:
   - mkdir -p $HOME/buildout-cache/{eggs,downloads}
-  - mkdir $HOME/.buildout
-  - echo "[buildout]" > $HOME/.buildout/default.cfg
-  - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
-  - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
-install:
-  - python bootstrap-buildout.py -c travis.cfg
-  - bin/buildout -Nc travis.cfg
-before_script:
+  - virtualenv .
+  - bin/pip install --upgrade pip setuptools zc.buildout
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
+install:
+  - bin/buildout -N -t 3 -c travis.cfg
 script:
   - bin/code-analysis
   - bin/test --all
