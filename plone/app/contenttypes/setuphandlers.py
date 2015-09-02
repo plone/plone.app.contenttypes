@@ -6,12 +6,12 @@ from Products.CMFPlone.interfaces import INonInstallable
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.utils import bodyfinder
+from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
 from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
-from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from plone.registry.interfaces import IRegistry
@@ -23,6 +23,7 @@ from zope.component.hooks import getSite
 from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
+from zope.i18n.locales.provider import LoadLocaleError
 from zope.interface import implements
 
 
@@ -96,13 +97,17 @@ def _get_locales_info(portal):
     reg = queryUtility(IRegistry, context=portal)
     language = reg['plone.default_language']
     parts = (language.split('-') + [None, None])[:3]
-    locale = locales.getLocale(*parts)
 
-    # If we get a territory, we enable the combined language codes
-    if locale.id.territory:
-        return locale.id.language + '_' + locale.id.territory, True, locale
+    try:
+        locale = locales.getLocale(*parts)
 
-    return locale.id.language, False, locale
+        # If we get a territory, we enable the combined language codes
+        if locale.id.territory:
+            return locale.id.language + '_' + locale.id.territory, True, locale
+        return locale.id.language, False, locale
+    except LoadLocaleError:
+        # default to *some* language so we don't error out
+        return language, False, locales.getLocale('en')
 
 
 def _setup_calendar(portal, locale):
@@ -127,7 +132,7 @@ def _setup_visible_ids(portal, target_language, locale):
     # See if we have a URL normalizer
     normalizer = queryUtility(IURLNormalizer, name=target_language)
     if normalizer is None:
-        normalizer = queryUtility(IURLNormalizer, name=target_language)
+        normalizer = queryUtility(IURLNormalizer)
 
     # If we get a script other than Latn we enable visible_ids
     if locale.id.script is not None:
@@ -162,7 +167,7 @@ def create_frontpage(portal, target_language):
         content = createContent('Document', id=frontpage_id,
                                 title=title,
                                 description=description,
-                                language=target_language
+                                language=target_language.replace('_', '-').lower()
                                 )
         content = addContentToContainer(portal, content)
         front_text = None
@@ -204,7 +209,7 @@ def create_news_topic(portal, target_language):
         container = createContent('Folder', id=news_id,
                                   title=title,
                                   description=description,
-                                  language=target_language)
+                                  language=target_language.replace('_', '-').lower())
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -249,7 +254,7 @@ def create_events_topic(portal, target_language):
         container = createContent('Folder', id=events_id,
                                   title=title,
                                   description=description,
-                                  language=target_language)
+                                  language=target_language.replace('_', '-').lower())
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -294,7 +299,7 @@ def configure_members_folder(portal, target_language):
         container = createContent('Folder', id=members_id,
                                   title=title,
                                   description=description,
-                                  language=target_language)
+                                  language=target_language.replace('_', '-').lower())
         container = addContentToContainer(portal, container)
         container.setOrdering('unordered')
         container.reindexObject()
