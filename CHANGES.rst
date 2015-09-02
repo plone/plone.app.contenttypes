@@ -4,6 +4,9 @@ Changelog
 1.2b5 (unreleased)
 ------------------
 
+- Handle languages better for content that is create when site is generated
+  [vangheem]
+
 - In ``FolderView`` based views, don't include the ``portal_types`` query, if
   ``object_provides`` is set in the ``results`` method keyword arguments. Fixes
   a case, where no Album Images were shown, when portal_state's
