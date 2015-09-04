@@ -4,6 +4,9 @@ Changelog
 1.1b6 (unreleased)
 ------------------
 
+- Ignore this PR, this is just a fake one to see if jenkins fails anyways.
+  [thet]
+
 - Add migrations from custom AT types to available DX types (fix #133).
   (backported from 1.2.x)
   [gbastien, cekk, tiazma, flohcim, pbauer]
