@@ -62,6 +62,50 @@ class FolderIntegrationTest(unittest.TestCase):
         self.assertTrue(IFolder.providedBy(self.portal['doc1']))
 
 
+class FolderViewIntegrationTest(unittest.TestCase):
+
+    layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        self.request['ACTUAL_URL'] = self.portal.absolute_url()
+        setRoles(self.portal, TEST_USER_ID, ['Contributor'])
+
+    def test_result_filtering(self):
+        """Test, if portal_state's friendly_types and the result method's
+        keyword arguments are included in the query.
+        """
+
+        self.portal.invokeFactory('News Item', 'newsitem')
+        self.portal.invokeFactory('Document', 'document')
+
+        from plone.app.contenttypes.browser.folder import FolderView
+        view = FolderView(self.portal, self.request)
+
+        # Test, if all results are found.
+        view.portal_state.friendly_types = lambda: ['Document', 'News Item']
+        res = view.results()
+        self.assertEqual(len(res), 2)
+
+        # Test, if friendly_types does filter for types.
+        view.portal_state.friendly_types = lambda: ['Document']
+        res = view.results()
+        self.assertEqual(len(res), 1)
+
+        # Test, if friendly_types does filter for types.
+        view.portal_state.friendly_types = lambda: ['NotExistingType']
+        res = view.results()
+        self.assertEqual(len(res), 0)
+
+        # Test, if kwargs filtering is applied.
+        view.portal_state.friendly_types = lambda: ['NotExistingType']
+        res = view.results(
+            object_provides='plone.app.contenttypes.interfaces.IDocument'
+        )
+        self.assertEqual(len(res), 1)
+
+
 class FolderFunctionalTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING

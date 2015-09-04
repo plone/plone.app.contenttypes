@@ -4,6 +4,12 @@ Changelog
 1.1b6 (unreleased)
 ------------------
 
+- In ``FolderView`` based views, don't include the ``portal_types`` query, if
+  ``object_provides`` is set in the ``results`` method keyword arguments. Fixes
+  a case, where no Album Images were shown, when portal_state's
+  ``friendly_types`` didn't include the ``Image`` type.
+  [thet]
+
 - Add migrations from custom AT types to available DX types (fix #133).
   (backported from 1.2.x)
   [gbastien, cekk, tiazma, flohcim, pbauer]
