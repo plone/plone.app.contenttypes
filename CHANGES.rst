@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2b5 (unreleased)
+1.2.0 (2015-09-07)
 ------------------
 
 - Handle languages better for content that is create when site is generated
