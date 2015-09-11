@@ -164,11 +164,11 @@ def create_frontpage(portal, target_language):
             u'front-description', target_language,
             u"Congratulations! You have successfully installed Plone."
         )
-        content = createContent('Document', id=frontpage_id,
-                                title=title,
-                                description=description,
-                                language=target_language.replace('_', '-').lower()
-                                )
+        content = createContent(
+            'Document', id=frontpage_id,
+            title=title,
+            description=description,
+            language=target_language.replace('_', '-').lower())
         content = addContentToContainer(portal, content)
         front_text = None
         if target_language != 'en':
@@ -206,10 +206,11 @@ def create_news_topic(portal, target_language):
         title = _translate(u'news-title', target_language, u'News')
         description = _translate(u'news-description', target_language,
                                  u'Site News')
-        container = createContent('Folder', id=news_id,
-                                  title=title,
-                                  description=description,
-                                  language=target_language.replace('_', '-').lower())
+        container = createContent(
+            'Folder', id=news_id,
+            title=title,
+            description=description,
+            language=target_language.replace('_', '-').lower())
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -251,10 +252,11 @@ def create_events_topic(portal, target_language):
         title = _translate(u'events-title', target_language, u'Events')
         description = _translate(u'events-description', target_language,
                                  u'Site Events')
-        container = createContent('Folder', id=events_id,
-                                  title=title,
-                                  description=description,
-                                  language=target_language.replace('_', '-').lower())
+        container = createContent(
+            'Folder', id=events_id,
+            title=title,
+            description=description,
+            language=target_language.replace('_', '-').lower())
         container = addContentToContainer(portal, container)
         _createObjectByType('Collection', container,
                             id='aggregator', title=title,
@@ -296,10 +298,11 @@ def configure_members_folder(portal, target_language):
         title = _translate(u'members-title', target_language, u'Users')
         description = _translate(u'members-description', target_language,
                                  u"Site Users")
-        container = createContent('Folder', id=members_id,
-                                  title=title,
-                                  description=description,
-                                  language=target_language.replace('_', '-').lower())
+        container = createContent(
+            'Folder', id=members_id,
+            title=title,
+            description=description,
+            language=target_language.replace('_', '-').lower())
         container = addContentToContainer(portal, container)
         container.setOrdering('unordered')
         container.reindexObject()
