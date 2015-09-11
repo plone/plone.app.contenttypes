@@ -31,6 +31,7 @@ from plone.app.contenttypes.migration.field_migrators import \
 from plone.app.contenttypes.migration.field_migrators import \
     migrate_simplefield
 from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
+from plone.app.dexterity.behaviors.nextprevious import INextPreviousToggle
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import adapter
@@ -174,6 +175,11 @@ class ATCTFolderMigrator(CMFFolderMigrator):
 
     def migrate_leadimage(self):
         migrate_leadimage(self.old, self.new)
+
+    def migrate_nextprevious(self):
+        if self.old.getNextPreviousEnabled():
+            if INextPreviousToggle.providedBy(self.new):
+                self.new.nextPreviousEnabled = True
 
     def last_migrate_comments(self):
         """Migrate the plone.app.discussion comments.

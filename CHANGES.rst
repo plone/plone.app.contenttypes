@@ -4,7 +4,9 @@ Changelog
 1.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Migrate next-previous-navigation.
+  Fix https://github.com/plone/plone.app.contenttypes/issues/267
+  [pbauer]
 
 
 1.2.0 (2015-09-07)

@@ -32,7 +32,7 @@ It contains the following types:
 * Link
 * News Item
 
-The main difference from a users perspective is that these types are extendable through-the-web. This means you can add or remove fields and behaviors using the control-panel "Dexterity Content Types" (``/@@dexterity-types``).
+The main difference from a users perspective is that these types are editable and extendable through-the-web. This means you can add or remove fields and behaviors using the control-panel "Dexterity Content Types" (``/@@dexterity-types``).
 
 **Warning: Using plone.app.contenttypes on a site with existing Archetypes-based content requires migrating the sites content. Please see the chapter "Migration".**
 
@@ -96,11 +96,11 @@ If you install plone.app.contenttypes on a fresh site (i.e. when no content has 
 Uninstalling
 ------------
 
-Uninstalling the default-types is not supported in Plone 5. If you really want to switch back to Archetypes-based types you have to to the following:
+Uninstalling the default-types is not officially supported in Plone 5. If you really want to switch back to Archetypes-based types you have to to the following:
 
 * Go to the ZMI
 * In portal_types delete the default-types
-* In portal_setup navigate to the tab 'import', select the profile 'Archetypes Content Types for Plone' and install all step including dependencies.
+* In portal_setup navigate to the tab 'import', select the profile 'Archetypes Content Types for Plone' and install all steps including dependencies.
 
 Any content you created based on plone.app.contenttypes will no longer be editable until you reinstall plone.app.contenttypes.
 
