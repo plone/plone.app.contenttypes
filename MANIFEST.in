@@ -1,10 +1,9 @@
 include *.txt
 include *.rst
 
-recursive-include docs *
-recursive-include plone *
+graft docs
+graft plone
 
 global-exclude *.pyc
 
-exclude bootstrap.py *.cfg *.yml *.sh
 prune templates
