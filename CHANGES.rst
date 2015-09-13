@@ -4,7 +4,8 @@ Changelog
 1.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Prevent negative ints and zero when limiting collection-results.
+  [pbauer]
 
 
 1.2.1 (2015-09-12)

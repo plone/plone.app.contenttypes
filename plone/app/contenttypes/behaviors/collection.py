@@ -67,6 +67,7 @@ class ICollection(model.Schema):
         description=_(u'Limit Search Results'),
         required=False,
         default=1000,
+        min=1,
     )
 
     item_count = schema.Int(
@@ -74,6 +75,7 @@ class ICollection(model.Schema):
         description=_(u'Number of items that will show up in one batch.'),
         required=False,
         default=30,
+        min=1,
     )
 
     customViewFields = schema.List(
