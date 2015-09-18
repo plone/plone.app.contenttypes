@@ -52,7 +52,7 @@
                     </span>
 
                     <metal:block metal:define-macro="document_byline">
-                      <span class="documentByLine">
+                      <div class="documentByLine">
                         <tal:event condition="item_is_event">
                           <tal:date tal:replace="structure python:view.formatted_date(obj)"/>
                           <span tal:condition="item/location" i18n:translate="label_event_byline_location">&mdash;
@@ -92,7 +92,7 @@
                             </tal:comment>
                           </metal:description>
                         </tal:byline>
-                      </span>
+                      </div>
                     </metal:block>
                   </header>
                   <p class="description discreet"
