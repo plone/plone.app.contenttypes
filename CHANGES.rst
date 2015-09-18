@@ -4,7 +4,8 @@ Changelog
 1.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix consistent use of LeadImage behavior template everywhere
+  [sneridagh]
 
 
 1.2.2 (2015-09-15)
