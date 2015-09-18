@@ -26,26 +26,28 @@
 
           <div metal:use-macro="context/@@listing_view/macros/document_byline"></div>
 
-          <p class="tileBody" tal:condition="item_description">
-            <span class="description" tal:content="item_description">
-              description
-            </span>
-          </p>
-
-          <div class="tileImage" tal:condition="item_has_image">
+          <div class="tileImage"
+               tal:condition="item_has_image"
+               tal:attributes="class python: 'tileImage' if item_description else 'tileImageNoFloat'">
             <a tal:attributes="href item_link">
               <img tal:define="scales obj/@@images;
                                scale python:scales.scale('image', 'thumb')"
-                  tal:replace="structure python:scale and scale.tag(css_class='tileImage') or None" />
+                  tal:replace="structure python:scale and scale.tag() or None" />
             </a>
           </div>
 
-          <p class="tileFooter">
+          <div class="tileBody" tal:condition="item_description">
+            <span class="description" tal:content="item_description">
+              description
+            </span>
+          </div>
+
+          <div class="tileFooter">
             <a tal:attributes="href item_link"
                 i18n:translate="read_more">
               Read More&hellip;
             </a>
-          </p>
+          </div>
 
           <div class="visualClear"><!-- --></div>
 
