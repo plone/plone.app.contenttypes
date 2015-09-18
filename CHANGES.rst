@@ -6,7 +6,13 @@ Changelog
 
 - Fix consistent use of LeadImage behavior template everywhere
   [sneridagh]
+- Make consistent use of LeadImage behavior everywhere. Related to
+  plone/plone.app.contenttypes#1012. Contentleadimages no longer show up in
+  full_view since they are a viewlet.
+  [sneridagh, pbauer]
 
+- Fixed the summary_view styling
+  [sneridagh]
 
 1.2.2 (2015-09-15)
 ------------------
