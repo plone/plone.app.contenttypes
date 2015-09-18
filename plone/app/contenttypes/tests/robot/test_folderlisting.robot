@@ -71,7 +71,7 @@ Listing should list contained content in detail
   Page Should Contain  this is a test document
   Page Should Contain  Test News Item
   Page Should Contain  this is a test news item
-  Xpath Should Match X Times  //img[@title="Test News Item"]  1
+  Xpath Should Match X Times  //img[@title="Test News Item"]  0
   Page Should Contain  Test Event
   Page Should Contain  this is a test event
   Page Should Contain  Test Collection
@@ -129,7 +129,7 @@ Listing should list all content in detail
   Page Should Contain  this is a test document
   Page Should Contain  Test News Item
   Page Should Contain  this is a test news item
-  Xpath Should Match X Times  //img[@title="Test News Item"]  1
+  Xpath Should Match X Times  //img[@title="Test News Item"]  0
   Page Should Contain  Test Event
   Page Should Contain  this is a test event
   Page Should Contain  Test Collection
