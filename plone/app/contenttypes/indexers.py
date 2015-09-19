@@ -27,7 +27,8 @@ def _unicode_save_string_concat(*args):
     for value in args:
         if isinstance(value, unicode):
             value = value.encode('utf-8', 'replace')
-        result = ' '.join((result, value))
+        if value:
+            result = ' '.join((result, value))
     return result
 
 
@@ -77,7 +78,7 @@ def SearchableText_file(obj):
         raise
     except Exception, msg:
         logger.exception('exception while trying to convert '
-                         'blob contents to "text/plain" for %r. Error: %s',
+                         'blob contents to "text/plain" for %r. Error: %s' %
                          (obj, str(msg)))
         return SearchableText(obj)
 

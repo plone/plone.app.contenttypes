@@ -4,6 +4,10 @@ Changelog
 1.2.3 (unreleased)
 ------------------
 
+- Fix an error with logging an exception on indexing SearchableText for files
+  and concating utf-8 encoded strings.
+  [thet]
+
 - Make consistent use of LeadImage behavior everywhere. Related to
   plone/plone.app.contenttypes#1012. Contentleadimages no longer show up in
   full_view since they are a viewlet.
@@ -11,6 +15,7 @@ Changelog
 
 - Fixed the summary_view styling
   [sneridagh]
+
 
 1.2.2 (2015-09-15)
 ------------------
