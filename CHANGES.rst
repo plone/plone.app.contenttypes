@@ -4,6 +4,11 @@ Changelog
 1.2.3 (unreleased)
 ------------------
 
+- Do not raise errors when IPrimaryFieldInfo(obj) fails (e.g. when the
+  Schema-Cache is gone).
+  Fixes https://github.com/plone/Products.CMFPlone/issues/839
+  [pbauer]
+
 - Fix an error with logging an exception on indexing SearchableText for files
   and concating utf-8 encoded strings.
   [thet]
