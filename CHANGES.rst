@@ -4,6 +4,10 @@ Changelog
 1.2.3 (unreleased)
 ------------------
 
+- Do not raise an exception for items where @@full_view_item throws an
+  exception. Instead hide the object.
+  [pbauer]
+
 - Do not raise errors when IPrimaryFieldInfo(obj) fails (e.g. when the
   Schema-Cache is gone).
   Fixes https://github.com/plone/Products.CMFPlone/issues/839

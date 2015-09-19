@@ -14,7 +14,7 @@
     <metal:entries fill-slot="entries">
       <metal:block use-macro="context/@@listing_view/macros/entries">
         <metal:entry fill-slot="entry">
-          <div tal:define="obj item/getObject;" tal:replace="structure obj/@@full_view_item" />
+          <div tal:define="obj item/getObject;" tal:replace="structure obj/@@full_view_item | nothing" />
         </metal:entry>
       </metal:block>
     </metal:entries>
