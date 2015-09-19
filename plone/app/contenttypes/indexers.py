@@ -56,7 +56,13 @@ def SearchableText_document(obj):
 
 @indexer(IFile)
 def SearchableText_file(obj):
-    primary_field = IPrimaryFieldInfo(obj)
+    try:
+        primary_field = IPrimaryFieldInfo(obj)
+    except TypeError:
+        logger.warn(u'Lookup of PrimaryField failed for %s '
+                    u'If renaming or importing please reindex!' %
+                    obj.absolute_url())
+        return
     if primary_field.value is None:
         return SearchableText(obj)
     mimetype = primary_field.value.contentType
@@ -100,13 +106,25 @@ def getRemoteUrl(obj):
 
 @indexer(IImage)
 def getObjSize_image(obj):
-    primary_field_info = IPrimaryFieldInfo(obj)
+    try:
+        primary_field_info = IPrimaryFieldInfo(obj)
+    except TypeError:
+        logger.warn(u'Lookup of PrimaryField failed for %s '
+                    u'If renaming or importing please reindex!' %
+                    obj.absolute_url())
+        return
     return obj.getObjSize(None, primary_field_info.value.size)
 
 
 @indexer(IFile)
 def getObjSize_file(obj):
-    primary_field_info = IPrimaryFieldInfo(obj)
+    try:
+        primary_field_info = IPrimaryFieldInfo(obj)
+    except TypeError:
+        logger.warn(u'Lookup of PrimaryField failed for %s '
+                    u'If renaming or importing please reindex!' %
+                    obj.absolute_url())
+        return
     return obj.getObjSize(None, primary_field_info.value.size)
 
 
@@ -120,7 +138,13 @@ def getIcon_file(obj):
     if mtr is None:
         return None
 
-    primary_field_info = IPrimaryFieldInfo(obj)
+    try:
+        primary_field_info = IPrimaryFieldInfo(obj, None)
+    except TypeError:
+        logger.warn(u'Lookup of PrimaryField failed for %s '
+                    u'If renaming or importing please reindex!' %
+                    obj.absolute_url())
+        return
     if not primary_field_info.value:
         # There is no file so we should show a generic icon
         # TODO : find a better icon for generic
