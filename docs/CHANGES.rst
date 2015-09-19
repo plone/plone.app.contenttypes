@@ -4,6 +4,10 @@ Changelog
 1.1b6 (unreleased)
 ------------------
 
+- Fix an error with logging an exception on indexing SearchableText for files
+  and concating utf-8 encoded strings.
+  [thet]
+
 - In ``FolderView`` based views, don't include the ``portal_types`` query, if
   ``object_provides`` is set in the ``results`` method keyword arguments. Fixes
   a case, where no Album Images were shown, when portal_state's
