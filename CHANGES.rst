@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2.3 (unreleased)
+1.2.3 (2015-09-20)
 ------------------
 
 - Do not raise an exception for items where @@full_view_item throws an
