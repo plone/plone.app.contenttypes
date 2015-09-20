@@ -28,7 +28,6 @@ class PloneAppContenttypesContent(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         # Necessary to set up some Plone stuff, such as Workflow.
-        self.applyProfile(portal, 'Products.CMFPlone:plone')
         self.applyProfile(portal, 'plone.app.contenttypes:plone-content')
 
 PLONE_APP_CONTENTTYPES_CONTENT_FIXTURE = PloneAppContenttypesContent()

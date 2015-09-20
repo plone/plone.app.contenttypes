@@ -4,7 +4,8 @@ Changelog
 1.2.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- test_content_profile: do not appy Products.CMFPlone:plone.
+  [maurits]
 
 
 1.2.3 (2015-09-20)
