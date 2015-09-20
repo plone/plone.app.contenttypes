@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+from zope.component import getUtility
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import ITypesSchema
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
+from plone.registry.interfaces import IRegistry
 
 
 # links starting with these URL scheme should not be redirected to
@@ -35,18 +38,16 @@ class LinkRedirectView(BrowserView):
     def __call__(self):
         """Redirect to the Link target URL, if and only if:
          - redirect_links property is enabled in
-           portal_properties/site_properties
+           configuration registry
          - the link is of a redirectable type (no mailto:, etc)
          - AND current user doesn't have permission to edit the Link"""
         context = self.context
-        ptool = getToolByName(context, 'portal_properties')
         mtool = getToolByName(context, 'portal_membership')
 
-        redirect_links = getattr(
-            ptool.site_properties,
-            'redirect_links',
-            False
-        )
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(ITypesSchema, prefix="plone")
+        redirect_links = settings.redirect_links
+
         can_edit = mtool.checkPermission('Modify portal content', context)
         redirect_links = redirect_links\
             and not self._url_uses_scheme(NON_REDIRECTABLE_URL_SCHEMES)

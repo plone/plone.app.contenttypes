@@ -94,9 +94,8 @@ class FolderView(BrowserView):
 
     @property
     def use_view_action(self):
-        site_props = self.context.restrictedTraverse(
-            'portal_properties').site_properties
-        return getattr(site_props, 'typesUseViewActionInListings', ())
+        registry = getUtility(IRegistry)
+        return registry.get('plone.types_use_view_action_in_listings', [])
 
     @property
     def show_about(self):

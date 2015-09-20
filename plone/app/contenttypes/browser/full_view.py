@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
 from Products.Five.browser import BrowserView
-from Products.CMFCore.utils import getToolByName
 from zope.publisher.interfaces.browser import IBrowserView
 
 
@@ -31,6 +32,7 @@ class FullViewItem(BrowserView):
     def item_url(self):
         context = self.context
         url = context.absolute_url()
-        props = getToolByName(context, 'portal_properties')
-        use_view_action = props.site_properties.typesUseViewActionInListings
+        registry = getUtility(IRegistry)
+        use_view_action = registry.get(
+            'plone.types_use_view_action_in_listings', [])
         return self.item_type in use_view_action and '%s/view' % url or url

@@ -9,7 +9,7 @@
 
 <metal:header fill-slot="header">
   <div class="portalMessage info"
-      tal:define="redirect_links context/portal_properties/site_properties/redirect_links|nothing;"
+      tal:define="redirect_links python:context.portal_registry['plone.redirect_links']"
       tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
     <strong i18n:translate="">Info</strong>
     <span tal:omit-tag=""
