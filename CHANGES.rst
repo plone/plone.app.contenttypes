@@ -4,6 +4,9 @@ Changelog
 1.2.4 (unreleased)
 ------------------
 
+- fix full_view error when collection contains itself
+  [vangheem]
+
 - test_content_profile: do not appy Products.CMFPlone:plone.
   [maurits]
 
