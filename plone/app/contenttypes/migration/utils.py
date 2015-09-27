@@ -20,9 +20,6 @@ from plone.app.contenttypes.migration.field_migrators import \
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
 from plone.app.discussion.interfaces import IConversation
-from plone.app.linkintegrity.handlers import modifiedArchetype
-from plone.app.linkintegrity.handlers import modifiedDexterity
-from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.dexterity.interfaces import IDexterityContent
@@ -373,18 +370,16 @@ def link_items(  # noqa
     else:
         target_type = 'AT'
 
-    if relationship == referencedRelationship:
-        # 'relatesTo' is the relationship for linkintegrity-relations.
+    if relationship == 'relatesTo':
+        # 'relatesTo' (plone.app.linkintegrity.handlers.referencedRelationship)
+        # is the relationship for linkintegrity-relations.
         # Linkintegrity-relations should automatically be (re)created by
         # plone.app.linkintegrity.handlers.modifiedDexterity or
         # plone.app.linkintegrity.handlers.modifiedArchetype
         # when a ObjectModifiedEvent is thrown.
         # These relations are only created if the source has a richtext-field
         # with a link to the target and should not be created manually.
-        if source_type == 'AT':
-            modifiedArchetype(source_obj, None)
-        if source_type == 'DX':
-            modifiedDexterity(source_obj, None)
+        modified(source_obj)
         return
 
     if source_type == 'AT':
