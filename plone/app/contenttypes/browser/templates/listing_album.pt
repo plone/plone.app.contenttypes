@@ -29,7 +29,7 @@
                            scale ob/@@images;
                            img_tag python:scale.scale('image', scale='thumb').tag()"
               tal:replace="structure img_tag" />
-        </span>
+        </span><div style='clear:both'></div>
         <span class="photoAlbumEntryTitle" tal:content="image/Title">
             Title
         </span>
