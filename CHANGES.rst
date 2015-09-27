@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2.4 (unreleased)
+1.2.4 (2015-09-27)
 ------------------
 
 - fix full_view error when collection contains itself
