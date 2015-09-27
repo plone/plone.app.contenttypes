@@ -4,8 +4,7 @@ Changelog
 1.2.5 (unreleased)
 ------------------
 
-- Remove imports from p.a.linkintegrity to fix test-issues.
-  [pbauer]
+- Nothing changed yet.
 
 
 1.2.4 (2015-09-27)
