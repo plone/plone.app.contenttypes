@@ -4,6 +4,10 @@ Changelog
 1.2.5 (unreleased)
 ------------------
 
+- Fix full_view when content is not IUUIDAware (like the portal).
+  Fixes https://github.com/plone/Products.CMFPlone/issues/1109.
+  [pbauer]
+
 - Add plone.app.linkintegrity to dependencies due to test-issues.
   [pbauer]
 

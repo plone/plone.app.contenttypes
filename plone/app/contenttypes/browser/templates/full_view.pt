@@ -9,7 +9,7 @@
 
 <metal:content-core fill-slot="content-core">
 <metal:block define-macro="content-core"
-             tal:define="uuid context/@@uuid">
+             tal:define="uuid context/@@uuid | nothing">
   <metal:listing use-macro="context/@@listing_view/macros/content-core">
     <!-- we don't want the dl -->
     <metal:entries fill-slot="entries">
