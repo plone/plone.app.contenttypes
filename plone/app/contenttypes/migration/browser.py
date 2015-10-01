@@ -126,6 +126,7 @@ class MigrateFromATContentTypes(BrowserView):
                  content_types="all",
                  migrate_schemaextended_content=False,
                  migrate_references=True,
+                 use_savepoints=False,
                  from_form=False):
 
         portal = self.context
@@ -234,7 +235,8 @@ class MigrateFromATContentTypes(BrowserView):
             for migrator in migrators_tuple:
 
                 walker_settings = {'portal': portal,
-                                   'migrator': migrator}
+                                   'migrator': migrator,
+                                   'use_savepoint': use_savepoints}
                 walker = CatalogWalker(**walker_settings)
                 logger.info("Refactored migration using migrator %s" % (
                             migrator))
@@ -360,6 +362,17 @@ class IATCTMigratorForm(Interface):
         default=True
     )
 
+    use_savepoints = schema.Bool(
+        title=u"Use Savepoints?",
+        description=(
+            u"Save migrated content gradually, rather than all at once. "
+            u"If errors occur then the migration will continue, but you will "
+            u"be left with a half migrated site, and have to solve migration "
+            u"problems somehow before continuing."
+        ),
+        default=False
+    )
+
     extended_content = schema.List(
         title=(
             u"Migrate content that was extended "
@@ -403,6 +416,7 @@ class ATCTMigratorForm(form.Form):
             content_types=content_types,
             migrate_schemaextended_content=True,
             migrate_references=data['migrate_references'],
+            use_savepoints=data['use_savepoints'],
             from_form=True,
         )
         sdm = getToolByName(context, "session_data_manager")

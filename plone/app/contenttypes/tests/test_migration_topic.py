@@ -47,7 +47,8 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         # We know this only ever returns one migrator - hence [0]
         migrator = select_topics_migrator(self.portal)[0]
         walker_settings = {'portal': self.portal,
-                           'migrator': migrator}
+                           'migrator': migrator,
+                           'use_savepoint': True}
         walker = CatalogWalker(**walker_settings)
         walker.go()
 
