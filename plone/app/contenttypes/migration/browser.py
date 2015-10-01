@@ -7,6 +7,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
+from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.utils import patch, undoPatch
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
@@ -216,7 +217,28 @@ class MigrateFromATContentTypes(BrowserView):
             installTypeIfNeeded(v['type_name'])
 
             # call the migrator
-            v['migrator'](portal)
+            if 'migrators' in v:
+                migrators_tuple = v['migrators']
+                logger.info("Migrators supplied by ATCT_LIST: %s" %
+                            migrators_tuple)
+            elif 'migrator_selector' in v:
+                migrators_tuple = v['migrators_selector'](portal)
+                logger.info("Migrators supplied by selector %s: %s" %
+                            (v['migrators_selector'],
+                             migrators_tuple))
+            else:
+                msg = "ATCT_LIST must supply one of 'migrators' or 'migrators_selector'"
+                logger.error(msg)
+                return(msg)
+
+            for migrator in migrators_tuple:
+
+                walker_settings = {'portal': portal,
+                                   'migrator': migrator}
+                walker = CatalogWalker(**walker_settings)
+                logger.info("Refactored migration using migrator %s" % (
+                            migrator))
+                walker.go()
 
             # logging
             duration_current = datetime.now() - starttime_for_current

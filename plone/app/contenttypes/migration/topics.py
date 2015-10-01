@@ -12,7 +12,7 @@ from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.inplace import InplaceCMFFolderMigrator
 from Products.contentmigration.inplace import InplaceCMFItemMigrator
-from Products.contentmigration.walker import CustomQueryWalker
+from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.app.querystring.interfaces import IQuerystringRegistryReader
@@ -459,10 +459,17 @@ class TopicMigrator(InplaceCMFItemMigrator):
     src_portal_type = 'Topic'
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
+    parsed_registry = None
 
     @property
     def registry(self):
-        return self.kwargs['registry']
+        if not self.parsed_registry:
+            # Parse the registry to get allowed operations and pass it to the
+            # migrator.
+            reg = getUtility(IRegistry)
+            reader = IQuerystringRegistryReader(reg)
+            self.parsed_registry = reader.parseRegistry()
+        return self.parsed_registry
 
     def beforeChange_criteria(self):
         """Store the criteria of the old Topic.
@@ -562,10 +569,17 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator):
     src_portal_type = 'Topic'
     src_meta_type = 'ATTopic'
     dst_portal_type = dst_meta_type = 'Collection'
+    parsed_registry = None
 
     @property
     def registry(self):
-        return self.kwargs['registry']
+        if not self.parsed_registry:
+            # Parse the registry to get allowed operations and pass it to the
+            # migrator.
+            reg = getUtility(IRegistry)
+            reader = IQuerystringRegistryReader(reg)
+            self.parsed_registry = reader.parseRegistry()
+        return self.parsed_registry
 
     def beforeChange_criteria(self):
         """Store the criteria of the old Topic.
@@ -661,24 +675,18 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator):
                 self.new.setDefaultPage(default_page)
 
 
-def migrate_topics(portal):
-    """Migrate ATContentTypes Topics to plone.app.contenttypes Collections.
+def select_topics_migrator(portal):
+    """To migrate ATContentTypes Topics to plone.app.contenttypes Collections.
 
-    This could also be used as upgrade step.
+    Must return a tuple of migrators (though most times only 1 is needed)
     """
-    # Parse the registry to get allowed operations and pass it to the
-    # migrator.
-    reg = getUtility(IRegistry)
-    reader = IQuerystringRegistryReader(reg)
-    registry = reader.parseRegistry()
     # select migrator based on the base-class of collections
     fti = portal.portal_types['Collection']
     if fti.content_meta_type == "Dexterity Item":
         migrator = TopicMigrator
     elif fti.content_meta_type == "Dexterity Container":
         migrator = FolderishTopicMigrator
-    walker = CustomQueryWalker(portal, migrator)(registry=registry)
-    return walker
+    return (migrator,)
 
 
 CONVERTERS = {
