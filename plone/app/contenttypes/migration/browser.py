@@ -222,7 +222,7 @@ class MigrateFromATContentTypes(BrowserView):
                 migrators_tuple = v['migrators']
                 logger.info("Migrators supplied by ATCT_LIST: %s" %
                             (migrators_tuple,))
-            elif 'migrator_selector' in v:
+            elif 'migrators_selector' in v:
                 migrators_tuple = v['migrators_selector'](portal)
                 logger.info("Migrators supplied by selector %s: %s" %
                             (v['migrators_selector'],
