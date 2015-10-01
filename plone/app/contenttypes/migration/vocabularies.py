@@ -29,6 +29,8 @@ else:
     HAS_APP_COLLECTION = True
     from plone.app.collection.interfaces import ICollection
 
+# each item in ATCT_LIST should supply a 'migrators' tuple
+# OR alternatively a 'migrators_selector' function which returns a tuple
 ATCT_LIST = {
     "Folder": {
         'iface': IATFolder,

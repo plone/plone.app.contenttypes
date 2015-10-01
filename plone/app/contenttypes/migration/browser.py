@@ -114,6 +114,42 @@ class FixBaseClasses(BrowserView):
         return out
 
 
+def migrate_atct_type(portal, atct_name, walker_settings={}):
+    """ Migrates a named ATCT type, where the name is a key in ATCT_LIST
+
+    Replaces the migrate_xx functions
+    """
+    #import pdb; pdb.set_trace()
+
+    atct_type_settings = ATCT_LIST[atct_name]
+
+    if 'migrators' in atct_type_settings:
+        migrators_tuple = atct_type_settings['migrators']
+        logger.info("Migrators supplied by ATCT_LIST: %s" %
+                    (migrators_tuple,))
+    elif 'migrators_selector' in atct_type_settings:
+        migrators_tuple = atct_type_settings['migrators_selector'](portal)
+        logger.info("Migrators supplied by selector %s: %s" %
+                    (atct_type_settings['migrators_selector'],
+                     migrators_tuple))
+    else:
+        msg = "ATCT_LIST must supply one of 'migrators' or 'migrators_selector'"
+        logger.error(msg)
+        return(msg)
+
+    for migrator in migrators_tuple:
+
+        walker_settings.update({'portal': portal,
+                                'migrator': migrator})
+        walker = CatalogWalker(**walker_settings)
+        logger.info("Run migration using migrator %s" % (
+                    migrator))
+        walker.go()
+
+    # signal success
+    return True
+
+
 class MigrateFromATContentTypes(BrowserView):
     """Migrate the default-types (except event and topic).
     This view can be called directly and it will migrate all content
@@ -218,29 +254,12 @@ class MigrateFromATContentTypes(BrowserView):
             installTypeIfNeeded(v['type_name'])
 
             # call the migrator
-            if 'migrators' in v:
-                migrators_tuple = v['migrators']
-                logger.info("Migrators supplied by ATCT_LIST: %s" %
-                            (migrators_tuple,))
-            elif 'migrators_selector' in v:
-                migrators_tuple = v['migrators_selector'](portal)
-                logger.info("Migrators supplied by selector %s: %s" %
-                            (v['migrators_selector'],
-                             migrators_tuple))
-            else:
-                msg = "ATCT_LIST must supply one of 'migrators' or 'migrators_selector'"
-                logger.error(msg)
-                return(msg)
-
-            for migrator in migrators_tuple:
-
-                walker_settings = {'portal': portal,
-                                   'migrator': migrator,
-                                   'use_savepoint': use_savepoints}
-                walker = CatalogWalker(**walker_settings)
-                logger.info("Refactored migration using migrator %s" % (
-                            migrator))
-                walker.go()
+            walker_settings = {'use_savepoint': use_savepoints}
+            result = migrate_atct_type(portal,
+                                       k,
+                                       walker_settings)
+            if result != True:
+                return result
 
             # logging
             duration_current = datetime.now() - starttime_for_current

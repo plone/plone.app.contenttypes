@@ -1518,7 +1518,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             migrate_folders,
             migrate_events,
         )
-        from plone.app.contenttypes.migration.topics import migrate_topics
+        from plone.app.contenttypes.migration.browser import migrate_atct_type
 
         # create all content types
         self.portal.invokeFactory('Document', 'document')
@@ -1547,7 +1547,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         migrate_blobnewsitems(self.portal)
         migrate_folders(self.portal)
         migrate_events(self.portal)
-        migrate_topics(self.portal)
+        migrate_atct_type(self.portal, 'Topic')
 
         # assertions
         cat = self.catalog
