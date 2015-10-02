@@ -45,7 +45,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.portal.invokeFactory("Folder", "folder", title="Folder")
 
     def run_migration(self):
-        migrate_atct_type(self.portal, 'Topic')
+        migrate_atct_type(self.portal, 'Topic', {'use_savepoint': True})
 
     def add_criterion(self, index, criterion, value=None):
         name = '%s_%s' % (index, criterion)

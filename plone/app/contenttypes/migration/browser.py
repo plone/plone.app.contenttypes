@@ -114,24 +114,23 @@ class FixBaseClasses(BrowserView):
         return out
 
 
-def migrate_atct_type(portal, atct_name, walker_settings={}):
+def migrate_atct_type(portal, atct_name, walker_settings=None):
     """ Migrates a named ATCT type, where the name is a key in ATCT_LIST
 
     Replaces the migrate_xx functions
     """
-    #import pdb; pdb.set_trace()
 
     atct_type_settings = ATCT_LIST[atct_name]
 
     if 'migrators' in atct_type_settings:
         migrators_tuple = atct_type_settings['migrators']
-        logger.info("Migrators supplied by ATCT_LIST: %s" %
-                    (migrators_tuple,))
+        logger.info("Migrators supplied by ATCT_LIST: %s",
+                    migrators_tuple)
     elif 'migrators_selector' in atct_type_settings:
         migrators_tuple = atct_type_settings['migrators_selector'](portal)
-        logger.info("Migrators supplied by selector %s: %s" %
-                    (atct_type_settings['migrators_selector'],
-                     migrators_tuple))
+        logger.info("Migrators supplied by selector %s: %s",
+                    atct_type_settings['migrators_selector'],
+                    migrators_tuple)
     else:
         msg = "ATCT_LIST must supply one of 'migrators' or 'migrators_selector'"
         logger.error(msg)
@@ -139,11 +138,13 @@ def migrate_atct_type(portal, atct_name, walker_settings={}):
 
     for migrator in migrators_tuple:
 
+        if walker_settings is None:
+            walker_settings = {}
         walker_settings.update({'portal': portal,
                                 'migrator': migrator})
         walker = CatalogWalker(**walker_settings)
-        logger.info("Run migration using migrator %s" % (
-                    migrator))
+        logger.info("Run migration using migrator %s",
+                    migrator)
         walker.go()
 
     # signal success
@@ -258,7 +259,7 @@ class MigrateFromATContentTypes(BrowserView):
             result = migrate_atct_type(portal,
                                        k,
                                        walker_settings)
-            if result != True:
+            if result is not True:
                 return result
 
             # logging

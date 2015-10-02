@@ -12,7 +12,6 @@ from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.inplace import InplaceCMFFolderMigrator
 from Products.contentmigration.inplace import InplaceCMFItemMigrator
-from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.app.querystring.interfaces import IQuerystringRegistryReader
