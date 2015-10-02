@@ -13,7 +13,7 @@ from plone.app.blob.interfaces import IATBlobImage
 from plone.app.contenttypes import _
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import isSchemaExtended
-from plone.app.contenttypes.migration.topics import migrate_topics
+from plone.app.contenttypes.migration.topics import select_topics_migrator
 from zope.interface import implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
@@ -29,17 +29,19 @@ else:
     HAS_APP_COLLECTION = True
     from plone.app.collection.interfaces import ICollection
 
+# each item in ATCT_LIST should supply a 'migrators' tuple
+# OR alternatively a 'migrators_selector' function which returns a tuple
 ATCT_LIST = {
     "Folder": {
         'iface': IATFolder,
-        'migrator': migration.migrate_folders,
+        'migrators': (migration.FolderMigrator,),
         'extended_fields': [],
         'type_name': 'Folder',
         'old_meta_type': 'ATFolder',
     },
     "Document": {
         'iface': IATDocument,
-        'migrator': migration.migrate_documents,
+        'migrators': (migration.DocumentMigrator,),
         'extended_fields': [],
         'type_name': 'Document',
         'old_meta_type': 'ATDocument',
@@ -47,7 +49,7 @@ ATCT_LIST = {
     # File without blobs
     "File": {
         'iface': IATFile,
-        'migrator': migration.migrate_files,
+        'migrators': (migration.FileMigrator,),
         'extended_fields': [],
         'type_name': 'File',
         'old_meta_type': 'ATFile',
@@ -55,49 +57,51 @@ ATCT_LIST = {
     # Image without blobs
     "Image": {
         'iface': IATImage,
-        'migrator': migration.migrate_images,
+        'migrators': (migration.ImageMigrator,),
         'extended_fields': [],
         'type_name': 'Image',
         'old_meta_type': 'ATImage',
     },
     "News Item": {
         'iface': IATNewsItem,
-        'migrator': migration.migrate_newsitems,
+        'migrators': (migration.NewsItemMigrator,),
         'extended_fields': [],
         'type_name': 'News Item',
         'old_meta_type': 'ATNewsItem',
     },
     "Link": {
         'iface': IATLink,
-        'migrator': migration.migrate_links,
+        'migrators': (migration.LinkMigrator,),
         'extended_fields': [],
         'type_name': 'Link',
         'old_meta_type': 'ATLink',
     },
     "Event": {
         'iface': IATEvent,
-        'migrator': migration.migrate_events,
+        'migrators': (migration.DXOldEventMigrator,
+                      migration.EventMigrator,
+                      migration.DXEventMigrator),
         'extended_fields': [],
         'type_name': 'Event',
         'old_meta_type': 'ATEvent',
     },
     "BlobImage": {
         'iface': IATBlobImage,
-        'migrator': migration.migrate_blobimages,
+        'migrators': (migration.BlobImageMigrator,),
         'extended_fields': ['image'],
         'type_name': 'Image',
         'old_meta_type': 'ATBlob',
     },
     "BlobFile": {
         'iface': IATBlobFile,
-        'migrator': migration.migrate_blobfiles,
+        'migrators': (migration.BlobFileMigrator,),
         'extended_fields': ['file'],
         'type_name': 'File',
         'old_meta_type': 'ATBlob',
     },
     "Topic": {
         'iface': IATTopic,
-        'migrator': migrate_topics,
+        'migrators_selector': select_topics_migrator,
         'extended_fields': [],
         'type_name': 'Collection',
         'old_meta_type': 'ATTopic',
@@ -107,7 +111,7 @@ ATCT_LIST = {
 if HAS_APP_COLLECTION:
     ATCT_LIST["Collection"] = {
         'iface': ICollection,
-        'migrator': migration.migrate_collections,
+        'migrators': (migration.CollectionMigrator,),
         'extended_fields': [],
         'type_name': 'Collection',
         'old_meta_type': 'Collection',

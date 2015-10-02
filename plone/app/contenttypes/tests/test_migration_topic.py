@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
+from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
-from plone.app.contenttypes.migration.topics import migrate_topics
+from plone.app.contenttypes.migration.browser import migrate_atct_type
+from plone.app.contenttypes.migration.topics import select_topics_migrator
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 from plone.app.querystring.queryparser import parseFormquery
@@ -43,7 +45,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.portal.invokeFactory("Folder", "folder", title="Folder")
 
     def run_migration(self):
-        migrate_topics(self.portal)
+        migrate_atct_type(self.portal, 'Topic', {'use_savepoint': True})
 
     def add_criterion(self, index, criterion, value=None):
         name = '%s_%s' % (index, criterion)

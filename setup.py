@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 import os
 import sys
 
-version = '1.1b6.dev0'
+version = '1.1b6-dj'
 additional_requires = []
 if sys.version_info < (2, 7):
     additional_requires.append('importlib')
