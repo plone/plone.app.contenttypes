@@ -108,7 +108,7 @@ Any content you created based on plone.app.contenttypes will no longer be editab
 Dependencies
 ------------
 
-* ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pinns for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the right version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://docs.plone.org/external/plone.app.dexterity/docs/install.html#installing-dexterity-on-older-versions-of-plone>`_.
+* ``plone.app.dexterity >= 2.0.7``. Dexterity is shipped with Plone 4.3.x. Version pins for Dexterity are included in Plone 4.2.x. For Plone 4.1.x you need to pin the right version for Dexterity in your buildout. See `Installing Dexterity on older versions of Plone <http://docs.plone.org/external/plone.app.dexterity/docs/install.html#installing-dexterity-on-older-versions-of-plone>`_.
 
 * ``plone.dexterity >= 2.2.1``. Olders version of plone.dexterity break the rss-views because plone.app.contenttypes uses behaviors for the richtext-fields.
 
@@ -116,7 +116,7 @@ Dependencies
 
 * ``plone.app.portlets >= 2.5a1``. In older version the event-portlet will not work with the new event-type.
 
-These are the version-pinns for Plone 4.3.4:
+These are the version-pins for Plone 4.3.4:
 
 .. code:: ini
 
@@ -128,7 +128,7 @@ These are the version-pinns for Plone 4.3.4:
 
 Plone 4.3.3 also needs ``plone.app.portlets = 2.5.2``
 
-Plone-versions before 4.3.3 need to pinn more packages:
+Plone-versions before 4.3.3 need to pin more packages:
 
 .. code:: ini
 
