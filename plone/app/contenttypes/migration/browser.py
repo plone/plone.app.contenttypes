@@ -134,10 +134,11 @@ def migrate_atct_type(portal, atct_name, walker_settings=None):
                     atct_type_settings['migrators_selector'],
                     migrators_tuple)
     else:
-        msg = ("ATCT_LIST must supply one of 'migrators' or" +
-               " 'migrators_selector'")
-        logger.error(msg)
-        return(msg)
+        logger.error("No migrator to run! - ATCT_LIST doesn't supply one of " +
+                     "'migrators' or 'migrators_selector' for type %s.",
+                     atct_name)
+        # signal Failure
+        return False
 
     for migrator in migrators_tuple:
 
@@ -261,9 +262,12 @@ class MigrateFromATContentTypes(BrowserView):
 
             # call the migrator
             walker_settings = {'use_savepoint': use_savepoints}
-            result = migrate_atct_type(portal,
-                                       k,
-                                       walker_settings)
+            migration_done = migrate_atct_type(portal,
+                                               k,
+                                               walker_settings)
+
+            if migration_done and use_savepoints:
+                transaction.commit()
 
             # logging
             duration_current = datetime.now() - starttime_for_current
