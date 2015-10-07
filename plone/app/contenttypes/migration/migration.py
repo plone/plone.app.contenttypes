@@ -211,10 +211,6 @@ class DocumentMigrator(ATCTContentMigrator):
         migrate_richtextfield(self.old, self.new, 'text', 'text')
 
 
-def migrate_documents(portal):
-    return migrate(portal, DocumentMigrator)
-
-
 class FileMigrator(ATCTContentMigrator):
 
     src_portal_type = 'File'
@@ -226,20 +222,12 @@ class FileMigrator(ATCTContentMigrator):
         migrate_filefield(self.old, self.new, 'file', 'file')
 
 
-def migrate_files(portal):
-    return migrate(portal, FileMigrator)
-
-
 class BlobFileMigrator(FileMigrator):
 
     src_portal_type = 'File'
     src_meta_type = 'ATBlob'
     dst_portal_type = 'File'
     dst_meta_type = None  # not used
-
-
-def migrate_blobfiles(portal):
-    return migrate(portal, BlobFileMigrator)
 
 
 class ImageMigrator(ATCTContentMigrator):
@@ -253,20 +241,12 @@ class ImageMigrator(ATCTContentMigrator):
         migrate_imagefield(self.old, self.new, 'image', 'image')
 
 
-def migrate_images(portal):
-    return migrate(portal, ImageMigrator)
-
-
 class BlobImageMigrator(ImageMigrator):
 
     src_portal_type = 'Image'
     src_meta_type = 'ATBlob'
     dst_portal_type = 'Image'
     dst_meta_type = None  # not used
-
-
-def migrate_blobimages(portal):
-    return migrate(portal, BlobImageMigrator)
 
 
 class LinkMigrator(ATCTContentMigrator):
@@ -280,10 +260,6 @@ class LinkMigrator(ATCTContentMigrator):
         migrate_simplefield(self.old, self.new, 'remoteUrl', 'remoteUrl')
 
 
-def migrate_links(portal):
-    return migrate(portal, LinkMigrator)
-
-
 class NewsItemMigrator(ATCTContentMigrator):
 
     src_portal_type = 'News Item'
@@ -295,10 +271,6 @@ class NewsItemMigrator(ATCTContentMigrator):
         migrate_richtextfield(self.old, self.new, 'text', 'text')
         migrate_imagefield(self.old, self.new, 'image', 'image')
         migrate_simplefield(self.old, self.new, 'imageCaption', 'imageCaption')
-
-
-def migrate_newsitems(portal):
-    return migrate(portal, NewsItemMigrator)
 
 
 class BlobNewsItemMigrator(ATCTContentMigrator):
@@ -331,10 +303,6 @@ class FolderMigrator(ATCTFolderMigrator):
     def beforeChange_migrate_layout(self):
         if self.old.getLayout() == 'atct_album_view':
             self.old.setLayout('album_view')
-
-
-def migrate_folders(portal):
-    return migrate(portal, FolderMigrator)
 
 
 class CollectionMigrator(ATCTContentMigrator):
@@ -370,10 +338,6 @@ class CollectionMigrator(ATCTContentMigrator):
             self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
 
 
-def migrate_collections(portal):
-    return migrate(portal, CollectionMigrator)
-
-
 class EventMigrator(ATCTContentMigrator):
     """Migrate both Products.ContentTypes & plone.app.event.at Events"""
 
@@ -397,12 +361,6 @@ class EventMigrator(ATCTContentMigrator):
         migrate_simplefield(self.old, self.new, 'wholeDay', 'whole_day')
         migrate_simplefield(self.old, self.new, 'openEnd', 'open_end')
         migrate_simplefield(self.old, self.new, 'recurrence', 'recurrence')
-
-
-def migrate_events(portal):
-    migrate(portal, DXOldEventMigrator)
-    migrate(portal, EventMigrator)
-    migrate(portal, DXEventMigrator)
 
 
 def makeCustomATMigrator(
