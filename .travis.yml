@@ -18,6 +18,7 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 install:
   - bin/buildout -N -t 3 -c travis.cfg
+  - bin/buildout -c travis.cfg annotate
 script:
   - bin/code-analysis
   - bin/test --all
