@@ -134,7 +134,8 @@ def migrate_atct_type(portal, atct_name, walker_settings=None):
                     atct_type_settings['migrators_selector'],
                     migrators_tuple)
     else:
-        msg = "ATCT_LIST must supply one of 'migrators' or 'migrators_selector'"
+        msg = ("ATCT_LIST must supply one of 'migrators' or" +
+               " 'migrators_selector'")
         logger.error(msg)
         return(msg)
 

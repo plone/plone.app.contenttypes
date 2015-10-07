@@ -13,8 +13,6 @@ from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.walker import CustomQueryWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
-from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
-from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
 from plone.app.contenttypes.migration.utils import copy_contentrules
 from plone.app.contenttypes.migration.utils import migrate_leadimage
 from plone.app.contenttypes.migration.utils import move_comments

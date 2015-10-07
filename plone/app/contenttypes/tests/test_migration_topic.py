@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
-from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.migration.browser import migrate_atct_type
-from plone.app.contenttypes.migration.topics import select_topics_migrator
 from plone.app.contenttypes.testing import \
     PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 from plone.app.querystring.queryparser import parseFormquery
