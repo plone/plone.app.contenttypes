@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_inner
 from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
@@ -51,6 +52,7 @@ from zope.interface import Interface
 
 import logging
 import pkg_resources
+import transaction
 
 try:
     pkg_resources.get_distribution('collective.contentleadimage')
@@ -195,6 +197,8 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
 
+        logger.info("Database size before migration: %s",
+                    self.dbstats())
         # store references on the portal
         if migrate_references:
             store_references(portal)
@@ -259,6 +263,9 @@ class MigrateFromATContentTypes(BrowserView):
             result = migrate_atct_type(portal,
                                        k,
                                        walker_settings)
+            if use_savepoints:
+                transaction.commit()
+
             if result is not True:
                 return result
 
@@ -270,6 +277,10 @@ class MigrateFromATContentTypes(BrowserView):
                 v['old_meta_type'],
                 v['type_name'],
                 duration_human))
+
+            logger.info("Database size after migrating %s: %s",
+                        v['old_meta_type'],
+                        self.dbstats())
 
             # some data for the results-page
             migrated_types[k] = {}
@@ -334,6 +345,13 @@ class MigrateFromATContentTypes(BrowserView):
             }
             logger.info(msg)
             return stats
+
+    def dbstats(self):
+        # If more stats are required, you could do worse that looking at
+        # plone.app.debugtoolbar.browser.global for inspiration
+        context = aq_inner(self.context)
+        cpanel = context.unrestrictedTraverse('/Control_Panel')
+        return cpanel.db_size()
 
     def stats(self):
         results = {}
