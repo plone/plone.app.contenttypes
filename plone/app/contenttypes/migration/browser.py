@@ -264,11 +264,6 @@ class MigrateFromATContentTypes(BrowserView):
             result = migrate_atct_type(portal,
                                        k,
                                        walker_settings)
-            if use_savepoints:
-                transaction.commit()
-
-            if result is not True:
-                return result
 
             # logging
             duration_current = datetime.now() - starttime_for_current

@@ -11,6 +11,7 @@ from Products.CMFCore.utils import getToolByName
 from plone.app.blob.interfaces import IATBlobFile
 from plone.app.blob.interfaces import IATBlobImage
 from plone.app.contenttypes import _
+from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.migration.topics import select_topics_migrator
@@ -78,9 +79,9 @@ ATCT_LIST = {
     },
     "Event": {
         'iface': IATEvent,
-        'migrators': (migration.DXOldEventMigrator,
+        'migrators': (dxmigration.DXOldEventMigrator,
                       migration.EventMigrator,
-                      migration.DXEventMigrator),
+                      dxmigration.DXEventMigrator),
         'extended_fields': [],
         'type_name': 'Event',
         'old_meta_type': 'ATEvent',

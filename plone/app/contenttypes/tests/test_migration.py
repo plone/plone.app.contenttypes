@@ -396,7 +396,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     @unittest.skip("Fails in Plone 4")
     def test_dx_excl_from_nav_is_migrated(self):
         from datetime import datetime
-        from plone.app.contenttypes.migration.migration import DXEventMigrator
+        from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
 
         # Enable plone.app.event.dx
         from plone.app.testing import applyProfile
