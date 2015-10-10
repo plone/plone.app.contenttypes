@@ -155,12 +155,6 @@ class FolderView(BrowserView):
             'value': value
         }
 
-    def has_image(self, obj):
-        if getattr(obj, 'getObject', False):
-            obj = obj.getObject()
-        img = getattr(aq_base(obj), 'image', None)
-        return True if img else False
-
     def is_event(self, obj):
         if getattr(obj, 'getObject', False):
             obj = obj.getObject()
