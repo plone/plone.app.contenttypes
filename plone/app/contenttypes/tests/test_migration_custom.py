@@ -478,3 +478,46 @@ class CustomMigrationFunctionalTests(unittest.TestCase):
         view = link1()
         self.assertIn(u'<h1 class="documentFirstHeading">Ein D\xf6cument</h1>', view)  # noqa
         self.assertIn(u'The link address is:</span>\n            <a href="http://www.starzel.de">http://www.starzel.de</a>', view)  # noqa
+
+    def test_custom_migration_form_for_types_with_spaces(self):
+        """Basic test for the custom_migration form.
+        Field-mapping only works with javascript enabled so we migrate
+        only the content but not the fields.
+        """
+        # add some at content
+        self.portal.invokeFactory('News Item', 'news1')
+        self.portal.invokeFactory('Event', 'event1')
+        self.portal.event1.setTitle(u'Ein Törmin')
+        self.portal.event1.setDescription(u'Wänn?')
+        self.portal.news1.setTitle(u'Ein News Item')
+        self.portal.news1.setDescription(u'Sö was')
+        transaction.commit()
+        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.browser.getControl('Install').click()
+        # open custom-migration-form
+        self.browser.open('%s/@@custom_migration' % self.portal_url)
+        results = self.browser.contents
+        self.assertIn('Custom types migration control panel', results)
+        self.assertIn('<input type="hidden" name="News_space_Item:list" value="text__type__Products.Archetypes.Field.TextField" />', results)  # noqa
+        self.assertEqual(self.browser.getControl(name='dx_select_News_space_Item').value, [''])  # noqa
+        # chose to migrate to Link
+        self.browser.getControl(name='dx_select_News_space_Item').value = ['Link']  # noqa
+        self.assertIn('<input type="hidden" name="Event:list" value="startDate__type__Products.Archetypes.Field.DateTimeField" />', results)  # noqa
+        # chose to migrate to Link
+        self.browser.getControl(name='dx_select_Event').value = ['Link']
+        # run migration
+        self.browser.getControl(name='form.button.Migrate').click()
+        results = self.browser.contents
+        self.assertIn('Migration applied succesfully for 1 "News Item" items.', results)  # noqa
+        self.assertIn('Migration applied succesfully for 1 "Event" items.', results)  # noqa
+        self.assertIn('No content to migrate.', results)
+        link1 = self.portal['news1']
+        self.assertEqual(link1.portal_type, 'Link')
+        self.assertEqual(link1.title, u'Ein News Item')
+        self.assertEqual(link1.description, u'S\xf6 was')
+        self.assertEqual(self.portal['event1'].portal_type, 'Link')
+        # we did not migrate the fields so lets find out if it is a real Link
+        link1.remote_url = 'http://www.starzel.de'
+        view = link1()
+        self.assertIn(u'<h1 class="documentFirstHeading">Ein News Item</h1>', view)  # noqa
+        self.assertIn(u'The link address is:</span>\n            <a href="http://www.starzel.de">http://www.starzel.de</a>', view)  # noqa
