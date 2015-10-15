@@ -473,7 +473,6 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     if fti is None or IDexterityFTI.providedBy(fti):
         # Get the needed info from an instance of the type
         catalog = portal.portal_catalog
-        import pdb; pdb.set_trace()
         brains = catalog(portal_type=src_type, sort_limit=1)
         if not brains:
             # no item? assume stuff
