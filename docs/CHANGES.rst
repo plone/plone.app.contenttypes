@@ -10,6 +10,34 @@ Changelog
 1.1b6 (2015-10-17)
 ------------------
 
+- Fix custom migration from and to types with spaces in the type-name.
+  [pbauer]
+
+- Fix full_view when content is not IUUIDAware (like the portal).
+  Fixes https://github.com/plone/Products.CMFPlone/issues/1109.
+  [pbauer]
+
+- Add plone.app.linkintegrity to dependencies due to test-issues.
+  [pbauer]
+
+
+1.2.4 (2015-09-27)
+------------------
+
+- fix full_view error when collection contains itself
+  [vangheem]
+
+- test_content_profile: do not appy Products.CMFPlone:plone.
+  [maurits]
+
+
+1.2.3 (2015-09-20)
+------------------
+
+- Do not raise an exception for items where @@full_view_item throws an
+  exception. Instead hide the object.
+  [pbauer]
+
 - Do not raise errors when IPrimaryFieldInfo(obj) fails (e.g. when the
   Schema-Cache is gone).
   Fixes https://github.com/plone/Products.CMFPlone/issues/839
