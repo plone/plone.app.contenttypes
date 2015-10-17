@@ -134,7 +134,7 @@ Dependencies
 
 * ``plone.app.portlets >= 2.5.1``. In older version the event-portlet will not work with the new event-type.
 
-These are the version-pinns for Plone 4.3.6:
+These are the version-pinns for Plone 4.3.7:
 
 .. code:: ini
 
@@ -144,7 +144,7 @@ These are the version-pinns for Plone 4.3.6:
     [versions]
     plone.app.event = <= 1.1.999
 
-Plone 4.3.x also needs ``plone.app.portlets = 2.5.2``
+Plone 4.3.5 and lower also need ``plone.app.portlets = >= 2.5.2``
 
 Plone-versions before 4.3.3 need to pinn more packages:
 
