@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1b6 (unreleased)
+1.1b6 (2015-10-17)
 ------------------
 
 - Do not raise errors when IPrimaryFieldInfo(obj) fails (e.g. when the
