@@ -482,7 +482,8 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
             src_obj = brains[0].getObject()
             if IDexterityContent.providedBy(src_obj):
                 logger.error(
-                    '%s should not be dexterity object!' % src_obj.absolute_url())
+                    '%s should not be dexterity object!',
+                    src_obj.absolute_url())
             is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
             src_meta_type = src_obj.meta_type
     else:
