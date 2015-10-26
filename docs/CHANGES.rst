@@ -4,7 +4,9 @@ Changelog
 1.1b7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add ``getRawQuery`` method to Collection content type for backward compatibility with Archetypes API.
+  Fixes (partially) https://github.com/plone/plone.app.contenttypes/issues/283.
+  [hvelarde]
 
 
 1.1b6 (2015-10-17)

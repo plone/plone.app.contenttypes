@@ -54,6 +54,7 @@ setup(name='plone.app.contenttypes',
           'pytz',
           'Products.CMFQuickInstallerTool >= 3.0.7',  # allow blacklisting steps
           'Products.GenericSetup >= 1.7.5',  # allow blacklisting steps
+          'zope.deprecation',
       ] + additional_requires,
       extras_require={
           'test': [
