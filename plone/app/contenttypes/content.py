@@ -9,6 +9,7 @@ from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
+from zope.deprecation import deprecation
 from zope.interface import implementer
 
 
@@ -37,7 +38,15 @@ class Collection(Item):
         self.query = query
 
     def getQuery(self):
+        """Return the query as a list of dict; note that this method
+        returns a list of CatalogContentListingObject in
+        Products.ATContentTypes.
+        """
         return self.query
+
+    @deprecation.deprecate('getRawQuery() is deprecated; use getQuery().')
+    def getRawQuery(self):
+        return self.getQuery()
 
     def setSort_on(self, sort_on):
         self.sort_on = sort_on
