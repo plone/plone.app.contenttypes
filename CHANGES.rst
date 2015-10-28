@@ -4,21 +4,23 @@ Changelog
 1.2.5 (unreleased)
 ------------------
 
-- Fix custom migration from and to types with spaces in the type-name.
+Fixes:
+
+- Fixed custom migration from and to types with spaces in the type-name.
   [pbauer]
 
-- Fix full_view when content is not IUUIDAware (like the portal).
+- Fixed full_view when content is not IUUIDAware (like the portal).
   Fixes https://github.com/plone/Products.CMFPlone/issues/1109.
   [pbauer]
 
-- Add plone.app.linkintegrity to dependencies due to test-issues.
+- Added plone.app.linkintegrity to dependencies due to test-issues.
   [pbauer]
 
 
 1.2.4 (2015-09-27)
 ------------------
 
-- fix full_view error when collection contains itself
+- Fixed full_view error when collection contains itself.
   [vangheem]
 
 - test_content_profile: do not appy Products.CMFPlone:plone.
