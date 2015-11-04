@@ -50,7 +50,8 @@ setup(name='plone.app.contenttypes',
           'plone.app.versioningbehavior',
           'plone.app.lockingbehavior',
           'pytz',
-          'plone.app.z3cform>=1.1.0.dev0'
+          'plone.app.z3cform>=1.1.0.dev0',
+          'zope.deprecation',
       ],
       extras_require={
           'test': [

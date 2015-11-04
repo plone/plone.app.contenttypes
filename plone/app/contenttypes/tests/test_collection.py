@@ -75,6 +75,10 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.collection.query = query
         self.assertEqual(self.collection.getQuery(), query)
 
+    def test_bbb_getRawQuery(self):
+        self.collection.query = query
+        self.assertEqual(self.collection.getRawQuery(), query)
+
     def test_bbb_setSort_on(self):
         self.collection.setSort_on('start')
         self.assertEqual(self.collection.sort_on, 'start')

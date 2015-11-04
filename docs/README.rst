@@ -430,6 +430,8 @@ Differences to Products.ATContentTypes
 - There is no more field ``Location``. If you need georeferenceable consider using ``collective.geo.behaviour``
 - The link on the image of the newsitem triggers an overlay
 - The link-type now allows the of the variables ``${navigation_root_url}`` and ``${portal_url}`` to construct relative urls.
+- The ``getQuery()`` function now returns a list of dict instead of a list of CatalogContentListingObject;
+  use of ``getRawQuery()`` is deprecated.
 - The views for Folders and Collections changed their names and now share a common implementation (since version 1.2a8):
 
   - ``folder_listing_view`` (Folders) and ``collection_view`` (Collections) -> ``listing_view`` (Folders and Collections)
@@ -506,3 +508,4 @@ Contributors
 * Bogdan Girman <bogdan.girman@gmail.com>
 * Martin Opstad Reistadbakk <martin@blaastolen.com>
 * Florent Michon <fmichon@atreal.fr>
+* Héctor Velarde <hector.velarde@gmail.com>
