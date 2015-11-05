@@ -6,7 +6,8 @@ Changelog
 
 New:
 
-- *add item here*
+- Allow to pass custom field_migrator methods with custom migrations.
+  [pbauer]
 
 Fixes:
 
