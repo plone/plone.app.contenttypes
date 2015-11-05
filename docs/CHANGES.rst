@@ -8,6 +8,11 @@ Changelog
   Fixes (partially) https://github.com/plone/plone.app.contenttypes/issues/283.
   [hvelarde]
 
+- Do a ``IRichText`` text indexing on all registered SearchableText indexers by
+  doing it as part of the base ``SearchableText`` function. Convert the text
+  from the source mimetype to ``text/plain``.
+  [thet]
+
 
 1.1b6 (2015-10-17)
 ------------------

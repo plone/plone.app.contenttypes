@@ -150,6 +150,24 @@ class CatalogIntegrationTest(unittest.TestCase):
             '/plone/folder/document'
         )
 
+    def test_html_stripped_searchable_text_index(self):
+        """Ensure, html tags are stripped out from the content and not indexed.
+        """
+        self.document.text = RichTextValue(
+            u'<p>Lorem <b>ipsum</b></p>',
+            mimeType='text/html',
+            outputMimeType='text/html'
+        )
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 1)
+        rid = brains[0].getRID()
+        index_data = self.catalog.getIndexDataForRID(rid)
+        self.assertEqual(index_data['SearchableText'].count('p'), 0)
+        self.assertEqual(index_data['SearchableText'].count('b'), 0)
+
     def test_file_fulltext_in_searchable_text_index_string(self):
         from plone.namedfile.file import NamedBlobFile
         data = ("Lorem ipsum. Köln <!-- ...oder München, das ist hier die "
