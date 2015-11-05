@@ -24,6 +24,12 @@ Fixes:
   [pbauer]
 
 - Fixed full_view when content is not IUUIDAware (like the portal).
+- remove code from deprecated getIcon, reuse metadata field getIcon 
+  for showing thumbs in content listings etc.:
+  https://github.com/plone/Products.CMFPlone/issues/1074
+  [fgrcon]
+  
+- Fix full_view when content is not IUUIDAware (like the portal).
   Fixes https://github.com/plone/Products.CMFPlone/issues/1109.
   [pbauer]
 
