@@ -11,6 +11,11 @@ New:
 
 Fixes:
 
+- Do a ``IRichText`` text indexing on all registered SearchableText indexers by
+  doing it as part of the base ``SearchableText`` function. Convert the text
+  from the source mimetype to ``text/plain``.
+  [thet]
+
 - Add ``getRawQuery`` method to Collection content type for backward compatibility with Archetypes API.
   Fixes (partially) https://github.com/plone/plone.app.contenttypes/issues/283.
   [hvelarde]
@@ -21,7 +26,7 @@ Fixes:
 
 Fixes:
 
-- Fixed custom migration from and to types with spaces in the type-name.
+- Fix custom migration from and to types with spaces in the type-name.
   [pbauer]
 
 - Fixed full_view when content is not IUUIDAware (like the portal).

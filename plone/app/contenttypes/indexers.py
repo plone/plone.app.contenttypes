@@ -3,6 +3,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from ZODB.POSException import ConflictError
 from logging import getLogger
+from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IFolder
@@ -10,6 +11,7 @@ from plone.app.contenttypes.interfaces import IImage
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
+from plone.app.textfield.value import IRichTextValue
 from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 
@@ -32,26 +34,35 @@ def _unicode_save_string_concat(*args):
     return result
 
 
-def SearchableText(obj, text=False):
+def SearchableText(obj):
+    text = u""
+    richtext = IRichText(obj, None)
+    if richtext:
+        textvalue = richtext.text
+        if IRichTextValue.providedBy(textvalue):
+            transforms = getToolByName(obj, 'portal_transforms')
+            text = transforms.convertTo(
+                'text/plain',
+                textvalue.output.encode('utf8'),
+                mimetype=textvalue.mimeType,
+            ).getData().strip()
+
     return u" ".join((
         safe_unicode(obj.id),
         safe_unicode(obj.title) or u"",
         safe_unicode(obj.description) or u"",
+        safe_unicode(text)
     ))
 
 
 @indexer(INewsItem)
 def SearchableText_news(obj):
-    if obj.text is None or obj.text.output is None:
-        return SearchableText(obj)
-    return _unicode_save_string_concat(SearchableText(obj), obj.text.output)
+    return _unicode_save_string_concat(SearchableText(obj))
 
 
 @indexer(IDocument)
 def SearchableText_document(obj):
-    if obj.text is None or obj.text.output is None:
-        return SearchableText(obj)
-    return _unicode_save_string_concat(SearchableText(obj), obj.text.output)
+    return _unicode_save_string_concat(SearchableText(obj))
 
 
 @indexer(IFile)
