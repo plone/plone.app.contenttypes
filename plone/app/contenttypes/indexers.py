@@ -43,7 +43,7 @@ def SearchableText(obj):
             transforms = getToolByName(obj, 'portal_transforms')
             text = transforms.convertTo(
                 'text/plain',
-                textvalue.output.encode('utf8'),
+                safe_unicode(textvalue.output).encode('utf8'),
                 mimetype=textvalue.mimeType,
             ).getData().strip()
 
