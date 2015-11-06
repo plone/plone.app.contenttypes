@@ -3,6 +3,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from ZODB.POSException import ConflictError
 from logging import getLogger
+from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
