@@ -31,26 +31,28 @@
                 item_type item/PortalType;
                 item_modified item/ModificationDate;
                 item_created item/CreationDate;
-                item_icon item/getIcon;
                 item_type_class python:'contenttype-' + view.normalizeString(item_type);
                 item_wf_state item/review_state;
                 item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                 item_creator item/Creator;
-                item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
-                item_has_image python:view.has_image(obj);
-                item_is_event python:view.is_event(obj)">
+                item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;                
+                item_is_event python:view.is_event(obj);
+                item_has_image python:item.getIcon">
               <metal:block define-slot="entry">
                 <article class="entry">
                   <header metal:define-macro="listitem" tal:attributes="class python:'vevent' if item_is_event else None">
-                    <span class="summary">
+                    <span class="summary" tal:attributes="title item_type">
                       <a tal:attributes="href item_link;
                                          class string:$item_type_class $item_wf_state_class url;
                                          title item_type"
                           tal:content="item_title">
-                        Item Title
+                           <img class="image-tile"
+                             tal:define="getIcon python:item.getURL()+'/@@images/image/tile'"
+                             tal:condition="item_has_image"                          
+                             tal:attributes="src  string:$getIcon">
+                             Item Title
                       </a>
-                    </span>
-
+                     </span>
                     <metal:block metal:define-macro="document_byline">
                       <div class="documentByLine">
                         <tal:event condition="item_is_event">

@@ -33,6 +33,13 @@ Fixes:
   [pbauer]
 
 - Fixed full_view when content is not IUUIDAware (like the portal).
+
+- Cleanup and rework: contenttype-icons 
+  and showing thumbnails for images/leadimages in listings ...
+  https://github.com/plone/Products.CMFPlone/issues/1226
+  [fgrcon]
+  
+- Fix full_view when content is not IUUIDAware (like the portal).
   Fixes https://github.com/plone/Products.CMFPlone/issues/1109.
   [pbauer]
 

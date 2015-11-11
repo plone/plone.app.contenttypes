@@ -4,6 +4,7 @@ from Products.CMFPlone.utils import safe_unicode
 from ZODB.POSException import ConflictError
 from logging import getLogger
 from plone.app.contenttypes.behaviors.richtext import IRichText
+from plone.dexterity.interfaces import IDexterityContent
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IFolder
@@ -139,48 +140,17 @@ def getObjSize_file(obj):
     return obj.getObjSize(None, primary_field_info.value.size)
 
 
-@indexer(IFile)
-def getIcon_file(obj):
-    """icon of the given mimetype,
+@indexer(IDexterityContent)
+def getIcon(obj):
+    '''
+    geticon redefined in Plone > 5.0
+    see https://github.com/plone/Products.CMFPlone/issues/1226
 
-    parts of this this code are borrowed from atct.
-    """
-    mtr = getToolByName(obj, 'mimetypes_registry', None)
-    if mtr is None:
-        return None
-
-    try:
-        primary_field_info = IPrimaryFieldInfo(obj, None)
-    except TypeError:
-        logger.warn(u'Lookup of PrimaryField failed for %s '
-                    u'If renaming or importing please reindex!' %
-                    obj.absolute_url())
-        return
-    if not primary_field_info.value:
-        # There is no file so we should show a generic icon
-        # TODO : find a better icon for generic
-        return 'png.png'
-        # return None
-
-    contenttype = None
-    if hasattr(primary_field_info.value, "contentType"):
-        contenttype = primary_field_info.value.contentType
-    if not contenttype:
-        contenttype = FALLBACK_CONTENTTYPE
-
-    mimetypeitem = None
-    try:
-        mimetypeitem = mtr.lookup(contenttype)
-    except Exception, msg:
-        logger.warn('mimetype lookup failed for %s. Error: %s' %
-                    (obj.absolute_url(), str(msg)))
-
-    if not mimetypeitem:
-        mimetypeitem = mtr.lookup(FALLBACK_CONTENTTYPE)
-
-    return mimetypeitem[0].icon_path
-
-
-@indexer(IImage)
-def getIcon_image(obj):
-    return getIcon_file(obj)
+    reuse of metadata field,
+    now used for showing thumbs in content listings etc.
+    when obj is an image or has a lead image
+    or has an image field with name 'image': true else false
+    '''
+    if obj.image:
+        return True
+    return False
