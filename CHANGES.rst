@@ -11,6 +11,9 @@ New:
 
 Fixes:
 
+- Use plone i18n domain in zcml.
+  [vincentfretin]
+
 - Do a ``IRichText`` text indexing on all registered SearchableText indexers by
   doing it as part of the base ``SearchableText`` function. Convert the text
   from the source mimetype to ``text/plain``.
