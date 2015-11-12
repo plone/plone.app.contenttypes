@@ -42,14 +42,16 @@
                 <article class="entry">
                   <header metal:define-macro="listitem" tal:attributes="class python:'vevent' if item_is_event else None">
                     <span class="summary" tal:attributes="title item_type">
+                     <a tal:attributes="href item_link">
+                    	<img class="image-tile"
+                             tal:condition="item_has_image"                          
+                             tal:attributes="src  string:$item_url/@@images/image/tile">
+                      </a>
                       <a tal:attributes="href item_link;
                                          class string:$item_type_class $item_wf_state_class url;
                                          title item_type"
                           tal:content="item_title">
-                           <img class="image-tile"
-                             tal:define="getIcon python:item.getURL()+'/@@images/image/tile'"
-                             tal:condition="item_has_image"                          
-                             tal:attributes="src  string:$getIcon">
+
                              Item Title
                       </a>
                      </span>
