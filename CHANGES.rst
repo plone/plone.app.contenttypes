@@ -11,6 +11,10 @@ New:
 
 Fixes:
 
+- Used html5 doctype in image_view_fullscreen.  Now it can be parsed
+  correctly by for example i18ndude.
+  [maurits]
+
 - Use plone i18n domain in zcml.
   [vincentfretin]
 
@@ -34,11 +38,11 @@ Fixes:
 
 - Fixed full_view when content is not IUUIDAware (like the portal).
 
-- Cleanup and rework: contenttype-icons 
+- Cleanup and rework: contenttype-icons
   and showing thumbnails for images/leadimages in listings ...
   https://github.com/plone/Products.CMFPlone/issues/1226
   [fgrcon]
-  
+
 - Fix full_view when content is not IUUIDAware (like the portal).
   Fixes https://github.com/plone/Products.CMFPlone/issues/1109.
   [pbauer]
