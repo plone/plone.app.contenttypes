@@ -55,7 +55,7 @@
                       <tal:block tal:replace="field_data/value" />
                     </td>
                     <td tal:condition="python:field == 'Title'">
-                      <img
+                      <img class="image-icon"
                          tal:define="getIcon python:item.getURL()+'/@@images/image/icon'"
                          tal:condition="python:  item.getIcon"                          
                          tal:attributes="href item/getURL;
