@@ -198,7 +198,7 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
         if old_layout in LISTING_VIEW_MAPPING.keys():
             default_page = self.old.getDefaultPage() or \
-                getattr(self.old, 'default_page')
+                getattr(self.old, 'default_page', None)
             self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
             if default_page:
                 # any defaultPage is switched of by setLayout

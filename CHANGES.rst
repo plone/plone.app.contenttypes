@@ -11,6 +11,10 @@ New:
 
 Fixes:
 
+- Avoid AttributeError when trying to get the default_page of an item
+  when migrating
+  [frapell]
+
 - Used html5 doctype in image_view_fullscreen.  Now it can be parsed
   correctly by for example i18ndude.
   [maurits]
