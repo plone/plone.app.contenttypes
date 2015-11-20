@@ -11,6 +11,9 @@ New:
 
 Fixes:
 
+- Fix potential acquisition issues with folder listings
+  [vangheem]
+
 - Avoid AttributeError when trying to get the default_page of an item
   when migrating
   [frapell]

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import random
+
 from Acquisition import aq_base
+from Acquisition import aq_inner
 from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
@@ -12,7 +15,6 @@ from plone.registry.interfaces import IRegistry
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.contentprovider.interfaces import IContentProvider
-import random
 
 HAS_SECURITY_SETTINGS = True
 try:
@@ -62,7 +64,7 @@ class FolderView(BrowserView):
         kwargs.setdefault('b_size', self.b_size)
         kwargs.setdefault('b_start', self.b_start)
 
-        results = self.context.restrictedTraverse('@@folderListing')(**kwargs)
+        results = aq_inner(self.context).restrictedTraverse('@@folderListing')(**kwargs)
         return results
 
     def batch(self):
