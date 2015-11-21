@@ -64,8 +64,11 @@ class FolderView(BrowserView):
         kwargs.setdefault('b_size', self.b_size)
         kwargs.setdefault('b_start', self.b_start)
 
-        results = aq_inner(self.context).restrictedTraverse(
-            '@@folderListing')(**kwargs)
+        listing = aq_inner(self.context).restrictedTraverse(
+            '@@folderListing', None)
+        if listing is None:
+            return []
+        results = listing(**kwargs)
         return results
 
     def batch(self):
