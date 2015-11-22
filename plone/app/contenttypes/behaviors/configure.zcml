@@ -21,7 +21,7 @@
     for=".leadimage.ILeadImage"
     view="plone.app.layout.globals.interfaces.IViewView"
     class=".viewlets.LeadImageViewlet"
-    manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
+    manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle"
     template="leadimage.pt"
     permission="zope2.View"
     />
