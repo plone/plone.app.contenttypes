@@ -232,11 +232,11 @@ def create_news_topic(portal, target_language):
         #: Query by Type and Review State
         aggregator.query = [
             {'i': u'portal_type',
-             'o': u'plone.app.querystring.operation.selection.is',
+             'o': u'plone.app.querystring.operation.selection.any',
              'v': [u'News Item'],
              },
             {'i': u'review_state',
-             'o': u'plone.app.querystring.operation.selection.is',
+             'o': u'plone.app.querystring.operation.selection.any',
              'v': [u'published'],
              },
         ]
@@ -279,11 +279,11 @@ def create_events_topic(portal, target_language):
         #: Query by Type and Review State
         aggregator.query = [
             {'i': 'portal_type',
-             'o': 'plone.app.querystring.operation.selection.is',
+             'o': 'plone.app.querystring.operation.selection.any',
              'v': ['Event']
              },
             {'i': 'review_state',
-             'o': 'plone.app.querystring.operation.selection.is',
+             'o': 'plone.app.querystring.operation.selection.any',
              'v': ['published']
              },
         ]

@@ -173,10 +173,10 @@ class ContentProfileTestCase(unittest.TestCase):
     def test_news_aggregator_settings(self):
         # Has the news aggregator (Collection) been set up?
         query = [dict(i=u'portal_type',
-                      o=u'plone.app.querystring.operation.selection.is',
+                      o=u'plone.app.querystring.operation.selection.any',
                       v=[u'News Item']),
                  dict(i=u'review_state',
-                      o=u'plone.app.querystring.operation.selection.is',
+                      o=u'plone.app.querystring.operation.selection.any',
                       v=[u'published']),
                  ]
         collection = self.portal['news']['aggregator']

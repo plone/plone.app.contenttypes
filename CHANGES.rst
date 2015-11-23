@@ -11,6 +11,10 @@ New:
 
 Fixes:
 
+- Create standard news/events collections with ``selection.any``.
+  Issue https://github.com/plone/Products.CMFPlone/issues/1040
+  [maurits]
+
 - Avoid AttributeError from potential acquisition issues with folder listings
   [vangheem]
 
