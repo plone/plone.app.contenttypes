@@ -151,6 +151,6 @@ def getIcon(obj):
     when obj is an image or has a lead image
     or has an image field with name 'image': true else false
     '''
-    if obj.image:
+    if obj.aq_base.image:
         return True
     return False
