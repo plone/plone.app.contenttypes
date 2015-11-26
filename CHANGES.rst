@@ -10,8 +10,9 @@ New:
 
 Fixes:
 
-- *add item here*
-
+- Index subject field on the catalog so that is searchable.
+  Fixes https://github.com/plone/plone.app.contenttypes/issues/194
+  [gforcada]
 
 1.2.6 (2015-11-25)
 ------------------

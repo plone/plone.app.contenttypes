@@ -89,6 +89,18 @@ class CatalogIntegrationTest(unittest.TestCase):
             '/plone/folder/document'
         )
 
+    def test_subject_in_searchable_text_index(self):
+        self.document.setSubject(["Apples", "Oranges", ])
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            SearchableText="Apples",
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEqual(
+            brains[0].getPath(),
+            '/plone/folder/document'
+        )
+
     def test_folder_fields_in_searchable_text_index(self):
         self.folder.title = "Carpeta"
         self.folder.description = "My description"
