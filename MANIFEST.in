@@ -5,5 +5,3 @@ graft docs
 graft plone
 
 global-exclude *.pyc
-
-prune templates
