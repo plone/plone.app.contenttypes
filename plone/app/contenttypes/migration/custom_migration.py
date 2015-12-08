@@ -234,9 +234,10 @@ class CustomMigrationForm(BrowserView):
                 # definition we have 2 keys we relevant mappings, first key
                 # is the AT typename second key is a particular key like
                 # 'dx_DXPortalType__for__MyATPortalType
-                safe_dx = dx_typename.replace('_space_', '')
+                safe_dx = dx_typename.replace(' ', '_space_')
                 safe_at = at_typename.replace('_space_', '')
-                dx_key = 'dx_%s__for__%s' % (safe_dx, safe_at)
+                # dx_key = 'dx_%s__for__%s' % (safe_dx, safe_at)
+                dx_key = 'dx_%s__for__%s' % (safe_dx, at_typename)
                 for at_field in form[at_typename]:
                     dx_field = form[dx_key][form[at_typename].index(at_field)]
                     if not dx_field:
@@ -254,9 +255,10 @@ class CustomMigrationForm(BrowserView):
         migration_results = []
         for at_typename in data:
             fields_mapping = data[at_typename]['field_mapping']
+            safe_at = at_typename.replace('_space_', ' ')
             res = migrateCustomAT(
                 fields_mapping=fields_mapping,
-                src_type=at_typename,
+                src_type=safe_at,
                 dst_type=data[at_typename]['target_type'],
                 dry_run=dry_run)
             migration_results.append({'type': at_typename,
