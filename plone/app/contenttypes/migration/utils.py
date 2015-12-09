@@ -302,13 +302,14 @@ def get_all_references(context):
     portal_catalog = getToolByName(context, 'portal_catalog')
     relation_catalog = queryUtility(ICatalog)
     for rel in relation_catalog.findRelations():
-        from_brain = portal_catalog(path=dict(query=rel.from_path, depth=0))[0]
-        to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))[0]
-        results.append({
-            'from_uuid': from_brain.UID,
-            'to_uuid': to_brain.UID,
-            'relationship': rel.from_attribute,
-        })
+        from_brain = portal_catalog(path=dict(query=rel.from_path, depth=0))
+        to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))
+        if len(from_brain) > 0 and len(to_brain) > 0:
+            results.append({
+                'from_uuid': from_brain[0].UID,
+                'to_uuid': to_brain[0].UID,
+                'relationship': rel.from_attribute,
+            })
     return results
 
 
