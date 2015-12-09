@@ -328,8 +328,11 @@ def restore_references(context):
             relationship = ref['relationship']
             link_items(context, source_obj, target_obj, relationship)
         else:
-            logger.warn('Could not restore reference from uid "%s" to uid "%s" on the context: %s' % (  # noqa
-                ref['from_uuid'], ref['to_uuid'], '/'.join(context.getPhysicalPath())))
+            logger.warn(
+                'Could not restore reference from uid '
+                '"%s" to uid "%s" on the context: %s' % (
+                    ref['from_uuid'], ref['to_uuid'],
+                    '/'.join(context.getPhysicalPath())))
     del IAnnotations(context)[key]
 
 
