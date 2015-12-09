@@ -419,6 +419,9 @@ def link_items(  # noqa
             modified(target_obj)
 
         field = source_obj.getField(fieldname)
+        if field is None:
+            # we can't migrate if it doesn't actually have the field
+            return
         accessor = field.getAccessor(source_obj)
         existing_at_relations = accessor()
 
