@@ -323,7 +323,12 @@ def restore_references(context):
         source_obj = uuidToObject(ref['from_uuid'])
         target_obj = uuidToObject(ref['to_uuid'])
         relationship = ref['relationship']
-        link_items(context, source_obj, target_obj, relationship)
+        if source_obj and target_obj:
+            relationship = ref['relationship']
+            link_items(context, source_obj, target_obj, relationship)
+        else:
+            logger.warn('Could not restore reference from uid "%s" to uid "%s" on the context: %s' % (  # noqa
+                ref['from_uuid'], ref['to_uuid'], '/'.join(context.getPhysicalPath())))
     del IAnnotations(context)[key]
 
 
