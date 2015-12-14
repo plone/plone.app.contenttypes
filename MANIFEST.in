@@ -7,4 +7,3 @@ recursive-include plone *
 global-exclude *.pyc
 
 exclude bootstrap.py *.cfg *.yml *.sh
-prune templates

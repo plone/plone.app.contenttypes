@@ -47,11 +47,16 @@ def SearchableText(obj):
                 mimetype=textvalue.mimeType,
             ).getData().strip()
 
+    subject = u' '.join(
+        [safe_unicode(s) for s in obj.Subject()]
+    )
+
     return u" ".join((
         safe_unicode(obj.id),
         safe_unicode(obj.title) or u"",
         safe_unicode(obj.description) or u"",
-        safe_unicode(text)
+        safe_unicode(text),
+        safe_unicode(subject),
     ))
 
 

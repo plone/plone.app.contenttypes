@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
+from Acquisition import aq_inner
 from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
@@ -62,7 +63,11 @@ class FolderView(BrowserView):
         kwargs.setdefault('b_size', self.b_size)
         kwargs.setdefault('b_start', self.b_start)
 
-        results = self.context.restrictedTraverse('@@folderListing')(**kwargs)
+        listing = aq_inner(self.context).restrictedTraverse(
+            '@@folderListing', None)
+        if listing is None:
+            return []
+        results = listing(**kwargs)
         return results
 
     def batch(self):

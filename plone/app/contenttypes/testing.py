@@ -139,6 +139,11 @@ PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
     name="PloneAppContenttypes:Functional"
 )
+PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_FIXTURE = PloneAppContenttypesMigration()  # noqa
+PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_FIXTURE,),
+    name="PloneAppContenttypes:Migration_Functional"
+)
 PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
     bases=(
         PLONE_APP_CONTENTTYPES_FIXTURE,
