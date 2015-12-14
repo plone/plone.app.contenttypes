@@ -226,20 +226,28 @@ class CustomMigrationForm(BrowserView):
                 if not form[k] or (dry_run and k != form.get('tested_type')):
                     # nothing selected in this select, continue
                     continue
-                at_typename = k[10:]
-                dx_typename = form[k]
+
+                form_at_typename = k[10:]
+                form_dx_typename = form[k]
+                at_typename = form_at_typename.replace('_space_', ' ')
+                dx_typename = form_dx_typename.replace('_space_', ' ')
+
                 data[at_typename] = {'target_type': dx_typename,
                                      'field_mapping': []}
                 # now handle fields mapping for found DX/AT type migration
-                # definition we have 2 keys we relevant mappings, first key
+                # definition we have 2 keys with relevant mappings, first key
                 # is the AT typename second key is a particular key like
                 # 'dx_DXPortalType__for__MyATPortalType
-                safe_dx = dx_typename.replace('_space_', '')
-                safe_at = at_typename.replace('_space_', '')
-                dx_key = 'dx_%s__for__%s' % (safe_dx, safe_at)
-                for at_field in form[at_typename]:
-                    dx_field = form[dx_key][form[at_typename].index(at_field)]
+                dx_key = 'dx_%s__for__%s' % (form_dx_typename,
+                                             form_at_typename)
+                for at_field in form[form_at_typename]:
+                    if form.get(dx_key) is None:
+                        # No field-mappings
+                        continue
+                    dx_field = form[dx_key][form[form_at_typename].index(
+                        at_field)]
                     if not dx_field:
+                        # Do not migrate field
                         continue
                     at_field_name, at_field_type = at_field.split('__type__')
                     dx_field_name, dx_field_type = dx_field.split('__type__')
