@@ -4,7 +4,33 @@ Changelog
 1.1b7 (unreleased)
 ------------------
 
-- Add ``getRawQuery`` method to Collection content type for backward compatibility with Archetypes API.
+- Allow to pass custom field_migrator methods with custom migrations
+  (backported).
+  [pbauer]
+
+- Fix issue in migration where source or target uuid could not
+  be found (backported).
+  [vangheem]
+
+- Index subject field on the catalog so that is searchable.
+  Fixes https://github.com/plone/plone.app.contenttypes/issues/194
+  (backported).
+  [gforcada]
+
+- Avoid AttributeError when trying to get the default_page of an item
+  when migrating (backported).
+  [frapell]
+
+- Avoid AttributeError from potential acquisition issues with folder listings
+  (backported).
+  [vangheem]
+
+- Fix custom migration from and to types with spaces in the type-name
+  (backported).
+  [pbauer]
+
+- Add ``getRawQuery`` method to Collection content type for backward
+  compatibility with Archetypes API.
   Fixes (partially) https://github.com/plone/plone.app.contenttypes/issues/283.
   [hvelarde]
 
