@@ -430,10 +430,13 @@ def makeCustomATMigrator(
                 at_fieldname = fields_dict.get('AT_field_name')
                 dx_fieldname = fields_dict.get('DX_field_name')
                 dx_fieldtype = fields_dict.get('DX_field_type')
-                migration_field_method = migrate_simplefield
+                migration_field_method = fields_dict.get('field_migrator')
+                if not migration_field_method:
                 if dx_fieldtype in FIELDS_MAPPING:
                     # Richtext, Image and File have custom migraton_methods
                     migration_field_method = FIELDS_MAPPING[dx_fieldtype]
+                    else:
+                        migration_field_method = migrate_simplefield
                 migration_field_method(src_obj=self.old,
                                        dst_obj=self.new,
                                        src_fieldname=at_fieldname,

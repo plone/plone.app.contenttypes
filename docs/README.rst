@@ -166,11 +166,15 @@ For migrations to work you need at least ``Products.contentmigration = 2.1.9`` a
 Migration
 ---------
 
+
+Migrating the default-types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 To migrate your existing content from Archetypes to Dexterity use the form at ``/@@atct_migrator``.
 
 
-Migrating Archetypes-based content to plone.app.contenttypes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Migrating Archetypes-based default-types content to plone.app.contenttypes
+``````````````````````````````````````````````````````````````````````````
 
 plone.app.contenttypes can migrate the following archetypes-based default types:
 
@@ -198,13 +202,13 @@ The migration tries to keep most features (including portlets, comments, content
 
 
 Migrating only certain types
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+````````````````````````````
 
-There is also a view ``/@@pac_installer`` that allows you to install plone.app.contenttypes without replacing those archetypes-types with the dexterity-types of which there are existing objects in the site. Afterwards it redirects to the migration-form and only the types that you chose to migrate are installed. This allows you to keep certain types as archetypes while migrating others to dexterity (for example if you did heavy customizations of these types and do not have the time to reimplement these features in dexterity.
+There is also a view ``/@@pac_installer`` that allows you to install plone.app.contenttypes without replacing those archetypes-types with the dexterity-types of which there are existing objects in the site. Afterwards it redirects to the migration-form and only the types that you chose to migrate are installed. This allows you to keep certain types as archetypes while migrating others to dexterity (for example if you did heavy customizations of these types and do not have the time to reimplement these features in dexterity).
 
 
 Migrating Topics
-^^^^^^^^^^^^^^^^
+````````````````
 
 To get migrated topics with path-criteria to work you need at least ``plone.app.querystring >= 1.3.1``.
 
@@ -239,24 +243,13 @@ The migration-form will warn you if you have subtopics in your site and your Col
 
 
 Migrating content that is translated with LinguaPlone
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+`````````````````````````````````````````````````````
 
 Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlone to plone.app.multilingual (http://pypi.python.org/pypi/plone.app.multilingual). The migration from Products.LinguaPlone to plone.app.multilingual should happen **before** the migration from Archetypes to plone.app.contenttypes. For details on the migration see http://pypi.python.org/pypi/plone.app.multilingual#linguaplone-migration
 
 
-Migrating from old versions of plone.app.contenttypes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Before version 1.0a2 the content-items did not implement marker-interfaces. They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
-
-Since plone.app.contenttypes 1.1a1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
-
-1) First run the default profile (``plone.app.contenttypes:default``) or reinstall plone.app.contenttypes
-2) Then run the upgrade steps.
-
-
 Migrating default-content that was extended with archetypes.schemaextender
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``````````````````````````````````````````````````````````````````````````
 
 The migration-form warns you if any of your old types were extended with aditional fields using archetypes.schemaextender. The data contained in these fields will be lost during migration (with the exception of images added with collective.contentleadimage).
 
@@ -264,7 +257,7 @@ To keep the data you would need to write a custom migration for your types dexte
 
 
 Migrating images created with collective.contentleadimage
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+`````````````````````````````````````````````````````````
 
 `collective.contentleadimage <https://pypi.python.org/pypi/collective.contentleadimage/>`_ was a popular addon that allows you to add images to any content in your site by extending the default types. Since it only supports Archetypes it does no longer work. To make sure these images are kept during migration you have to enable the behavior "Lead Image" on all those types where you want to migrate images added using collective.contentleadimage.
 
@@ -276,11 +269,99 @@ Migrating custom content
 
 During migrations of the default types any custom content-types will not be migrated and will continue to work as expected.
 
-To help you migrating these types to Dexterity plone.app.contenttypes contains a migration form (``/@@custom_migration``) that allows you to migrate any (custom or default) Archetypes-type to any (custom or default) Dexterity-type. The only requirement is that the Dexterity-type you want to migrate to has to exist and that the class of the old type is still present. It makes no difference if the type you are migrating from is still registered in portal_types or is already removed or replaced by a dexterity-version using the same name.
+Using the migration-form to migrate custom content
+``````````````````````````````````````````````````
+
+To help you migrating these types to Dexterity plone.app.contenttypes contains a migration form (``/@@custom_migration``) that allows you to migrate any (custom or default) Archetypes-type to any (custom or default) Dexterity-type. The only requirement is that the target-type (the Dexterity-type you want to migrate to) has to exist and that the class of the old type is still present. It makes no difference if the type you are migrating from is still registered in portal_types or is already removed or replaced by a dexterity-version using the same name.
 
 In the form ``/@@custom_migration`` you can select a Dexterity-type for any Archetypes-types that exists in the portal. You can then map the source-types fields to the targets fields. You can also choose to ignore fields. You have to take care that the values can be migrated (since there is no validation for that), e.g. it would make no sense to migrate a ImageField to a TextField. There are build-in methods for most field-types, custom or rarely used fields might not migrate properly (you can create a issue if you miss a migration that is not yet supported).
 
 After you map the fields you can test the configuration. During a test one item will be test-migrated and Plone checks if the migrated item will be accessible without throwing a errors. After the test any changes will be rolled back.
+
+Migrating custom types in your own code
+```````````````````````````````````````
+
+It is recommended that you reuse the migration-code provided by plone.app.contenttypes in ``plone.app.contenttypes.migration.migration.migrateCustomAT`` for custom migrations.
+
+To do this you have to simply pass a mapping of source- to target-fields to a migration-method for each type.
+
+..  code-block:: python
+
+
+    from plone.app.contenttypes.migration.migration import migrateCustomAT
+
+    def my_custom_migration():
+        fields_mapping = (
+                {'AT_field_name': 'some_field',
+                 'DX_field_name': 'description',
+                 },
+
+                # Migrate AT imagefield to DX imagefield using the mapping in
+                # plone.app.contenttypes.migration.field_migrators.FIELDS_MAPPING
+                {'AT_field_name': 'some_atimage',
+                 'DX_field_name': 'some_dximage',
+                 'DX_field_type': 'NamedBlobImage',
+                 },
+        )
+        migrateCustomAT(
+            fields_mapping,
+            src_type='SomeATType',
+            dst_type='SomeDXType')
+
+A field-dict without a key ``DX_field_type`` from one of the migrators in ``plone.app.contenttypes.migration.field_migrators.FIELDS_MAPPING`` will always use ``plone.app.contenttypes.migration.field_migrators.migrate_simplefield`` as its migration-method. That can migrate most field-types where the value does not have to change (e.g. strings, lists, tuples, dicts etc.).
+
+``plone.app.contenttypes.migration.field_migrators`` has special field migrators for the following field-types: ``RichText``, ``NamedBlobFile``, ``NamedBlobImage``, ``Datetime``, ``Date``. They transform values from the Archetypes-version of such fields to their Dexterity counterparts.
+
+
+Custom field-migrators
+``````````````````````
+
+If you use rare or custom fields or want to apply special transforms to your data while migrating you can pass custom methods as ``field_migrator`` with the fields_mapping. This way you can migrate fields that are usually not migrateable.
+
+Here is an example where this method is used to migrate a Richtext-Field into a Tuple-Field by passing the custom field-migrator ``some_field_migrator``. In such a custom migrator you can do just about anything you wish.
+
+
+..  code-block:: python
+
+    from plone.app.contenttypes.migration.migration import migrateCustomAT
+
+
+    def some_field_migrator(src_obj, dst_obj, src_fieldname, dst_fieldname):
+        """A simple example that transforms pipe-delimited richtext to a tuple.
+        """
+        field = src_obj.getField(src_fieldname)
+        at_value = field.get(src_obj)
+        at_value = at_value.replace('<p>', '').replace('</p>', '')
+        dx_value = [safe_unicode(i) for i in at_value.split('|')]
+        setattr(dst_obj, dst_fieldname, tuple(dx_value))
+
+
+    def my_custom_migration():
+        """
+        """
+        fields_mapping = (
+                # Migrate using our custom migrator
+                {'AT_field_name': 'some_richtext_field',
+                 'DX_field_name': 'some_tuple_field',
+                 'field_migrator': some_field_migrator},
+        )
+        migrateCustomAT(
+            fields_mapping,
+            src_type='SomeATType',
+            dst_type='SomeDXType')
+
+Alternatively you could also extends the mapping from ``plone.app.contenttypes.migration.field_migrators.FIELDS_MAPPING`` to add new or replace existing migrators for specific field-types.
+
+
+Migrating from old versions of plone.app.contenttypes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Before version 1.0a2 the content-items did not implement marker-interfaces. They will break in newer versions since the views are now registered for these interfaces (e.g. ``plone.app.contenttypes.interfaces.IDocument``). To fix this you can call the view ``/@@fix_base_classes`` on your site-root.
+
+Since plone.app.contenttypes 1.1a1, the Collection type uses the new Collection behavior and the Event type utilizes behaviors from `plone.app.event <http://pypi.python.org/pypi/plone.app.event>`_. In order to upgrade:
+
+1. First run the default profile (``plone.app.contenttypes:default``) or reinstall plone.app.contenttypes
+2. Then run the upgrade steps.
 
 
 Widgets

@@ -395,3 +395,47 @@ class MigrateCustomATTest(unittest.TestCase):
             os.environ['TZ'] = oldTZ
         else:
             del os.environ['TZ']
+
+    def test_migration_with_custom_fieldmigrator(self):
+        """Migrate a ATDocument to a DXNewsItem using a custom modifier"""
+        from plone.app.contenttypes.interfaces import INewsItem
+        from plone.app.contenttypes.migration.migration import migrateCustomAT
+        at_document = self.createCustomATDocument('foo-document')
+        at_text = (
+            u'Some | field is | pipe-delimited | in the field\n'
+            )
+        at_document.setText(at_text)
+        qi = self.portal.portal_quickinstaller
+        # install pac but only install News Items
+        qi.installProduct(
+            'plone.app.contenttypes',
+            profile='plone.app.contenttypes:default',
+            blacklistedSteps=['typeinfo'])
+        installTypeIfNeeded("News Item")
+        fields_mapping = (
+            {'AT_field_name': 'text',
+             'DX_field_name': 'creators',
+             'field_migrator': some_field_migrator},
+        )
+        migrateCustomAT(
+            fields_mapping, src_type='Document', dst_type='News Item')
+
+        dx_newsitem = self.portal['foo-document']
+        self.assertTrue(INewsItem.providedBy(dx_newsitem))
+        self.assertTrue(dx_newsitem is not at_document)
+        self.assertEquals(4, len(dx_newsitem.creators))
+        self.assertEquals(at_document.Title(), dx_newsitem.title)
+
+
+def some_field_migrator(src_obj, dst_obj, src_fieldname, dst_fieldname):
+    """Custom field_migrator
+
+    A simple example that transforms the value of a pipe-delimited richtext
+    to a tuple.
+    """
+    field = src_obj.getField(src_fieldname)
+    at_value = field.get(src_obj)
+    at_value = at_value.replace('<p>', '').replace('</p>', '')
+    dx_value = [safe_unicode(i) for i in at_value.split('|')]
+    setattr(dst_obj, dst_fieldname, tuple(dx_value))
+
