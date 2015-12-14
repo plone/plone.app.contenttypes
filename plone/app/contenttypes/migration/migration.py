@@ -192,7 +192,7 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
         if old_layout in LISTING_VIEW_MAPPING.keys():
             default_page = self.old.getDefaultPage() or \
-                getattr(self.old, 'default_page')
+                getattr(self.old, 'default_page', None)
             self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
             if default_page:
                 # any defaultPage is switched of by setLayout
@@ -432,9 +432,9 @@ def makeCustomATMigrator(
                 dx_fieldtype = fields_dict.get('DX_field_type')
                 migration_field_method = fields_dict.get('field_migrator')
                 if not migration_field_method:
-                if dx_fieldtype in FIELDS_MAPPING:
-                    # Richtext, Image and File have custom migraton_methods
-                    migration_field_method = FIELDS_MAPPING[dx_fieldtype]
+                    if dx_fieldtype in FIELDS_MAPPING:
+                        # Richtext, Image and File have custom migraton_methods
+                        migration_field_method = FIELDS_MAPPING[dx_fieldtype]
                     else:
                         migration_field_method = migrate_simplefield
                 migration_field_method(src_obj=self.old,
@@ -470,13 +470,18 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     if fti is None or IDexterityFTI.providedBy(fti):
         # Get the needed info from an instance of the type
         catalog = portal.portal_catalog
-        brain = catalog(portal_type=src_type, sort_limit=1)[0]
-        src_obj = brain.getObject()
-        if IDexterityContent.providedBy(src_obj):
-            logger.error(
-                '%s should not be dexterity object!' % src_obj.absolute_url())
-        is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
-        src_meta_type = src_obj.meta_type
+        brains = catalog(portal_type=src_type, sort_limit=1)
+        if not brains:
+            # no item? assume stuff
+            is_folderish = False
+            src_meta_type = src_type
+        else:
+            src_obj = brains[0].getObject()
+            if IDexterityContent.providedBy(src_obj):
+                logger.error(
+                    '%s should not be dexterity object!' % src_obj.absolute_url())
+            is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
+            src_meta_type = src_obj.meta_type
     else:
         # Get info from at-fti
         src_meta_type = fti.content_meta_type
