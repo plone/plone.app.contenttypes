@@ -10,7 +10,9 @@ New:
 
 Fixes:
 
-- *add item here*
+- fix issue in migration where source or target uuid could not
+  be found
+  [vangheem]
 
 
 1.2.7 (2015-11-28)

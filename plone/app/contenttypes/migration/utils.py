@@ -302,13 +302,14 @@ def get_all_references(context):
     portal_catalog = getToolByName(context, 'portal_catalog')
     relation_catalog = queryUtility(ICatalog)
     for rel in relation_catalog.findRelations():
-        from_brain = portal_catalog(path=dict(query=rel.from_path, depth=0))[0]
-        to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))[0]
-        results.append({
-            'from_uuid': from_brain.UID,
-            'to_uuid': to_brain.UID,
-            'relationship': rel.from_attribute,
-        })
+        from_brain = portal_catalog(path=dict(query=rel.from_path, depth=0))
+        to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))
+        if len(from_brain) > 0 and len(to_brain) > 0:
+            results.append({
+                'from_uuid': from_brain[0].UID,
+                'to_uuid': to_brain[0].UID,
+                'relationship': rel.from_attribute,
+            })
     return results
 
 
@@ -323,7 +324,15 @@ def restore_references(context):
         source_obj = uuidToObject(ref['from_uuid'])
         target_obj = uuidToObject(ref['to_uuid'])
         relationship = ref['relationship']
-        link_items(context, source_obj, target_obj, relationship)
+        if source_obj and target_obj:
+            relationship = ref['relationship']
+            link_items(context, source_obj, target_obj, relationship)
+        else:
+            logger.warn(
+                'Could not restore reference from uid '
+                '"%s" to uid "%s" on the context: %s' % (
+                    ref['from_uuid'], ref['to_uuid'],
+                    '/'.join(context.getPhysicalPath())))
     del IAnnotations(context)[key]
 
 
@@ -414,6 +423,9 @@ def link_items(  # noqa
             modified(target_obj)
 
         field = source_obj.getField(fieldname)
+        if field is None:
+            # we can't migrate if it doesn't actually have the field
+            return
         accessor = field.getAccessor(source_obj)
         existing_at_relations = accessor()
 
