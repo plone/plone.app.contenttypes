@@ -1,6 +1,18 @@
 Changelog
 =========
 
+1.2.9 (unreleased)
+------------------
+
+New:
+
+- *add item here*
+
+Fixes:
+
+- *add item here*
+
+
 1.2.8 (2015-12-15)
 ------------------
 
