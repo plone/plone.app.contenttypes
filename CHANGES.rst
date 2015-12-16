@@ -1,12 +1,8 @@
 Changelog
 =========
 
-1.2.8 (unreleased)
+1.2.8 (2015-12-15)
 ------------------
-
-New:
-
-- *add item here*
 
 Fixes:
 
