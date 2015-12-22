@@ -33,7 +33,7 @@
 
   <div id="parent-fieldname-text"
       tal:condition="context/text"
-      tal:content="structure context/text/output" />
+      tal:content="structure python:context.text.output_relative_to(view.context)" />
 
   <div class="newsFileContainer"
       tal:condition="python: getattr(context.aq_explicit, 'image', False) and not scaled_image">
