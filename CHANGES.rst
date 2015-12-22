@@ -10,7 +10,11 @@ New:
 
 Fixes:
 
-- *add item here*
+- Change all text getters on ``plone.app.textfield.value.RichTextValue``
+  objects to ``output_relative_to`` with the current context. This correctly
+  transforms relative links. See:
+  https://github.com/plone/plone.app.textfield/issues/7
+  [thet]
 
 
 1.2.8 (2015-12-15)
