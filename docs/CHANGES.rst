@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.1b7 (unreleased)
-------------------
+1.1 (2015-12-22)
+----------------
 
 - Change all text getters on ``plone.app.textfield.value.RichTextValue``
   objects to ``output_relative_to`` with the current context. This correctly
