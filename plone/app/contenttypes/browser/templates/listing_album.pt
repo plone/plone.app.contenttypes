@@ -20,6 +20,7 @@
     <div metal:define-slot="inside" tal:replace="structure text">The body</div>
   </div>
 
+  <metal:listingmacro define-macro="listing">
   <tal:images tal:repeat="image images">
     <div class="photoAlbumEntry">
       <a tal:attributes="href string:${image/getURL}/view;
@@ -72,6 +73,7 @@
       There are currently no items in this folder.
     </p>
   </metal:empty>
+  </metal:listingmacro>
 
 </metal:main_macro>
 </metal:content-core>
