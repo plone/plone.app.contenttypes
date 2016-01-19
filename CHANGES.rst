@@ -10,7 +10,8 @@ New:
 
 Fixes:
 
-- *add item here*
+- Simplifiy test in robot framework which fails in its newer version.
+  [jensens]
 
 
 1.2.9 (2016-01-08)

@@ -79,8 +79,7 @@ the content area should contain
 
 the content area should not contain
   [Arguments]  ${text}
-  ${passed} =  Run Keyword And Return Status  Element Should Contain  id=content  ${text}
-  Should Not Be True  ${passed}
+  Element Should Not Contain  id=content  ${text}
 
 the collection should contain
   [Arguments]  ${title}
