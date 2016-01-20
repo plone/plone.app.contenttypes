@@ -10,6 +10,10 @@ New:
 
 Fixes:
 
+- Enhancement: Split up migration test for modification date and references 
+  in two functions for easier debugging.
+  [jensens]
+
 - Simplifiy test in robot framework which fails in its newer version.
   [jensens]
 

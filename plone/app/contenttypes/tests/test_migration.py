@@ -842,7 +842,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         # be 100% sure the migration-date is after the creation-date
         time.sleep(0.1)
 
-        # relate them
+        # relate them - triggers modification date
         at_doc1.setRelatedItems([at_doc2])
         at_doc2.setRelatedItems([at_newsitem1, at_doc3, at_doc1])
         at_doc3.setRelatedItems(at_doc1)
@@ -912,6 +912,77 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(at_doc3_date, dx_doc3.ModificationDate())
         self.assertEqual(at_newsitem1_date, at_newsitem1.ModificationDate())
         self.assertEqual(at_newsitem2_date, at_newsitem2.ModificationDate())
+
+    def test_references_are_set_correctly(self):
+        set_browserlayer(self.request)
+
+        # create folders
+        self.portal.invokeFactory('Folder', 'folder1')
+        at_folder1 = self.portal['folder1']
+        self.portal.invokeFactory('Folder', 'folder2')
+        at_folder2 = self.portal['folder2']
+        self.portal.invokeFactory('Folder', 'folder3')
+
+        # create ATDocuments
+        at_folder1.invokeFactory('Document', 'doc1')
+        at_doc1 = at_folder1['doc1']
+        at_folder2.invokeFactory('Document', 'doc2')
+        at_doc2 = at_folder2['doc2']
+        self.portal.invokeFactory('Document', 'doc3')
+        at_doc3 = self.portal['doc3']
+        at_folder2.invokeFactory('News Item', 'newsitem1')
+        at_newsitem1 = at_folder2['newsitem1']
+
+        # be 100% sure the migration-date is after the creation-date
+        time.sleep(0.1)
+
+        # relate them
+        at_doc1.setRelatedItems([at_doc2])
+        at_doc2.setRelatedItems([at_newsitem1, at_doc3, at_doc1])
+        at_doc3.setRelatedItems(at_doc1)
+        at_folder1.setRelatedItems([at_doc2])
+        at_folder2.setRelatedItems([at_doc1])
+
+        # migrate content
+        applyProfile(self.portal, 'plone.app.contenttypes:default')
+        self._enable_referenceable_for('Document')
+        self._enable_referenceable_for('News Item')
+        self._enable_referenceable_for('Folder')
+
+        # we use the migration-view instead of calling the migratons by hand
+        # to make sure the patch for notifyModified is used.
+        migration_view = getMultiAdapter(
+            (self.portal, self.request),
+            name=u'migrate_from_atct'
+        )
+
+        # We call migration twice to make sure documents are migrated first.
+        # This would result in changed modification-dates on the folders
+        # unless this is patched in the migration-view.
+        migration_view(
+            migrate=True,
+            content_types=['Document'],
+            migrate_schemaextended_content=True,
+            migrate_references=True,
+            from_form=False,
+        )
+        migration_view(
+            migrate=True,
+            content_types=['Folder'],
+            migrate_schemaextended_content=True,
+            migrate_references=True,
+            from_form=False,
+        )
+
+        dx_folder1 = self.portal['folder1']
+        dx_folder2 = self.portal['folder2']
+
+        dx_doc1 = dx_folder1['doc1']
+        dx_doc2 = dx_folder2['doc2']
+        dx_doc3 = self.portal['doc3']
+
+        self.assertTrue(at_folder1 is not dx_folder1)
+        self.assertTrue(at_folder2 is not dx_folder2)
 
         # assert single references
         dx_doc1_related = [x.to_object for x in dx_doc1.relatedItems]
