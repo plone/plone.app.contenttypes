@@ -18,6 +18,7 @@
     <div metal:define-slot="inside" tal:replace="structure text">The body</div>
   </div>
 
+  <metal:listingmacro define-macro="listing">
   <tal:results define="batch view/batch">
     <tal:listing condition="batch">
 
@@ -98,6 +99,7 @@
     </metal:empty>
 
   </tal:results>
+  </metal:listingmacro>
 
 </metal:block>
 </metal:content-core>

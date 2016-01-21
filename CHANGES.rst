@@ -6,7 +6,10 @@ Changelog
 
 New:
 
-- *add item here*
+- Added *listing* macro as found in ``listing.pt`` to
+  ``listing_album.pt`` and ``listing_tabular.pt`` for
+  a coherent customization.
+  [tomgross]
 
 Fixes:
 
