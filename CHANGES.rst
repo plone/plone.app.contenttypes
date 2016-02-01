@@ -13,7 +13,13 @@ New:
 
 Fixes:
 
-- Enhancement: Split up migration test for modification date and references 
+- Also remove collections upon uninstalling.
+  [pbauer]
+
+- No longer try to install ATContentTypes-types on uninstalling.
+  [pbauer]
+
+- Enhancement: Split up migration test for modification date and references
   in two functions for easier debugging.
   [jensens]
 

@@ -9,23 +9,6 @@
  <object meta_type="Dexterity FTI" name="Image" remove="True" />
  <object meta_type="Dexterity FTI" name="News Item" remove="True" />
  <object meta_type="Dexterity FTI" name="Event" remove="True" />
-
- <object name="Document"
-    meta_type="Factory-based Type Information with dynamic views"/>
- <object name="Event"
-    meta_type="Factory-based Type Information with dynamic views"/>
- <object name="File"
-    meta_type="Factory-based Type Information with dynamic views"/>
- <object name="Folder"
-    meta_type="Factory-based Type Information with dynamic views"/>
- <object name="Image"
-    meta_type="Factory-based Type Information with dynamic views"/>
- <object name="Link"
-    meta_type="Factory-based Type Information with dynamic views"/>
- <object name="News Item"
-    meta_type="Factory-based Type Information with dynamic views"/>
-
- <object name="Plone Site"
-    meta_type="Factory-based Type Information with dynamic views"/>
+ <object meta_type="Dexterity FTI" name="Collection" remove="True" />
 
 </object>
