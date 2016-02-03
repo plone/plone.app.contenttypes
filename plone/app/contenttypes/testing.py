@@ -37,11 +37,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
-
-        mtr = portal.mimetypes_registry
-        mime_doc = mtr.lookup('application/msword')[0]
-        mime_doc.icon_path = 'custom.png'
-
         portal.acl_users.userFolderAddUser('admin',
                                            'secret',
                                            ['Manager'],
