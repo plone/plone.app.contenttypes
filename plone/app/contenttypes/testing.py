@@ -44,17 +44,15 @@ class PloneAppContenttypes(PloneSandboxLayer):
         login(portal, 'admin')
         portal.portal_workflow.setDefaultChain("simple_publication_workflow")
         setRoles(portal, TEST_USER_ID, ['Manager'])
-        portal.invokeFactory(
-            "Folder",
-            id=TEST_FOLDER_ID,
-            title=u"Test Folder"
-        )
 
     def tearDownPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:uninstall')
 
 
 class PloneAppContenttypesMigration(PloneSandboxLayer):
+    """ A setup that installs the old default AT-Types to migrate them to
+    Dexterity. The profile of pac is not only in the individual tests.
+    """
 
     defaultBases = (PLONE_FIXTURE,)
 
@@ -114,6 +112,20 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         z2.uninstallProduct(app, 'Products.Archetypes')
 
 
+class PloneAppContenttypesRobot(PloneAppContenttypes):
+    """Same as the default but with a added folder 'robot-test-folder'.
+    """
+
+    def setUpPloneSite(self, portal):
+        super(PloneAppContenttypesRobot, self).setUpPloneSite(portal)
+        portal.invokeFactory('Folder', id=TEST_FOLDER_ID, title=u'Test Folder')
+
+    def tearDownPloneSite(self, portal):
+        login(portal, 'admin')
+        portal.manage_delObjects([TEST_FOLDER_ID])
+        super(PloneAppContenttypesRobot, self).tearDownPloneSite(portal)
+
+
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
 PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
@@ -133,9 +145,10 @@ PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_FIXTURE,),
     name="PloneAppContenttypes:Migration_Functional"
 )
+PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE = PloneAppContenttypesRobot()
 PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
     bases=(
-        PLONE_APP_CONTENTTYPES_FIXTURE,
+        PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE,
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE
     ),
