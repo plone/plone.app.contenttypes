@@ -7,12 +7,10 @@ from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import TEST_USER_ID
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.interface import alsoProvides
 import pkg_resources
@@ -40,7 +38,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
         portal.portal_workflow.setDefaultChain('simple_publication_workflow')
-        setRoles(portal, TEST_USER_ID, ['Manager'])
 
     def tearDownPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:uninstall')
