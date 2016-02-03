@@ -55,11 +55,10 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.request['URL'] = self.portal.absolute_url()
         self.catalog = getToolByName(self.portal, "portal_catalog")
-        self.portal.acl_users.userFolderAddUser('admin',
-                                                'secret',
-                                                ['Manager'],
-                                                [])
-        login(self.portal, 'admin')
+        self.portal.acl_users.userFolderAddUser(
+            SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
+
+        login(self.portal, SITE_OWNER_NAME)
         self.portal.portal_workflow.setDefaultChain(
             "simple_publication_workflow")
 
@@ -1891,11 +1890,11 @@ class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
 
         applyProfile(self.portal, 'plone.app.dexterity:testing')
 
-        self.portal.acl_users.userFolderAddUser('admin',
-                                                'secret',
+        self.portal.acl_users.userFolderAddUser(SITE_OWNER_NAME,
+                                                SITE_OWNER_PASSWORD,
                                                 ['Manager'],
                                                 [])
-        login(self.portal, 'admin')
+        login(self.portal, SITE_OWNER_NAME)
 
         # Add default content
         self.portal.invokeFactory('Document', 'item')
@@ -1956,7 +1955,6 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
         app = self.layer['app']
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-
         self.portal_url = self.portal.absolute_url()
         self.manage_document_url = '{0}/{1}/{2}/{3}'.format(
             self.portal_url,
@@ -2017,11 +2015,11 @@ class MigrationFunctionalTests(unittest.TestCase):
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.request['URL'] = self.portal.absolute_url()
         self.catalog = getToolByName(self.portal, "portal_catalog")
-        self.portal.acl_users.userFolderAddUser('admin',
-                                                'secret',
+        self.portal.acl_users.userFolderAddUser(SITE_OWNER_NAME,
+                                                SITE_OWNER_PASSWORD,
                                                 ['Manager'],
                                                 [])
-        login(self.portal, 'admin')
+        login(self.portal, SITE_OWNER_NAME)
         self.portal.portal_workflow.setDefaultChain(
             "simple_publication_workflow")
         self.portal_url = self.portal.absolute_url()

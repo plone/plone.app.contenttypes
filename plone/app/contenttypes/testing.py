@@ -8,6 +8,8 @@ from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import TEST_USER_ID
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.app.testing import setRoles
@@ -37,8 +39,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
-        portal.acl_users.userFolderAddUser('admin', 'secret', ['Manager'], [])
-        login(portal, 'admin')
         portal.portal_workflow.setDefaultChain('simple_publication_workflow')
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
@@ -51,6 +51,9 @@ class PloneAppContenttypesRobot(PloneAppContenttypes):
     """
 
     def setUpPloneSite(self, portal):
+        self.portal.acl_users.userFolderAddUser(
+            SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
+        login(portal, SITE_OWNER_NAME)
         super(PloneAppContenttypesRobot, self).setUpPloneSite(portal)
         portal.invokeFactory('Folder', id=TEST_FOLDER_ID, title=u'Test Folder')
 
