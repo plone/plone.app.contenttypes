@@ -48,7 +48,7 @@ class PloneAppContenttypesRobot(PloneAppContenttypes):
     """
 
     def setUpPloneSite(self, portal):
-        self.portal.acl_users.userFolderAddUser(
+        portal.acl_users.userFolderAddUser(
             SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
         login(portal, SITE_OWNER_NAME)
         super(PloneAppContenttypesRobot, self).setUpPloneSite(portal)
