@@ -12,7 +12,6 @@ from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.testing import z2
-from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
 import pkg_resources
 
@@ -32,15 +31,9 @@ class PloneAppContenttypes(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         import plone.app.contenttypes
-        xmlconfig.file(
-            'configure.zcml',
-            plone.app.contenttypes,
-            context=configurationContext
-        )
-
+        self.loadZCML(package=plone.app.contenttypes)
         import plone.app.event.dx
-        self.loadZCML(package=plone.app.event.dx,
-                      context=configurationContext)
+        self.loadZCML(package=plone.app.event.dx)
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
@@ -91,23 +84,9 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         z2.installProduct(app, 'Products.DateRecurringIndex')
 
         import plone.app.contenttypes
-        xmlconfig.file(
-            'configure.zcml',
-            plone.app.contenttypes,
-            context=configurationContext
-        )
+        self.loadZCML(package=plone.app.contenttypes)
         import plone.app.referenceablebehavior
         self.loadZCML(package=plone.app.referenceablebehavior)
-
-    def tearDownZope(self, app):
-        try:
-            pkg_resources.get_distribution('plone.app.collection')
-            z2.uninstallProduct(app, 'plone.app.collection')
-        except pkg_resources.DistributionNotFound:
-            pass
-        z2.uninstallProduct(app, 'plone.app.blob')
-        z2.uninstallProduct(app, 'Products.ATContentTypes')
-        z2.uninstallProduct(app, 'Products.Archetypes')
 
     def setUpPloneSite(self, portal):
         # install Products.ATContentTypes manually if profile is available
@@ -125,6 +104,19 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
             applyProfile(portal, 'plone.app.collection:default')
 
         applyProfile(portal, 'plone.app.referenceablebehavior:default')
+
+    def tearDownPloneSite(self, portal):
+        applyProfile(portal, 'plone.app.contenttypes:uninstall')
+
+    def tearDownZope(self, app):
+        try:
+            pkg_resources.get_distribution('plone.app.collection')
+            z2.uninstallProduct(app, 'plone.app.collection')
+        except pkg_resources.DistributionNotFound:
+            pass
+        z2.uninstallProduct(app, 'plone.app.blob')
+        z2.uninstallProduct(app, 'Products.ATContentTypes')
+        z2.uninstallProduct(app, 'Products.Archetypes')
 
 
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
