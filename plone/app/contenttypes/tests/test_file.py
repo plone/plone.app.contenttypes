@@ -1,30 +1,23 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
-import os.path
-
-from zope.interface import alsoProvides
-from zope.component import createObject
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
-
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
 from plone.app.contenttypes.interfaces import IFile
-
+from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 )
-
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.z3cform.interfaces import IPloneFormLayer
-
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.namedfile.file import NamedFile
-from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+from plone.testing.z2 import Browser
+from zope.component import createObject
+from zope.component import queryUtility
+from zope.interface import alsoProvides
+import os.path
+import unittest2 as unittest
+import transaction
 
 
 class FileIntegrationTest(unittest.TestCase):
@@ -174,6 +167,10 @@ class FileFunctionalTest(unittest.TestCase):
         self.assertTrue('pdf.png' in self.browser.contents)
 
     def test_alternative_mime_icon_doc_for_file(self):
+        mtr = self.portal.mimetypes_registry
+        mime_doc = mtr.lookup('application/msword')[0]
+        mime_doc.icon_path = 'custom.png'
+        transaction.commit()
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
 

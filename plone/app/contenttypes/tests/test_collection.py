@@ -204,9 +204,11 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
 
     # @unittest.skip("Needs to be refactored")
     def test_collection_templates(self):
+        self.portal.acl_users.userFolderAddUser(
+            SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
         browser = self.browser
-        portal = self.layer['portal']
-        login(portal, 'admin')
+        portal = self.portal
+        login(portal, SITE_OWNER_NAME)
         # add an image that will be listed by the collection
         portal.invokeFactory("Image",
                              "image",
@@ -267,8 +269,11 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue("Image example" in browser.contents)
 
     def test_sorting_1(self):
-        portal = self.layer['portal']
-        login(portal, 'admin')
+        self.portal.acl_users.userFolderAddUser(
+            SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
+
+        portal = self.portal
+        login(portal, SITE_OWNER_NAME)
         query = [{
             'i': 'portal_type',
             'o': 'plone.app.querystring.operation.string.is',
@@ -313,8 +318,10 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertTrue(ritem1.CreationDate() > ritem2.CreationDate())
 
     def test_custom_query(self):
-        portal = self.layer['portal']
-        login(portal, 'admin')
+        self.portal.acl_users.userFolderAddUser(
+            SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
+        portal = self.portal
+        login(portal, SITE_OWNER_NAME)
         query = [{
             'i': 'portal_type',
             'o': 'plone.app.querystring.operation.string.is',
@@ -358,8 +365,10 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertEqual(len(results), 0)
 
     def test_respect_navigation_root(self):
-        portal = self.layer['portal']
-        login(portal, 'admin')
+        self.portal.acl_users.userFolderAddUser(
+            SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
+        portal = self.portal
+        login(portal, SITE_OWNER_NAME)
 
         # Create two subsites i.e create two folders and mark them with
         # INavigationRoot

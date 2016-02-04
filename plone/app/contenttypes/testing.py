@@ -7,12 +7,11 @@ from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import TEST_USER_ID
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.testing import z2
-from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
 import pkg_resources
 
@@ -32,41 +31,39 @@ class PloneAppContenttypes(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         import plone.app.contenttypes
-        xmlconfig.file(
-            'configure.zcml',
-            plone.app.contenttypes,
-            context=configurationContext
-        )
-
+        self.loadZCML(package=plone.app.contenttypes)
         import plone.app.event.dx
-        self.loadZCML(package=plone.app.event.dx,
-                      context=configurationContext)
+        self.loadZCML(package=plone.app.event.dx)
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:default')
-
-        mtr = portal.mimetypes_registry
-        mime_doc = mtr.lookup('application/msword')[0]
-        mime_doc.icon_path = 'custom.png'
-
-        portal.acl_users.userFolderAddUser('admin',
-                                           'secret',
-                                           ['Manager'],
-                                           [])
-        login(portal, 'admin')
-        portal.portal_workflow.setDefaultChain("simple_publication_workflow")
-        setRoles(portal, TEST_USER_ID, ['Manager'])
-        portal.invokeFactory(
-            "Folder",
-            id=TEST_FOLDER_ID,
-            title=u"Test Folder"
-        )
+        portal.portal_workflow.setDefaultChain('simple_publication_workflow')
 
     def tearDownPloneSite(self, portal):
         applyProfile(portal, 'plone.app.contenttypes:uninstall')
 
 
+class PloneAppContenttypesRobot(PloneAppContenttypes):
+    """Same as the default but with a added folder 'robot-test-folder'.
+    """
+
+    def setUpPloneSite(self, portal):
+        portal.acl_users.userFolderAddUser(
+            SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
+        login(portal, SITE_OWNER_NAME)
+        super(PloneAppContenttypesRobot, self).setUpPloneSite(portal)
+        portal.invokeFactory('Folder', id=TEST_FOLDER_ID, title=u'Test Folder')
+
+    def tearDownPloneSite(self, portal):
+        login(portal, 'admin')
+        portal.manage_delObjects([TEST_FOLDER_ID])
+        super(PloneAppContenttypesRobot, self).tearDownPloneSite(portal)
+
+
 class PloneAppContenttypesMigration(PloneSandboxLayer):
+    """ A setup that installs the old default AT-Types to migrate them to
+    Dexterity. The profile of pac is not only in the individual tests.
+    """
 
     defaultBases = (PLONE_FIXTURE,)
 
@@ -75,7 +72,6 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         # prepare installing Products.ATContentTypes
         import Products.ATContentTypes
         self.loadZCML(package=Products.ATContentTypes)
-
         z2.installProduct(app, 'Products.Archetypes')
         z2.installProduct(app, 'Products.ATContentTypes')
         z2.installProduct(app, 'plone.app.blob')
@@ -91,23 +87,9 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         z2.installProduct(app, 'Products.DateRecurringIndex')
 
         import plone.app.contenttypes
-        xmlconfig.file(
-            'configure.zcml',
-            plone.app.contenttypes,
-            context=configurationContext
-        )
+        self.loadZCML(package=plone.app.contenttypes)
         import plone.app.referenceablebehavior
         self.loadZCML(package=plone.app.referenceablebehavior)
-
-    def tearDownZope(self, app):
-        try:
-            pkg_resources.get_distribution('plone.app.collection')
-            z2.uninstallProduct(app, 'plone.app.collection')
-        except pkg_resources.DistributionNotFound:
-            pass
-        z2.uninstallProduct(app, 'plone.app.blob')
-        z2.uninstallProduct(app, 'Products.ATContentTypes')
-        z2.uninstallProduct(app, 'Products.Archetypes')
 
     def setUpPloneSite(self, portal):
         # install Products.ATContentTypes manually if profile is available
@@ -126,31 +108,44 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
 
         applyProfile(portal, 'plone.app.referenceablebehavior:default')
 
+    def tearDownPloneSite(self, portal):
+        applyProfile(portal, 'plone.app.contenttypes:uninstall')
+
+    def tearDownZope(self, app):
+        try:
+            pkg_resources.get_distribution('plone.app.collection')
+            z2.uninstallProduct(app, 'plone.app.collection')
+        except pkg_resources.DistributionNotFound:
+            pass
+        z2.uninstallProduct(app, 'plone.app.blob')
+        z2.uninstallProduct(app, 'Products.ATContentTypes')
+        z2.uninstallProduct(app, 'Products.Archetypes')
+
 
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
 PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
-    name="PloneAppContenttypes:Integration"
+    name='PloneAppContenttypes:Integration'
+)
+PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
+    name='PloneAppContenttypes:Functional'
+)
+PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE = PloneAppContenttypesRobot()
+PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
+    bases=(
+        PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE,
+        REMOTE_LIBRARY_BUNDLE_FIXTURE,
+        z2.ZSERVER_FIXTURE
+    ),
+    name='PloneAppContenttypes:Robot'
 )
 PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE = PloneAppContenttypesMigration()
 PLONE_APP_CONTENTTYPES_MIGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,),
-    name="PloneAppContenttypes:Migration"
+    name='PloneAppContenttypes:Migration'
 )
-PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_CONTENTTYPES_FIXTURE,),
-    name="PloneAppContenttypes:Functional"
-)
-PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_FIXTURE = PloneAppContenttypesMigration()  # noqa
 PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_FIXTURE,),
-    name="PloneAppContenttypes:Migration_Functional"
-)
-PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
-    bases=(
-        PLONE_APP_CONTENTTYPES_FIXTURE,
-        REMOTE_LIBRARY_BUNDLE_FIXTURE,
-        z2.ZSERVER_FIXTURE
-    ),
-    name="PloneAppContenttypes:Robot"
+    bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,),
+    name='PloneAppContenttypes:Migration_Functional'
 )
