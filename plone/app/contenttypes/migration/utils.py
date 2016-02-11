@@ -209,7 +209,7 @@ def migrate_leadimage(source_object, target_object):
 
     acc = source_object.getField(
         OLD_LEADIMAGE_FIELD_NAME).getAccessor(source_object)()
-    if not acc.filename:
+    if getattr(acc, 'filename', None) is not None:
         # skip if old content has field but has no lead image in the field
         return
 
