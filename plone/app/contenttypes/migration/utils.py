@@ -232,9 +232,8 @@ def migrate_leadimage(source_object, target_object):
         target_object,
         OLD_CAPTION_FIELD_NAME,
         NEW_CAPTION_FIELD_NAME)
-    logger.info(
-        "Migrating contentlead image for {0}.".format(
-            target_object.absolute_url()))
+    logger.info("Migrating contentlead image for {0}.".format(
+        target_object.absolute_url()))
 
 
 def migrate_portlets(src_obj, dst_obj):
