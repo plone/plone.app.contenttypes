@@ -4,7 +4,8 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Check if there is an image into leadimage field for migration.
+  [bsuttor]
 
 
 1.1 (2015-12-22)
