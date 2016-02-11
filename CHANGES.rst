@@ -15,6 +15,8 @@ Fixes:
 
 - Make sure to have image scale before generating tag for album view
   [vangheem]
+- Check if there is an image into leadimage field for migration.
+  [bsuttor]
 
 - Also remove collections upon uninstalling.
   [pbauer]
