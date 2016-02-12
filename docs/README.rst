@@ -176,7 +176,7 @@ The following non-default types will also be migrated:
 * The AT-based Event-type provided by plone.app.event
 * The DX-based Event-type provided by plone.app.event
 * The Event-type provided by plone.app.contenttypes until version 1.0
-* News Items with blobs (provoded by https://github.com/plone/plone.app.blob/pull/2)
+* News Items with blobs (provided by https://github.com/plone/plone.app.blob/pull/2)
 * Files and Images without blobs
 
 The migration tries to keep most features (including portlets, comments, contentrules, local roles and local workflows).
