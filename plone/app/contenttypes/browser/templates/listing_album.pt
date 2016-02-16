@@ -22,14 +22,15 @@
 
   <metal:listingmacro define-macro="listing">
   <tal:images tal:repeat="image images">
-    <div class="photoAlbumEntry">
+    <div class="photoAlbumEntry"
+         tal:define="ob image/getObject;
+                     scale ob/@@images;
+                     img_tag python:scale.scale('image', scale='thumb')">
       <a tal:attributes="href string:${image/getURL}/view;
                          title image/Description">
         <span class="photoAlbumEntryWrapper">
-          <img tal:define="ob image/getObject;
-                           scale ob/@@images;
-                           img_tag python:scale.scale('image', scale='thumb').tag()"
-              tal:replace="structure img_tag" />
+          <img tal:condition="img_tag"
+              tal:replace="structure img_tag/tag" />
         </span>
         <span class="photoAlbumEntryTitle" tal:content="image/Title">
             Title

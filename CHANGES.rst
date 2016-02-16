@@ -13,6 +13,9 @@ New:
 
 Fixes:
 
+- Make sure to have image scale before generating tag for album view
+  [vangheem]
+
 - Also remove collections upon uninstalling.
   [pbauer]
 
