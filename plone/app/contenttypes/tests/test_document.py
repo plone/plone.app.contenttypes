@@ -15,7 +15,6 @@ from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
 
-import transaction
 import unittest2 as unittest
 
 
@@ -83,7 +82,6 @@ class DocumentIntegrationTest(unittest.TestCase):
     def tearDown(self):
         if 'document' in self.portal.objectIds():
             self.portal.manage_delObjects(ids='document')
-            transaction.commit()
 
 
 class DocumentFunctionalTest(unittest.TestCase):
