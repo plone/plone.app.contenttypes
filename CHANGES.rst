@@ -13,6 +13,9 @@ New:
 
 Fixes:
 
+- Check if there is a non-empty leadimage field for migration.
+  [bsuttor]
+
 - Make sure to have image scale before generating tag for album view
   [vangheem]
 
