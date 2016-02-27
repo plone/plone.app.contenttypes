@@ -16,7 +16,7 @@ Fixes:
 - Check if there is a non-empty leadimage field for migration.
   [bsuttor]
 
-- Make sure to have image scale before generating tag for album view
+- Make sure to have image scale before generating tag for album view.
   [vangheem]
 
 - Also remove collections upon uninstalling.
@@ -29,7 +29,7 @@ Fixes:
   in two functions for easier debugging.
   [jensens]
 
-- Simplifiy test in robot framework which fails in its newer version.
+- Simplify test in robot framework which fails in its newer version.
   [jensens]
 
 
