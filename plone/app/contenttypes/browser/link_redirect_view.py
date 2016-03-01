@@ -12,7 +12,7 @@ from plone.registry.interfaces import IRegistry
 NON_REDIRECTABLE_URL_SCHEMES = [
     'mailto:',
     'tel:',
-    'callto:',
+    'callto:',  # nonstandard according to RFC 3966. used for skype.
     'webdav:',
     'caldav:'
 ]
