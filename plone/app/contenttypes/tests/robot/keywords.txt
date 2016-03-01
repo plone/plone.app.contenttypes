@@ -83,8 +83,8 @@ the content area should not contain
 
 the collection should contain
   [Arguments]  ${title}
-  Wait until page contains element  xpath=//section[@id='content-core']
-  xpath should match x times  //section[@id='content-core']//*[@class='entry']//a[contains(text(), '${title}')]  1
+  Wait until page contains element  xpath=//*[@id='content-core']
+  xpath should match x times  //*[@id='content-core']//*[@class='entry']//a[contains(text(), '${title}')]  1
 
 
 the collection should not contain

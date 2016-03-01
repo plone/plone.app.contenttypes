@@ -14,6 +14,9 @@ New:
 
 Fixes:
 
+- Made xpath expression in test less restrictive.
+  [maurits]
+
 - Register explicitly plone.app.event dependency on configure.zcml.
   [hvelarde]
 
