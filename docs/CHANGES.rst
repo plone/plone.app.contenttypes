@@ -4,6 +4,9 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
+- Register explicitly plone.app.event dependency on configure.zcml.
+  [hvelarde]
+
 - Check if there is an image into leadimage field for migration.
   [bsuttor]
 
