@@ -14,7 +14,8 @@ New:
 
 Fixes:
 
-- *add item here*
+- Register explicitly plone.app.event dependency on configure.zcml.
+  [hvelarde]
 
 
 1.2.10 (2016-02-27)
