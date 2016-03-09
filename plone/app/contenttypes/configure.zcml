@@ -8,6 +8,7 @@
            i18n_domain="plone.app.contenttypes">
 
   <includeDependencies package="." />
+  <include package="plone.app.event" />
   <include file="profiles.zcml" />
 
   <include package=".behaviors" />
