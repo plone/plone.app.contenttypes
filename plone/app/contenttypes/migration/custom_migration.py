@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 from Products.ATContentTypes.content.schemata import ATContentTypeSchema
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -150,7 +151,7 @@ class CustomMigrationForm(BrowserView):
             return results
         for field in schema.fields():
             if not field.getName() in self.at_metadata_fields:
-                translated_label = translate(field.widget.label)
+                translated_label = translate(safe_unicode(field.widget.label))
                 results.append(
                     {'id': field.getName(),
                      'title': '%s (%s)' % (translated_label, field.getType()),
