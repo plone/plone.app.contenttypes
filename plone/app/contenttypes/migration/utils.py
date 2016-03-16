@@ -28,6 +28,7 @@ from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
+from plone.portlets.interfaces import ILocalPortletAssignable
 from plone.portlets.interfaces import IPortletAssignmentMapping
 from plone.portlets.interfaces import IPortletManager
 from plone.uuid.interfaces import IUUID
@@ -258,6 +259,8 @@ def migrate_portlets(src_obj, dst_obj):
 
     # copy all portlet assignments (visibilty is stored as annotation
     # on the assignments and gets copied here too)
+    if not ILocalPortletAssignable.providedBy(src_obj):
+        return
     for manager in managers:
         column = getUtility(IPortletManager, manager)
         mappings = getMultiAdapter((src_obj, column),
