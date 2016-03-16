@@ -9,8 +9,11 @@ from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
+from plone.namedfile.file import NamedBlobImage
+from plone.namedfile.file import NamedBlobFile
 from zope.deprecation import deprecation
 from zope.interface import implementer
+from zope.lifecycleevent import modified
 
 
 @implementer(ICollection)
@@ -77,6 +80,28 @@ class File(Item):
     """Convenience subclass for ``File`` portal type
     """
 
+    def PUT(self, REQUEST=None, RESPONSE=None):
+        """DAV method to replace the file field with a new resource."""
+        request = REQUEST if REQUEST is not None else self.REQUEST
+        response = RESPONSE if RESPONSE is not None else request.response
+
+        self.dav__init(request, response)
+        self.dav__simpleifhandler(request, response, refresh=1)
+
+        infile = request.get('BODYFILE', None)
+        filename = request['PATH_INFO'].split('/')[-1]
+        self.file = NamedBlobFile(
+            data=infile.read(), filename=unicode(filename))
+
+        modified(self)
+        return response
+
+    def get_size(self):
+        return self.file.size
+
+    def content_type(self):
+        return self.file.contentType
+
 
 @implementer(IFolder)
 class Folder(Container):
@@ -88,6 +113,28 @@ class Folder(Container):
 class Image(Item):
     """Convenience subclass for ``Image`` portal type
     """
+
+    def PUT(self, REQUEST=None, RESPONSE=None):
+        """DAV method to replace image field with a new resource."""
+        request = REQUEST if REQUEST is not None else self.REQUEST
+        response = RESPONSE if RESPONSE is not None else request.response
+
+        self.dav__init(request, response)
+        self.dav__simpleifhandler(request, response, refresh=1)
+
+        infile = request.get('BODYFILE', None)
+        filename = request['PATH_INFO'].split('/')[-1]
+        self.image = NamedBlobImage(
+            data=infile.read(), filename=unicode(filename))
+
+        modified(self)
+        return response
+
+    def get_size(self):
+        return self.image.size
+
+    def content_type(self):
+        return self.image.contentType
 
 
 @implementer(ILink)

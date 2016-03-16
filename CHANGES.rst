@@ -10,7 +10,8 @@ Incompatibilities:
 
 New:
 
-- *add item here*
+- WebDAV support for File and Image
+  [ebrehault]
 
 Fixes:
 
