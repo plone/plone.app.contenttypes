@@ -238,7 +238,8 @@ def migrate_portlets(src_obj, dst_obj):
     Also takes blocked portlet settings into account, keeps hidden portlets
     hidden and skips broken assignments.
     """
-    if not ILocalPortletAssignable.providedBy(src_obj):
+    if not ILocalPortletAssignable.providedBy(src_obj) or \
+       not ILocalPortletAssignable.providedBy(dst_obj):
         return
 
     # also take custom portlet managers into account
