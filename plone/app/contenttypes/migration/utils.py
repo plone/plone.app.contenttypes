@@ -243,6 +243,8 @@ def migrate_portlets(src_obj, dst_obj):
     Also takes blocked portlet settings into account, keeps hidden portlets
     hidden and skips broken assignments.
     """
+    if not ILocalPortletAssignable.providedBy(src_obj):
+        return
 
     # also take custom portlet managers into account
     managers = [reg.name for reg in getSiteManager().registeredUtilities()
@@ -259,8 +261,6 @@ def migrate_portlets(src_obj, dst_obj):
 
     # copy all portlet assignments (visibilty is stored as annotation
     # on the assignments and gets copied here too)
-    if not ILocalPortletAssignable.providedBy(src_obj):
-        return
     for manager in managers:
         column = getUtility(IPortletManager, manager)
         mappings = getMultiAdapter((src_obj, column),
