@@ -28,6 +28,7 @@ from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
+from plone.portlets.interfaces import ILocalPortletAssignable
 from plone.portlets.interfaces import IPortletAssignmentMapping
 from plone.portlets.interfaces import IPortletManager
 from plone.uuid.interfaces import IUUID
@@ -237,6 +238,9 @@ def migrate_portlets(src_obj, dst_obj):
     Also takes blocked portlet settings into account, keeps hidden portlets
     hidden and skips broken assignments.
     """
+    if not ILocalPortletAssignable.providedBy(src_obj) or \
+       not ILocalPortletAssignable.providedBy(dst_obj):
+        return
 
     # also take custom portlet managers into account
     managers = [reg.name for reg in getSiteManager().registeredUtilities()
