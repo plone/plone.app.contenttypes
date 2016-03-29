@@ -67,6 +67,9 @@ Bug fixes:
 Bug fixes:
 
 - Fixed possible cross site scripting (XSS) attack in news item image caption.  [maurits]
+- Check if LingaPlone is installed for adding Language='all' option of 
+  query catalog used to migration. No more for plone.app.multilingual.
+  [bsuttor]
 
 - Register explicitly plone.app.event dependency on configure.zcml.
   [hvelarde]
