@@ -5,7 +5,7 @@ from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
 from plone.app.contenttypes.migration.field_migrators import datetime_fixer
-from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
+from plone.app.contenttypes.migration.utils import HAS_LINGUA_PLONE
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone
@@ -172,7 +172,7 @@ def migrate_base_class_to_new_class(obj,
 def list_of_objects_with_changed_base_class(context):
     catalog = getToolByName(context, "portal_catalog")
     query = {'object_provides': IDexterityContent.__identifier__}
-    if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+    if HAS_LINGUA_PLONE and 'Language' in catalog.indexes():
         query['Language'] = 'all'
     for brain in catalog(query):
         try:

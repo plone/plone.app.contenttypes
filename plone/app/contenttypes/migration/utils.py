@@ -56,17 +56,9 @@ logger = logging.getLogger(__name__)
 try:
     pkg_resources.get_distribution('Products.LinguaPlone')
 except pkg_resources.DistributionNotFound:
-    HAS_MULTILINGUAL = False
+    HAS_LINGUA_PLONE = False
 else:
-    HAS_MULTILINGUAL = True
-
-if not HAS_MULTILINGUAL:
-    try:
-        pkg_resources.get_distribution('plone.app.multilingual')
-    except pkg_resources.DistributionNotFound:
-        HAS_MULTILINGUAL = False
-    else:
-        HAS_MULTILINGUAL = True
+    HAS_LINGUA_PLONE = True
 
 
 def isSchemaExtended(iface):
