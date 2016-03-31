@@ -235,3 +235,9 @@ def searchabletext_richtext(context):
     for brain in search(portal_type=['Collection', 'Document', 'News Item']):
         obj = brain.getObject()
         obj.reindexObject(idxs=['SearchableText'])
+
+
+def add_leadimage_settings(context):
+    context.runImportStepFromProfile(
+        'profile-plone.app.contenttypes:default',
+        'registry')
