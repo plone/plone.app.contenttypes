@@ -32,3 +32,19 @@ class LeadImage(object):
 
     def __init__(self, context):
         self.context = context
+
+
+class ILeadImageSettings(Interface):
+
+    scale_name = schema.Choice(
+        title=_(u"Image scale"),
+        description=_(u'Please select scale which will be used.'),
+        required=True,
+        default='mini',
+        vocabulary=u"plone.app.vocabularies.ImagesScales",
+    )
+
+    is_visible = schema.Bool(
+        title=_(u'Show image in content'),
+        default=True,
+    )
