@@ -42,7 +42,7 @@ class ILeadImageSettings(Interface):
         description=_(u'Please select scale which will be used.'),
         required=True,
         default='mini',
-        vocabulary = u"plone.app.vocabularies.ImagesScales",
+        vocabulary=u"plone.app.vocabularies.ImagesScales",
     )
 
     is_visible = schema.Bool(
