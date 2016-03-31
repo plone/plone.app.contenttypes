@@ -8,6 +8,7 @@
   <include package="plone.behavior" file="meta.zcml"/>
 
   <plone:behavior
+    name="plone.leadimage"
     title="Lead Image"
     description="Adds image and image caption fields"
     provides=".leadimage.ILeadImage"
@@ -27,6 +28,7 @@
     />
 
   <plone:behavior
+    name="plone.tableofcontents"
     title="Table of contents"
     description="Adds a table of contents"
     provides=".tableofcontents.ITableOfContents"
@@ -34,6 +36,7 @@
     />
 
   <plone:behavior
+    name="plone.collection"
     title="Collection"
     description="Adds collection behavior"
     provides=".collection.ICollection"
@@ -43,6 +46,7 @@
     />
 
   <plone:behavior
+    name="plone.richtext"
     title="RichText"
     description="Adds richtext behavior"
     provides=".richtext.IRichText"
