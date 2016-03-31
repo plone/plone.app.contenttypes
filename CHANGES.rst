@@ -1,12 +1,8 @@
 Changelog
 =========
 
-1.2.11 (unreleased)
+1.2.11 (2016-03-31)
 -------------------
-
-Incompatibilities:
-
-- *add item here*
 
 New:
 
