@@ -28,9 +28,3 @@ class LeadImageViewlet(ViewletBase):
         return api.portal.get_registry_record(
                 'scale_name',
                 interface=ILeadImageSettings)
-
-    @property
-    def css_class(self):
-        prefix = self.context.portal_type.split(' ')[0].lower()
-        name = "{0}Image".format(prefix)
-        return name

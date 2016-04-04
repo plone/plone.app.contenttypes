@@ -144,7 +144,7 @@ class LeadImageBehaviorIntegrationtTest(unittest.TestCase):
         view = container.restrictedTraverse('view')
         view.update()
         self.assertTrue(
-            'figure class="leadimagefolderImageContainer"' in view.render(),
+            'figure class="leadImageContainer"' in view.render(),
             'Leadimage should be visible.')
 
         api.portal.set_registry_record(
@@ -153,7 +153,7 @@ class LeadImageBehaviorIntegrationtTest(unittest.TestCase):
             interface=ILeadImageSettings)
         view.update()
         self.assertTrue(
-            'class="leadimagefolderImageContainer"' not in view.render(),
+            'class="leadImageContainer"' not in view.render(),
             'Leadimage should not be visible.')
 
     def test_lead_image_viewlet_view(self):
@@ -181,7 +181,6 @@ class LeadImageBehaviorIntegrationtTest(unittest.TestCase):
         self.assertEqual(len(viewlet), 1)
 
         lead_viewlet = viewlet[0]
-        self.assertEqual(lead_viewlet.css_class, 'leadimagefolderImage')
         self.assertEqual(lead_viewlet.scale_name, 'mini')
         self.assertTrue(lead_viewlet.available)
         is_visible = api.portal.set_registry_record(
