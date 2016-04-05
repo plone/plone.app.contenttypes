@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <div class="leadImage" tal:condition="view/available">
   <img tal:define="has_img context/image|nothing;
                    scales context/@@images|nothing"

@@ -4,6 +4,9 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
+- Add leadimage settings.
+  [bsuttor]
+
 - Register explicitly plone.app.event dependency on configure.zcml.
   [hvelarde]
 
