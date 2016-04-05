@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
-from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.layout.viewlets import ViewletBase
 from plone.app.contenttypes.behaviors.leadimage import ILeadImageSettings
 from plone import api
@@ -27,7 +26,5 @@ class LeadImageViewlet(ViewletBase):
     @property
     def scale_name(self):
         return api.portal.get_registry_record(
-                'scale_name',
-                interface=ILeadImageSettings)
-
-
+            'scale_name',
+            interface=ILeadImageSettings)
