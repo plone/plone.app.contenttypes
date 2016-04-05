@@ -72,4 +72,13 @@
       handler=".upgrades.use_new_view_names"
       />
 
+  <genericsetup:upgradeStep
+      source="1104"
+      destination="1105"
+      title="Add leadimage settings"
+      description=""
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.add_leadimage_settings"
+      />
+
 </configure>
