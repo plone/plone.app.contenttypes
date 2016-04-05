@@ -240,4 +240,4 @@ def searchabletext_richtext(context):
 def add_leadimage_settings(context):
     context.runImportStepFromProfile(
         'profile-plone.app.contenttypes:default',
-        'registry')
+        'plone.app.registry')
