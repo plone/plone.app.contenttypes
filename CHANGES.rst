@@ -16,6 +16,9 @@ New features:
 - Add ``i18n:attribute`` properies to all action nodes for FTI types.
   [thet]
 
+- added few pypi links in 'Migration' section
+  [kkhan]
+
 Bug fixes:
 
 - Remove ``path`` index injection in "plone.collection" behaviors ``results`` method.
@@ -33,6 +36,9 @@ Bug fixes:
 - Mark robot test ``plone.app.contenttypes.tests.test_robot.RobotTestCase.Scenario Test Absolute Location Criterion`` as unstable.
   This needs further investigation, but must not block Plone development.
   [jensens]
+
+- corrected typos in the documentation
+  [kkhan]
 
 
 1.2.16 (2016-06-12)

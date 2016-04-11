@@ -159,7 +159,7 @@ To migrate your existing content from Archetypes to Dexterity use the form at ``
 Migrating Archetypes-based default-types content to plone.app.contenttypes
 ``````````````````````````````````````````````````````````````````````````
 
-plone.app.contenttypes can migrate the following archetypes-based default types:
+`plone.app.contenttypes <https://pypi.python.org/pypi/plone.app.contenttypes/>`_ can migrate the following archetypes-based default types:
 
 * Document
 * Event
@@ -226,13 +226,15 @@ The migration-form will warn you if you have subtopics in your site and your Col
 Migrating content that is translated with LinguaPlone
 `````````````````````````````````````````````````````
 
-Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlone to plone.app.multilingual (http://pypi.python.org/pypi/plone.app.multilingual). The migration from Products.LinguaPlone to plone.app.multilingual should happen **before** the migration from Archetypes to plone.app.contenttypes. For details on the migration see http://pypi.python.org/pypi/plone.app.multilingual#linguaplone-migration
+Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlone to plone.app.multilingual (http://pypi.python.org/pypi/plone.app.multilingual). The migration from Products.LinguaPlone to plone.app.multilingual should happen **before** the migration from Archetypes to plone.app.contenttypes. For details on the migration see--
+http://pypi.python.org/pypi/plone.app.multilingual#linguaplone-migration
 
 
 Migrating default-content that was extended with archetypes.schemaextender
 ``````````````````````````````````````````````````````````````````````````
 
-The migration-form warns you if any of your old types were extended with aditional fields using archetypes.schemaextender. The data contained in these fields will be lost during migration (with the exception of images added with collective.contentleadimage).
+
+The migration-form warns you if any of your old types were extended with additional fields using `archetypes.schemaextender   <https://pypi.python.org/pypi/archetypes.schemaextender/>`_. The data contained in these fields will be lost during migration (with the exception of images added with collective.contentleadimage).
 
 To keep the data you would need to write a custom migration for your types dexterity-behaviors for the functionality provided by the schemaextenders. This is an advanced development task and beyond the scope of this documentation.
 
