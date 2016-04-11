@@ -159,7 +159,7 @@ To migrate your existing content from Archetypes to Dexterity use the form at ``
 Migrating Archetypes-based default-types content to plone.app.contenttypes
 ``````````````````````````````````````````````````````````````````````````
 
-`plone.app.contenttypes<https://pypi.python.org/pypi/plone.app.contenttypes/1.2.5/>`_ can migrate the following archetypes-based default types:
+`plone.app.contenttypes <https://pypi.python.org/pypi/plone.app.contenttypes/>`_ can migrate the following archetypes-based default types:
 
 * Document
 * Event
@@ -233,7 +233,7 @@ Migrating default-content that was extended with archetypes.schemaextender
 ``````````````````````````````````````````````````````````````````````````
 
 
-The migration-form warns you if any of your old types were extended with aditional fields using `archetypes.schemaextender<https://pypi.python.org/pypi/archetypes.schemaextender/2.1.5/>`_. The data contained in these fields will be lost during migration (with the exception of images added with collective.contentleadimage).
+The migration-form warns you if any of your old types were extended with aditional fields using `archetypes.schemaextender   <https://pypi.python.org/pypi/archetypes.schemaextender/>`_. The data contained in these fields will be lost during migration (with the exception of images added with collective.contentleadimage).
 
 To keep the data you would need to write a custom migration for your types dexterity-behaviors for the functionality provided by the schemaextenders. This is an advanced development task and beyond the scope of this documentation.
 
