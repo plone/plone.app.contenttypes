@@ -229,10 +229,9 @@ Migrating content that is translated with LinguaPlone
 Since LinguaPlone does not support Dexterity you need to migrate from LinguaPlone to plone.app.multilingual (http://pypi.python.org/pypi/plone.app.multilingual). The migration from Products.LinguaPlone to plone.app.multilingual should happen **before** the migration from Archetypes to plone.app.contenttypes. For details on the migration see http://pypi.python.org/pypi/plone.app.multilingual#linguaplone-migration
 
 
-Migrating default-content that was extended with 
+Migrating default-content that was extended with `schemaextender`
 ``````````````````````````````````````````````````````````````````````````
-archetypes.schemaextender
-``````````````````````````````````````````````````````````````````````````
+
 
 The migration-form warns you if any of your old types were extended with aditional fields using archetypes.schemaextender. The data contained in these fields will be lost during migration (with the exception of images added with collective.contentleadimage).
 
