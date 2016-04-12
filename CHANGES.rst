@@ -16,6 +16,9 @@ Fixes:
 
 - *add item here*
 
+- Encode the linked url for the Link type to allow for non ascii characters in the url. 
+  [martior]
+
 
 1.2.11 (2016-03-31)
 -------------------
