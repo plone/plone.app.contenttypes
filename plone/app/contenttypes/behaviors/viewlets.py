@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.layout.viewlets import ViewletBase
-from plone.app.contenttypes.behaviors.leadimage import ILeadImageSettings
+from Products.CMFPlone.interfaces.controlpanel import IImagingSchema
 from plone import api
 
 
@@ -18,7 +18,7 @@ class LeadImageViewlet(ViewletBase):
         if self.context.image:
             is_visible = api.portal.get_registry_record(
                 'is_visible',
-                interface=ILeadImageSettings)
+                interface=IImagingSchema)
             if is_visible:
                 visible = True
         return visible
@@ -27,4 +27,4 @@ class LeadImageViewlet(ViewletBase):
     def scale_name(self):
         return api.portal.get_registry_record(
                 'scale_name',
-                interface=ILeadImageSettings)
+                interface=IImagingSchema)
