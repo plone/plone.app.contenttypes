@@ -1,20 +1,14 @@
 Changelog
 =========
 
-1.2.12 (unreleased)
+1.2.12 (2016-04-13)
 -------------------
 
-Incompatibilities:
-
-- *add item here*
 
 New:
 
-- *add item here*
-
-Fixes:
-
-- *add item here*
+- assign shortnames to behaviors as supported by plone.behavior
+  [thet]
 
 
 1.2.11 (2016-03-31)
