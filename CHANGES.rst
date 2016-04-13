@@ -4,18 +4,15 @@ Changelog
 1.2.13 (unreleased)
 -------------------
 
-Incompatibilities:
-
-- *add item here*
-
 New:
 
-- *add item here*
+- added few pypi links in 'Migration' section
+  [kkhan]
 
 Fixes:
 
-- *add item here*
-
+- corrected typos in the documentation
+  [kkhan]
 
 1.2.12 (2016-04-13)
 -------------------
