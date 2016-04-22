@@ -18,7 +18,7 @@ def replace_link_variables_by_paths(context, url):
     context.
     """
     if not url:
-        return None
+        return url
 
     portal_state = context.restrictedTraverse('@@plone_portal_state')
 
