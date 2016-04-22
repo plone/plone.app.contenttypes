@@ -14,7 +14,9 @@ New:
 
 Fixes:
 
-- *add item here*
+- Don't fail for ``utils.replace_link_variables_by_paths``, if value is ``None``.
+  The value can be ``None`` when creating a ``Link`` type with ``invokeFactory`` without ``remoteUrl`` set and calling the indexer before setting the URL.
+  [thet]
 
 
 1.2.12 (2016-04-13)

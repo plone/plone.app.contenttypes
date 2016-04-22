@@ -17,6 +17,9 @@ def replace_link_variables_by_paths(context, url):
     "${portal_url}" by the corresponding paths. `context` is the acquisition
     context.
     """
+    if not url:
+        return url
+
     portal_state = context.restrictedTraverse('@@plone_portal_state')
 
     if '${navigation_root_url}' in url:
