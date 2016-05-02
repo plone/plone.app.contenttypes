@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
