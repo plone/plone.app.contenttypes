@@ -66,13 +66,14 @@ Fixes:
 
 - Also remove collections upon uninstalling.
   [pbauer]
-- Various fixes while migrating custom contenttypes :
+
+- Various fixes while migrating custom contenttypes:
+
   - do not fail if source object does not have a 'excludeFromNav' field;
   - do not fail if source object field's label contains special characters;
   - do not try to migrate assigned portlets if source object is not
     portlet assignable.
-  [gbastien]
-
+    [gbastien]
 
 - No longer try to install ATContentTypes-types on uninstalling.
   [pbauer]
