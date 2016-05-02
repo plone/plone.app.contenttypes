@@ -21,7 +21,9 @@
   <metal:listingmacro define-macro="listing">
     <tal:results define="batch view/batch">
       <tal:listing condition="batch">
-        <div class="entries" metal:define-slot="entries">
+        <div class="entries" metal:define-slot="entries"
+            tal:define="portal context/@@plone_portal_state/portal;
+                        image_scale portal/@@image_scale">
           <tal:repeat repeat="item batch" metal:define-macro="entries">
             <tal:block tal:define="obj item/getObject;
                 item_url item/getURL;
@@ -43,9 +45,8 @@
                   <header metal:define-macro="listitem" tal:attributes="class python:'vevent' if item_is_event else None">
                     <span class="summary" tal:attributes="title item_type">
                      <a tal:attributes="href item_link">
-                      <img class="image-tile"
-                             tal:condition="item_has_image"
-                             tal:attributes="src  string:$item_url/@@images/image/tile">
+                        <img tal:condition="item_has_image"
+                             tal:replace="structure python:image_scale.tag(item, 'image', scale='tile', css_class='image-tile')">
                       </a>
                       <a tal:attributes="href item_link;
                                          class string:$item_type_class $item_wf_state_class url;
