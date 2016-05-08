@@ -10,11 +10,18 @@ from plone.memoize.view import memoize
 
 class CollectionView(FolderView):
 
-    def __init__(self, *args, **kwargs):
-        super(CollectionView, self).__init__(*args, **kwargs)
-        context = aq_inner(self.context)
-        self.collection_behavior = ICollection(context)
-        self.b_size = self.collection_behavior.item_count
+    @property
+    def collection_behavior(self):
+        return ICollection(aq_inner(self.context))
+
+    @property
+    def b_size(self):
+        return getattr(self, '_b_size', self.collection_behavior.item_count)
+
+    @b_size.setter
+    def b_size(self, value):
+        # ignore, FolderView tries to set on init
+        pass
 
     def results(self, **kwargs):
         """Return a content listing based result set with results from the
