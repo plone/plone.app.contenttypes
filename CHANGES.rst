@@ -14,6 +14,11 @@ New:
 
 Fixes:
 
+- Deferred adapter lookup in collection view.
+  This was looked up for contentmenu/toolbar at every authenticated request.
+  It also had side effects if custom collection behaviors are used.
+  [jensens]
+
 - Fixed unstable robot test for location criterion.  [maurits]
 
 - Don't fail for ``utils.replace_link_variables_by_paths``, if value is ``None``.
