@@ -4,14 +4,6 @@ Changelog
 1.2.13 (unreleased)
 -------------------
 
-Incompatibilities:
-
-- *add item here*
-
-New:
-
-- *add item here*
-
 Fixes:
 
 - Deferred adapter lookup in collection view.
