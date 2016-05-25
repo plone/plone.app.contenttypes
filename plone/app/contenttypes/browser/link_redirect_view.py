@@ -53,7 +53,8 @@ class LinkRedirectView(BrowserView):
             and not self._url_uses_scheme(NON_REDIRECTABLE_URL_SCHEMES)
 
         if redirect_links and not can_edit:
-            return self.request.RESPONSE.redirect(self.absolute_target_url().encode('utf-8'))
+            return self.request.RESPONSE.redirect(
+                self.absolute_target_url().encode('utf-8'))
         else:
             return self.index()
 
