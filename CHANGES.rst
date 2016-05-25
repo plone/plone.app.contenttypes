@@ -4,18 +4,6 @@ Changelog
 1.2.14 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
-- *add item here*
-
 - Encode the linked url for the Link type to allow for non ascii characters in the url. 
   [martior]
 
