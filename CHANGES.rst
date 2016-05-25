@@ -4,7 +4,9 @@ Changelog
 1.2.14 (unreleased)
 -------------------
 
-- Encode the linked url for the Link type to allow for non ascii characters in the url. 
+Bug fixes:
+
+- Encode the linked url for the Link type to allow for non ascii characters in the url.
   [martior]
 
 
