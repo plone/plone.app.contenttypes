@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fixed possible cross site scripting (XSS) attack in lead image caption.  [maurits]
 
 
 1.2.14 (2016-05-25)
