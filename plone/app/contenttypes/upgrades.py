@@ -206,3 +206,9 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
             _fixup(obj, LISTING_VIEW_MAPPING)
         if portal_type == 'Plone Site':
             _fixup(context, LISTING_VIEW_MAPPING)
+
+
+def add_leadimage_settings(context):
+    context.runImportStepFromProfile(
+        'profile-plone.app.contenttypes:default',
+        'plone.app.registry')

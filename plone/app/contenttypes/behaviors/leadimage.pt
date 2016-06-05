@@ -1,6 +1,6 @@
 <div class="leadImage" tal:condition="view/available">
   <img tal:define="has_img context/image|nothing;
                    scales context/@@images|nothing"
-       tal:condition="python:has_img and scales" 
-       tal:replace="structure python: scales.scale('image', scale='mini').tag(css_class='newsImage')" />
+       tal:condition="python:has_img and scales"
+       tal:replace="structure python: scales.scale('image', scale=view.scale_name).tag(css_class='leadImage')" />
 </div>

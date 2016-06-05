@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
 import os
@@ -55,6 +56,7 @@ setup(name='plone.app.contenttypes',
           'Products.CMFQuickInstallerTool >= 3.0.7',  # allow blacklisting steps
           'Products.GenericSetup >= 1.7.5',  # allow blacklisting steps
           'zope.deprecation',
+          'plone.api',
       ] + additional_requires,
       extras_require={
           'test': [

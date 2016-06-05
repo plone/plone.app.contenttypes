@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
-from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.layout.viewlets import ViewletBase
+from plone.app.contenttypes.behaviors.leadimage import ILeadImageSettings
+from plone import api
 
 
 class LeadImageViewlet(ViewletBase):
@@ -9,6 +10,21 @@ class LeadImageViewlet(ViewletBase):
 
     def update(self):
         self.context = ILeadImage(self.context)
-        self.available = True if self.context.image else False
-        if INewsItem.providedBy(self.context):
-            self.available = False
+        self.available = self.is_visible
+
+    @property
+    def is_visible(self):
+        visible = False
+        if self.context.image:
+            is_visible = api.portal.get_registry_record(
+                'is_visible',
+                interface=ILeadImageSettings)
+            if is_visible:
+                visible = True
+        return visible
+
+    @property
+    def scale_name(self):
+        return api.portal.get_registry_record(
+            'scale_name',
+            interface=ILeadImageSettings)
