@@ -4,14 +4,6 @@ Changelog
 1.2.15 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fixed possible cross site scripting (XSS) attack in lead image caption.  [maurits]
