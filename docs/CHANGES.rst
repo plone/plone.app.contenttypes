@@ -13,10 +13,12 @@ Changelog
   [bsuttor]
 
 - Various fixes while migrating custom contenttypes :
+
   - do not fail if source object does not have a 'excludeFromNav' field;
   - do not fail if source object field's label contains special characters;
   - do not try to migrate assigned portlets if source object is not
     portlet assignable.
+
   [gbastien]
 
 
