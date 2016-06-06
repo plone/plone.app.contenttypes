@@ -4,6 +4,8 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
+Bug fixes:
+
 - Fixed possible cross site scripting (XSS) attack in news item image caption.  [maurits]
 
 - Register explicitly plone.app.event dependency on configure.zcml.
