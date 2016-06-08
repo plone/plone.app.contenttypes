@@ -121,6 +121,6 @@ I set the criteria ${type} in row ${number} to the text '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
   Input text  css=${criteria_row} .querystring-criteria-value input  ${label}\t
   [Documentation]  Shift the focus so the input sticks, and wait a bit
-  Sleep  0.5
+  Sleep  1.5
   Focus  css=.querystring-sortreverse
-  Sleep  0.5
+  Sleep  1.5

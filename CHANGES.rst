@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Wait longer to fix unstable robot tests.  [maurits]
 
 
 1.2.15 (2016-06-06)
