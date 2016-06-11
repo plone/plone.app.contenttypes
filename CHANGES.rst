@@ -4,14 +4,6 @@ Changelog
 1.2.16 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Wait longer to fix unstable robot tests.  [maurits]
