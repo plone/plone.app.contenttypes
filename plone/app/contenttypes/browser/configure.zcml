@@ -1,11 +1,12 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
   xmlns:browser="http://namespaces.zope.org/browser"
-  xmlns:plone="http://namespaces.plone.org/plone"
+  xmlns:z3c="http://namespaces.zope.org/z3c"
   xmlns:zcml="http://namespaces.zope.org/zcml"
   i18n_domain="plone">
 
   <include package="plone.app.contentmenu" />
+  <adapter factory=".widgets.LinkDataConverter" />
 
   <!-- VIEWS FOR PLONE SITE ROOT -->
   <browser:pages
@@ -206,7 +207,6 @@
       permission="zope2.View"
       />
 
-
   <configure zcml:condition="installed Products.Archetypes">
     <browser:viewlet
       name="archetypes_warning_viewlet"
@@ -218,7 +218,6 @@
       permission="cmf.ModifyPortalContent"
       />
   </configure>
-
 
   <!-- BBB OlD VIEW NAME REGISTRATIONS -->
   <browser:pages
@@ -259,5 +258,12 @@
     <browser:page name="all_content" template="templates/full_view.pt"/>
     <browser:page name="thumbnail_view" template="templates/listing_album.pt"/>
   </browser:pages>
+
+  <z3c:widgetTemplate
+      mode="input"
+      widget=".widgets.ILinkWidget"
+      layer="z3c.form.interfaces.IFormLayer"
+      template="templates/link_input.pt"
+      />
 
 </configure>

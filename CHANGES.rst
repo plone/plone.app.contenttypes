@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- New widget for `remoteURL` of Link content type.
+  [tomgross]
 
 Bug fixes:
 
