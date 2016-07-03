@@ -394,8 +394,19 @@ class ATCTMigratorForm(form.Form):
         self.actions['migrate'].addClass("btn-danger")
 
     def updateWidgets(self):
-        """ Overload this to hide empty widget """
+        """ Overload to set defaults and hide empty widgets. """
         form.Form.updateWidgets(self)
+        # 1. Select all items in the checkboxwidget
+        ct_widget = self.widgets['content_types']
+        # Only override when rendering the form. When you unselect
+        # everything the value will be [], not ())
+        if ct_widget.value == ():
+            ct_widget.value = ATCT_LIST.keys()
+            # Call update again since the list-items checked-states are
+            # assigned in z3c.form.browser.checkbox.CheckBoxWidget.update
+            # using the widget.value.
+            ct_widget.update()
+        # 2. Hide empty widget
         for title, widget in self.widgets.items():
             if title not in ('content_types', 'extended_content'):
                 continue

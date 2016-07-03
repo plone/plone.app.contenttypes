@@ -2108,16 +2108,28 @@ class MigrationFunctionalTests(unittest.TestCase):
 
         # add some at content:
         self.portal.invokeFactory('Document', 'doc1')
+        self.portal.invokeFactory('News Item', 'news1')
+        self.portal.invokeFactory('News Item', 'news2')
         transaction.commit()
         from zExceptions import NotFound
         self.assertRaises(NotFound, self.browser.open, '%s/@@atct_migrator' % self.portal_url)  # noqa
         self.browser.open('%s/@@pac_installer' % self.portal_url)
         self.browser.getControl('Install').click()
-        self.assertIn('You currently have <span class="strong">1</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
-
+        # check statistics before
+        self.assertIn('You currently have <span class="strong">3</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
+        ct_widget = self.browser.getControl(name='form.widgets.content_types:list')  # noqa
+        self.assertEqual(ct_widget.options, ['Document', 'News Item'])
+        # all types are auto-selected
+        self.assertEqual(ct_widget.value, ['Document', 'News Item'])
         self.browser.getControl(name='form.widgets.content_types:list').value = ['Document']  # noqa
         self.assertEqual(self.browser.getControl(name='form.widgets.migrate_references:list').value, ['selected'])  # noqa
         self.browser.getControl(name='form.buttons.migrate').click()
+        from plone.app.contenttypes.interfaces import IDocument
+        from plone.app.contenttypes.interfaces import INewsItem
+        self.assertTrue(IDocument.providedBy(self.portal['doc1']))
+        self.assertFalse(INewsItem.providedBy(self.portal['news1']))
         self.assertIn('Congratulations! You migrated from Archetypes to Dexterity.', self.browser.contents)  # noqa
         msg = "<td>ATDocument</td>\n      <td>Document</td>\n      <td>1</td>"
+        self.assertIn(msg, self.browser.contents)
+        msg = "<tr>\n      <td>ATNewsItem</td>\n      <td>2</td>\n    </tr>"
         self.assertIn(msg, self.browser.contents)

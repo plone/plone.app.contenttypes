@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Select all migratable types in migration-form by default. Fixes #193.
+  [pbauer]
 
 
 1.2.16 (2016-06-12)
