@@ -14,7 +14,7 @@ from plone.app.contenttypes import _
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.migration.topics import migrate_topics
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
@@ -193,8 +193,8 @@ def results(context, show_extended=False):
                                       show_extended))
 
 
+@implementer(IVocabularyFactory)
 class ATCTypesVocabulary(object):
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         """Return a vocabulary with standard content types
@@ -203,8 +203,8 @@ class ATCTypesVocabulary(object):
         return results(context, show_extended=False)
 
 
+@implementer(IVocabularyFactory)
 class ExtendedTypesVocabulary(object):
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         """Return a vocabulary with all extended types
@@ -214,8 +214,8 @@ class ExtendedTypesVocabulary(object):
         return results(context, show_extended=True)
 
 
+@implementer(IVocabularyFactory)
 class ChangedBaseClasses(object):
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         """Return a vocabulary with all changed base classes."""

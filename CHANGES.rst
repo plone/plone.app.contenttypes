@@ -17,6 +17,8 @@ Bug fixes:
 - Select all migratable types in migration-form by default. Fixes #193.
   [pbauer]
 
+- Use zope.interface decorator.
+  [gforcada]
 
 1.2.16 (2016-06-12)
 -------------------
