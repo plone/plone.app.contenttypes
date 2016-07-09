@@ -100,7 +100,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         from archetypes.schemaextender.field import ExtensionField
         from plone.app.blob.subtypes.image import ExtensionBlobField
         from zope.component import getGlobalSiteManager
-        from zope.interface import implements
+        from zope.interface import implementer
 
         # create schema extension
         class ExtensionTextField(ExtensionField, TextField):
@@ -109,8 +109,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         class ExtensionStringField(ExtensionField, StringField):
             """ derivative of text for extending schemas """
 
+        @implementer(ISchemaExtender)
         class SchemaExtender(object):
-            implements(ISchemaExtender)
             fields = [
                 ExtensionTextField('text',
                                    primary=True,
@@ -1484,7 +1484,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         from zope.component import adapts
         from zope.component import provideAdapter
         from zope.interface import classImplements
-        from zope.interface import implements
+        from zope.interface import implementer
         from zope.interface import Interface
 
         name = 'plone.app.contenttypes.migration.extendedtypes'
@@ -1500,8 +1500,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         class DummyField(ExtensionField, atapi.StringField):
             """Dummy Field"""
 
+        @implementer(ISchemaExtender)
         class DummySchemaExtender(object):
-            implements(ISchemaExtender)
             adapts(IDummy)
 
             _fields = [DummyField('dummy')]

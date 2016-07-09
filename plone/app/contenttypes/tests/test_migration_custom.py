@@ -157,7 +157,7 @@ class MigrateCustomATTest(unittest.TestCase):
         from archetypes.schemaextender.interfaces import ISchemaExtender
         from archetypes.schemaextender.field import ExtensionField
         from zope.component import getGlobalSiteManager
-        from zope.interface import implements
+        from zope.interface import implementer
 
         # create schema extension
         class ExtensionTextField(ExtensionField, TextField):
@@ -166,8 +166,8 @@ class MigrateCustomATTest(unittest.TestCase):
         class ExtensionStringField(ExtensionField, StringField):
             """ derivative of text for extending schemas """
 
+        @implementer(ISchemaExtender)
         class SchemaExtender(object):
-            implements(ISchemaExtender)
             fields = [
                 ExtensionTextField('textExtended',
                                    ),

@@ -24,11 +24,11 @@ from zope.container.interfaces import INameChooser
 from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.i18n.locales.provider import LoadLocaleError
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(INonInstallable)
 class HiddenProfiles(object):
-    implements(INonInstallable)
 
     def getNonInstallableProfiles(self):
         """
