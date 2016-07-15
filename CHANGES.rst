@@ -13,6 +13,9 @@ New features:
 - Configure edit urls for locking support, where locking support is enabled.
   [thet]
 
+- Add ``i18n:attribute`` properies to all action nodes for FTI types.
+  [thet]
+
 Bug fixes:
 
 - Select all migratable types in migration-form by default. Fixes #193.
