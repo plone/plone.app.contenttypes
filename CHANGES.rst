@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Configure edit urls for locking support, where locking support is enabled.
+  [thet]
 
 Bug fixes:
 
@@ -398,7 +399,7 @@ Fixes:
 - Provide table of contents for document view.
   [vangheem]
 
-- Default to using locking support on Page, Collection, Event and News Item types
+- Default to using locking support on Page, Collection, Event and News Item types.
   [vangheem]
 
 - Show the LeadImageViewlet only on default views.
