@@ -74,6 +74,7 @@
       action_id="view"
       category="object"
       condition_expr=""
+      i18n:attributes="title"
       title="View"
       url_expr="string:${object_url}"
       visible="True">
@@ -83,6 +84,7 @@
       action_id="edit"
       category="object"
       condition_expr=""
+      i18n:attributes="title"
       title="Edit"
       url_expr="string:${object_url}/edit"
       visible="True">
