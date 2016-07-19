@@ -18,6 +18,12 @@ New features:
 
 Bug fixes:
 
+- Remove ``path`` index injection in "plone.collection" behaviors ``results`` method.
+  It is a duplicate.
+  Exactly the same is done already in the ``plone.app.querybuilder.querybuilder._makequery``,
+  which is called by above ``results`` method.
+  [jensens]
+
 - Select all migratable types in migration-form by default. Fixes #193.
   [pbauer]
 
