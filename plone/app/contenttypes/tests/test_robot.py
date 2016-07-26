@@ -20,12 +20,15 @@ def test_suite():
         doc.startswith('test_')
     ]
     for robot_test in robot_tests:
-        robottestsuite = robotsuite.RobotTestSuite(robot_test)
+        robottestsuite = robotsuite.RobotTestSuite(
+            robot_test,
+            noncritical=['unstable'],
+        )
         robottestsuite.level = ROBOT_TEST_LEVEL
         suite.addTests([
             layered(
                 robottestsuite,
-                layer=PLONE_APP_CONTENTTYPES_ROBOT_TESTING
+                layer=PLONE_APP_CONTENTTYPES_ROBOT_TESTING,
             ),
         ])
     return suite
