@@ -32,6 +32,8 @@ Scenario: Test Relative Location Criterion
 
 
 Scenario: Test Absolute Location Criterion
+   [Tags]  unstable
+   [Documentation]  This sometimes fails with: Element locator 'css=#select2-drop input' did not match any elements after 30 seconds
     Given I am logged in as site owner
       And a document   Document outside Folder
       And a folder 'my-folder' with a document 'Document within Folder'

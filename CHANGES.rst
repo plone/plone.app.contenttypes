@@ -30,6 +30,11 @@ Bug fixes:
 - Use zope.interface decorator.
   [gforcada]
 
+- Mark robot test ``plone.app.contenttypes.tests.test_robot.RobotTestCase.Scenario Test Absolute Location Criterion`` as unstable.
+  This needs further investigation, but must not block Plone development.
+  [jensens]
+
+
 1.2.16 (2016-06-12)
 -------------------
 
