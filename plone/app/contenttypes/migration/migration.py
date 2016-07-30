@@ -464,7 +464,7 @@ def makeCustomATMigrator(
 
 def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     """
-    Try to get types infos from archetype_tool, then set a migrator an pass it
+    Try to get types infos from archetype_tool, then set a migrator and pass it
     given values. There is a dry_run mode that allows to check the success of
     a migration without committing.
     """
