@@ -21,6 +21,11 @@ New features:
 
 Bug fixes:
 
+- Marked relative location criterion robot test as unstable.
+  This needs further investigation, but must not block Plone development.
+  See issue https://github.com/plone/plone.app.contenttypes/issues/362
+  [maurits]
+
 - Remove ``path`` index injection in "plone.collection" behaviors ``results`` method.
   It is a duplicate.
   Exactly the same is done already in the ``plone.app.querybuilder.querybuilder._makequery``,
