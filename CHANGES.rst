@@ -4,10 +4,6 @@ Changelog
 1.2.17 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Configure edit urls for locking support, where locking support is enabled.
