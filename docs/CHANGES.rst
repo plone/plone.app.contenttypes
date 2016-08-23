@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Correct the SearchableText base indexer: use mime type of RichText output
+  (rather than of that of the raw) value in plaintext conversion. Fixes #357.
+  [petri]
 
 
 1.1.1 (2016-06-06)
