@@ -57,6 +57,10 @@ Bug fixes:
 - corrected typos in the documentation
   [kkhan]
 
+- Correct the SearchableText base indexer: use mime type of RichText output
+  (rather than raw) value in plaintext conversion. Fixes #357.
+  [petri]
+
 
 1.2.16 (2016-06-12)
 -------------------
