@@ -19,7 +19,13 @@
   </div>
 
   <metal:listingmacro define-macro="listing">
-    <tal:results define="batch view/batch">
+    <tal:results define="batch view/batch;
+                         thumb_size_list python:view.get_thumbSize_list();
+                         thumb_size_table python:view.get_thumbSize_table();
+                         thumb_size_summary python:view.get_thumbSize_summary();
+                         img_class_list python:'image-'+thumb_size_list;
+                         img_class_summmary python:'image-'+thumb_size_summary;
+                         showicons view/show_icons ;">
       <tal:listing condition="batch">
         <div class="entries" metal:define-slot="entries"
             tal:define="portal context/@@plone_portal_state/portal;
@@ -33,13 +39,14 @@
                 item_type item/PortalType;
                 item_modified item/ModificationDate;
                 item_created item/CreationDate;
-                item_type_class python:'contenttype-' + view.normalizeString(item_type);
                 item_wf_state item/review_state;
                 item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                 item_creator item/Creator;
                 item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
                 item_is_event python:view.is_event(obj);
-                item_has_image python:item.getIcon">
+                item_has_image python:item.getIcon;
+                item_type_class python:('contenttype-' + view.normalizeString(item_type)) if showicons else '' ;                
+                ">
               <metal:block define-slot="entry">
                 <article class="entry">
                   <header metal:define-macro="listitem" tal:attributes="class python:'vevent' if item_is_event else None">
@@ -47,6 +54,12 @@
                      <a tal:attributes="href item_link">
                         <img tal:condition="item_has_image"
                              tal:replace="structure python:image_scale.tag(item, 'image', scale='tile', css_class='image-tile')">
+                                             src item/MimeTypeIcon;">
+                        <img tal:define="thumb_url python:item_url +'/@@images/image/'+thumb_size_list;"
+                             tal:condition="python:  item_has_image and not thumb_size_list=='none'"
+                             tal:attributes="href item/getURL;
+                                             src string:$thumb_url;
+                                             class string:$img_class_list  pull-right">
                       </a>
                       <a tal:attributes="href item_link;
                                          class string:$item_type_class $item_wf_state_class url;

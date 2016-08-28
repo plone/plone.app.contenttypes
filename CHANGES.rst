@@ -6,7 +6,9 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- new behavior: IThumbIconHandling, supress thumbs /icons, adjust thumb size, templates adapted
+  https://github.com/plone/Products.CMFPlone/issues/1734 (PLIP) 
+  requires upgrade step (reapply profile)[fgrcon]
 
 New features:
 
