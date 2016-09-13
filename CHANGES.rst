@@ -4,14 +4,6 @@ Changelog
 1.2.18 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Correct the SearchableText base indexer: use mime type of RichText output
