@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Show message for editors when viewing Link.
+  Fixes `issue 375 <https://github.com/plone/plone.app.contenttypes/issues/375>`_.
+  [maurits]
 
 
 1.2.18 (2016-09-14)
