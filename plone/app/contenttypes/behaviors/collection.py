@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.browser.syndication.adapters import CollectionFeed \
-    as BaseCollectionFeed
-from Products.CMFPlone.interfaces.syndication import IFeed
-from Products.CMFPlone.interfaces.syndication import ISyndicatable
 from plone.app.contenttypes import _
 from plone.app.z3cform.widget import QueryStringFieldWidget
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.browser.syndication.adapters import CollectionFeed as BaseCollectionFeed  # noqa
+from Products.CMFPlone.interfaces.syndication import IFeed
+from Products.CMFPlone.interfaces.syndication import ISyndicatable
 from zope import schema
 from zope.component import adapter
 from zope.component import getMultiAdapter
@@ -40,9 +39,9 @@ class ICollection(model.Schema):
 
     query = schema.List(
         title=_(u'Search terms'),
-        description=_(u"Define the search terms for the items you want "
-                      u"to list by choosing what to match on. "
-                      u"The list of results will be dynamically updated"),
+        description=_(u'Define the search terms for the items you want '
+                      u'to list by choosing what to match on. '
+                      u'The list of results will be dynamically updated'),
         value_type=schema.Dict(value_type=schema.Field(),
                                key_type=schema.TextLine()),
         required=False,
@@ -52,7 +51,7 @@ class ICollection(model.Schema):
 
     sort_on = schema.TextLine(
         title=_(u'label_sort_on', default=u'Sort on'),
-        description=_(u"Sort the collection on this index"),
+        description=_(u'Sort the collection on this index'),
         required=False,
     )
 
@@ -86,7 +85,7 @@ class ICollection(model.Schema):
         value_type=schema.Choice(
             vocabulary='plone.app.contenttypes.metadatafields'),
         required=False,
-        )
+    )
 
 
 class ISyndicatableCollection(ISyndicatable):

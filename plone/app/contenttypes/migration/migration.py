@@ -1,47 +1,45 @@
 # -*- coding: utf-8 -*-
-'''
+"""
 Migrating ATContentTypes to plone.app.contenttypes objects.
 
 This module imports from Product.contentmigration on which we depend
 only in the setuptools extra_requiers [migrate_atct]. Importing this
 module will only work if Products.contentmigration is installed so make sure
 you catch ImportErrors
-'''
+"""
+from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
+from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
+from plone.app.contenttypes.migration.field_migrators import FIELDS_MAPPING
+from plone.app.contenttypes.migration.field_migrators import migrate_blobimagefield  # noqa
+from plone.app.contenttypes.migration.field_migrators import migrate_datetimefield  # noqa
+from plone.app.contenttypes.migration.field_migrators import migrate_filefield
+from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
+from plone.app.contenttypes.migration.field_migrators import migrate_richtextfield  # noqa
+from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
+from plone.app.contenttypes.migration.utils import copy_contentrules
+from plone.app.contenttypes.migration.utils import migrate_leadimage
+from plone.app.contenttypes.migration.utils import migrate_portlets
+from plone.app.contenttypes.migration.utils import move_comments
+from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
+from plone.app.dexterity.behaviors.nextprevious import INextPreviousToggle
+from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
 from Products.CMFCore.utils import getToolByName
 from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.walker import CustomQueryWalker
-from plone.app.contenttypes.behaviors.collection import ICollection
-from plone.app.contenttypes.migration.dxmigration import DXEventMigrator
-from plone.app.contenttypes.migration.dxmigration import DXOldEventMigrator
-from plone.app.contenttypes.migration.utils import copy_contentrules
-from plone.app.contenttypes.migration.utils import migrate_leadimage
-from plone.app.contenttypes.migration.utils import move_comments
-from plone.app.contenttypes.migration.utils import migrate_portlets
-from plone.app.contenttypes.migration.field_migrators import FIELDS_MAPPING
-from plone.app.contenttypes.migration.field_migrators import \
-    migrate_datetimefield
-from plone.app.contenttypes.migration.field_migrators import migrate_filefield
-from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
-from plone.app.contenttypes.migration.field_migrators import \
-    migrate_blobimagefield
-from plone.app.contenttypes.migration.field_migrators import \
-    migrate_richtextfield
-from plone.app.contenttypes.migration.field_migrators import \
-    migrate_simplefield
-from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
-from plone.app.dexterity.behaviors.nextprevious import INextPreviousToggle
-from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
 from zope.component.hooks import getSite
-from zope.interface import Interface
 from zope.interface import implementer
+from zope.interface import Interface
+
 import logging
 import transaction
+
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +71,7 @@ class BaseCustomMigator(object):
     You can use this as base class for your custom migrator adapters.
     You might register it to some specific orginal content interface.
     """
+
     def __init__(self, context):
         self.context = context
 
@@ -87,8 +86,10 @@ class ATCTContentMigrator(CMFItemMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTContentMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating {0}".format(
-                '/'.join(self.old.getPhysicalPath())))
+            'Migrating {0}'.format(
+                '/'.join(self.old.getPhysicalPath())
+            )
+        )
 
     def beforeChange_store_default_page(self):
         """If the item is the default page store that info to set it again.
@@ -149,7 +150,8 @@ class ATCTFolderMigrator(CMFFolderMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTFolderMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            "Migrating {}".format('/'.join(self.old.getPhysicalPath())))
+            'Migrating {0}'.format('/'.join(self.old.getPhysicalPath()))
+        )
 
     def beforeChange_store_comments_on_portal(self):
         """Comments from plone.app.discussion are lost when the
@@ -456,7 +458,7 @@ def makeCustomATMigrator(
             """
             if self.dry_run_mode:
                 view = getMultiAdapter(
-                    (self.new, self.new.REQUEST), name="view")
+                    (self.new, self.new.REQUEST), name='view')
                 view()
 
     return CustomATMigrator

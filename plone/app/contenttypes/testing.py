@@ -3,16 +3,17 @@ from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
 from plone.app.event.testing import PAEvent_FIXTURE
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
+from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
+from plone.app.testing import login
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.testing import applyProfile
-from plone.app.testing import login
 from plone.testing import z2
 from zope.interface import alsoProvides
+
 import pkg_resources
 
 

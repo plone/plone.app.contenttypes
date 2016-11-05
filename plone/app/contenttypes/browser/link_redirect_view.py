@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from zope.component import getUtility
+from plone.app.contenttypes.utils import replace_link_variables_by_paths
+from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import ITypesSchema
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.contenttypes.utils import replace_link_variables_by_paths
-from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 
 
 # links starting with these URL scheme should not be redirected to
@@ -45,7 +45,7 @@ class LinkRedirectView(BrowserView):
         mtool = getToolByName(context, 'portal_membership')
 
         registry = getUtility(IRegistry)
-        settings = registry.forInterface(ITypesSchema, prefix="plone")
+        settings = registry.forInterface(ITypesSchema, prefix='plone')
         redirect_links = settings.redirect_links
 
         can_edit = mtool.checkPermission('Modify portal content', context)

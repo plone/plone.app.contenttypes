@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-import random
-
 from Acquisition import aq_base
 from Acquisition import aq_inner
-from Products.CMFPlone.PloneBatch import Batch
-from Products.CMFPlone.utils import safe_callable
-from Products.Five import BrowserView
 from plone.app.contenttypes import _
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.event.interfaces import IEvent
 from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.PloneBatch import Batch
+from Products.CMFPlone.utils import safe_callable
+from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.contentprovider.interfaces import IContentProvider
+
+import random
+
 
 HAS_SECURITY_SETTINGS = True
 try:
@@ -29,11 +30,11 @@ class FolderView(BrowserView):
         super(FolderView, self).__init__(context, request)
 
         self.plone_view = getMultiAdapter(
-            (context, request), name=u"plone")
+            (context, request), name=u'plone')
         self.portal_state = getMultiAdapter(
-            (context, request), name=u"plone_portal_state")
+            (context, request), name=u'plone_portal_state')
         self.pas_member = getMultiAdapter(
-            (context, request), name=u"pas_member")
+            (context, request), name=u'pas_member')
 
         self.text_class = None
 
@@ -112,7 +113,7 @@ class FolderView(BrowserView):
             show_about = getattr(site_props, 'allowAnonymousViewAbout', False)
         else:
             registry = getUtility(IRegistry)
-            settings = registry.forInterface(ISecuritySchema, prefix="plone")
+            settings = registry.forInterface(ISecuritySchema, prefix='plone')
             show_about = getattr(settings, 'allow_anon_views_about', False)
         return show_about or not self.isAnon
 
@@ -218,5 +219,5 @@ class FolderView(BrowserView):
     def no_items_message(self):
         return _(
             'description_no_items_in_folder',
-            default=u"There are currently no items in this folder."
+            default=u'There are currently no items in this folder.'
         )

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
-from Products.CMFCore.permissions import ManagePortal
 from plone.app.layout.viewlets import ViewletBase
 from plone.dexterity.interfaces import IDexterityFTI
+from Products.CMFCore.permissions import ManagePortal
+
 import pkg_resources
+
 
 try:
     pkg_resources.get_distribution('Products.Archetypes')

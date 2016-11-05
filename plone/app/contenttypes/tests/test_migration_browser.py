@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
-from plone.dexterity.fti import DexterityFTI
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
 from plone.app.testing import applyProfile
-from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.dexterity.fti import DexterityFTI
+from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.interfaces import IEvent
+from Products.CMFCore.utils import getToolByName
 from zope.interface import directlyProvides
 
 import unittest2 as unittest
@@ -30,7 +30,7 @@ class FixBaseclassesTest(unittest.TestCase):
         self.request['URL'] = self.portal.absolute_url()
         directlyProvides(self.request, IPloneAppContenttypesLayer)
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        self.catalog = getToolByName(self.portal, "portal_catalog")
+        self.catalog = getToolByName(self.portal, 'portal_catalog')
         fti = DexterityFTI('mockobject')
         fti.klass = 'plone.dexterity.content.Item'
         self.portal.portal_types._setObject('mockobject', fti)

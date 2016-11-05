@@ -5,13 +5,14 @@ from zope import schema
 from zope.i18nmessageid import MessageFactory
 from zope.interface import provider
 
+
 _ = MessageFactory('atcontenttypes')
 
 
 @provider(IFormFieldProvider)
 class ITableOfContents(model.Schema):
 
-    model.fieldset('settings', label=_(u"Settings"),
+    model.fieldset('settings', label=_(u'Settings'),
                    fields=['table_of_contents'])
 
     table_of_contents = schema.Bool(

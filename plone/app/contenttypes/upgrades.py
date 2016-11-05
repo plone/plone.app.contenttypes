@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
+from Products.CMFCore.utils import getToolByName
 from zope.component import queryUtility
 from zope.component.hooks import getSite
+
 import logging
 
-logger = logging.getLogger(name="plone.app.contenttypes upgrade")
+
+logger = logging.getLogger(name='plone.app.contenttypes upgrade')
 
 LISTING_VIEW_MAPPING = {  # OLD (AT and old DX) : NEW
     'all_content': 'full_view',
@@ -33,37 +35,37 @@ def update_fti(context):
         IDexterityFTI,
         name='Document'
     )
-    fti.model_file = "plone.app.contenttypes.schema:document.xml"
+    fti.model_file = 'plone.app.contenttypes.schema:document.xml'
     # File
     fti = queryUtility(
         IDexterityFTI,
         name='File'
     )
-    fti.model_file = "plone.app.contenttypes.schema:file.xml"
+    fti.model_file = 'plone.app.contenttypes.schema:file.xml'
     # Folder
     fti = queryUtility(
         IDexterityFTI,
         name='Folder'
     )
-    fti.model_file = "plone.app.contenttypes.schema:folder.xml"
+    fti.model_file = 'plone.app.contenttypes.schema:folder.xml'
     # Image
     fti = queryUtility(
         IDexterityFTI,
         name='Image'
     )
-    fti.model_file = "plone.app.contenttypes.schema:image.xml"
+    fti.model_file = 'plone.app.contenttypes.schema:image.xml'
     # Link
     fti = queryUtility(
         IDexterityFTI,
         name='Link'
     )
-    fti.model_file = "plone.app.contenttypes.schema:link.xml"
+    fti.model_file = 'plone.app.contenttypes.schema:link.xml'
     # News Item
     fti = queryUtility(
         IDexterityFTI,
         name='News Item'
     )
-    fti.model_file = "plone.app.contenttypes.schema:news_item.xml"
+    fti.model_file = 'plone.app.contenttypes.schema:news_item.xml'
 
 
 def enable_collection_behavior(context):
@@ -85,12 +87,12 @@ def enable_collection_behavior(context):
 def migrate_to_richtext(context):
     """Update fti's to add RichText behaviors and remove old text-fields."""
 
-    behavior = "plone.app.contenttypes.behaviors.richtext.IRichText"
+    behavior = 'plone.app.contenttypes.behaviors.richtext.IRichText'
     types = [
-        "Document",
-        "News Item",
-        "Event",
-        "Collection",
+        'Document',
+        'News Item',
+        'Event',
+        'Collection',
     ]
     for type_name in types:
         fti = queryUtility(
@@ -183,15 +185,16 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
                 view_methods=tuple(view_methods),
                 default_view=default_view,
             )
-            logger.info("Updated view_methods for {}".format(ctype))
+            logger.info('Updated view_methods for {0}'.format(ctype))
 
     def _fixup(obj, view_map):
         current = obj.getLayout()
         if current in view_map:
             default_page = obj.getDefaultPage()
             obj.setLayout(view_map[current])
-            logger.info("Set view to {} for {}".format(
-                view_map[current], obj.absolute_url()
+            logger.info('Set view to {0} for {1}'.format(
+                view_map[current],
+                obj.absolute_url(),
             ))
             if default_page:
                 # any defaultPage is switched of by setLayout

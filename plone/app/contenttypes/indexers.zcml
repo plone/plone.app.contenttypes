@@ -13,6 +13,6 @@
   <adapter name="getRemoteUrl" factory=".indexers.getRemoteUrl" />
   <adapter name="getObjSize" factory=".indexers.getObjSize_image" />
   <adapter name="getObjSize" factory=".indexers.getObjSize_file" />
-  <adapter name="getIcon" factory=".indexers.getIcon" /> 
+  <adapter name="getIcon" factory=".indexers.getIcon" />
 
 </configure>

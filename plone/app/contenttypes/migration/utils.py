@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.Archetypes.interfaces.referenceable import IReferenceable
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.CMFPlone.utils import safe_hasattr
-from Products.GenericSetup.context import DirectoryImportContext
-from Products.GenericSetup.utils import importObjects
 from archetypes.schemaextender.interfaces import IBrowserLayerAwareExtender
 from archetypes.schemaextender.interfaces import IOrderableSchemaExtender
 from archetypes.schemaextender.interfaces import ISchemaExtender
@@ -15,8 +8,7 @@ from copy import deepcopy
 from plone.app.contentrules.api import assign_rule
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
-from plone.app.contenttypes.migration.field_migrators import \
-    migrate_simplefield
+from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
 from plone.app.discussion.interfaces import IConversation
@@ -32,6 +24,14 @@ from plone.portlets.interfaces import ILocalPortletAssignable
 from plone.portlets.interfaces import IPortletAssignmentMapping
 from plone.portlets.interfaces import IPortletManager
 from plone.uuid.interfaces import IUUID
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.Archetypes.interfaces.referenceable import IReferenceable
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.CMFPlone.utils import safe_hasattr
+from Products.Five.browser import BrowserView
+from Products.GenericSetup.context import DirectoryImportContext
+from Products.GenericSetup.utils import importObjects
 from z3c.relationfield import RelationValue
 from zc.relation.interfaces import ICatalog
 from zope.annotation.interfaces import IAnnotations
@@ -43,12 +43,12 @@ from zope.component import queryUtility
 from zope.component.hooks import getSite
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
-from Products.Five.browser import BrowserView
-import json
 
+import json
 import logging
 import os
 import pkg_resources
+
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +126,7 @@ def installTypeIfNeeded(type_name):
     information from the fti in the profile.
     """
     if type_name not in DEFAULT_TYPES:
-        raise KeyError("%s is not one of the default types" % type_name)
+        raise KeyError('{0} is not one of the default types'.format(type_name))
     portal = getSite()
     tt = getToolByName(portal, 'portal_types')
     fti = tt.getTypeInfo(type_name)
@@ -188,8 +188,11 @@ def copy_contentrules(source_object, target_object):
         try:
             IRuleAssignmentManager(target_object)
         except TypeError:
-            logger.info("Cound not assign contentrules to {0}".format(
-                target_object.absolute_url()))
+            logger.info(
+                'Cound not assign contentrules to {0}'.format(
+                    target_object.absolute_url()
+                )
+            )
             return
         for rule_id in source_assignable:
             assign_rule(target_object, rule_id)
@@ -210,8 +213,8 @@ def migrate_leadimage(source_object, target_object):
 
     if ILeadImage(target_object, None) is None:
         # skip if new content does not have the LeadImage-behavior enabled
-        logger.info("Target does not have the behavior 'Lead Image' enabled. "
-                    "Could not migrate collective.leadimage fields.")
+        logger.info('Target does not have the behavior "Lead Image" enabled. '
+                    'Could not migrate collective.leadimage fields.')
         return
 
     acc = source_object.getField(
@@ -233,8 +236,9 @@ def migrate_leadimage(source_object, target_object):
         target_object,
         OLD_CAPTION_FIELD_NAME,
         NEW_CAPTION_FIELD_NAME)
-    logger.info("Migrating contentlead image for {0}.".format(
-        target_object.absolute_url()))
+    logger.info('Migrating contentlead image for {0}.'.format(
+        target_object.absolute_url())
+    )
 
 
 def migrate_portlets(src_obj, dst_obj):
@@ -280,8 +284,9 @@ def store_references(context):
     all_references = get_all_references(context)
     key = 'ALL_REFERENCES'
     IAnnotations(context)[key] = all_references
-    logger.info('Stored {} relations for later restore.'.format(
-        len(all_references)))
+    logger.info('Stored {0} relations for later restore.'.format(
+        len(all_references))
+    )
 
 
 class ExportAllReferences(BrowserView):
@@ -290,7 +295,7 @@ class ExportAllReferences(BrowserView):
 
     def __call__(self):
         data = get_all_references(self.context)
-        self.request.response.setHeader("Content-type", "application/json")
+        self.request.response.setHeader('Content-type', 'application/json')
         return json.dumps(data)
 
 
@@ -340,9 +345,12 @@ def restore_references(context):
         else:
             logger.warn(
                 'Could not restore reference from uid '
-                '"%s" to uid "%s" on the context: %s' % (
-                    ref['from_uuid'], ref['to_uuid'],
-                    '/'.join(context.getPhysicalPath())))
+                '"{0}" to uid "{1}" on the context: {2}'.format(
+                    ref['from_uuid'],
+                    ref['to_uuid'],
+                    '/'.join(context.getPhysicalPath())
+                )
+            )
     del IAnnotations(context)[key]
 
 

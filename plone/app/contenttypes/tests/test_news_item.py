@@ -1,31 +1,23 @@
 # -*- coding: utf-8 -*-
-from zope.interface import alsoProvides
-from zope.viewlet.interfaces import IViewletManager
-from zope.component import queryMultiAdapter
-import unittest2 as unittest
-
-from Products.Five.browser import BrowserView as View
-
-from zope.component import createObject
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
-
-from plone.app.textfield.value import RichTextValue
-
+from plone.app.contenttypes.interfaces import INewsItem
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
-from plone.app.contenttypes.interfaces import INewsItem
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
-
-from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.textfield.value import RichTextValue
 from plone.app.z3cform.interfaces import IPloneFormLayer
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.testing.z2 import Browser
+from Products.Five.browser import BrowserView as View
+from zope.component import createObject
+from zope.component import queryMultiAdapter
+from zope.component import queryUtility
+from zope.interface import alsoProvides
+from zope.viewlet.interfaces import IViewletManager
+
+import unittest2 as unittest
 
 
 class NewsItemIntegrationTest(unittest.TestCase):
@@ -76,10 +68,10 @@ class NewsItemIntegrationTest(unittest.TestCase):
     def test_view(self):
         self.portal.invokeFactory('News Item', 'news_item')
         news_item = self.portal['news_item']
-        news_item.title = "My News Item"
-        news_item.description = "This is my news item."
+        news_item.title = 'My News Item'
+        news_item.description = 'This is my news item.'
         news_item.text = RichTextValue(
-            u"Lorem ipsum",
+            u'Lorem ipsum',
             'text/plain',
             'text/html'
         )
@@ -126,20 +118,20 @@ class NewsItemFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD, )
         )
 
     def test_add_news_item(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('News Item').click()
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My news item"
+            .value = 'My news item'
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
-            .value = "This is my news item."
+            .value = 'This is my news item.'
         self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = ""
+            .value = ''
         self.browser.getControl(name='form.widgets.IRichText.text')\
-            .value = "Lorem Ipsum"
+            .value = 'Lorem Ipsum'
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-news-item/view'))
@@ -151,9 +143,9 @@ class NewsItemFunctionalTest(unittest.TestCase):
         self.browser.open(self.portal_url)
         self.browser.getLink('News Item').click()
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My news item"
+            .value = 'My news item'
         self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-news"
+            .value = 'my-special-news'
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-special-news/view'))

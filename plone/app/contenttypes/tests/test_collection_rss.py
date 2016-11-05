@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
-from Products.CMFPlone.interfaces.syndication import ISiteSyndicationSettings
+from lxml import etree
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import login
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.interfaces.syndication import ISiteSyndicationSettings
 from zope.component import getUtility
 
 import unittest2 as unittest
 
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, setRoles, login
-
-from lxml import etree
 
 query = [{
     'i': 'Title',
@@ -31,8 +31,11 @@ class RSSViewTest(unittest.TestCase):
         login(self.portal, TEST_USER_NAME)
         self.portal.invokeFactory('Folder', 'test-folder')
         self.folder = self.portal['test-folder']
-        self.folder.invokeFactory('Document',
-                                  'page1', title="Collection Test Page")
+        self.folder.invokeFactory(
+            'Document',
+            'page1',
+            title='Collection Test Page',
+        )
         self.folder.invokeFactory('Collection',
                                   'collection1')
         self.collection = aq_inner(self.folder['collection1'])
@@ -50,7 +53,7 @@ class RSSViewTest(unittest.TestCase):
         # schema = etree.XMLSchema(schema_root)
         # parser = etree.XMLParser(dtd_validation=True,schema=schema)
         if isinstance(rss, unicode):
-            rss = rss.encode("utf-8")
+            rss = rss.encode('utf-8')
         parser = etree.XMLParser()
         return etree.fromstring(rss, parser)
 
@@ -58,9 +61,9 @@ class RSSViewTest(unittest.TestCase):
         view = self.collection.restrictedTraverse('@@RSS')
         html = view()
         self.assertEqual(view.request.response.status, 200)
-        self.assertTrue("Collection Test Page" in html)
+        self.assertTrue('Collection Test Page' in html)
 
     def test_view_is_valid(self):
         view = self.collection.restrictedTraverse('@@RSS')
         result = self.assertIsValidRSS(view())
-        self.assertTrue("Collection Test Page" in etree.tostring(result))
+        self.assertTrue('Collection Test Page' in etree.tostring(result))

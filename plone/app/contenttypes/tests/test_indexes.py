@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
-import os
-import unittest2 as unittest
-
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.textfield.value import RichTextValue
+from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 
-from plone.app.textfield.value import RichTextValue
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-)
-
-from plone.app.testing import TEST_USER_ID, setRoles
-from plone.rfc822.interfaces import IPrimaryFieldInfo
+import os
+import unittest2 as unittest
 
 
 class CatalogIntegrationTest(unittest.TestCase):
@@ -57,7 +53,7 @@ class CatalogIntegrationTest(unittest.TestCase):
 
     def test_id_in_searchable_text_index(self):
         brains = self.catalog.searchResults(dict(
-            SearchableText="document",
+            SearchableText='document',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
@@ -66,10 +62,10 @@ class CatalogIntegrationTest(unittest.TestCase):
         )
 
     def test_title_in_searchable_text_index(self):
-        self.document.title = "My title"
+        self.document.title = 'My title'
         self.document.reindexObject()
         brains = self.catalog.searchResults(dict(
-            SearchableText="My title",
+            SearchableText='My title',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
@@ -78,10 +74,10 @@ class CatalogIntegrationTest(unittest.TestCase):
         )
 
     def test_description_in_searchable_text_index(self):
-        self.document.description = "My description"
+        self.document.description = 'My description'
         self.document.reindexObject()
         brains = self.catalog.searchResults(dict(
-            SearchableText="My description",
+            SearchableText='My description',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
@@ -90,10 +86,10 @@ class CatalogIntegrationTest(unittest.TestCase):
         )
 
     def test_subject_in_searchable_text_index(self):
-        self.document.setSubject(["Apples", "Oranges", ])
+        self.document.setSubject(['Apples', 'Oranges', ])
         self.document.reindexObject()
         brains = self.catalog.searchResults(dict(
-            SearchableText="Apples",
+            SearchableText='Apples',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
@@ -102,12 +98,12 @@ class CatalogIntegrationTest(unittest.TestCase):
         )
 
     def test_folder_fields_in_searchable_text_index(self):
-        self.folder.title = "Carpeta"
-        self.folder.description = "My description"
+        self.folder.title = 'Carpeta'
+        self.folder.description = 'My description'
         self.folder.reindexObject()
         # Description
         brains = self.catalog.searchResults(dict(
-            SearchableText="My description",
+            SearchableText='My description',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
@@ -116,7 +112,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         )
         # Title
         brains = self.catalog.searchResults(dict(
-            SearchableText="Carpeta",
+            SearchableText='Carpeta',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
@@ -128,7 +124,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.link.remoteUrl = 'http://www.plone.org/'
         self.link.reindexObject()
         brains = self.catalog.searchResults(dict(
-            SearchableText="plone",
+            SearchableText='plone',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
@@ -182,8 +178,8 @@ class CatalogIntegrationTest(unittest.TestCase):
 
     def test_file_fulltext_in_searchable_text_index_string(self):
         from plone.namedfile.file import NamedBlobFile
-        data = ("Lorem ipsum. Köln <!-- ...oder München, das ist hier die "
-                "Frage. -->")
+        data = ('Lorem ipsum. Köln <!-- ...oder München, das ist hier die '
+                'Frage. -->')
         test_file = NamedBlobFile(data=data, filename=u'string.html')
 
         primary_field_info = IPrimaryFieldInfo(self.file)
@@ -204,8 +200,8 @@ class CatalogIntegrationTest(unittest.TestCase):
 
     def test_file_fulltext_in_searchable_text_index_unicode(self):
         from plone.namedfile.file import NamedBlobFile
-        data = (u"Lorem ipsum' Köln <!-- ...oder München, das ist hier die "
-                u"Frage. -->")
+        data = (u'Lorem ipsum Köln <!-- ...oder München, das ist hier die '
+                u'Frage. -->')
         test_file = NamedBlobFile(data=data, filename=u'unicode.html')
 
         primary_field_info = IPrimaryFieldInfo(self.file)
@@ -225,36 +221,36 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.assertEqual(len(brains), 0)  # hint: html comment is stripped
 
     def test_title_in_metadata(self):
-        self.document.title = "My title"
+        self.document.title = 'My title'
         self.document.reindexObject()
         brains = self.catalog.searchResults(dict(
-            path="/plone/folder/document",
+            path='/plone/folder/document',
         ))
         self.assertEqual(
             brains[0].Title,
-            "My title"
+            'My title'
         )
 
     def test_description_in_metadata(self):
-        self.document.description = "My description"
+        self.document.description = 'My description'
         self.document.reindexObject()
         brains = self.catalog.searchResults(dict(
-            path="/plone/folder/document",
+            path='/plone/folder/document',
         ))
         self.assertEqual(
             brains[0].Description,
-            "My description"
+            'My description'
         )
 
     def test_get_remote_url_in_metadata(self):
         self.link.remoteUrl = 'http://www.plone.org/'
         self.link.reindexObject()
         brains = self.catalog.searchResults(dict(
-            path="/plone/folder/link",
+            path='/plone/folder/link',
         ))
         self.assertEqual(
             brains[0].getRemoteUrl,
-            "http://www.plone.org/"
+            'http://www.plone.org/'
         )
 
     def test_get_remote_url_in_metadata_variables_replaced(self):
@@ -266,11 +262,11 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.link.remoteUrl = '${navigation_root_url}/my-item'
         self.link.reindexObject()
         brains = self.catalog.searchResults(dict(
-            path="/plone/folder/link",
+            path='/plone/folder/link',
         ))
         self.assertEqual(
             brains[0].getRemoteUrl,
-            "/plone/my-item"
+            '/plone/my-item'
         )
 
     def test_getobjsize_image(self):
@@ -281,7 +277,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.image.reindexObject()
 
         brains = self.catalog.searchResults(dict(
-            path="/plone/folder/image",
+            path='/plone/folder/image',
         ))
 
         # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
@@ -302,7 +298,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.file.reindexObject()
 
         brains = self.catalog.searchResults(dict(
-            path="/plone/folder/file",
+            path='/plone/folder/file',
         ))
 
         # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?

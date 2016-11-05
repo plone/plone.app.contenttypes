@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
-from plone.event.interfaces import IEventAccessor
-from plone.app.testing import login
-from plone.app.testing import applyProfile
 from datetime import datetime
-from plone.app.textfield.value import RichTextValue
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.tests.oldtypes import create1_0EventType
+from plone.app.testing import applyProfile
+from plone.app.testing import login
+from plone.app.textfield.value import RichTextValue
+from plone.event.interfaces import IEventAccessor
+from Products.CMFCore.utils import getToolByName
 
 import unittest2 as unittest
 
@@ -21,14 +20,14 @@ class MigrateEventContentTypesTest(unittest.TestCase):
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.request['URL'] = self.portal.absolute_url()
-        self.catalog = getToolByName(self.portal, "portal_catalog")
+        self.catalog = getToolByName(self.portal, 'portal_catalog')
         self.portal.acl_users.userFolderAddUser('admin',
                                                 'secret',
                                                 ['Manager'],
                                                 [])
         login(self.portal, 'admin')
         self.portal.portal_workflow.setDefaultChain(
-            "simple_publication_workflow")
+            'simple_publication_workflow')
 
     def tearDown(self):
         try:

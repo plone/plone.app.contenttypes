@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.interfaces import IEvent
@@ -62,8 +61,8 @@ class EventIntegrationTest(unittest.TestCase):
     def test_view(self):
         self.portal.invokeFactory('Event', 'event')
         event = self.portal['event']
-        event.title = "My Event"
-        event.description = "This is my event."
+        event.title = 'My Event'
+        event.description = 'This is my event.'
         event.start = datetime(2013, 1, 1, 10, 0)
         event.end = datetime(2013, 1, 1, 12, 0)
 
@@ -93,7 +92,7 @@ class EventFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD, )
         )
 
     def test_add_event(self):
@@ -101,26 +100,27 @@ class EventFunctionalTest(unittest.TestCase):
         self.browser.getLink('Event').click()
         self.browser.getControl(
             name='form.widgets.IDublinCore.title'
-        ).value = "My event"
+        ).value = 'My event'
         self.browser.getControl(
             name='form.widgets.IDublinCore.description'
-        ).value = "This is my event."
+        ).value = 'This is my event.'
         self.browser.getControl(
             name='form.widgets.IRichText.text'
-        ).value = "Lorem Ipsum"
+        ).value = 'Lorem Ipsum'
         self.browser.getControl(
             name='form.widgets.IEventBasic.start'
         ).value = '2013-01-01'
         self.browser.getControl(
             name='form.widgets.IEventBasic.end'
         ).value = '2013-01-12'
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-event"
+        self.browser.getControl(
+            name='form.widgets.IShortName.id'
+        ).value = 'my-special-event'
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-special-event/view'))
-        self.assertTrue('My event' in self.browser.contents)
-        self.assertTrue('This is my event' in self.browser.contents)
-        self.assertTrue('Lorem Ipsum' in self.browser.contents)
-        self.assertTrue('2013-01-01' in self.browser.contents)
-        self.assertTrue('2013-01-12' in self.browser.contents)
+        self.assertIn('My event', self.browser.contents)
+        self.assertIn('This is my event', self.browser.contents)
+        self.assertIn('Lorem Ipsum', self.browser.contents)
+        self.assertIn('2013-01-01', self.browser.contents)
+        self.assertIn('2013-01-12', self.browser.contents)

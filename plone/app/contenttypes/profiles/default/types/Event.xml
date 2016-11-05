@@ -56,7 +56,7 @@
   <property name="view_methods">
     <element value="event_view"/>
   </property>
- 
+
   <!-- Method aliases -->
   <alias
       from="(Default)"

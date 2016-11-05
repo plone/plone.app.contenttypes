@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
-
-from plone.app.testing import TEST_USER_ID, setRoles
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-)
-
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
 from plone.app.contenttypes.upgrades import update_fti
 from plone.app.contenttypes.upgrades import use_new_view_names
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.dexterity.interfaces import IDexterityFTI
+from zope.component import queryUtility
+
+import unittest2 as unittest
 
 
 class UpgradeTo1000IntegrationTest(unittest.TestCase):

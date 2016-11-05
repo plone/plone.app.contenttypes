@@ -1,26 +1,20 @@
 # -*- coding: utf-8 -*-
-import os.path
-import unittest2 as unittest
-
-from zope.interface import alsoProvides
-from zope.component import createObject
-from zope.component import queryUtility
-
-from plone.dexterity.interfaces import IDexterityFTI
-
+from plone.app.contenttypes.interfaces import IImage
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
-from plone.app.contenttypes.interfaces import IImage
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
-
-from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.interfaces import IPloneFormLayer
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.testing.z2 import Browser
+from zope.component import createObject
+from zope.component import queryUtility
+from zope.interface import alsoProvides
+
+import os.path
+import unittest2 as unittest
 
 
 def dummy_image():
@@ -84,8 +78,8 @@ class ImageViewIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.portal.invokeFactory('Image', 'image')
         image = self.portal['image']
-        image.title = "My Image"
-        image.description = "This is my image."
+        image.title = 'My Image'
+        image.description = 'This is my image.'
         image.image = dummy_image()
         self.image = image
         self.request.set('URL', image.absolute_url())
@@ -105,7 +99,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
 #    def test_image_view_fullscreen(self):
 #        view = getMultiAdapter(
 #            (self.image, self.request),
-#            name="image_view_fullscreen"
+#            name='image_view_fullscreen'
 #        )
 #
 #        self.assertTrue(view())
@@ -126,35 +120,35 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_add_image(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Image').click()
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My image"
-        self.browser.getControl(name='form.widgets.description')\
-            .value = "This is my image."
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-image.jpg"
-        image_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My image'
+        widget = 'form.widgets.description'
+        self.browser.getControl(name=widget).value = 'This is my image.'
+        widget = 'form.widgets.IShortName.id'
+        self.browser.getControl(name=widget).value = 'my-special-image.jpg'
+        image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
         image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('image.jpg/view'))
-        self.assertTrue('My image' in self.browser.contents)
-        self.assertTrue('This is my image' in self.browser.contents)
-        self.assertTrue('image.jpg' in self.browser.contents)
+        self.assertIn('My image', self.browser.contents)
+        self.assertIn('This is my image', self.browser.contents)
+        self.assertIn('image.jpg', self.browser.contents)
 
     def test_add_image_with_shortname(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Image').click()
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My image"
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-image.jpg"
-        image_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My image'
+        widget = 'form.widgets.IShortName.id'
+        self.browser.getControl(name=widget).value = 'my-special-image.jpg'
+        image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
         image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
@@ -166,11 +160,11 @@ class ImageFunctionalTest(unittest.TestCase):
         self.assertTrue('Title' in self.browser.contents)
         self.assertTrue('Description' in self.browser.contents)
         self.assertTrue('Text' in self.browser.contents)
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My image"
-        self.browser.getControl(name='form.widgets.description')\
-            .value = "This is my image."
-        image_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My image'
+        widget = 'form.widgets.description'
+        self.browser.getControl(name=widget).value = 'This is my image.'
+        image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
         image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()

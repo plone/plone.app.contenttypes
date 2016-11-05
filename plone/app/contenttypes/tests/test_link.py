@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
 from datetime import datetime
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import logout
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.testing import TEST_USER_ID, setRoles
-from plone.app.testing import logout
+from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.testing.z2 import Browser
+from Products.CMFCore.utils import getToolByName
 from zope.component import createObject
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
 from zope.event import notify
 from zope.interface import alsoProvides
 from zope.traversing.interfaces import BeforeTraverseEvent
+
 import unittest2 as unittest
 
 
@@ -73,8 +75,8 @@ class LinkViewIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.portal.invokeFactory('Link', 'link')
         link = self.portal['link']
-        link.title = "My Link"
-        link.description = "This is my link."
+        link.title = 'My Link'
+        link.description = 'This is my link.'
         self.link = link
         self.request.set('URL', link.absolute_url())
         self.request.set('ACTUAL_URL', link.absolute_url())
@@ -160,7 +162,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self._publish(self.link)
         logout()
         rendered = view()
-        self.assertTrue('href="mailto:stress@test.us"' in rendered)
+        self.assertIn('href="mailto:stress@test.us"', rendered)
         self._assert_response_OK()
 
     def test_tel_type(self):
@@ -169,7 +171,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self._publish(self.link)
         logout()
         rendered = view()
-        self.assertTrue('href="tel:123"' in rendered)
+        self.assertIn('href="tel:123"', rendered)
         self._assert_response_OK()
 
     def test_callto_type(self):
@@ -178,7 +180,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self._publish(self.link)
         logout()
         rendered = view()
-        self.assertTrue('href="callto:123"' in rendered)
+        self.assertIn('href="callto:123"', rendered)
         self._assert_response_OK()
 
     def test_webdav_type(self):
@@ -187,7 +189,10 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self._publish(self.link)
         logout()
         rendered = view()
-        self.assertTrue('href="webdav://web.site/resource"' in rendered)
+        self.assertIn(
+            'href="webdav://web.site/resource"',
+            rendered
+        )
         self._assert_response_OK()
 
     def test_caldav_type(self):
@@ -196,7 +201,10 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self._publish(self.link)
         logout()
         rendered = view()
-        self.assertTrue('href="caldav://calendar.site/resource"' in rendered)
+        self.assertIn(
+            'href="caldav://calendar.site/resource"',
+            rendered
+        )
         self._assert_response_OK()
 
     def test_file_type(self):
@@ -218,7 +226,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self._assert_redirect(self.link.remoteUrl)
 
     def _publish(self, obj):
-        portal_workflow = getToolByName(self.portal, "portal_workflow")
+        portal_workflow = getToolByName(self.portal, 'portal_workflow')
         portal_workflow.doActionFor(obj, 'publish')
 
     def _assert_redirect(self, url):
@@ -245,18 +253,18 @@ class LinkFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_add_link(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Link').click()
         self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My link"
+            .value = 'My link'
         self.browser.getControl(name='form.widgets.IDublinCore.description')\
-            .value = "This is my link."
+            .value = 'This is my link.'
         self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-link"
+            .value = 'my-special-link'
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-special-link/view'))

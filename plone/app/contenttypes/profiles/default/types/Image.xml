@@ -4,7 +4,7 @@
     meta_type="Dexterity FTI"
     name="Image"
     xmlns:i18n="http://xml.zope.org/namespaces/i18n">
-  
+
   <!-- Basic properties -->
   <property
       i18n:translate=""

@@ -35,7 +35,7 @@
                 item_wf_state item/review_state;
                 item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                 item_creator item/Creator;
-                item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;                
+                item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
                 item_is_event python:view.is_event(obj);
                 item_has_image python:item.getIcon">
               <metal:block define-slot="entry">
@@ -43,8 +43,8 @@
                   <header metal:define-macro="listitem" tal:attributes="class python:'vevent' if item_is_event else None">
                     <span class="summary" tal:attributes="title item_type">
                      <a tal:attributes="href item_link">
-                    	<img class="image-tile"
-                             tal:condition="item_has_image"                          
+                      <img class="image-tile"
+                             tal:condition="item_has_image"
                              tal:attributes="src  string:$item_url/@@images/image/tile">
                       </a>
                       <a tal:attributes="href item_link;

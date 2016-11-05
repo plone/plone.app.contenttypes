@@ -1,19 +1,21 @@
 # -*- coding: UTF-8 -*-
+from plone.app.contenttypes import _
+from plone.app.contenttypes.migration.migration import migrateCustomAT
+from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.utils import iterSchemataForType
 from Products.ATContentTypes.content.schemata import ATContentTypeSchema
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-from plone.app.contenttypes import _
-from plone.app.contenttypes.migration.migration import migrateCustomAT
-from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.utils import iterSchemataForType
 from zope.i18n import translate
+
 import json
 import logging
 import traceback
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,15 +53,18 @@ class CustomMigrationForm(BrowserView):
                 res_infos = migration_result.get('infos')
                 if res_infos.get('errors'):
                     messages.add(
-                        u'Error when migrating "%s" type. Check the '
-                        u'log for other informations.'
-                        % res_type, type=u"error")
+                        u'Error when migrating "{0}" type. Check the '
+                        u'log for other informations.'.format(res_type),
+                        type=u'error',
+                    )
                 else:
+                    raw_message = 'Migration applied successfully for {0} ' \
+                        '"{1}" items.'
                     msg = translate(
-                        'Migration applied succesfully for %s "%s" items.'
-                        % (res_infos.get('counter'), res_type),
-                        domain='plone.app.contenttypes')
-                    messages.add(msg, type=u"info")
+                        raw_message.format(res_infos.get('counter'), res_type),
+                        domain='plone.app.contenttypes',
+                    )
+                    messages.add(msg, type=u'info')
         elif cancelled:
             self.request.response.redirect(form.get('form.HTTP_REFERER'))
         return self.index()
@@ -108,9 +113,9 @@ class CustomMigrationForm(BrowserView):
                 continue
             typename = brain.portal_type
             if typename not in all_registered_types:
-                    results.append({'id': typename,
-                                    'title': typename,
-                                    'removed': True})
+                results.append({'id': typename,
+                                'title': typename,
+                                'removed': True})
         return results
 
     def getDXFTIs(self):
@@ -154,8 +159,12 @@ class CustomMigrationForm(BrowserView):
                 translated_label = translate(safe_unicode(field.widget.label))
                 results.append(
                     {'id': field.getName(),
-                     'title': '%s (%s)' % (translated_label, field.getType()),
-                     'type': field.getType()})
+                     'title': '{0} ({1})'.format(
+                         translated_label,
+                         field.getType()
+                     ),
+                     'type': field.getType()}
+                )
         return results
 
     def getFieldsForATTypeWithoutFTI(self, typename):
@@ -175,8 +184,12 @@ class CustomMigrationForm(BrowserView):
                 translated_label = translate(field.widget.label)
                 results.append(
                     {'id': field.getName(),
-                     'title': '%s (%s)' % (translated_label, field.getType()),
-                     'type': field.getType()})
+                     'title': '{0} ({1})'.format(
+                         translated_label,
+                         field.getType()
+                     ),
+                     'type': field.getType()}
+                )
         return results
 
     def getFieldsForDXType(self, typename):
@@ -196,7 +209,7 @@ class CustomMigrationForm(BrowserView):
                 class_name = field.__class__.__name__
                 results.append(
                     {'id': fieldName,
-                     'title': '%s (%s)' % (translated_title, class_name),
+                     'title': '{0} ({1})'.format(translated_title, class_name),
                      'type': class_name})
         return results
 
@@ -238,8 +251,10 @@ class CustomMigrationForm(BrowserView):
                 # definition we have 2 keys with relevant mappings, first key
                 # is the AT typename second key is a particular key like
                 # 'dx_DXPortalType__for__MyATPortalType
-                dx_key = 'dx_%s__for__%s' % (form_dx_typename,
-                                             form_at_typename)
+                dx_key = 'dx_{0}__for__{1}'.format(
+                    form_dx_typename,
+                    form_at_typename,
+                )
                 for at_field in form[form_at_typename]:
                     if form.get(dx_key) is None:
                         # No field-mappings
@@ -302,7 +317,7 @@ class TestMigration(CustomMigrationForm):
             results = self.migrate(dry_run=True)
         except Exception, e:
             trace = traceback.format_exc()
-            msg = "Test-Migration failed: %s\n%s\n" % (e, trace)
+            msg = 'Test-Migration failed: {0}\n{1}\n'.format(e, trace)
             logger.error(msg)
             response['status'] = 'error'
             response['message'] = msg

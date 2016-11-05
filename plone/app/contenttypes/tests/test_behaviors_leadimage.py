@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
-import os
-import unittest2 as unittest
-
+from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
+from plone.app.testing import TEST_USER_ID
+from plone.dexterity.fti import DexterityFTI
 from plone.testing.z2 import Browser
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
-
-from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from zope.interface import alsoProvides
 
-from plone.dexterity.fti import DexterityFTI
-
-from plone.app.testing import TEST_USER_ID, setRoles
+import os
+import unittest2 as unittest
 
 
 class LeadImageBehaviorFunctionalTest(unittest.TestCase):
@@ -51,7 +46,7 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_lead_image_in_edit_form(self):
@@ -62,7 +57,7 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
     def test_lead_image_viewlet_shows_up(self):
         self.browser.open(self.portal_url + '/leadimagefolder/edit')
         # Image upload
-        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         file_ctl = self.browser.getControl(
             name='form.widgets.ILeadImage.image'
         )

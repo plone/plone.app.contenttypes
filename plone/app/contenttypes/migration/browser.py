@@ -1,15 +1,4 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
-from Products.CMFCore.interfaces import IPropertiesTool
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.DublinCore import DefaultDublinCoreImpl
-from Products.CMFPlone.interfaces import IEditingSchema
-from Products.Five.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
-from Products.contentmigration.utils import patch, undoPatch
-from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from datetime import timedelta
 from plone.app.contenttypes.content import Document
@@ -20,16 +9,15 @@ from plone.app.contenttypes.content import Link
 from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
-from plone.app.contenttypes.migration.patches import \
-    patched_insertForwardIndexEntry
+from plone.app.contenttypes.migration.patches import patched_insertForwardIndexEntry  # noqa
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.migration.utils import restore_references
 from plone.app.contenttypes.migration.utils import store_references
 from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
-from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.contenttypes.upgrades import use_new_view_names
+from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
@@ -37,6 +25,18 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.registry.interfaces import IRegistry
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
+from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
+from Products.CMFCore.interfaces import IPropertiesTool
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.DublinCore import DefaultDublinCoreImpl
+from Products.CMFPlone.interfaces import IEditingSchema
+from Products.contentmigration.utils import patch
+from Products.contentmigration.utils import undoPatch
+from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
+from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
@@ -50,6 +50,7 @@ from zope.interface import Interface
 
 import logging
 import pkg_resources
+
 
 try:
     pkg_resources.get_distribution('collective.contentleadimage')
@@ -83,7 +84,7 @@ class FixBaseClasses(BrowserView):
         Instances before version 1.0b1 had no base-class.
         To update them call @@fix_base_classes on your site-root.
         """
-        out = ""
+        out = ''
         portal_types = [
             ('Document', Document),
             ('File', File),
@@ -92,7 +93,7 @@ class FixBaseClasses(BrowserView):
             ('Link', Link),
             ('News Item', NewsItem),
         ]
-        catalog = getToolByName(self.context, "portal_catalog")
+        catalog = getToolByName(self.context, 'portal_catalog')
         query = {}
         if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
             query['Language'] = 'all'
@@ -106,7 +107,7 @@ class FixBaseClasses(BrowserView):
                     target_class_name = portal_type_class.__name__
                     if not object_class_name == target_class_name:
                         obj.__class__ = portal_type_class
-                        out += "Make %s use %s\n as base class." % (
+                        out += 'Make {0} use {1}\n as base class.'.format(
                             obj.Title(),
                             portal_type_class.__name__,
                         )
@@ -122,7 +123,7 @@ class MigrateFromATContentTypes(BrowserView):
 
     def __call__(self,
                  migrate=False,
-                 content_types="all",
+                 content_types='all',
                  migrate_schemaextended_content=False,
                  migrate_references=True,
                  from_form=False):
@@ -144,7 +145,7 @@ class MigrateFromATContentTypes(BrowserView):
             return msg
 
         helpers = getMultiAdapter((portal, self.request),
-                                  name="atct_migrator_helpers")
+                                  name='atct_migrator_helpers')
         if helpers.linguaplone_installed():
             msg = 'Warning\n'
             msg += 'Migration aborted since Products.LinguaPlone is '
@@ -209,10 +210,13 @@ class MigrateFromATContentTypes(BrowserView):
                 query['Language'] = 'all'
             amount_to_be_migrated = len(catalog(query))
             starttime_for_current = datetime.now()
-            logger.info("Start migrating %s objects from %s to %s" % (
-                amount_to_be_migrated,
-                v['old_meta_type'],
-                v['type_name']))
+            logger.info(
+                'Start migrating {0} objects from {1} to {2}'.format(
+                    amount_to_be_migrated,
+                    v['old_meta_type'],
+                    v['type_name'],
+                )
+            )
             installTypeIfNeeded(v['type_name'])
 
             # call the migrator
@@ -221,11 +225,13 @@ class MigrateFromATContentTypes(BrowserView):
             # logging
             duration_current = datetime.now() - starttime_for_current
             duration_human = str(timedelta(seconds=duration_current.seconds))
-            logger.info("Finished migrating %s objects from %s to %s in %s" % (
-                amount_to_be_migrated,
-                v['old_meta_type'],
-                v['type_name'],
-                duration_human))
+            logger.info(
+                'Finished migrating {0} objects from {1} to {2} in {3}'.format(
+                    amount_to_be_migrated,
+                    v['old_meta_type'],
+                    v['type_name'],
+                    duration_human),
+            )
 
             # some data for the results-page
             migrated_types[k] = {}
@@ -261,12 +267,15 @@ class MigrateFromATContentTypes(BrowserView):
 
         duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
         if not_migrated:
-            msg = ("The following types were not migrated: \n %s"
-                   % "\n".join(not_migrated))
+            msg = (
+                'The following types were not migrated: \n {0}'.format(
+                    '\n'.join(not_migrated)
+                )
+            )
         else:
-            msg = "Migration successful\n\n"
+            msg = 'Migration successful\n\n'
         msg += '\n-----------------------------\n'
-        msg += 'Migration finished in: %s' % duration
+        msg += 'Migration finished in: {0}'.format(duration)
         msg += '\n-----------------------------\n'
         msg += 'Migration statictics:\n'
         msg += pformat(migrated_types)
@@ -322,32 +331,32 @@ class MigrateFromATContentTypes(BrowserView):
 class IATCTMigratorForm(Interface):
 
     content_types = schema.List(
-        title=u"Existing content that can be migrated",
-        description=u"Select which content types you want to migrate",
+        title=u'Existing content that can be migrated',
+        description=u'Select which content types you want to migrate',
         value_type=schema.Choice(
-            vocabulary="plone.app.contenttypes.migration.atctypes",
+            vocabulary='plone.app.contenttypes.migration.atctypes',
         ),
         required=False,
     )
 
     migrate_references = schema.Bool(
-        title=u"Migrate references?",
+        title=u'Migrate references?',
         description=(
-            u"Select this option to migrate references."
+            u'Select this option to migrate references.'
         ),
         default=True
     )
 
     extended_content = schema.List(
         title=(
-            u"Migrate content that was extended "
-            u"using archetypes.schemaextender?"
+            u'Migrate content that was extended '
+            u'using archetypes.schemaextender?'
         ),
         description=(
-            u"Warning: You will loose all data in the extended fields!"
+            u'Warning: You will loose all data in the extended fields!'
         ),
         value_type=schema.Choice(
-            vocabulary="plone.app.contenttypes.migration.extendedtypes",
+            vocabulary='plone.app.contenttypes.migration.extendedtypes',
         ),
         required=False,
     )
@@ -383,15 +392,15 @@ class ATCTMigratorForm(form.Form):
             migrate_references=data['migrate_references'],
             from_form=True,
         )
-        sdm = getToolByName(context, "session_data_manager")
+        sdm = getToolByName(context, 'session_data_manager')
         session = sdm.getSessionData(create=True)
-        session.set("atct_migrator_results", results)
+        session.set('atct_migrator_results', results)
         url = context.absolute_url()
-        self.request.response.redirect(url + "/@@atct_migrator_results")
+        self.request.response.redirect(url + '/@@atct_migrator_results')
 
     def updateActions(self):
         super(ATCTMigratorForm, self).updateActions()
-        self.actions['migrate'].addClass("btn-danger")
+        self.actions['migrate'].addClass('btn-danger')
 
     def updateWidgets(self):
         """ Overload to set defaults and hide empty widgets. """
@@ -432,11 +441,11 @@ class IBaseClassMigratorForm(Interface):
         required=True,
     )
     migrate_to_folderish = schema.Bool(
-        title=u"Migrate to folderish type?",
+        title=u'Migrate to folderish type?',
         description=(
-            u"Select this option if you changed a type from being "
-            u"itemish to being folderish but the class of the type is still "
-            u"the same."
+            u'Select this option if you changed a type from being '
+            u'itemish to being folderish but the class of the type is still '
+            u'the same.'
         ),
         default=False,
     )
@@ -461,7 +470,7 @@ class BaseClassMigratorForm(form.Form):
             return
 
         migrate_to_folderish = data.get('changed_base_classes', False)
-        catalog = getToolByName(self.context, "portal_catalog")
+        catalog = getToolByName(self.context, 'portal_catalog')
         migrated = []
         not_migrated = []
         for brain in catalog():
@@ -495,7 +504,7 @@ class ATCTMigratorHelpers(BrowserView):
 
     def objects_to_be_migrated(self):
         """ Return the number of AT objects in the portal """
-        catalog = getToolByName(self.context, "portal_catalog")
+        catalog = getToolByName(self.context, 'portal_catalog')
         query = {'meta_type': [i['old_meta_type'] for i in ATCT_LIST.values()]}
         if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
             query['Language'] = 'all'
@@ -525,7 +534,7 @@ class ATCTMigratorHelpers(BrowserView):
         default the migration of subtopics would fail Collections are changed
         to be folderish.
         """
-        catalog = getToolByName(self.context, "portal_catalog")
+        catalog = getToolByName(self.context, 'portal_catalog')
         query = {'meta_type': 'ATTopic'}
         results = []
         if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
@@ -536,8 +545,8 @@ class ATCTMigratorHelpers(BrowserView):
                 results.append(item.getURL())
         if results:
             results = set(results)
-            paths = "\n".join(results)
-            logger.info("Found {0} subtopics at: \n{1}".format(
+            paths = '\n'.join(results)
+            logger.info('Found {0} subtopics at: \n{1}'.format(
                 len(results), paths))
             return results
 
@@ -574,11 +583,11 @@ class ATCTMigratorHelpers(BrowserView):
             </object>
 
         """
-        fti = queryUtility(IDexterityFTI, name="Collection")
-        if fti and fti.content_meta_type == "Dexterity Container":
+        fti = queryUtility(IDexterityFTI, name='Collection')
+        if fti and fti.content_meta_type == 'Dexterity Container':
             return True
         # test for lowercase ttw-type
-        fti = queryUtility(IDexterityFTI, name="collection")
+        fti = queryUtility(IDexterityFTI, name='collection')
         behavior = 'plone.app.contenttypes.behaviors.collection.ICollection'
         if fti and behavior in fti.behaviors:
             logger.warn("You are trying to migrate topic to collection. "
@@ -613,7 +622,7 @@ class ATCTMigratorResults(BrowserView):
     def results(self):
         sdm = self.context.session_data_manager
         session = sdm.getSessionData(create=True)
-        results = session.get("atct_migrator_results", None)
+        results = session.get('atct_migrator_results', None)
         if not results:
             return False
         # results['atct_list'] = ATCT_LIST
@@ -629,14 +638,14 @@ class PACInstaller(form.Form):
 
     @property
     def pac_installable(self):
-        qi = getToolByName(self.context, "portal_quickinstaller")
+        qi = getToolByName(self.context, 'portal_quickinstaller')
         pac_installed = qi.isProductInstalled('plone.app.contenttypes')
         pac_installable = qi.isProductInstallable('plone.app.contenttypes')
         return pac_installable and not pac_installed
 
     @property
     def pac_installed(self):
-        qi = getToolByName(self.context, "portal_quickinstaller")
+        qi = getToolByName(self.context, 'portal_quickinstaller')
         return qi.isProductInstalled('plone.app.contenttypes')
 
     @button.buttonAndHandler(_(u'Install'), name='install')
@@ -644,7 +653,7 @@ class PACInstaller(form.Form):
         """ install p.a.c
         """
         url = self.context.absolute_url()
-        qi = getToolByName(self.context, "portal_quickinstaller")
+        qi = getToolByName(self.context, 'portal_quickinstaller')
         fail = qi.installProduct(
             'plone.app.contenttypes',
             profile='plone.app.contenttypes:default',
@@ -663,7 +672,7 @@ class PACInstaller(form.Form):
         self.request.response.redirect(url)
 
     def installTypesWithoutItems(self):
-        catalog = getToolByName(self.context, "portal_catalog")
+        catalog = getToolByName(self.context, 'portal_catalog')
         for types_name in DEFAULT_TYPES:
             if not catalog.unrestrictedSearchResults(portal_type=types_name):
                 installTypeIfNeeded(types_name)

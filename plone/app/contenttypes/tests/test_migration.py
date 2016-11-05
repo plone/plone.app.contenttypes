@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
 from lxml import etree
 from persistent.list import PersistentList
 from plone.app.contenttypes.migration.migration import migrate_documents
@@ -14,10 +13,10 @@ from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TES
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import login
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.uuid.utils import uuidToObject
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.content import Container
@@ -26,6 +25,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.interfaces import IEventAccessor
 from plone.namedfile.file import NamedBlobImage
 from plone.testing.z2 import Browser
+from Products.CMFCore.utils import getToolByName
 from z3c.relationfield import RelationValue
 from z3c.relationfield.index import dump
 from zc.relation.interfaces import ICatalog
@@ -54,13 +54,13 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.request['URL'] = self.portal.absolute_url()
-        self.catalog = getToolByName(self.portal, "portal_catalog")
+        self.catalog = getToolByName(self.portal, 'portal_catalog')
         self.portal.acl_users.userFolderAddUser(
             SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
 
         login(self.portal, SITE_OWNER_NAME)
         self.portal.portal_workflow.setDefaultChain(
-            "simple_publication_workflow")
+            'simple_publication_workflow')
 
     def tearDown(self):
         try:
@@ -210,11 +210,11 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual('Name', dx_event.contact_name)
         self.assertEqual('http://www.plone.org', dx_event.event_url)
         self.assertEqual(('You', 'Me'), dx_event.attendees)
-        self.assertEquals('Event', dx_event.__class__.__name__)
+        self.assertEqual('Event', dx_event.__class__.__name__)
         self.assertEqual(u'<p>T\xfctensuppe</p>', dx_event.text.output)
         self.assertEqual(u'Tütensuppe', dx_event.text.raw)
 
-    @unittest.skip("Skip this test, until old type is mocked")
+    @unittest.skip('Skip this test, until old type is mocked')
     def test_pae_atevent_is_migrated(self):
         """Can we migrate a plone.app.event AT event?"""
         from DateTime import DateTime
@@ -284,7 +284,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(u'<p>T\xfctensuppe</p>', new_event.text.output)
         self.assertEqual(u'Tütensuppe', new_event.text.raw)
 
-    @unittest.skip("Skip this test, until old type is mocked")
+    @unittest.skip('Skip this test, until old type is mocked')
     def test_pae_dxevent_is_migrated(self):
         from datetime import datetime
         from plone.app.contenttypes.migration.migration import migrate_events
@@ -299,7 +299,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             'dx-event',
             start=datetime(2011, 11, 11, 11, 0),
             end=datetime(2011, 11, 11, 12, 0),
-            timezone="Asia/Tbilisi",
+            timezone='Asia/Tbilisi',
             whole_day=False,
         )]
         old_event_acc = IEventAccessor(old_event)
@@ -307,7 +307,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         old_event_acc.contact_email = 'me@geor.ge'
         old_event_acc.contact_phone = '+99512345'
         old_event_acc.event_url = 'http://geor.ge/event'
-        # We need to manually place the value of the "text" field into
+        # We need to manually place the value of the 'text' field into
         # annotation storage
         richtext = RichTextValue(
             raw='Woo, yeah',
@@ -411,7 +411,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             'dx-event',
             start=datetime(2011, 11, 11, 11, 0),
             end=datetime(2011, 11, 11, 12, 0),
-            timezone="GMT",
+            timezone='GMT',
             whole_day=False,
             exclude_from_nav=True,
         )]
@@ -442,7 +442,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         migrator.migrate()
         brains = self.catalog(object_provides=IDocument.__identifier__)
         self.assertEqual(len(brains), 1)
-        self.assertEqual(brains[0].getObject(), self.portal["document"])
+        self.assertEqual(brains[0].getObject(), self.portal['document'])
 
     def test_old_content_is_removed(self):
         from plone.app.contenttypes.migration.migration import DocumentMigrator
@@ -487,7 +487,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         from plone.app.contenttypes.interfaces import ICollection
         self.portal.invokeFactory('Collection', 'collection')
         at_collection = self.portal['collection']
-        at_collection.setText("<p>Whopee</p>")
+        at_collection.setText('<p>Whopee</p>')
         query = [{
             'i': 'Type',
             'o': 'plone.app.querystring.operation.string.is',
@@ -502,7 +502,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_collection is not dx_collection)
         wrapped = ICollectionBehavior(dx_collection)
         self.assertEqual(wrapped.query, query)
-        self.assertEqual(dx_collection.text.output, "<p>Whopee</p>")
+        self.assertEqual(dx_collection.text.output, '<p>Whopee</p>')
         at_collection.setLayout('summary_view')
 
     def test_document_content_is_migrated(self):
@@ -637,7 +637,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.portal.invokeFactory('File', 'file')
         at_file = self.portal['file']
         at_file.setFile('dummydata',
-                        mimetype="text/dummy",
+                        mimetype='text/dummy',
                         filename='dummyfile.txt')
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrator = self.get_migrator(at_file, BlobFileMigrator)
@@ -1429,8 +1429,10 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     def test_migration_atctypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.atctypes'
         factory = getUtility(IVocabularyFactory, name)
-        self.assertIsNotNone(factory,
-                             'Vocabulary %s does not exist' % name)
+        self.assertIsNotNone(
+            factory,
+            'Vocabulary {0} does not exist'.format(name),
+        )
 
         vocabulary = factory(self.portal)
         self.assertEqual((), tuple(vocabulary))
@@ -1467,8 +1469,10 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     def test_migration_extendedtypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.extendedtypes'
         factory = getUtility(IVocabularyFactory, name)
-        self.assertIsNotNone(factory,
-                             'Vocabulary %s does not exist' % name)
+        self.assertIsNotNone(
+            factory,
+            'Vocabulary {0} does not exist'.format(name),
+        )
 
         vocabulary = factory(self.portal)
         self.assertEqual((), tuple(vocabulary))
@@ -1481,7 +1485,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         from archetypes.schemaextender.interfaces import ISchemaExtender
         from Products.Archetypes import atapi
         from Products.ATContentTypes.content.document import ATDocument
-        from zope.component import adapts
+        from zope.component import adapter
         from zope.component import provideAdapter
         from zope.interface import classImplements
         from zope.interface import implementer
@@ -1501,8 +1505,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             """Dummy Field"""
 
         @implementer(ISchemaExtender)
+        @adapter(IDummy)
         class DummySchemaExtender(object):
-            adapts(IDummy)
 
             _fields = [DummyField('dummy')]
 
@@ -1512,7 +1516,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             def getFields(self):
                 return self._fields
 
-        provideAdapter(DummySchemaExtender, name=u"dummy.extender")
+        provideAdapter(DummySchemaExtender, name=u'dummy.extender')
 
         # Clear cache
         if CACHE_ENABLED:
@@ -1532,7 +1536,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.portal.invokeFactory('Document', 'document')
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrate(self.portal, DocumentMigrator)
-        dx_document = self.portal["document"]
+        dx_document = self.portal['document']
         self.assertTrue(IDexterityContent.providedBy(dx_document))
 
     def test_migrate_xx_functions(self):
@@ -1721,8 +1725,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_document.setContentType('chemical/x-gaussian-checkpoint')
 
         # add a portlet
-        portlet = StaticAssignment(u"Sample Portlet",
-                                   "<p>Yay! I get migrated!</p>")
+        portlet = StaticAssignment(u'Sample Portlet',
+                                   '<p>Yay! I get migrated!</p>')
         add_portlet(at_document, portlet, 'static-portlet',
                     u'plone.leftcolumn')
 
@@ -1738,8 +1742,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # add another portlet type that is not available when doing the
         # migration and make sure it got ignored in the migration
-        broken = StaticAssignment(u"Fake broken portlet",
-                                  "<p>Ouch! I'm broken</p>")
+        broken = StaticAssignment(u'Fake broken portlet',
+                                  '<p>Ouch! I am broken</p>')
         # ZODB.broken will add an ___Broken_state__ attribute if a portlet's
         # module is no longer available
         broken.__Broken_state__ = True
@@ -1750,8 +1754,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_folder = self.portal['folder']
 
         # add a portlet to the folder
-        portlet2 = StaticAssignment(u"Sample Folder Portlet",
-                                    "<p>Do I get migrated?</p>")
+        portlet2 = StaticAssignment(u'Sample Folder Portlet',
+                                    '<p>Do I get migrated?</p>')
         add_portlet(at_folder, portlet2, 'static-portlet',
                     u'plone.rightcolumn')
 
@@ -1766,11 +1770,15 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         dx_document = self.portal['document']
 
         # portlet is available
-        self.failUnless('static-portlet' in get_portlets(dx_document,
-                                                         u'plone.leftcolumn'))
+        self.assertIn(
+            'static-portlet',
+            get_portlets(dx_document, u'plone.leftcolumn')
+        )
         # broken portlets don't get copied
-        self.failIf('broken-portlet' in get_portlets(dx_document,
-                                                     u'plone.leftcolumn'))
+        self.assertNotIn(
+            'broken-portlet',
+            get_portlets(dx_document, u'plone.leftcolumn')
+        )
 
         # block portlets settings copied
         right_column = getUtility(IPortletManager, u'plone.rightcolumn')
@@ -1785,8 +1793,10 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertFalse(settings['visible'])
 
         dx_folder = self.portal['folder']
-        self.failUnless('static-portlet' in get_portlets(dx_folder,
-                                                         u'plone.rightcolumn'))
+        self.assertIn(
+            'static-portlet',
+            get_portlets(dx_folder, u'plone.rightcolumn')
+        )
 
     def test_comments_are_migrated(self):
         """add some comments and check that it is correctly migrated.
@@ -1806,7 +1816,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         # add some comments to the document
         at_conversation = IConversation(at_document)
         new_comment = createObject('plone.Comment')
-        new_comment.text = u"Hey Dude! Ä is not ascii."
+        new_comment.text = u'Hey Dude! Ä is not ascii.'
         at_conversation.addComment(new_comment)
         at_comments = at_conversation.getComments()
         at_comment = [i for i in at_comments][0]
@@ -1822,10 +1832,13 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # no more comments on the portal
         portal_conversation = IConversation(self.portal)
-        self.failIf(portal_conversation)
+        self.assertFalse(portal_conversation)
         # comments were migrated
         dx_conversation = IConversation(dx_document)
-        self.failUnless(len(dx_conversation) == 1)
+        self.assertEqual(
+            len(dx_conversation),
+            1
+        )
         dx_comments = dx_conversation.getComments()
         dx_comment = [i for i in dx_comments][0]
         dx_comment_id = getattr(dx_comment, 'comment_id')
@@ -1967,16 +1980,16 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
         # Add default content
         self.browser.open(self.portal_url)
         self.browser.getLink('Page').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My item"
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "item"
+        widget = 'form.widgets.IDublinCore.title'
+        self.browser.getControl(name=widget).value = 'My item'
+        widget = 'form.widgets.IShortName.id'
+        self.browser.getControl(name=widget).value = 'item'
         self.browser.getControl('Save').click()
 
         # Change Document conent type to folderish
@@ -2014,21 +2027,22 @@ class MigrationFunctionalTests(unittest.TestCase):
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.request['URL'] = self.portal.absolute_url()
-        self.catalog = getToolByName(self.portal, "portal_catalog")
+        self.catalog = getToolByName(self.portal, 'portal_catalog')
         self.portal.acl_users.userFolderAddUser(SITE_OWNER_NAME,
                                                 SITE_OWNER_PASSWORD,
                                                 ['Manager'],
                                                 [])
         login(self.portal, SITE_OWNER_NAME)
         self.portal.portal_workflow.setDefaultChain(
-            "simple_publication_workflow")
+            'simple_publication_workflow'
+        )
         self.portal_url = self.portal.absolute_url()
 
         self.browser = Browser(app)
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def tearDown(self):
@@ -2040,7 +2054,7 @@ class MigrationFunctionalTests(unittest.TestCase):
     def test_pac_installer_cancel(self):
         qi = self.portal.portal_quickinstaller
         portal_types = self.portal.portal_types
-        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.browser.open('{0}/@@pac_installer'.format(self.portal_url))
         self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
         self.browser.getControl('Cancel').click()
         self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
@@ -2050,7 +2064,7 @@ class MigrationFunctionalTests(unittest.TestCase):
     def test_pac_installer_without_content(self):
         qi = self.portal.portal_quickinstaller
         portal_types = self.portal.portal_types
-        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.browser.open('{0}/@@pac_installer'.format(self.portal_url))
         self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
         self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
         self.assertIn('proceed to the migration-form?', self.browser.contents)
@@ -2067,7 +2081,7 @@ class MigrationFunctionalTests(unittest.TestCase):
         transaction.commit()
         qi = self.portal.portal_quickinstaller
         portal_types = self.portal.portal_types
-        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.browser.open('{0}/@@pac_installer'.format(self.portal_url))
         self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
         self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
         self.assertIn('proceed to the migration-form?', self.browser.contents)
@@ -2090,14 +2104,14 @@ class MigrationFunctionalTests(unittest.TestCase):
         from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder  # noqa
         from Products.Transience.Transience import TransientObjectContainer
         bidmgr = BrowserIdManager(idmgr_name)
-        tf = MountedTemporaryFolder(tf_name, title="Temporary Folder")
+        tf = MountedTemporaryFolder(tf_name, title='Temporary Folder')
         toc = TransientObjectContainer(
             toc_name,
             title='Temporary Transient Object Container',
             timeout_mins=20)
         session_data_manager = SessionDataManager(
             id=sdm_name,
-            path=tf_name+'/'+toc_name,
+            path=tf_name + '/' + toc_name,
             title='Session Data Manager',
             requestName='TESTOFSESSION')
         self.portal._setObject(idmgr_name, bidmgr)
@@ -2112,24 +2126,41 @@ class MigrationFunctionalTests(unittest.TestCase):
         self.portal.invokeFactory('News Item', 'news2')
         transaction.commit()
         from zExceptions import NotFound
-        self.assertRaises(NotFound, self.browser.open, '%s/@@atct_migrator' % self.portal_url)  # noqa
-        self.browser.open('%s/@@pac_installer' % self.portal_url)
+        self.assertRaises(
+            NotFound,
+            self.browser.open,
+            '{0}/@@atct_migrator'.format(self.portal_url)
+        )
+        self.browser.open('{0}/@@pac_installer'.format(self.portal_url))
         self.browser.getControl('Install').click()
         # check statistics before
-        self.assertIn('You currently have <span class="strong">3</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
-        ct_widget = self.browser.getControl(name='form.widgets.content_types:list')  # noqa
+        self.assertIn(
+            'You currently have <span class="strong">3</span> archetypes '
+            'objects to be migrated.',
+            self.browser.contents,
+        )
+        widget = 'form.widgets.content_types:list'
+        ct_widget = self.browser.getControl(name=widget)
         self.assertEqual(ct_widget.options, ['Document', 'News Item'])
         # all types are auto-selected
         self.assertEqual(ct_widget.value, ['Document', 'News Item'])
-        self.browser.getControl(name='form.widgets.content_types:list').value = ['Document']  # noqa
-        self.assertEqual(self.browser.getControl(name='form.widgets.migrate_references:list').value, ['selected'])  # noqa
+        widget = 'form.widgets.content_types:list'
+        self.browser.getControl(name=widget).value = ['Document']
+        widget = 'form.widgets.migrate_references:list'
+        self.assertEqual(
+            self.browser.getControl(name=widget).value,
+            ['selected']
+        )
         self.browser.getControl(name='form.buttons.migrate').click()
         from plone.app.contenttypes.interfaces import IDocument
         from plone.app.contenttypes.interfaces import INewsItem
         self.assertTrue(IDocument.providedBy(self.portal['doc1']))
         self.assertFalse(INewsItem.providedBy(self.portal['news1']))
-        self.assertIn('Congratulations! You migrated from Archetypes to Dexterity.', self.browser.contents)  # noqa
-        msg = "<td>ATDocument</td>\n      <td>Document</td>\n      <td>1</td>"
+        self.assertIn(
+            'Congratulations! You migrated from Archetypes to Dexterity.',
+            self.browser.contents
+        )
+        msg = '<td>ATDocument</td>\n      <td>Document</td>\n      <td>1</td>'
         self.assertIn(msg, self.browser.contents)
-        msg = "<tr>\n      <td>ATNewsItem</td>\n      <td>2</td>\n    </tr>"
+        msg = '<tr>\n      <td>ATNewsItem</td>\n      <td>2</td>\n    </tr>'
         self.assertIn(msg, self.browser.contents)
