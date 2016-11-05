@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from ZODB.POSException import ConflictError
 from logging import getLogger
 from plone.app.contenttypes.behaviors.richtext import IRichText
-from plone.dexterity.interfaces import IDexterityContent
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IFolder
@@ -13,8 +9,13 @@ from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from plone.app.textfield.value import IRichTextValue
+from plone.dexterity.interfaces import IDexterityContent
 from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from ZODB.POSException import ConflictError
+
 
 logger = getLogger(__name__)
 
@@ -36,7 +37,7 @@ def _unicode_save_string_concat(*args):
 
 
 def SearchableText(obj):
-    text = u""
+    text = u''
     richtext = IRichText(obj, None)
     if richtext:
         textvalue = richtext.text
@@ -52,10 +53,10 @@ def SearchableText(obj):
         [safe_unicode(s) for s in obj.Subject()]
     )
 
-    return u" ".join((
+    return u' '.join((
         safe_unicode(obj.id),
-        safe_unicode(obj.title) or u"",
-        safe_unicode(obj.description) or u"",
+        safe_unicode(obj.title) or u'',
+        safe_unicode(obj.description) or u'',
         safe_unicode(text),
         safe_unicode(subject),
     ))
@@ -76,9 +77,12 @@ def SearchableText_file(obj):
     try:
         primary_field = IPrimaryFieldInfo(obj)
     except TypeError:
-        logger.warn(u'Lookup of PrimaryField failed for %s '
-                    u'If renaming or importing please reindex!' %
-                    obj.absolute_url())
+        logger.warn(
+            u'Lookup of PrimaryField failed for {0} '
+            u'If renaming or importing please reindex!'.format(
+                obj.absolute_url()
+            )
+        )
         return
     if primary_field.value is None:
         return SearchableText(obj)
@@ -100,9 +104,10 @@ def SearchableText_file(obj):
     except (ConflictError, KeyboardInterrupt):
         raise
     except Exception, msg:
-        logger.exception('exception while trying to convert '
-                         'blob contents to "text/plain" for %r. Error: %s' %
-                         (obj, str(msg)))
+        logger.exception(
+            'exception while trying to convert blob contents to "text/plain" '
+            'for {0}. Error: {1}'.format(obj, str(msg)),
+        )
         return SearchableText(obj)
 
 
@@ -126,9 +131,10 @@ def getObjSize_image(obj):
     try:
         primary_field_info = IPrimaryFieldInfo(obj)
     except TypeError:
-        logger.warn(u'Lookup of PrimaryField failed for %s '
-                    u'If renaming or importing please reindex!' %
-                    obj.absolute_url())
+        logger.warn(
+            u'Lookup of PrimaryField failed for {0} If renaming or importing '
+            u'please reindex!'.format(obj.absolute_url())
+        )
         return
     return obj.getObjSize(None, primary_field_info.value.size)
 
@@ -138,16 +144,17 @@ def getObjSize_file(obj):
     try:
         primary_field_info = IPrimaryFieldInfo(obj)
     except TypeError:
-        logger.warn(u'Lookup of PrimaryField failed for %s '
-                    u'If renaming or importing please reindex!' %
-                    obj.absolute_url())
+        logger.warn(
+            u'Lookup of PrimaryField failed for {0} If renaming or importing '
+            u'please reindex!'.format(obj.absolute_url())
+        )
         return
     return obj.getObjSize(None, primary_field_info.value.size)
 
 
 @indexer(IDexterityContent)
 def getIcon(obj):
-    '''
+    """
     geticon redefined in Plone > 5.0
     see https://github.com/plone/Products.CMFPlone/issues/1226
 
@@ -155,7 +162,7 @@ def getIcon(obj):
     now used for showing thumbs in content listings etc.
     when obj is an image or has a lead image
     or has an image field with name 'image': true else false
-    '''
+    """
     if obj.aq_base.image:
         return True
     return False

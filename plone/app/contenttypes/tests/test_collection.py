@@ -7,13 +7,13 @@ from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TES
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from plone.app.testing import login
+from plone.app.testing import logout
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import login
-from plone.app.testing import logout
-from plone.app.testing import setRoles
 from plone.app.textfield.value import RichTextValue
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.testing.z2 import Browser
@@ -21,8 +21,10 @@ from transaction import commit
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
+
 import os.path
 import unittest2 as unittest
+
 
 query = [{
     'i': 'Title',
@@ -183,26 +185,25 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         browser.handleErrors = False
         browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
         portal_url = self.portal.absolute_url()
         browser.open(portal_url)
         browser.getLink(url='http://nohost/plone/++add++Collection').click()
-        browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My collection"
-        browser.getControl(name='form.widgets.IDublinCore.description')\
-            .value = "This is my collection."
-        browser.getControl(name='form.widgets.IRichText.text')\
-            .value = "Lorem Ipsum"
-        browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-collection"
+        widget = 'form.widgets.IDublinCore.title'
+        browser.getControl(name=widget).value = 'My collection'
+        widget = 'form.widgets.IDublinCore.description'
+        browser.getControl(name=widget).value = 'This is my collection.'
+        widget = 'form.widgets.IRichText.text'
+        browser.getControl(name=widget).value = 'Lorem Ipsum'
+        widget = 'form.widgets.IShortName.id'
+        browser.getControl(name=widget).value = 'my-special-collection'
         browser.getControl('Save').click()
         self.assertTrue(browser.url.endswith('my-special-collection/view'))
         self.assertTrue('My collection' in browser.contents)
         self.assertTrue('This is my collection' in browser.contents)
         self.assertTrue('Lorem Ipsum' in browser.contents)
 
-    # @unittest.skip("Needs to be refactored")
     def test_collection_templates(self):
         self.portal.acl_users.userFolderAddUser(
             SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
@@ -210,17 +211,17 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         portal = self.portal
         login(portal, SITE_OWNER_NAME)
         # add an image that will be listed by the collection
-        portal.invokeFactory("Image",
-                             "image",
-                             title="Image example")
+        portal.invokeFactory('Image',
+                             'image',
+                             title='Image example')
 
         image = self.portal['image']
         image.image = dummy_image()
 
         # add a collection, so we can add a query to it
-        portal.invokeFactory("Collection",
-                             "collection",
-                             title="New Collection")
+        portal.invokeFactory('Collection',
+                             'collection',
+                             title='New Collection')
         collection = portal['collection']
         # Search for images
         query = [{
@@ -229,7 +230,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             'v': 'Image',
         }]
         collection.text = RichTextValue(
-            u"Lorem collection ipsum",
+            u'Lorem collection ipsum',
             'text/plain',
             'text/html'
         )
@@ -238,35 +239,35 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         # set the query and publish the collection
         wrapped.query = query
         workflow = portal.portal_workflow
-        workflow.doActionFor(collection, "publish")
+        workflow.doActionFor(collection, 'publish')
         commit()
         logout()
         # open a browser to see if our image is in the results
         browser.handleErrors = False
         url = collection.absolute_url()
         browser.open(url)
-        self.assertTrue("Lorem collection ipsum" in browser.contents)
-        self.assertTrue("Image example" in browser.contents)
+        self.assertIn('Lorem collection ipsum', browser.contents)
+        self.assertIn('Image example', browser.contents)
 
         # open summary_view template
-        browser.open('%s/@@summary_view' % url)
-        self.assertTrue("Lorem collection ipsum" in browser.contents)
-        self.assertTrue("Image example" in browser.contents)
+        browser.open('{0}/@@summary_view'.format(url))
+        self.assertIn('Lorem collection ipsum', browser.contents)
+        self.assertIn('Image example', browser.contents)
 
         # open full_view template
-        browser.open('%s/@@full_view' % url)
-        self.assertTrue("Lorem collection ipsum" in browser.contents)
-        self.assertTrue("Image example" in browser.contents)
+        browser.open('{0}/@@full_view'.format(url))
+        self.assertIn('Lorem collection ipsum', browser.contents)
+        self.assertIn('Image example', browser.contents)
 
         # open tabular_view template
-        browser.open('%s/@@tabular_view' % url)
-        self.assertTrue("Lorem collection ipsum" in browser.contents)
-        self.assertTrue("Image example" in browser.contents)
+        browser.open('{0}/@@tabular_view'.format(url))
+        self.assertIn('Lorem collection ipsum', browser.contents)
+        self.assertIn('Image example', browser.contents)
 
         # open thumbnail_view template
-        browser.open('%s/@@album_view' % url)
-        self.assertTrue("Lorem collection ipsum" in browser.contents)
-        self.assertTrue("Image example" in browser.contents)
+        browser.open('{0}/@@album_view'.format(url))
+        self.assertIn('Lorem collection ipsum', browser.contents)
+        self.assertIn('Image example', browser.contents)
 
     def test_sorting_1(self):
         self.portal.acl_users.userFolderAddUser(
@@ -279,9 +280,9 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             'o': 'plone.app.querystring.operation.string.is',
             'v': 'News Item',
         }]
-        portal.invokeFactory("Collection",
-                             "collection",
-                             title="New Collection",
+        portal.invokeFactory('Collection',
+                             'collection',
+                             title='New Collection',
                              query=query,
                              sort_on='created',
                              sort_reversed=True,
@@ -327,9 +328,9 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             'o': 'plone.app.querystring.operation.string.is',
             'v': ['News Item', 'Document'],
         }]
-        portal.invokeFactory("Collection",
-                             "collection",
-                             title="New Collection",
+        portal.invokeFactory('Collection',
+                             'collection',
+                             title='New Collection',
                              query=query,
                              )
 
@@ -340,7 +341,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         item1.reindexObject()
 
         # item 2
-        portal.invokeFactory(id="testdoc",
+        portal.invokeFactory(id='testdoc',
                              type_name='Document')
         item2 = portal.testdoc
         item2.reindexObject()
@@ -373,10 +374,10 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         # Create two subsites i.e create two folders and mark them with
         # INavigationRoot
         for i in xrange(1, 3):
-            folder_id = 'folder{}'.format(i)
+            folder_id = 'folder{0}'.format(i)
             portal.invokeFactory('Folder',
                                  folder_id,
-                                 title='Folder{}'.format(i))
+                                 title='Folder{0}'.format(i))
             folder = portal[folder_id]
             alsoProvides(folder, INavigationRoot)
         folders = (portal['folder1'], portal['folder2'])
@@ -385,8 +386,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         for f in folders:
             f_id = f.getId()
             f.invokeFactory('Document',
-                            'item_in_{}'.format(f_id),
-                            title='Item In {}'.format(f_id))
+                            'item_in_{0}'.format(f_id),
+                            title='Item In {0}'.format(f_id))
 
         # Add a collection to folder1
         folder1 = folders[0]
@@ -434,5 +435,5 @@ class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
         self.assertTrue('form-widgets-ICollection-query' in html)
         # from plone.app.contentlisting.interfaces import IContentListing
         # self.assertTrue(IContentListing.providedBy(view.accessor()))
-        # self.assertTrue(getattr(accessor(), "actual_result_count"))
+        # self.assertTrue(getattr(accessor(), 'actual_result_count'))
         # self.assertEqual(accessor().actual_result_count, 0)

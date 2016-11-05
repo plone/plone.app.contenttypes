@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
+from plone.memoize.view import memoize
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.MimetypesRegistry.MimeTypeItem import guess_icon_path
-from plone.memoize.view import memoize
 from zope.component import getMultiAdapter
-from zope.interface import Interface
 from zope.interface import implementer
+from zope.interface import Interface
 
 
 class IUtils(Interface):
@@ -30,18 +30,18 @@ class Utils(BrowserView):
             name=u'plone_portal_state'
         )
         portal_url = pstate.portal_url()
-        mtr = getToolByName(context, "mimetypes_registry")
+        mtr = getToolByName(context, 'mimetypes_registry')
         mime = []
         if content_file.contentType:
             mime.append(mtr.lookup(content_file.contentType))
         if content_file.filename:
             mime.append(mtr.lookupExtension(content_file.filename))
-        mime.append(mtr.lookup("application/octet-stream")[0])
+        mime.append(mtr.lookup('application/octet-stream')[0])
         icon_paths = [m.icon_path for m in mime if hasattr(m, 'icon_path')]
         if icon_paths:
             return icon_paths[0]
 
-        return portal_url + "/" + guess_icon_path(mime[0])
+        return portal_url + '/' + guess_icon_path(mime[0])
 
         # function works but is possibly not best implementation. following
         # code might work for files where the mimetype is not directly

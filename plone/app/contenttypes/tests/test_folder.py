@@ -1,24 +1,18 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
+from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.contenttypes.tests.test_image import dummy_image
+from plone.app.testing import setRoles
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
+from plone.app.testing import TEST_USER_ID
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.testing.z2 import Browser
 from zope.component import createObject
 from zope.component import queryUtility
 
-from plone.dexterity.interfaces import IDexterityFTI
-
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
-from plone.app.contenttypes.interfaces import IFolder
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
-from plone.app.contenttypes.tests.test_image import dummy_image
-
-from plone.app.testing import TEST_USER_ID, setRoles
+import unittest2 as unittest
 
 
 class FolderIntegrationTest(unittest.TestCase):
@@ -118,18 +112,18 @@ class FolderFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_add_folder(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Folder').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My folder"
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = ""
-        self.browser.getControl(name='form.widgets.IDublinCore.description')\
-            .value = "This is my folder."
+        widget = 'form.widgets.IDublinCore.title'
+        self.browser.getControl(name=widget).value = 'My folder'
+        widget = 'form.widgets.IShortName.id'
+        self.browser.getControl(name=widget).value = ''
+        widget = 'form.widgets.IDublinCore.description'
+        self.browser.getControl(name=widget).value = 'This is my folder.'
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-folder/view'))
         self.assertTrue('My folder' in self.browser.contents)
@@ -138,10 +132,10 @@ class FolderFunctionalTest(unittest.TestCase):
     def test_add_folder_with_shortname(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Folder').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My folder"
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-folder"
+        widget = 'form.widgets.IDublinCore.title'
+        self.browser.getControl(name=widget).value = 'My folder'
+        widget = 'form.widgets.IShortName.id'
+        self.browser.getControl(name=widget).value = 'my-special-folder'
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-folder/view'))
 
@@ -166,28 +160,28 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_folder_view(self):
         self.browser.open(self.folder_url + '/view')
-        self.assertTrue('My Folder' in self.browser.contents)
-        self.assertTrue('Document 1' in self.browser.contents)
+        self.assertIn('My Folder', self.browser.contents)
+        self.assertIn('Document 1', self.browser.contents)
 
     def test_folder_summary_view(self):
         self.browser.open(self.folder_url + '/summary_view')
-        self.assertTrue('My Folder' in self.browser.contents)
-        self.assertTrue('Document 1' in self.browser.contents)
+        self.assertIn('My Folder', self.browser.contents)
+        self.assertIn('Document 1', self.browser.contents)
 
     def test_folder_full_view(self):
         self.browser.open(self.folder_url + '/full_view')
-        self.assertTrue('My Folder' in self.browser.contents)
-        self.assertTrue('Document 1' in self.browser.contents)
+        self.assertIn('My Folder', self.browser.contents)
+        self.assertIn('Document 1', self.browser.contents)
 
     def test_folder_tabular_view(self):
         self.browser.open(self.folder_url + '/tabular_view')
-        self.assertTrue('My Folder' in self.browser.contents)
-        self.assertTrue('Document 1' in self.browser.contents)
+        self.assertIn('My Folder', self.browser.contents)
+        self.assertIn('Document 1', self.browser.contents)
 
     def test_folder_album_view(self):
         self.folder.invokeFactory('Image', id='image1', title='Image 1')
@@ -196,7 +190,7 @@ class FolderViewFunctionalTest(unittest.TestCase):
         import transaction
         transaction.commit()
         self.browser.open(self.folder_url + '/album_view')
-        self.assertTrue('My Folder' in self.browser.contents)
+        self.assertIn('My Folder', self.browser.contents)
         self.assertIn(
             '<img src="http://nohost/plone/folder/image1/@@images',
             self.browser.contents)

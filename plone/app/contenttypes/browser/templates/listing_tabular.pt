@@ -58,7 +58,7 @@
                     <td tal:condition="python:field == 'Title'">
                       <img class="image-icon"
                          tal:define="getIcon python:item.getURL()+'/@@images/image/icon'"
-                         tal:condition="python:  item.getIcon"                          
+                         tal:condition="python:  item.getIcon"
                          tal:attributes="href item/getURL;
                                          src  string:$getIcon"
                       />

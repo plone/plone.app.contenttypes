@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
-from Acquisition import aq_base, aq_inner
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import INonInstallable
-from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from Products.CMFPlone.utils import _createObjectByType
-from Products.CMFPlone.utils import bodyfinder
+from Acquisition import aq_base
+from Acquisition import aq_inner
 from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
@@ -15,6 +11,11 @@ from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import INonInstallable
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
+from Products.CMFPlone.utils import _createObjectByType
+from Products.CMFPlone.utils import bodyfinder
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -43,7 +44,7 @@ class HiddenProfiles(object):
 
 def _publish(content):
     """Publish the object if it hasn't been published."""
-    portal_workflow = getToolByName(getSite(), "portal_workflow")
+    portal_workflow = getToolByName(getSite(), 'portal_workflow')
     if portal_workflow.getInfoFor(content, 'review_state') != 'published':
         portal_workflow.doActionFor(content, 'publish')
         return True
@@ -65,8 +66,8 @@ def addContentToContainer(container, object, checkConstraints=True):
     """Copy of plone.dexterity.util.addContentToContainer.
     Modified to check the existing Id on the object before paving over it.
     """
-    if not hasattr(aq_base(object), "portal_type"):
-        raise ValueError("object must have its portal_type set")
+    if not hasattr(aq_base(object), 'portal_type'):
+        raise ValueError('object must have its portal_type set')
 
     container = aq_inner(container)
     if checkConstraints:
@@ -74,12 +75,12 @@ def addContentToContainer(container, object, checkConstraints=True):
 
         fti = getUtility(IDexterityFTI, name=object.portal_type)
         if not fti.isConstructionAllowed(container):
-            raise Unauthorized("Cannot create %s" % object.portal_type)
+            raise Unauthorized('Cannot create {0}'.format(object.portal_type))
 
         if container_fti is not None and \
                 not container_fti.allowType(object.portal_type):
             raise ValueError(
-                "Disallowed subobject type: %s" % object.portal_type
+                'Disallowed subobject type: {0}'.format(object.portal_type)
             )
 
     chooser = INameChooser(container)
@@ -113,7 +114,7 @@ def _get_locales_info(portal):
 def _setup_calendar(portal, locale):
     """Set the calendar's date system to reflect the default locale"""
     gregorian_calendar = locale.dates.calendars.get(u'gregorian', None)
-    portal_calendar = getToolByName(portal, "portal_calendar", None)
+    portal_calendar = getToolByName(portal, 'portal_calendar', None)
     if portal_calendar is not None:
         first = 6
         if gregorian_calendar is not None:
@@ -145,10 +146,10 @@ def _setup_visible_ids(portal, target_language, locale):
 
 
 def _setup_constrains(container, allowed_types):
-        behavior = ISelectableConstrainTypes(container)
-        behavior.setConstrainTypesMode(constrains.ENABLED)
-        behavior.setImmediatelyAddableTypes(allowed_types)
-        return True
+    behavior = ISelectableConstrainTypes(container)
+    behavior.setConstrainTypesMode(constrains.ENABLED)
+    behavior.setImmediatelyAddableTypes(allowed_types)
+    return True
 
 
 def create_frontpage(portal, target_language):
@@ -158,11 +159,11 @@ def create_frontpage(portal, target_language):
         title = _translate(
             u'front-title',
             target_language,
-            u"Welcome to Plone"
+            u'Welcome to Plone'
         )
         description = _translate(
             u'front-description', target_language,
-            u"Congratulations! You have successfully installed Plone."
+            u'Congratulations! You have successfully installed Plone.'
         )
         content = createContent(
             'Document', id=frontpage_id,
@@ -297,7 +298,7 @@ def configure_members_folder(portal, target_language):
     if members_id not in portal.keys():
         title = _translate(u'members-title', target_language, u'Users')
         description = _translate(u'members-description', target_language,
-                                 u"Site Users")
+                                 u'Site Users')
         container = createContent(
             'Folder', id=members_id,
             title=title,

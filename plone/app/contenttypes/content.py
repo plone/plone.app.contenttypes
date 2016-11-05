@@ -9,8 +9,8 @@ from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
-from plone.namedfile.file import NamedBlobImage
 from plone.namedfile.file import NamedBlobFile
+from plone.namedfile.file import NamedBlobImage
 from zope.deprecation import deprecation
 from zope.interface import implementer
 from zope.lifecycleevent import modified

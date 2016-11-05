@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from DateTime import DateTime
-from Products.CMFCore.utils import getToolByName
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.migration.topics import migrate_topics
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
 from plone.app.querystring.queryparser import parseFormquery
 from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.dexterity.content import Container
 from plone.dexterity.interfaces import IDexterityFTI
+from Products.CMFCore.utils import getToolByName
 from zope.component import queryUtility
 from zope.interface import implementer
 
@@ -31,22 +30,22 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
         self.request['URL'] = self.portal.absolute_url()
-        self.catalog = getToolByName(self.portal, "portal_catalog")
+        self.catalog = getToolByName(self.portal, 'portal_catalog')
         self.portal.acl_users.userFolderAddUser('admin',
                                                 'secret',
                                                 ['Manager'],
                                                 [])
         login(self.portal, 'admin')
         self.portal.portal_workflow.setDefaultChain(
-            "simple_publication_workflow")
-        self.portal.invokeFactory("Topic", "topic", title="Topic")
-        self.portal.invokeFactory("Folder", "folder", title="Folder")
+            'simple_publication_workflow')
+        self.portal.invokeFactory('Topic', 'topic', title='Topic')
+        self.portal.invokeFactory('Folder', 'folder', title='Folder')
 
     def run_migration(self):
         migrate_topics(self.portal)
 
     def add_criterion(self, index, criterion, value=None):
-        name = '%s_%s' % (index, criterion)
+        name = '{0}_{1}'.format(index, criterion)
         self.portal.topic.addCriterion(index, criterion)
         crit = self.portal.topic.getCriterion(name)
         if value is not None:
@@ -95,7 +94,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
 
     def test_migrate_nested_topic(self):
         self.portal.portal_types['Topic'].filter_content_types = False
-        self.portal.topic.invokeFactory("Topic", "subtopic", title="Sub Topic")
+        self.portal.topic.invokeFactory('Topic', 'subtopic', title='Sub Topic')
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         fti = queryUtility(IDexterityFTI, name='Collection')
         # switch our a custom folderish base-class for collections
@@ -400,7 +399,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         # Collections support multiple paths since
         # plone.app.querystring 1.2.0.
         login(self.portal, 'admin')
-        self.portal.invokeFactory("Folder", "folder2", title="Folder 2")
+        self.portal.invokeFactory('Folder', 'folder2', title='Folder 2')
         crit = self.add_criterion(
             'path',
             'ATPathCriterion',
@@ -427,7 +426,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         # Collections support multiple paths since
         # plone.app.querystring 1.2.0.
         login(self.portal, 'admin')
-        self.portal.invokeFactory("Folder", "folder2", title="Folder 2")
+        self.portal.invokeFactory('Folder', 'folder2', title='Folder 2')
         crit = self.add_criterion(
             'path',
             'ATPathCriterion',

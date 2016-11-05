@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IDocument
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.app.textfield.value import RichTextValue
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.interfaces import IDexterityFTI
@@ -61,12 +60,12 @@ class DocumentIntegrationTest(unittest.TestCase):
     def test_view(self):
         self.portal.invokeFactory('Document', 'document')
         document = self.portal['document']
-        document.title = "My Document"
-        document.description = "This is my document."
+        document.title = 'My Document'
+        document.description = 'This is my document.'
         document.text = RichTextValue(
-            u"Lorem ipsum",
+            u'Lorem ipsum',
             'text/plain',
-            'text/html'
+            'text/html',
         )
         self.request.set('URL', document.absolute_url())
         self.request.set('ACTUAL_URL', document.absolute_url())
@@ -97,20 +96,20 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_add_document(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Document').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
-            .value = "My document"
-        self.browser.getControl(name='form.widgets.IDublinCore.description')\
-            .value = "This is my document."
-        self.browser.getControl(name='form.widgets.IRichText.text')\
-            .value = "Lorem Ipsum"
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-document"
+        widget = 'form.widgets.IDublinCore.title'
+        self.browser.getControl(name=widget).value = 'My document'
+        widget = 'form.widgets.IDublinCore.description'
+        self.browser.getControl(name=widget).value = 'This is my document.'
+        widget = 'form.widgets.IRichText.text'
+        self.browser.getControl(name=widget).value = 'Lorem Ipsum'
+        widget = 'form.widgets.IShortName.id'
+        self.browser.getControl(name=widget).value = 'my-special-document'
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-document/view'))
         self.assertTrue('My document' in self.browser.contents)

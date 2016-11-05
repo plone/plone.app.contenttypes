@@ -9,23 +9,24 @@ the default migration to migrate Topics with Subtopics.
 """
 
 from DateTime import DateTime
-from Products.CMFCore.utils import getToolByName
-from Products.contentmigration.inplace import InplaceCMFFolderMigrator
-from Products.contentmigration.inplace import InplaceCMFItemMigrator
-from Products.contentmigration.walker import CustomQueryWalker
 from plone.app.contenttypes.behaviors.collection import ICollection
 from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.app.querystring.interfaces import IQuerystringRegistryReader
 from plone.registry.interfaces import IRegistry
 from plone.uuid.interfaces import IMutableUUID
+from Products.CMFCore.utils import getToolByName
+from Products.contentmigration.inplace import InplaceCMFFolderMigrator
+from Products.contentmigration.inplace import InplaceCMFItemMigrator
+from Products.contentmigration.walker import CustomQueryWalker
 from zope.component import getUtility
 from zope.component import queryAdapter
 from zope.dottedname.resolve import resolve
 
 import logging
 
+
 logger = logging.getLogger(__name__)
-prefix = "plone.app.querystring"
+prefix = 'plone.app.querystring'
 
 INVALID_OPERATION = 'Invalid operation %s for criterion: %s'
 
@@ -46,30 +47,32 @@ class CriterionConverter(object):
 
     def get_operation(self, value, index, criterion):
         # Get dotted operation method.  This may depend on value.
-        return "%s.operation.%s" % (prefix, self.operator_code)
+        return '{0}.operation.{1}'.format(prefix, self.operator_code)
 
     def get_alt_operation(self, value, index, criterion):
         # Get dotted operation method.  This may depend on value.
-        return "%s.operation.%s" % (prefix, self.alt_operator_code)
+        return '{0}.operation.{1}'.format(prefix, self.alt_operator_code)
 
     def is_index_known(self, registry, index):
         # Is the index registered as criterion index?
-        key = '%s.field.%s' % (prefix, index)
+        key = '{0}.field.{1}'.format(prefix, index)
         try:
             registry.get(key)
         except KeyError:
-            logger.error("Index %s is no criterion index. Registry gives "
-                         "KeyError: %s", index, key)
+            logger.error(
+                'Index {0} is no criterion index. Registry gives '
+                'KeyError: {1}'.format(index, key)
+            )
             return False
         return True
 
     def is_index_enabled(self, registry, index):
         # Is the index enabled as criterion index?
-        key = '%s.field.%s' % (prefix, index)
+        key = '{0}.field.{1}'.format(prefix, index)
         index_data = registry.get(key)
         if index_data.get('enabled'):
             return True
-        logger.warn("Index %s is not enabled as criterion index. ", index)
+        logger.warn('Index %s is not enabled as criterion index. ', index)
         return False
 
     def switch_type_to_portal_type(self, value, criterion):
@@ -96,7 +99,7 @@ class CriterionConverter(object):
                 if Type in portal_types:
                     portal_type = Type
                 else:
-                    logger.warn("Cannot switch Type %r to portal_type.", Type)
+                    logger.warn('Cannot switch Type %r to portal_type.', Type)
                     continue
             new_values.append(portal_type)
         if isinstance(value, dict):
@@ -109,19 +112,22 @@ class CriterionConverter(object):
         # Check that the operation exists.
         op_info = registry.get(operation)
         if op_info is None:
-            logger.error("Operation %r is not defined.", operation)
+            logger.error('Operation %r is not defined.', operation)
             return False
         op_function_name = op_info.get('operation')
         try:
             resolve(op_function_name)
         except ImportError:
-            logger.error("ImportError for operation %r: %s",
-                         operation, op_function_name)
+            logger.error(
+                'ImportError for operation %r: %s',
+                operation,
+                op_function_name,
+            )
             return False
         return True
 
     def get_valid_operation(self, registry, index, value, criterion):
-        key = '%s.field.%s.operations' % (prefix, index)
+        key = '{0}.field.{1}.operations'.format(prefix, index)
         operations = registry.get(key)
         operation = self.get_operation(value, index, criterion)
         if operation not in operations:
@@ -141,7 +147,7 @@ class CriterionConverter(object):
     def __call__(self, formquery, criterion, registry):
         criteria = criterion.getCriteriaItems()
         if not criteria:
-            logger.warn("Ignoring empty criterion %s.", criterion)
+            logger.warn('Ignoring empty criterion %s.', criterion)
             return
         for index, value in criteria:
             # Check if the index is known and enabled as criterion index.
@@ -150,7 +156,7 @@ class CriterionConverter(object):
                 index = 'portal_type'
                 value = self.switch_type_to_portal_type(value, criterion)
             if not self.is_index_known(registry, index):
-                logger.info("Index %s not known in registry.", index)
+                logger.info('Index %s not known in registry.', index)
                 continue
             self.is_index_enabled(registry, index)
             # TODO: what do we do when this is False?  Raise an
@@ -201,7 +207,7 @@ class ATDateCriteriaConverter(CriterionConverter):
 
     def __call__(self, formquery, criterion, registry):  # noqa
         if criterion.value is None:
-            logger.warn("Ignoring empty criterion %s.", criterion)
+            logger.warn('Ignoring empty criterion %s.', criterion)
             return
         field = criterion.Field()
         value = criterion.Value()
@@ -218,7 +224,7 @@ class ATDateCriteriaConverter(CriterionConverter):
         date = DateTime() + value
 
         # Get the possible operation methods.
-        key = '%s.field.%s.operations' % (prefix, field)
+        key = '{0}.field.{1}.operations'.format(prefix, field)
         operations = registry.get(key)
 
         def add_row(operation, value=None):
@@ -238,31 +244,31 @@ class ATDateCriteriaConverter(CriterionConverter):
         operation = criterion.getOperation()
         if operation == 'within_day':
             if date.isCurrentDay():
-                new_operation = "%s.operation.date.today" % prefix
+                new_operation = '{0}.operation.date.today'.format(prefix)
                 add_row(new_operation)
                 return
             date_range = (date.earliestTime(), date.latestTime())
-            new_operation = "%s.operation.date.between" % prefix
+            new_operation = '{0}.operation.date.between'.format(prefix)
             add_row(new_operation, date_range)
             return
         if operation == 'more':
             if value != 0:
-                new_operation = ("{0}.operation.date."
-                                 "largerThanRelativeDate".format(prefix))
+                new_operation = ('{0}.operation.date.'
+                                 'largerThanRelativeDate'.format(prefix))
                 add_row(new_operation, value)
                 return
             else:
-                new_operation = "{0}.operation.date.afterToday".format(prefix)
+                new_operation = '{0}.operation.date.afterToday'.format(prefix)
                 add_row(new_operation)
                 return
         if operation == 'less':
             if value != 0:
-                new_operation = ("{0}.operation.date."
-                                 "lessThanRelativeDate".format(prefix))
+                new_operation = ('{0}.operation.date.'
+                                 'lessThanRelativeDate'.format(prefix))
                 add_row(new_operation, value)
                 return
             else:
-                new_operation = "{0}.operation.date.beforeToday".format(prefix)
+                new_operation = '{0}.operation.date.beforeToday'.format(prefix)
                 add_row(new_operation)
                 return
 
@@ -292,9 +298,9 @@ class ATSelectionCriterionConverter(CriterionConverter):
                 suffix = 'all'
             else:
                 suffix = 'any'
-            return "%s.operation.selection.%s" % (prefix, suffix)
+            return '{0}.operation.selection.{1}'.format(prefix, suffix)
         else:
-            return "%s.operation.%s" % (prefix, self.operator_code)
+            return '{0}.operation.{1}'.format(prefix, self.operator_code)
 
     def get_query_value(self, value, index, criterion):
         values = value['query']
@@ -359,10 +365,13 @@ class ATBooleanCriterionConverter(CriterionConverter):
         elif False in value:
             code = 'isFalse'
         else:
-            logger.warn("Unknown value for boolean criterion. "
-                        "Falling back to True. %r", value)
+            logger.warn(
+                'Unknown value for boolean criterion. '
+                'Falling back to True. %r',
+                value,
+            )
             code = 'isTrue'
-        return "%s.operation.boolean.%s" % (prefix, code)
+        return '{0}.operation.boolean.{1}'.format(prefix, code)
 
     def __call__(self, formquery, criterion, registry):
         criteria = criterion.getCriteriaItems()
@@ -417,8 +426,11 @@ class ATRelativePathCriterionConverter(CriterionConverter):
 
     def get_query_value(self, value, index, criterion):
         if not criterion.Recurse():
-            logger.warn("Cannot handle non-recursive path search. "
-                        "Allowing recursive search. %r", value)
+            logger.warn(
+                'Cannot handle non-recursive path search. '
+                'Allowing recursive search. %r',
+                value,
+            )
         return criterion.getRelativePath()
 
 
@@ -436,17 +448,19 @@ class ATSimpleIntCriterionConverter(CriterionConverter):
         elif direction == 'max':
             code = 'lessThan'
         elif direction == 'min:max':
-            logger.warn("min:max direction not supported for integers. %r",
-                        value)
+            logger.warn(
+                'min:max direction not supported for integers. %r',
+                value,
+            )
             return
         else:
-            logger.warn("Unknown direction for integers. %r", value)
+            logger.warn('Unknown direction for integers. %r', value)
             return
-        return "{0}.operation.int.{1}".format(prefix, code)
+        return '{0}.operation.int.{1}'.format(prefix, code)
 
     def get_query_value(self, value, index, criterion):
         if isinstance(value['query'], tuple):
-            logger.warn("More than one integer is not supported. %r", value)
+            logger.warn('More than one integer is not supported. %r', value)
             return
         return value['query']
 
@@ -475,12 +489,15 @@ class TopicMigrator(InplaceCMFItemMigrator):
         self._collection_sort_on = None
         self._collection_query = None
         path = '/'.join(self.old.getPhysicalPath())
-        logger.info("Migrating %s at %s", self.src_portal_type, path)
+        logger.info('Migrating %s at %s', self.src_portal_type, path)
         # Get the old criteria.
         # See also Products.ATContentTypes.content.topic.buildQuery
         criteria = self.old.listCriteria()
-        logger.debug("Old criteria for %s: %r", path,
-                     [(crit, crit.getCriteriaItems()) for crit in criteria])
+        logger.debug(
+            'Old criteria for %s: %r',
+            path,
+            [(crit, crit.getCriteriaItems()) for crit in criteria],
+        )
         formquery = []
         for criterion in criteria:
             type_ = criterion.__class__.__name__
@@ -488,19 +505,21 @@ class TopicMigrator(InplaceCMFItemMigrator):
                 # Sort order and direction are now stored in the Collection.
                 self._collection_sort_reversed = criterion.getReversed()
                 self._collection_sort_on = criterion.Field()
-                logger.debug("Sort on %r, reverse: %s.",
-                             self._collection_sort_on,
-                             self._collection_sort_reversed)
+                logger.debug(
+                    'Sort on %r, reverse: %s.',
+                    self._collection_sort_on,
+                    self._collection_sort_reversed,
+                )
                 continue
 
             converter = CONVERTERS.get(type_)
             if converter is None:
-                msg = 'Unsupported criterion %s' % type_
+                msg = 'Unsupported criterion {0}'.format(type_)
                 logger.error(msg)
                 raise ValueError(msg)
             converter(formquery, criterion, self.registry)
 
-        logger.debug("New query for %s: %r", path, formquery)
+        logger.debug('New query for %s: %r', path, formquery)
         self._collection_query = formquery
 
     def migrate_criteria(self):
@@ -578,11 +597,11 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator):
         self._collection_sort_on = None
         self._collection_query = None
         path = '/'.join(self.old.getPhysicalPath())
-        logger.info("Migrating %s at %s", self.src_portal_type, path)
+        logger.info('Migrating %s at %s', self.src_portal_type, path)
         # Get the old criteria.
         # See also Products.ATContentTypes.content.topic.buildQuery
         criteria = self.old.listCriteria()
-        logger.debug("Old criteria for %s: %r", path,
+        logger.debug('Old criteria for %s: %r', path,
                      [(crit, crit.getCriteriaItems()) for crit in criteria])
         formquery = []
         for criterion in criteria:
@@ -591,19 +610,21 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator):
                 # Sort order and direction are now stored in the Collection.
                 self._collection_sort_reversed = criterion.getReversed()
                 self._collection_sort_on = criterion.Field()
-                logger.debug("Sort on %r, reverse: %s.",
-                             self._collection_sort_on,
-                             self._collection_sort_reversed)
+                logger.debug(
+                    'Sort on %r, reverse: %s.',
+                    self._collection_sort_on,
+                    self._collection_sort_reversed,
+                )
                 continue
 
             converter = CONVERTERS.get(type_)
             if converter is None:
-                msg = 'Unsupported criterion %s' % type_
+                msg = 'Unsupported criterion {0}'.format(type_)
                 logger.error(msg)
                 raise ValueError(msg)
             converter(formquery, criterion, self.registry)
 
-        logger.debug("New query for %s: %r", path, formquery)
+        logger.debug('New query for %s: %r', path, formquery)
         self._collection_query = formquery
 
     def migrate_criteria(self):
@@ -674,9 +695,9 @@ def migrate_topics(portal):
     registry = reader.parseRegistry()
     # select migrator based on the base-class of collections
     fti = portal.portal_types['Collection']
-    if fti.content_meta_type == "Dexterity Item":
+    if fti.content_meta_type == 'Dexterity Item':
         migrator = TopicMigrator
-    elif fti.content_meta_type == "Dexterity Container":
+    elif fti.content_meta_type == 'Dexterity Container':
         migrator = FolderishTopicMigrator
     walker = CustomQueryWalker(portal, migrator)(registry=registry)
     return walker

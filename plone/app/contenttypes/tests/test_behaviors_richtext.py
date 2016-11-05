@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
-
-from Products.CMFCore.utils import getToolByName
-from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.contenttypes.behaviors.richtext import IRichText
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
+from plone.app.testing import TEST_USER_ID
 from plone.dexterity.fti import DexterityFTI
+from plone.testing.z2 import Browser
+from Products.CMFCore.utils import getToolByName
 
-from plone.app.contenttypes.behaviors.richtext import IRichText
-from plone.app.contenttypes.testing import \
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+import unittest2 as unittest
 
 
 class RichTextBase:
@@ -37,7 +36,7 @@ class RichTextBehaviorFunctionalTest(RichTextBase, unittest.TestCase):
     def setUp(self):
         app = self.layer['app']
         self.portal = self.layer['portal']
-        self.wf = getToolByName(self.portal, "portal_workflow")
+        self.wf = getToolByName(self.portal, 'portal_workflow')
         self.portal.acl_users._doAddUser('user_std', 'secret', ['Member'], [])
         self.portal_url = self.portal.absolute_url()
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
@@ -51,7 +50,7 @@ class RichTextBehaviorFunctionalTest(RichTextBase, unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_richtext_in_edit_form(self):

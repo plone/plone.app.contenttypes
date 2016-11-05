@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-from plone.app.testing import PloneSandboxLayer, IntegrationTesting
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_FIXTURE
-)
-from plone.portlets.interfaces import (
-    ILocalPortletAssignmentManager,
-    IPortletManager
-)
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
+from plone.app.testing import IntegrationTesting
+from plone.app.testing import PloneSandboxLayer
+from plone.portlets.interfaces import ILocalPortletAssignmentManager
+from plone.portlets.interfaces import IPortletManager
 from Products.CMFCore.utils import getToolByName
-from Products.PythonScripts.PythonScript import PythonScript
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from zope.component import getUtility, getMultiAdapter
+from Products.PythonScripts.PythonScript import PythonScript
+from zope.component import getMultiAdapter
+from zope.component import getUtility
 
-import unittest2 as unittest
 import pkg_resources
+import unittest2 as unittest
+
 
 try:
     pkg_resources.get_distribution('plone.app.dexterity.behaviors.constraints')
@@ -33,7 +32,7 @@ class PloneAppContenttypesContent(PloneSandboxLayer):
 PLONE_APP_CONTENTTYPES_CONTENT_FIXTURE = PloneAppContenttypesContent()
 PLONE_APP_CONTENTTYPES_CONTENT_INTEGRATION_TESTING = \
     IntegrationTesting(bases=(PLONE_APP_CONTENTTYPES_CONTENT_FIXTURE,),
-                       name="PloneAppContenttypesContent:Integration")
+                       name='PloneAppContenttypesContent:Integration')
 
 # TODO Test for content translation.
 
@@ -58,14 +57,6 @@ class ContentProfileTestCase(unittest.TestCase):
         # Has the object been set on the container as the default page?
         self.assertEqual(self.portal.default_page, 'front-page')
 
-# XXX: Todo
-#    def test_frontpage_is_in_presentation_mode(self):
-#        # Has presentation mode been set?
-#
-#        # NOTE Presentation mode is built into ATDocument and things like
-#        #      plone.app.layout simply take advantage of its capabilities.
-#        self.fail("The implementation for presentation mode is missing.")
-
     def test_frontpage_is_published(self):
         # Has the content object been published?
         front_page = self.portal['front-page']
@@ -83,7 +74,7 @@ class ContentProfileTestCase(unittest.TestCase):
         obj = self.portal['Members']
         self.assertEqual(obj.portal_type, 'Folder')
 
-    @unittest.skip("Replaced by new members-search-form")
+    @unittest.skip('Replaced by new members-search-form')
     def test_Members__index_html(self):
         # Was the index_html script created?
         obj = self.portal['Members']['index_html']
@@ -132,7 +123,7 @@ class ContentProfileTestCase(unittest.TestCase):
 
     @unittest.skipUnless(
         DEXTERITY_WITH_CONSTRAINS,
-        "Dexterity constraints are not present")
+        'Dexterity constraints are not present')
     def test_events_allowable_types(self):
         events = self.portal['events']
         behavior = ISelectableConstrainTypes(events)
@@ -163,12 +154,12 @@ class ContentProfileTestCase(unittest.TestCase):
 
     @unittest.skipUnless(
         DEXTERITY_WITH_CONSTRAINS,
-        "Dexterity constraints are not present")
+        'Dexterity constraints are not present')
     def test_news_allowable_types(self):
-            news = self.portal['news']
-            behavior = ISelectableConstrainTypes(news)
-            types = ['News Item']
-            self.assertEqual(types, behavior.getImmediatelyAddableTypes())
+        news = self.portal['news']
+        behavior = ISelectableConstrainTypes(news)
+        types = ['News Item']
+        self.assertEqual(types, behavior.getImmediatelyAddableTypes())
 
     def test_news_aggregator_settings(self):
         # Has the news aggregator (Collection) been set up?

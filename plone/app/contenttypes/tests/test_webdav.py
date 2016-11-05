@@ -29,10 +29,10 @@ class WebDAVIntegrationTest(unittest.TestCase):
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.portal.invokeFactory('Image', 'image')
         self.image = self.portal['image']
-        self.image.title = "My Image"
+        self.image.title = 'My Image'
         self.portal.invokeFactory('File', 'file')
         self.file = self.portal['file']
-        self.file.title = "My file"
+        self.file.title = 'My file'
 
     def test_image_put(self):
         """Upload an image through webdav."""

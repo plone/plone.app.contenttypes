@@ -18,6 +18,3 @@ def patched_insertForwardIndexEntry(self, entry, documentId):
     if old_docid is _marker:
         self._index[entry] = documentId
         self._length.change(1)
-    # elif old_docid != documentId:
-    #     logger.error("A different document with value '%s' already "
-    #         "exists in the index.'" % entry)

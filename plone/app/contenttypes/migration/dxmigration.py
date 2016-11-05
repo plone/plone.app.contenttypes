@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
-from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
-from Products.CMFCore.utils import getToolByName
-from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
-from Products.contentmigration.basemigrator.walker import CatalogWalker
 from plone.app.contenttypes.interfaces import IEvent
 from plone.app.contenttypes.migration.field_migrators import datetime_fixer
 from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.event.utils import default_timezone
+from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
+from Products.CMFCore.utils import getToolByName
+from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
+from Products.contentmigration.basemigrator.walker import CatalogWalker
 from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
-from zope.component.hooks import getSite
 from zope.component import queryUtility
+from zope.component.hooks import getSite
 
 import importlib
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +171,7 @@ def migrate_base_class_to_new_class(obj,
 
 
 def list_of_objects_with_changed_base_class(context):
-    catalog = getToolByName(context, "portal_catalog")
+    catalog = getToolByName(context, 'portal_catalog')
     query = {'object_provides': IDexterityContent.__identifier__}
     if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
         query['Language'] = 'all'
@@ -178,7 +179,7 @@ def list_of_objects_with_changed_base_class(context):
         try:
             obj = brain.getObject()
         except NotFound:
-            logger.warn("Object {0} not found".format(brain.getPath()))
+            logger.warn('Object {0} not found'.format(brain.getPath()))
             continue
         if get_portal_type_name_string(obj) != get_old_class_name_string(obj):
             yield obj

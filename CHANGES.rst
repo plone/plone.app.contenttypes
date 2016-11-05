@@ -18,6 +18,8 @@ Bug fixes:
   Fixes `issue 375 <https://github.com/plone/plone.app.contenttypes/issues/375>`_.
   [maurits]
 
+- Update code to follow Plone styleguide.
+  [gforcada]
 
 1.2.18 (2016-09-14)
 -------------------

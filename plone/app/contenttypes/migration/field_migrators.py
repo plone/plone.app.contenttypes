@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from Products.CMFPlone.utils import safe_unicode, safe_hasattr
+from plone.app.textfield.value import RichTextValue
 from plone.event.utils import default_timezone
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
-from plone.app.textfield.value import RichTextValue
+from Products.CMFPlone.utils import safe_hasattr
+from Products.CMFPlone.utils import safe_unicode
+
 import logging
 import pytz
+
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +51,7 @@ def migrate_richtextfield(src_obj, dst_obj, src_fieldname, dst_fieldname):
             raw_text = safe_unicode(at_value.raw)
 
     if raw_text.strip() == '':
-            return
+        return
     richtext = RichTextValue(raw=raw_text, mimeType=mime_type,
                              outputMimeType='text/x-html-safe')
     setattr(dst_obj, dst_fieldname, richtext)
@@ -83,13 +86,13 @@ def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     # is this postulate correct ?
     # should this field not be handle by itself because it will appear in the
     # old field list ?
-    caption_field = src_obj.getField('%sCaption' % src_fieldname, None)
+    caption_field = src_obj.getField('{0}Caption'.format(src_fieldname), None)
     if caption_field:
         setattr(dst_obj,
-                ('%s_caption' % dst_fieldname),
+                ('{0}_caption'.format(dst_fieldname)),
                 safe_unicode(caption_field.get(src_obj)))
 
-    logger.info("Migrating image %s" % filename)
+    logger.info('Migrating image {0}'.format(filename))
 
 
 def migrate_blobimagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
@@ -112,13 +115,14 @@ def migrate_blobimagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     setattr(dst_obj, dst_fieldname, namedblobimage)
 
     # handle a possible image caption field
-    old_image_caption = getattr(src_obj, '%s_caption' % src_fieldname, None)
+    field = '{0}_caption'.format(src_fieldname)
+    old_image_caption = getattr(src_obj, field, None)
     if old_image_caption:
         setattr(dst_obj,
-                ('%s_caption' % dst_fieldname),
+                ('{0}_caption'.format(dst_fieldname)),
                 safe_unicode(old_image_caption))
 
-    logger.info("Migrating image %s" % filename)
+    logger.info('Migrating image {0}'.format(filename))
 
 
 def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
@@ -138,7 +142,7 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
         data=old_file_data,
         filename=filename)
     setattr(dst_obj, dst_fieldname, namedblobfile)
-    logger.info("Migrating file %s" % filename)
+    logger.info('Migrating file {0}'.format(filename))
 
 
 def migrate_datetimefield(src_obj, dst_obj, src_fieldname, dst_fieldname):

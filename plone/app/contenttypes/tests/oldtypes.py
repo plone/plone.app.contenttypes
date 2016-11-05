@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from plone.dexterity.fti import DexterityFTI
-from plone.dexterity.content import Item
 from plone.app.contenttypes.interfaces import IEvent
+from plone.dexterity.content import Item
+from plone.dexterity.fti import DexterityFTI
 from zope.interface import implementer
 
 
@@ -14,30 +14,30 @@ class Event(Item):
 def create1_0EventType(portal):
     """Recreate the old event type used in the 1.0 branch"""
     fti = DexterityFTI('Event')
-    fti.title = "Event"
-    fti.description = "Events can be shown in calendars."
-    fti.factory = "Event"
-    fti.add_view_expr = "string:${folder_url}/++add++Event"
-    fti.link_target = ""
-    fti.link_target = ""
-    fti.immediate_view = "view"
+    fti.title = 'Event'
+    fti.description = 'Events can be shown in calendars.'
+    fti.factory = 'Event'
+    fti.add_view_expr = 'string:${folder_url}/++add++Event'
+    fti.link_target = ''
+    fti.link_target = ''
+    fti.immediate_view = 'view'
     fti.global_allow = True
     fti.filter_content_types = True
     fti.allowed_content_types = []
     fti.allow_discussion = False
-    fti.default_view = "event_view"
-    fti.view_methods = ("event_view", )
+    fti.default_view = 'event_view'
+    fti.view_methods = ('event_view', )
     fti.default_view_fallback = False
-    fti.add_permission = "plone.app.contenttypes.addEvent"
-    fti.klass = "plone.app.contenttypes.tests.oldtypes.Event"
+    fti.add_permission = 'plone.app.contenttypes.addEvent'
+    fti.klass = 'plone.app.contenttypes.tests.oldtypes.Event'
     fti.behaviors = (
-        "plone.app.contenttypes.interfaces.IEvent",
-        "plone.app.dexterity.behaviors.metadata.IDublinCore",
-        "plone.app.content.interfaces.INameFromTitle",
-        "plone.app.dexterity.behaviors.discussion.IAllowDiscussion",
-        "plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation",
-        "plone.app.relationfield.behavior.IRelatedItems",
-        "plone.app.versioningbehavior.behaviors.IVersionable",
+        'plone.app.contenttypes.interfaces.IEvent',
+        'plone.app.dexterity.behaviors.metadata.IDublinCore',
+        'plone.app.content.interfaces.INameFromTitle',
+        'plone.app.dexterity.behaviors.discussion.IAllowDiscussion',
+        'plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation',
+        'plone.app.relationfield.behavior.IRelatedItems',
+        'plone.app.versioningbehavior.behaviors.IVersionable',
     )
     fti.schema = None
     fti.model_source = """

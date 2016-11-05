@@ -92,5 +92,5 @@ class CollectionView(FolderView):
     def no_items_message(self):
         return _(
             'description_no_results_found',
-            default=u"No results were found."
+            default=u'No results were found.'
         )

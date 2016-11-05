@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.testing import TEST_USER_ID, setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.namedfile.file import NamedFile
@@ -15,9 +14,10 @@ from plone.testing.z2 import Browser
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
+
 import os.path
-import unittest2 as unittest
 import transaction
+import unittest2 as unittest
 
 
 class FileIntegrationTest(unittest.TestCase):
@@ -63,8 +63,8 @@ class FileIntegrationTest(unittest.TestCase):
     def test_view(self):
         self.portal.invokeFactory('File', 'file')
         file1 = self.portal['file']
-        file1.title = "My File"
-        file1.description = "This is my file."
+        file1.title = 'My File'
+        file1.description = 'This is my file.'
         self.request.set('URL', file1.absolute_url())
         self.request.set('ACTUAL_URL', file1.absolute_url())
         alsoProvides(self.request, IPloneFormLayer)
@@ -120,17 +120,17 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
 
     def test_add_file(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My file"
-        self.browser.getControl(name='form.widgets.description')\
-            .value = "This is my file."
-        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My file'
+        widget = 'form.widgets.description'
+        self.browser.getControl(name=widget).value = 'This is my file.'
+        file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         file_ctl = self.browser.getControl(name='form.widgets.file')
         file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
@@ -141,11 +141,11 @@ class FileFunctionalTest(unittest.TestCase):
     def test_shortname_file(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My file"
-        self.browser.getControl(name='form.widgets.IShortName.id')\
-            .value = "my-special-file"
-        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My file'
+        widget = 'form.widgets.IShortName.id'
+        self.browser.getControl(name=widget).value = 'my-special-file'
+        file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         file_ctl = self.browser.getControl(name='form.widgets.file')
         file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
@@ -155,11 +155,11 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
 
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My file"
-        self.browser.getControl(name='form.widgets.description')\
-            .value = "This is my pdf file."
-        file_path = os.path.join(os.path.dirname(__file__), "file.pdf")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My file'
+        widget = 'form.widgets.description'
+        self.browser.getControl(name=widget).value = 'This is my pdf file.'
+        file_path = os.path.join(os.path.dirname(__file__), 'file.pdf')
         file_ctl = self.browser.getControl(name='form.widgets.file')
         file_ctl.add_file(open(file_path), 'application/pdf', 'file.pdf')
         self.browser.getControl('Save').click()
@@ -174,11 +174,11 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
 
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My file"
-        self.browser.getControl(name='form.widgets.description')\
-            .value = "This is my doc file."
-        file_path = os.path.join(os.path.dirname(__file__), "file.doc")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My file'
+        widget = 'form.widgets.description'
+        self.browser.getControl(name=widget).value = 'This is my doc file.'
+        file_path = os.path.join(os.path.dirname(__file__), 'file.doc')
         file_ctl = self.browser.getControl(name='form.widgets.file')
         file_ctl.add_file(open(file_path), 'application/msword', 'file.doc')
         self.browser.getControl('Save').click()
@@ -189,11 +189,11 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.open(self.portal_url)
         self.browser.getLink('File').click()
 
-        self.browser.getControl(name='form.widgets.title')\
-            .value = "My file"
-        self.browser.getControl(name='form.widgets.description')\
-            .value = "This is my odt file."
-        file_path = os.path.join(os.path.dirname(__file__), "file.odt")
+        widget = 'form.widgets.title'
+        self.browser.getControl(name=widget).value = 'My file'
+        widget = 'form.widgets.description'
+        self.browser.getControl(name=widget).value = 'This is my odt file.'
+        file_path = os.path.join(os.path.dirname(__file__), 'file.odt')
         file_ctl = self.browser.getControl(name='form.widgets.file')
         file_ctl.add_file(open(file_path),
                           'application/vnd.oasis.opendocument.text',

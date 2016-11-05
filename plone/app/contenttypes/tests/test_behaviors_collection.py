@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
+from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.testing import setRoles
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
+from plone.app.testing import TEST_USER_ID
+from plone.dexterity.fti import DexterityFTI
+from plone.testing.z2 import Browser
+from zope.interface import alsoProvides
+
 import json
 import unittest2 as unittest
 
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing.z2 import Browser
-
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
-)
-
-from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
-from zope.interface import alsoProvides
-
-from plone.dexterity.fti import DexterityFTI
-
-from plone.app.testing import TEST_USER_ID, setRoles
 
 query = [{
     'i': 'Title',
@@ -68,7 +64,7 @@ class CollectionBehaviorFunctionalTest(unittest.TestCase):
         browser.handleErrors = False
         browser.addHeader(
             'Authorization',
-            'Basic %s:%s' % (SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
+            'Basic {0}:{1}'.format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD,)
         )
         return browser
 
