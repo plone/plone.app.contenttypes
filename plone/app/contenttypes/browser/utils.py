@@ -37,7 +37,8 @@ class Utils(BrowserView):
         if content_file.filename:
             mime.append(mtr.lookupExtension(content_file.filename))
         mime.append(mtr.lookup('application/octet-stream')[0])
-        icon_paths = [m.icon_path for m in mime if hasattr(m, 'icon_path')]
+        icon_paths = ['++resource++mimetype.icons/' + m.icon_path
+                      for m in mime if hasattr(m, 'icon_path')]
         if icon_paths:
             return icon_paths[0]
 
