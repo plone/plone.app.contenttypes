@@ -14,6 +14,11 @@ New features:
 
 Bug fixes:
 
+- Fix Mimetype icon path. With the removal of the skins folder in
+  https://github.com/plone/Products.MimetypesRegistry/pull/8/commits/61acf8327e5c844bff9e5c5676170aaf0ee2c323
+  we need the full resourcepath now
+  [agitator]
+
 - Show message for editors when viewing Link.
   Fixes `issue 375 <https://github.com/plone/plone.app.contenttypes/issues/375>`_.
   [maurits]
