@@ -26,6 +26,11 @@ Bug fixes:
 - Update code to follow Plone styleguide.
   [gforcada]
 
+- Update File.xml view action url_expr to append /view
+  Fixes 'issue 378' <https://github.com/plone/plone.app.contenttypes/issues/378>`_.
+  [lbrannon]
+
+
 1.2.18 (2016-09-14)
 -------------------
 
