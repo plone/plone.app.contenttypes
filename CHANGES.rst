@@ -4,14 +4,6 @@ Changelog
 1.2.19 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fix SearchableText indexer, using textvalue.mimeType
