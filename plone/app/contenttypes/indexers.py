@@ -46,7 +46,7 @@ def SearchableText(obj):
             text = transforms.convertTo(
                 'text/plain',
                 safe_unicode(textvalue.output).encode('utf8'),
-                mimetype=textvalue.outputMimeType,
+                mimetype=textvalue.mimeType,
             ).getData().strip()
 
     subject = u' '.join(
