@@ -2,10 +2,10 @@
   <div class="linkModal">
 
     <div class="linkTypes pat-autotoc autotabs"
-         data-pat-autotoc="section:fieldset;levels:legend;IDPrefix:link-autotoc-;classSectionName:linkType">
+         data-pat-autotoc="section:span.linkType;levels:span.linkLabel;">
 
-      <fieldset class="linkType internal" data-linkType="internal">
-        <legend id="tinylink-internal">Internal</legend>
+      <span class="linkType internal" data-linkType="internal">
+        <span class="linkLabel" i18n:translate="label_internal_url">Internal</span>
         <div>
           <div class="form-group main">
             <!-- this gives the name to the "linkType" -->
@@ -15,20 +15,20 @@
                                     name string:${view/name}.internal" />
           </div>
         </div>
-      </fieldset>
+      </span>
 
-      <fieldset class="linkType external" data-linkType="external">
-        <legend id="tinylink-external" i18n:translate="label_external_url">External</legend>
+      <span class="linkType external" data-linkType="external">
+        <span class="linkLabel" i18n:translate="label_external_url">External</span>
         <div class="form-group main">
           <label for="external" i18n:translate="help_external_url">External URL (can be relative within this site or absolute if it starts with http:// or https://)</label>
           <input type="text" name="external"
                  tal:attributes="name string:${view/name}.external;
                                  value view/value/external | nothing" />
         </div>
-      </fieldset>
+      </span>
 
-      <fieldset class="linkType email" data-linkType="email">
-        <legend id="tinylink-email" i18n:translate="label_email_url">Email</legend>
+      <span class="linkType email" data-linkType="email">
+        <span class="linkLabel" i18n:translate="label_email_url">Email</span>
         <div class="form-inline">
           <div class="form-group main">
             <label i18n:translate="help_email_url">Email Address</label>
@@ -43,7 +43,7 @@
                                    value view/value/email_subject | nothing" />
           </div>
         </div>
-      </fieldset>
+      </span>
 
     </div><!-- / tabs -->
 
