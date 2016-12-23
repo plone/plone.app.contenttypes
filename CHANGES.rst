@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Test SVG handling
+  [tomgross]
 
 Bug fixes:
 
