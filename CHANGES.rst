@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use unicode string when .format() parameter is unicode for the field migrator
+  [frapell]
 
 
 1.2.19 (2016-12-02)
