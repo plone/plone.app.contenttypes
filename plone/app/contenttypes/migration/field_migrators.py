@@ -92,7 +92,7 @@ def migrate_imagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
                 ('{0}_caption'.format(dst_fieldname)),
                 safe_unicode(caption_field.get(src_obj)))
 
-    logger.info('Migrating image {0}'.format(filename))
+    logger.info(u'Migrating image {0}'.format(filename))
 
 
 def migrate_blobimagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
@@ -122,7 +122,7 @@ def migrate_blobimagefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
                 ('{0}_caption'.format(dst_fieldname)),
                 safe_unicode(old_image_caption))
 
-    logger.info('Migrating image {0}'.format(filename))
+    logger.info(u'Migrating image {0}'.format(filename))
 
 
 def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
@@ -142,7 +142,7 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
         data=old_file_data,
         filename=filename)
     setattr(dst_obj, dst_fieldname, namedblobfile)
-    logger.info('Migrating file {0}'.format(filename))
+    logger.info(u'Migrating file {0}'.format(filename))
 
 
 def migrate_datetimefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
