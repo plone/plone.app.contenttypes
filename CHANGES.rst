@@ -6,8 +6,7 @@ Changelog
 
 Bug fixes:
 
-- Use unicode string when .format() parameter is unicode for the field migrator
-  [frapell]
+- *add item here*
 
 
 1.2.19 (2016-12-02)
