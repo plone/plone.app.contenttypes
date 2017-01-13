@@ -4,14 +4,6 @@ Changelog
 1.2.20 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Use unicode string when .format() parameter is unicode for the field migrator
