@@ -15,7 +15,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use helper method to retrieve all catalog brains in migration code, because Products.ZCatalog removed the ability to get all brains by calling the catalog without arguments.
+  [thet, gogobd]
 
 
 1.2.20 (2017-01-20)
