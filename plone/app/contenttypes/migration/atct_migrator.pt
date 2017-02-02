@@ -66,10 +66,9 @@
           <p i18n:translate="">You can select which content types you want to migrate and
             choose to migrate references or not.</p>
         </div>
-        <div id="migration-form"
-             tal:content="structure view/contents">
-             This is the real migration form
-        </div>
+        <tal:form metal:use-macro="context/@@ploneform-macros/titlelessform">
+            This is the real migration form.
+        </tal:form>
       </div>
     </tal:block>
     <tal:block condition="linguaplone_installed">

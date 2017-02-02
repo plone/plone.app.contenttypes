@@ -2011,7 +2011,8 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
     def test_dxmigration_migrate_check_migration_successful_message(self):
         """Check base class migrator view of changed base class names."""
         self.browser.getControl(
-            name='form.widgets.changed_base_classes:list').value = ['true']
+            name='form.widgets.changed_base_classes:list').value = [
+                'plone.app.contenttypes.content.Document']
         self.browser.getControl('Update').click()
         self.assertIn(
             self.good_info_message_template.format(1), self.browser.contents)
@@ -2093,33 +2094,6 @@ class MigrationFunctionalTests(unittest.TestCase):
         self.assertIn('You currently have <span class="strong">1</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
 
     def test_atct_migration_form(self):
-        # setup session
-        # taken from Products.Sessions.tests.testSessionDataManager._populate
-        tf_name = 'temp_folder'
-        idmgr_name = 'browser_id_manager'
-        toc_name = 'temp_transient_container'
-        sdm_name = 'session_data_manager'
-        from Products.Sessions.BrowserIdManager import BrowserIdManager
-        from Products.Sessions.SessionDataManager import SessionDataManager
-        from Products.TemporaryFolder.TemporaryFolder import MountedTemporaryFolder  # noqa
-        from Products.Transience.Transience import TransientObjectContainer
-        bidmgr = BrowserIdManager(idmgr_name)
-        tf = MountedTemporaryFolder(tf_name, title='Temporary Folder')
-        toc = TransientObjectContainer(
-            toc_name,
-            title='Temporary Transient Object Container',
-            timeout_mins=20)
-        session_data_manager = SessionDataManager(
-            id=sdm_name,
-            path=tf_name + '/' + toc_name,
-            title='Session Data Manager',
-            requestName='TESTOFSESSION')
-        self.portal._setObject(idmgr_name, bidmgr)
-        self.portal._setObject(sdm_name, session_data_manager)
-        self.portal._setObject(tf_name, tf)
-        transaction.commit()
-        self.portal.temp_folder._setObject(toc_name, toc)
-
         # add some at content:
         self.portal.invokeFactory('Document', 'doc1')
         self.portal.invokeFactory('News Item', 'news1')

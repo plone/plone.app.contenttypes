@@ -363,12 +363,16 @@ class IATCTMigratorForm(Interface):
 
 
 class ATCTMigratorForm(form.Form):
+    template = ViewPageTemplateFile('atct_migrator.pt')
+    results_template = ViewPageTemplateFile('atct_migrator_results.pt')
 
     fields = field.Fields(IATCTMigratorForm)
     fields['content_types'].widgetFactory = CheckBoxFieldWidget
     fields['extended_content'].widgetFactory = CheckBoxFieldWidget
     ignoreContext = True
     enableCSRFProtection = True
+
+    results = None
 
     @button.buttonAndHandler(u'Migrate', name='migrate')
     def handle_migrate(self, action):
@@ -385,18 +389,13 @@ class ATCTMigratorForm(form.Form):
             (context, self.request),
             name=u'migrate_from_atct'
         )
-        # call the migration-view above to actually migrate stuff.
-        results = migration_view(
+        # store results where `render` can find them
+        self.results = migration_view(
             content_types=content_types,
             migrate_schemaextended_content=True,
             migrate_references=data['migrate_references'],
             from_form=True,
         )
-        sdm = getToolByName(context, 'session_data_manager')
-        session = sdm.getSessionData(create=True)
-        session.set('atct_migrator_results', results)
-        url = context.absolute_url()
-        self.request.response.redirect(url + '/@@atct_migrator_results')
 
     def updateActions(self):
         super(ATCTMigratorForm, self).updateActions()
@@ -423,11 +422,11 @@ class ATCTMigratorForm(form.Form):
                 # the vocabulary is empty, we hide the widget
                 widget.mode = HIDDEN_MODE
 
-
-ATCTMigrator = wrap_form(
-    ATCTMigratorForm,
-    index=ViewPageTemplateFile('atct_migrator.pt')
-)
+    def render(self):
+        if self.results:
+            return self.results_template()
+        else:
+            return super(ATCTMigratorForm, self).render()
 
 
 class IBaseClassMigratorForm(Interface):
@@ -612,20 +611,6 @@ class ATCTMigratorHelpers(BrowserView):
                     results['installed_without_behavior'].append(type_name)
             else:
                 results['not_installed'].append(type_name)
-        return results
-
-
-class ATCTMigratorResults(BrowserView):
-
-    index = ViewPageTemplateFile('atct_migrator_results.pt')
-
-    def results(self):
-        sdm = self.context.session_data_manager
-        session = sdm.getSessionData(create=True)
-        results = session.get('atct_migrator_results', None)
-        if not results:
-            return False
-        # results['atct_list'] = ATCT_LIST
         return results
 
 
