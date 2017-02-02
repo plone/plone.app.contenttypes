@@ -15,6 +15,7 @@ from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
 
+import io
 import os.path
 import transaction
 import unittest2 as unittest
@@ -132,7 +133,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my file.'
         file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
+        file_ctl.add_file(io.FileIO(file_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('image.jpg/view'))
         self.assertTrue('My file' in self.browser.contents)
@@ -147,7 +148,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-file'
         file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
+        file_ctl.add_file(io.FileIO(file_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-file/view'))
 
@@ -161,7 +162,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my pdf file.'
         file_path = os.path.join(os.path.dirname(__file__), 'file.pdf')
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(open(file_path), 'application/pdf', 'file.pdf')
+        file_ctl.add_file(io.FileIO(file_path), 'application/pdf', 'file.pdf')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.pdf/view'))
         self.assertTrue('pdf.png' in self.browser.contents)
@@ -180,7 +181,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my doc file.'
         file_path = os.path.join(os.path.dirname(__file__), 'file.doc')
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(open(file_path), 'application/msword', 'file.doc')
+        file_ctl.add_file(io.FileIO(file_path), 'application/msword', 'file.doc')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.doc/view'))
         self.assertTrue('custom.png' in self.browser.contents)
@@ -195,7 +196,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my odt file.'
         file_path = os.path.join(os.path.dirname(__file__), 'file.odt')
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(open(file_path),
+        file_ctl.add_file(io.FileIO(file_path),
                           'application/vnd.oasis.opendocument.text',
                           'file.odt')
         self.browser.getControl('Save').click()

@@ -9,6 +9,7 @@ from plone.dexterity.fti import DexterityFTI
 from plone.testing.z2 import Browser
 from zope.interface import alsoProvides
 
+import io
 import os
 import unittest2 as unittest
 
@@ -61,7 +62,7 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         file_ctl = self.browser.getControl(
             name='form.widgets.ILeadImage.image'
         )
-        file_ctl.add_file(open(file_path), 'image/png', 'image.jpg')
+        file_ctl.add_file(io.FileIO(file_path), 'image/png', 'image.jpg')
         # Image caption
         self.browser.getControl(
             name='form.widgets.ILeadImage.image_caption'
