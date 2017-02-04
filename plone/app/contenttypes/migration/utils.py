@@ -299,13 +299,25 @@ class ExportAllReferences(BrowserView):
         return json.dumps(data)
 
 
+def catalog_get_all(catalog, unique_idx='UID'):
+    """Get all brains from the catalog.
+    """
+    res = [
+        catalog({
+            unique_idx: catalog._catalog.getIndexDataForRID(it)[unique_idx]
+        })[0]
+        for it in catalog._catalog.data
+    ]
+    return res
+
+
 def get_all_references(context):
     results = []
     # Archetypes
     # Get all data from the reference_catalog if it exists
     reference_catalog = getToolByName(context, REFERENCE_CATALOG, None)
     if reference_catalog is not None:
-        for brain in reference_catalog():
+        for brain in catalog_get_all(reference_catalog):
             results.append({
                 'from_uuid': brain.sourceUID,
                 'to_uuid': brain.targetUID,

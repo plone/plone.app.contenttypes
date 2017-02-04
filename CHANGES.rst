@@ -15,7 +15,12 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use helper method to retrieve all catalog brains in migration code, because Products.ZCatalog removed the ability to get all brains by calling the catalog without arguments.
+  [thet, gogobd]
+
+- Fix use of add_file in testbrowser tests. [davisagli]
+
+- Render migration results without using Zope session. [davisagli]
 
 
 1.2.20 (2017-01-20)

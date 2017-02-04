@@ -13,6 +13,7 @@ from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
 
+import io
 import os.path
 import unittest2 as unittest
 
@@ -134,7 +135,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
+        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('image.jpg/view'))
         self.assertIn('My image', self.browser.contents)
@@ -150,7 +151,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
+        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-image.jpg/view'))
 
@@ -166,9 +167,9 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my image.'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(open(image_path), 'image/png', 'image.jpg')
+        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
-        self.browser.getLink('Click to view full-size image…').click()
+        self.browser.getLink('Click to view full-size image').click()
         self.assertTrue(
             self.browser.url.endswith('image.jpg/image_view_fullscreen')
         )

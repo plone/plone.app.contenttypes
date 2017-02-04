@@ -30,7 +30,7 @@
   <browser:page
     name="atct_migrator"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    class=".browser.ATCTMigrator"
+    class=".browser.ATCTMigratorForm"
     layer="..interfaces.IPloneAppContenttypesLayer"
     permission="cmf.ManagePortal"
     />
@@ -49,15 +49,6 @@
     class=".browser.ATCTMigratorHelpers"
     layer="..interfaces.IPloneAppContenttypesLayer"
     permission="cmf.ManagePortal"
-    />
-
-  <browser:page
-    name="atct_migrator_results"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    class=".browser.ATCTMigratorResults"
-    layer="..interfaces.IPloneAppContenttypesLayer"
-    permission="cmf.ManagePortal"
-    template="atct_migrator_results.pt"
     />
 
   <browser:page
