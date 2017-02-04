@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Remove browserlayer from listing views to allow overrides from other packages
+  [agitator]
 
 Bug fixes:
 
