@@ -4,10 +4,6 @@ Changelog
 1.2.21 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Remove browserlayer from listing views to allow overrides from other packages
