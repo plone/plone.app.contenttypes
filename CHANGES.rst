@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Only wake up event objects (this is needed for a the date math) in listings
+  [tomgross]
 
 
 1.2.21 (2017-02-05)
