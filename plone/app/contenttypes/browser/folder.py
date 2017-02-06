@@ -7,6 +7,7 @@ from plone.app.contenttypes.interfaces import IImage
 from plone.event.interfaces import IEvent
 from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
@@ -35,6 +36,8 @@ class FolderView(BrowserView):
             (context, request), name=u'plone_portal_state')
         self.pas_member = getMultiAdapter(
             (context, request), name=u'pas_member')
+        self.portal_catalog = getToolByName(aq_inner(self.context),
+                                            'portal_catalog')
 
         self.text_class = None
 
@@ -165,9 +168,10 @@ class FolderView(BrowserView):
         }
 
     def is_event(self, obj):
-        if getattr(obj, 'getObject', False):
-            obj = obj.getObject()
-        return IEvent.providedBy(obj)
+        """ Check if an obj (which is a brain in a listing) is an event """
+        rid = obj.getRID()
+        return IEvent.__identifier__ in \
+            self.portal_catalog.getIndexDataForRID(rid)['object_provides']
 
     def formatted_date(self, item):
         provider = getMultiAdapter(
