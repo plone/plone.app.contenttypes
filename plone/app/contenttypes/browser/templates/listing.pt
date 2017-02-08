@@ -23,7 +23,7 @@
       <tal:listing condition="batch">
         <div class="entries" metal:define-slot="entries">
           <tal:repeat repeat="item batch" metal:define-macro="entries">
-            <tal:block tal:define="
+            <tal:block tal:define="obj item/getObject;
                 item_url item/getURL;
                 item_id item/getId;
                 item_title item/Title;
@@ -36,7 +36,7 @@
                 item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                 item_creator item/Creator;
                 item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
-                item_is_event python:view.is_event(item);
+                item_is_event python:view.is_event(obj);
                 item_has_image python:item.getIcon">
               <metal:block define-slot="entry">
                 <article class="entry">
@@ -58,8 +58,7 @@
                     <metal:block metal:define-macro="document_byline">
                       <div class="documentByLine">
                         <tal:event condition="item_is_event">
-                          <tal:date  tal:define="obj item/getObject"
-			             tal:replace="structure python:view.formatted_date(obj)"/>
+                          <tal:date tal:replace="structure python:view.formatted_date(obj)"/>
                           <span tal:condition="item/location" i18n:translate="label_event_byline_location">&mdash;
                             <span tal:content="string:${item/location}" class="location" i18n:name="location">Oslo</span>,
                           </span>
