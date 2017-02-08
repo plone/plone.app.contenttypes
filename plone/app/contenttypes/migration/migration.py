@@ -159,7 +159,8 @@ class ATCTFolderMigrator(CMFFolderMigrator):
 
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
-        self.new.exclude_from_nav = field.get(self.old)
+        if field:
+            self.new.exclude_from_nav = field.get(self.old)
 
     def migrate_custom(self):
         """Get all ICustomMigrator registered migrators and run the migration.

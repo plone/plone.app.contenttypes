@@ -18,6 +18,10 @@ Bug fixes:
   (rather than of that of the raw) value in plaintext conversion. Fixes #357.
   [petri]
 
+- Add condition so custom folder migration does not fail if there is not
+  an 'excludeFromNav'
+  [cdw9]
+
 
 1.1.1 (2016-06-06)
 ------------------
