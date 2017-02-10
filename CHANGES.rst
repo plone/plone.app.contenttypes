@@ -17,6 +17,10 @@ Bug fixes:
 - Only wake up event objects (this is needed for a the date math) in listings
   [tomgross]
 
+- Add condition so custom folder migration does not fail if there is not
+  an 'excludeFromNav'
+  [cdw9]
+
 
 1.2.21 (2017-02-05)
 -------------------
