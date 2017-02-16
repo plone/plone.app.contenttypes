@@ -16,6 +16,10 @@ Bug fixes:
 
 - *add item here*
 
+- Add condition so custom folder migration does not fail if there is not
+  an 'excludeFromNav'
+  [cdw9]
+
 
 1.2.21 (2017-02-05)
 -------------------
