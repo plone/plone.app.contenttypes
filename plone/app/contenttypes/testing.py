@@ -48,6 +48,9 @@ class PloneAppContenttypesRobot(PloneAppContenttypes):
     """Same as the default but with a added folder 'robot-test-folder'.
     """
 
+    defaultBases = (
+        PAEvent_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE)
+
     def setUpPloneSite(self, portal):
         portal.acl_users.userFolderAddUser(
             SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ['Manager'], [])
@@ -136,7 +139,6 @@ PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE = PloneAppContenttypesRobot()
 PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
     bases=(
         PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE,
-        REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE
     ),
     name='PloneAppContenttypes:Robot'
