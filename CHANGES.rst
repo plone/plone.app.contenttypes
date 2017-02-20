@@ -1,20 +1,10 @@
 Changelog
 =========
 
-1.2.22 (unreleased)
+1.2.22 (2017-02-20)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
-
-- *add item here*
 
 - Add condition so custom folder migration does not fail if there is not
   an 'excludeFromNav'
