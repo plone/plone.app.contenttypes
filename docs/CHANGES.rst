@@ -14,6 +14,10 @@ New features:
 
 Bug fixes:
 
+- Allow third party content types to directly provide the ``ICollection`` interface.
+  Fixes `#369 <https://github.com/plone/plone.app.contenttypes/issues/369>`_.
+  [hvelarde]
+
 - Correct the SearchableText base indexer: use mime type of RichText output
   (rather than of that of the raw) value in plaintext conversion. Fixes #357.
   [petri]

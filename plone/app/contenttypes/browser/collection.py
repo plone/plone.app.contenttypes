@@ -13,8 +13,16 @@ class CollectionView(FolderView):
     def __init__(self, *args, **kwargs):
         super(CollectionView, self).__init__(*args, **kwargs)
         context = aq_inner(self.context)
-        self.collection_behavior = ICollection(context)
+
+        try:
+            # the object may have the behavior applied
+            self.collection_behavior = ICollection(context)
+        except TypeError:
+            # or it may directly provide the interface
+            self.collection_behavior = context
+
         self.b_size = self.collection_behavior.item_count
+
 
     def results(self, **kwargs):
         """Return a content listing based result set with results from the
@@ -76,9 +84,7 @@ class CollectionView(FolderView):
         """Returns a list of all metadata fields from the catalog that were
            selected.
         """
-        context = aq_inner(self.context)
-        wrapped = ICollection(context)
-        fields = wrapped.selectedViewFields()
+        fields = self.collection_behavior.selectedViewFields()
         fields = [field[0] for field in fields]
         return fields
 

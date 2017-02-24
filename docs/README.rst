@@ -413,7 +413,10 @@ Information for Addon-Developers
 Design decisions
 ^^^^^^^^^^^^^^^^
 
-The schemata for the types File, Image and Link are defined in xml-files using ``plone.supermodel``. This allows the types to be editable trough the web. The types Document, News Item, Folder and Event have no schemata at all but only use behaviors to provide their fields.
+The schemata for the types File, Image and Link are defined in xml-files using ``plone.supermodel``.
+This allows the types to be editable trough the web.
+
+The types Collection, Document, News Item, Folder and Event have no schemata at all but only use behaviors to provide their fields.
 
 
 Installation as a dependency from another product
@@ -544,8 +547,8 @@ Differences to Products.ATContentTypes
   - ``atct_album_view`` (Folders) and ``thumbnail_view`` (Collections) -> ``album_view`` (Folders and Collections)
 
 
-Toubleshooting
---------------
+Troubleshooting
+---------------
 
 Please report issues in the bugtracker at https://github.com/plone/plone.app.contenttypes/issues.
 
