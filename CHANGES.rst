@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Avoid failure during migration if relation is broken.
+  [cedricmessiant]
 
 
 1.2.22 (2017-02-20)
