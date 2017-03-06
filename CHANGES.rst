@@ -14,8 +14,12 @@ New features:
 
 Bug fixes:
 
+
 - Avoid failure during migration if relation is broken.
   [cedricmessiant]
+  
+- Fix import location for Products.ATContentTypes.interfaces.
+  [thet]
 
 
 1.2.22 (2017-02-20)

@@ -95,7 +95,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
     def createATCTBlobNewsItem(self, id, parent=None):
         from Products.Archetypes.atapi import StringField, TextField
-        from Products.ATContentTypes.interface import IATNewsItem
+        from Products.ATContentTypes.interfaces import IATNewsItem
         from archetypes.schemaextender.interfaces import ISchemaExtender
         from archetypes.schemaextender.field import ExtensionField
         from plone.app.blob.subtypes.image import ExtensionBlobField
