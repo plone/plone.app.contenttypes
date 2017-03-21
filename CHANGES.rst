@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2.23 (unreleased)
+1.3.0 (unreleased)
 -------------------
 
 Breaking changes:
@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Make use of plone.namedfile's tag() function to generate img tags. Part of plip 1483.
+  [didrix]
 
 Bug fixes:
 
