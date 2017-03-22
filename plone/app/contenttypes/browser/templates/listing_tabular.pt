@@ -24,9 +24,9 @@
 
       <div metal:use-macro="context/batch_macros/macros/navigation" />
       <div class="has-table">
-        <table 
-            tal:define="thumb_size python:view.get_thumbSize_table();
-                        img_class python:'image-%s pull-right' % thumb_size;
+        <table
+            tal:define="thumb_size_table python:view.get_thumbSize_table();
+                        img_class python:'image-%s pull-right' % thumb_size_table;
                         showicons  view/show_icons;
                         "
             class="listing"
@@ -51,6 +51,7 @@
                                      item_wf_state item/review_state;
                                      item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                                      item_creator item/Creator;
+                                     item_has_image python:item.getIcon;
                                      item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
                                      ">
                 <tr metal:define-macro="listitem"
@@ -63,20 +64,21 @@
                       <tal:block tal:replace="field_data/value" />
                     </td>
                     <td tal:condition="python:field == 'Title'">
-                        <img tal:condition="python: item.getIcon"
-                             tal:replace="structure python:image_scale.tag(item, 'image', scale='icon', css_class='image-icon')">
-                      <img 
-                         tal:define="thumb_url python:item_url+'/@@images/image/'+thumb_size"
-                         tal:condition="python: item.getIcon and not thumb_size=='none'"                          
-                         tal:attributes="href item_url;
-                                         src  string:$thumb_url;
-                                         class string:$img_class"
-                        <a href="#"
-                          tal:attributes="href item_link;
-                          class string:$item_wf_state_class $item_type_class;
-                          title item_description;"
-                          tal:content="item_title">
-                        Item Title
+                      <a tal:condition="python:item_type == 'File' and showicons"
+                         tal:attributes="href item_link;
+                                         class string:$item_type_class $item_wf_state_class url;
+                                         title item_type">
+                         <image class="mime-icon"
+                                tal:attributes="src item/MimeTypeIcon">
+                      </a>
+                      <a tal:attributes="href item_link;
+                                         class string:$item_type_class $item_wf_state_class url;
+                                         title item_type"
+                         tal:content="item_title">Item Title
+                      </a>
+                      <a tal:condition="python: item_has_image and (thumb_size_table!='none')">
+                         <img tal:attributes="href item_link;"
+                              tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_size_table, css_class=img_class)" />
                       </a>
                     </td>
                     <td tal:condition="python:field == 'Creator'"

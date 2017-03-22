@@ -6,15 +6,17 @@ Changelog
 
 Breaking changes:
 
-- new behavior: IThumbIconHandling, supress thumbs /icons, adjust thumb size, templates adapted
-  https://github.com/plone/Products.CMFPlone/issues/1734 (PLIP) 
-  requires upgrade step (reapply profile)[fgrcon]
+- *add item here*
+
 
 New features:
 
 - New metadata catalog column MimeType
   https://github.com/plone/Products.CMFPlone/issues/1995
   [fgrcon]
+
+- new behavior: IThumbIconHandling, supress thumbs /icons, adjust thumb size, templates adapted
+  https://github.com/plone/Products.CMFPlone/issues/1734 (PLIP)
 
 Bug fixes:
 

@@ -32,8 +32,9 @@
                tal:condition="python:  item_has_image and not thumb_size_summary=='none'"
                tal:attributes="class python: 'tileImage' if item_description else 'tileImageNoFloat'">
             <a tal:attributes="href item_link">
-              <img tal:replace="structure python:image_scale.tag(item, 'image', scale='thumb')" />
-                                   class string:$img_class_summmary"> 
+              <img tal:condition="python: item_has_image and (thumb_size_summary!='none')"
+                tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_size_summary, css_class='image-'+thumb_size_summary)" />
+
             </a>
           </div>
 

@@ -54,14 +54,14 @@
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".richtext.IRichText"
     />
-    
+
   <plone:behavior
       name="plone.thumb_icon"
       title="Thumbs and icon handling"
       description="Options to suppress thumbs and/or icons and to override thumb size in listings, tables etc."
       provides=".thumb_icon.IThumbIconHandling"
-      />   
-         
+      />
+
   <browser:page
     name="getText"
     for=".richtext.IRichText"
