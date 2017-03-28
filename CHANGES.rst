@@ -4,10 +4,6 @@ Changelog
 1.3.0 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Make use of plone.namedfile's tag() function to generate img tags. Part of plip 1483.
