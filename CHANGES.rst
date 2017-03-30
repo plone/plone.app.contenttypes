@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix issue where contentFilter could not be read from request
+  [datakurre]
 
 
 1.3.0 (2017-03-27)
