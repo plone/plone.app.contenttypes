@@ -36,7 +36,7 @@ class CollectionView(FolderView):
                 sequence.
         """
         # Extra filter
-        contentFilter = self.request.get('contentFilter', {})
+        contentFilter = dict(self.request.get('contentFilter', {}))
         contentFilter.update(kwargs.get('contentFilter', {}))
         kwargs.setdefault('custom_query', contentFilter)
         kwargs.setdefault('batch', True)
