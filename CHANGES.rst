@@ -14,6 +14,11 @@ New features:
 
 Bug fixes:
 
+- Fixed Mimetype icon path. Version 1.2.19 introduced a change to fit
+  Products.MimetypesRegistry 2.1, but Plone 5.0 should remain on 2.0.x.
+  Fixes `issue 1997 <https://github.com/plone/Products.CMFPlone/issues/1997>`_.
+  [maurits]
+
 - Avoid failure during migration if relation is broken.
   [cedricmessiant]
 
