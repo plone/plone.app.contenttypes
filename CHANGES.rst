@@ -10,7 +10,10 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- new metadata catalog columń MimeType
+  https://github.com/plone/Products.CMFPlone/issues/1995
+  [fgrcon]
+
 
 Bug fixes:
 

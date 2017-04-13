@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_base
 from logging import getLogger
 from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.contenttypes.interfaces import IDocument
@@ -150,6 +151,11 @@ def getObjSize_file(obj):
         )
         return
     return obj.getObjSize(None, primary_field_info.value.size)
+
+
+@indexer(IDexterityContent)
+def mime_type(obj):
+    return aq_base(obj).content_type()
 
 
 @indexer(IDexterityContent)
