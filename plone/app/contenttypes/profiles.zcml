@@ -20,6 +20,15 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
+  <!-- All types folderish, no sample content. Depends on default -->
+  <gs:registerProfile
+    name="folderish"
+    title="Content-types (plone.app.contenttypes folderish)"
+    directory="profiles/folderish"
+    description="Folderish Plone default content-types (plone.app.contenttypes)"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
   <!-- Uninstall -->
   <gs:registerProfile
     name="uninstall"
