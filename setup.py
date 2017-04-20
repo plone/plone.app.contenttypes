@@ -48,7 +48,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
           'plone.app.relationfield',
-          'plone.namedfile [blobs]',
+          'plone.namedfile [blobs] >= 4.2.0',
           'plone.app.versioningbehavior',
           'plone.app.lockingbehavior',
           'pytz',
