@@ -18,7 +18,7 @@ from zope.interface import alsoProvides
 import io
 import os.path
 import transaction
-import unittest2 as unittest
+import unittest
 
 
 class FileIntegrationTest(unittest.TestCase):
