@@ -10,7 +10,7 @@ Breaking changes:
 
 New features:
 
-- new metadata catalog columń MimeType
+- New metadata catalog column MimeType
   https://github.com/plone/Products.CMFPlone/issues/1995
   [fgrcon]
 

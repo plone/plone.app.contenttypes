@@ -97,10 +97,10 @@ class File(Item):
         return response
 
     def get_size(self):
-        return self.file.size
+        return getattr(self.file, 'size', None)
 
     def content_type(self):
-        return self.file.contentType
+        return getattr(self.file, 'contentType', None)
 
 
 @implementer(IFolder)
@@ -131,10 +131,10 @@ class Image(Item):
         return response
 
     def get_size(self):
-        return self.image.size
+        return getattr(self.image, 'size', None)
 
     def content_type(self):
-        return self.image.contentType
+        return getattr(self.image, 'contentType', None)
 
 
 @implementer(ILink)
