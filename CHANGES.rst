@@ -25,6 +25,8 @@ Bug fixes:
 - Fix import location for Products.ATContentTypes.interfaces.
   [thet]
 
+- removed unittest2 dependency
+   [kakshay21]
 
 1.2.22 (2017-02-20)
 -------------------
