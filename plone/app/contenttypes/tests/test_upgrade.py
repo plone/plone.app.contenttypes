@@ -7,7 +7,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
 from zope.component import queryUtility
 
-import unittest2 as unittest
+import unittest
 
 
 class UpgradeTo1000IntegrationTest(unittest.TestCase):

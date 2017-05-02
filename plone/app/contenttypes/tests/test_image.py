@@ -15,7 +15,7 @@ from zope.interface import alsoProvides
 
 import io
 import os.path
-import unittest2 as unittest
+import unittest
 
 
 def dummy_image():

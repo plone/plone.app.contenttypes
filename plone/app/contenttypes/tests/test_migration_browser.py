@@ -16,7 +16,7 @@ from plone.event.interfaces import IEvent
 from Products.CMFCore.utils import getToolByName
 from zope.interface import directlyProvides
 
-import unittest2 as unittest
+import unittest
 
 
 class FixBaseclassesTest(unittest.TestCase):

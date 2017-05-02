@@ -6,7 +6,7 @@ from zope.publisher.browser import TestRequest
 from ZPublisher.HTTPResponse import HTTPResponse
 
 import os.path
-import unittest2 as unittest
+import unittest
 
 
 class DAVTestRequest(TestRequest):

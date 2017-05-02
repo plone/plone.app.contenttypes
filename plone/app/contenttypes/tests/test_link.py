@@ -19,7 +19,7 @@ from zope.event import notify
 from zope.interface import alsoProvides
 from zope.traversing.interfaces import BeforeTraverseEvent
 
-import unittest2 as unittest
+import unittest
 
 
 class LinkIntegrationTest(unittest.TestCase):
