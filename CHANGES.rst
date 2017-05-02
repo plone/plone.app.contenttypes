@@ -14,12 +14,13 @@ New features:
   https://github.com/plone/Products.CMFPlone/issues/1995
   [fgrcon]
 
-
 Bug fixes:
 
 - Fix issue where contentFilter could not be read from request
   [datakurre]
 
+- removed unittest2 dependency
+   [kakshay21]
 
 1.3.0 (2017-03-27)
 ------------------
@@ -36,9 +37,6 @@ Bug fixes:
 
 - Fix import location for Products.ATContentTypes.interfaces.
   [thet]
-
-- removed unittest2 dependency
-   [kakshay21]
 
 1.2.22 (2017-02-20)
 -------------------
