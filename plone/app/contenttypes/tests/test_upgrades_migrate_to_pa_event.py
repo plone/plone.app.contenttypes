@@ -8,7 +8,7 @@ from plone.app.textfield.value import RichTextValue
 from plone.event.interfaces import IEventAccessor
 from Products.CMFCore.utils import getToolByName
 
-import unittest2 as unittest
+import unittest
 
 
 class MigrateEventContentTypesTest(unittest.TestCase):

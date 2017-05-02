@@ -17,7 +17,7 @@ from zope.component import queryUtility
 from zope.interface import alsoProvides
 from zope.viewlet.interfaces import IViewletManager
 
-import unittest2 as unittest
+import unittest
 
 
 class NewsItemIntegrationTest(unittest.TestCase):

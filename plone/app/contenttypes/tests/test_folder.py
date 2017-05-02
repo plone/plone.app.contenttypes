@@ -12,7 +12,7 @@ from plone.testing.z2 import Browser
 from zope.component import createObject
 from zope.component import queryUtility
 
-import unittest2 as unittest
+import unittest
 
 
 class FolderIntegrationTest(unittest.TestCase):

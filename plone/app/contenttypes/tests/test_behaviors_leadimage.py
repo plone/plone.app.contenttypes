@@ -11,7 +11,7 @@ from zope.interface import alsoProvides
 
 import io
 import os
-import unittest2 as unittest
+import unittest
 
 
 class LeadImageBehaviorFunctionalTest(unittest.TestCase):

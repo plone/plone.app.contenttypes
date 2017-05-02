@@ -9,7 +9,7 @@ from plone.dexterity.fti import DexterityFTI
 from plone.testing.z2 import Browser
 from zope.interface import alsoProvides
 
-import unittest2 as unittest
+import unittest
 
 
 class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):

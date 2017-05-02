@@ -19,7 +19,7 @@ from Products.CMFPlone.utils import safe_unicode
 import os.path
 import pytz
 import transaction
-import unittest2 as unittest
+import unittest
 
 
 class MigrateFieldsTest(unittest.TestCase):
