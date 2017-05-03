@@ -9,7 +9,7 @@ from plone.dexterity.fti import DexterityFTI
 from plone.testing.z2 import Browser
 from Products.CMFCore.utils import getToolByName
 
-import unittest2 as unittest
+import unittest
 
 
 class RichTextBase:

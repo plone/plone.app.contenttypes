@@ -42,7 +42,7 @@ import json
 import os.path
 import time
 import transaction
-import unittest2 as unittest
+import unittest
 
 
 class MigrateFromATContentTypesTest(unittest.TestCase):

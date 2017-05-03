@@ -23,7 +23,7 @@ from zope.component import queryUtility
 from zope.interface import alsoProvides
 
 import os.path
-import unittest2 as unittest
+import unittest
 
 
 query = [{

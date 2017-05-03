@@ -11,7 +11,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 
 import pkg_resources
-import unittest2 as unittest
+import unittest
 
 
 try:

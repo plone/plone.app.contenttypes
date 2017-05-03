@@ -7,7 +7,7 @@ from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 
 import os
-import unittest2 as unittest
+import unittest
 
 
 class CatalogIntegrationTest(unittest.TestCase):
