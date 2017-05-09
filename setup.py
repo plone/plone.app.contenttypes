@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 
-import os
 import sys
 
 version = '1.1.2.dev0'
@@ -8,13 +7,9 @@ additional_requires = []
 if sys.version_info < (2, 7):
     additional_requires.append('importlib')
 
-
-def read(*rnames):
-    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
-
 long_description = \
-    read('docs', 'README.rst') + '\n\n' + \
-    read('docs', 'CHANGES.rst')
+    open('README.rst').read() + '\n\n' + \
+    open('CHANGES.rst').read()
 
 setup(name='plone.app.contenttypes',
       version=version,
