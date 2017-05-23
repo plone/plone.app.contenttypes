@@ -149,13 +149,13 @@ class CatalogIntegrationTest(unittest.TestCase):
             SearchableText=u'Lorem ipsum',
         ))
         self.assertEqual(len(brains), 2)
-        self.assertEqual(
-            brains[0].getPath(),
-            '/plone/folder/news_item'
+
+        paths = [it.getPath() for it in brains]
+        self.assertTrue(
+            '/plone/folder/news_item' in paths
         )
-        self.assertEqual(
-            brains[1].getPath(),
-            '/plone/folder/document'
+        self.assertTrue(
+            '/plone/folder/document' in paths
         )
 
     def test_html_stripped_searchable_text_index(self):

@@ -14,8 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
-
+- Fix flaky test in test_indexes.
+  [thet]
 
 1.2.23 (2017-05-09)
 -------------------
