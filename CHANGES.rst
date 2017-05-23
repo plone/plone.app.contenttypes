@@ -16,11 +16,15 @@ New features:
 
 Bug fixes:
 
+- Fix flaky test in test_indexes.
+  [thet]
+
+- removed unittest2 dependency
+  [kakshay21]
+
 - Fix issue where contentFilter could not be read from request
   [datakurre]
 
-- removed unittest2 dependency
-   [kakshay21]
 
 1.3.0 (2017-03-27)
 ------------------
