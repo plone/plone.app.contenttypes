@@ -16,6 +16,9 @@ New features:
 
 Bug fixes:
 
+- Fix test for checking if TinyMCE is loaded which broke after https://github.com/plone/Products.CMFPlone/pull/2059
+  [thet]
+
 - Fix flaky test in test_indexes.
   [thet]
 
