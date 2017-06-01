@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from Acquisition import aq_inner
+from Products.CMFPlone.interfaces import ISiteSchema
 from plone.app.contenttypes import _
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
@@ -221,3 +222,48 @@ class FolderView(BrowserView):
             'description_no_items_in_folder',
             default=u'There are currently no items in this folder.'
         )
+
+    @memoize
+    def get_thumbSize_table(self):
+        if getattr(self.context, 'suppress_thumbs', False):
+            return 'none'
+        thsize = getattr(self.context, 'ov_thumbsize_table', '')
+        if thsize > '':
+            return thsize
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ISiteSchema, prefix='plone', check=False)
+        if settings.no_thumbs_tables:
+            return 'none'
+        return settings.thumb_size_table
+
+    @memoize
+    def get_thumbSize_list(self):
+        if getattr(self.context, 'suppress_thumbs', False):
+            return 'none'
+        thsize = getattr(self.context, 'ov_thumbsize_list', '')
+        if thsize > '':
+            return thsize
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ISiteSchema, prefix='plone', check=False)
+        if settings.no_thumbs_lists:
+            return 'none'
+        return settings.thumb_size_listing
+
+    @memoize
+    def get_thumbSize_summary(self):
+        if getattr(self.context, 'suppress_thumbs', False):
+            return 'none'
+        thsize = getattr(self.context, 'ov_thumbsize_summary', '')
+        if thsize > '':
+            return thsize
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ISiteSchema, prefix='plone', check=False)
+        if settings.no_thumbs_summary:
+            return 'none'
+        return settings.thumb_size_summary
+
+    def show_icons(self):
+        return not getattr(self.context, 'suppress_icons', False)
