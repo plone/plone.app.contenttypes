@@ -71,4 +71,12 @@
       handler=".upgrades.use_new_view_names"
       />
 
+  <genericsetup:upgradeStep
+      source="1104"
+      destination="1105"
+      title="Reindex SearchableText for Collections"
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.searchabletext_collections"
+      />
+
 </configure>
