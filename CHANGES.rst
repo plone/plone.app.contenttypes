@@ -14,6 +14,8 @@ New features:
 
 Bug fixes:
 
+- Fixed two failing unit tests.  [maurits]
+
 - Made sure the text field of Collections is searchable.
   `Issue 406 <https://github.com/plone/plone.app.contenttypes/issues/406>`_.
   [maurits]
