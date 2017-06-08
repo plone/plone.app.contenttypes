@@ -1,7 +1,7 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
   xmlns:browser="http://namespaces.zope.org/browser"
-  xmlns:plone="http://namespaces.plone.org/plone"
+  xmlns:z3c="http://namespaces.zope.org/z3c"
   xmlns:zcml="http://namespaces.zope.org/zcml"
   i18n_domain="plone">
 
@@ -206,7 +206,6 @@
       permission="zope2.View"
       />
 
-
   <configure zcml:condition="installed Products.Archetypes">
     <browser:viewlet
       name="archetypes_warning_viewlet"
@@ -218,7 +217,6 @@
       permission="cmf.ModifyPortalContent"
       />
   </configure>
-
 
   <!-- BBB OlD VIEW NAME REGISTRATIONS -->
   <browser:pages

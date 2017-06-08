@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Integrate new link widget from plone.app.z3cform.
+  [tomgross]
 
 Bug fixes:
 
