@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from plone.app.contenttypes.browser.widgets import LinkDataConverter
-from plone.app.contenttypes.browser.widgets import LinkWidget
+from plone.app.z3cform.converters import LinkWidgetDataConverter
+from plone.app.z3cform.widget import LinkWidget
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
@@ -302,7 +302,7 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         url = 'http://www.example.org'
         self.link.remoteUrl = url
 
-        converter = LinkDataConverter(self.link_field, self.widget)
+        converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
         expected['external'] = url
         self.assertEqual(converter.toWidgetValue(url), expected)
@@ -313,21 +313,21 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
                                   description="This is a document.")
         doc1 = self.portal['doc1']
         url = doc1.absolute_url()
-        converter = LinkDataConverter(self.link_field, self.widget)
+        converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
         expected['internal'] = IUUID(doc1)
         self.assertEqual(converter.toWidgetValue(url), expected)
 
     def test_dc_towidget_mail(self):
         url = u'mailto:foo@.example.org'
-        converter = LinkDataConverter(self.link_field, self.widget)
+        converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
         expected['email'] = url[7:]   # mailto is cut
         self.assertEqual(converter.toWidgetValue(url), expected)
 
     def test_dc_towidget_mail_subject(self):
         url = 'mailto:foo@.example.org?subject=A subject'
-        converter = LinkDataConverter(self.link_field, self.widget)
+        converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
         expected['email'] = u'foo@.example.org'
         expected['email_subject'] = u'A subject'
@@ -335,14 +335,14 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
 
     def test_dc_illegal(self):
         url = 'foo'
-        converter = LinkDataConverter(self.link_field, self.widget)
+        converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
         expected['external'] = url
         self.assertEqual(converter.toWidgetValue(url), expected)
 
     def test_dc_var(self):
         url = '${portal_url}/foo'
-        converter = LinkDataConverter(self.link_field, self.widget)
+        converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
         expected['external'] = url
         self.assertEqual(converter.toWidgetValue(url), expected)

@@ -10,7 +10,7 @@ Breaking changes:
 
 New features:
 
-- New widget for `remoteURL` of Link content type.
+- Integrate new link widget from plone.app.z3cform.
   [tomgross]
 
 Bug fixes:

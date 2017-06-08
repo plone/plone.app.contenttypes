@@ -6,7 +6,6 @@
   i18n_domain="plone">
 
   <include package="plone.app.contentmenu" />
-  <adapter factory=".widgets.LinkDataConverter" />
 
   <!-- VIEWS FOR PLONE SITE ROOT -->
   <browser:pages
@@ -258,12 +257,5 @@
     <browser:page name="all_content" template="templates/full_view.pt"/>
     <browser:page name="thumbnail_view" template="templates/listing_album.pt"/>
   </browser:pages>
-
-  <z3c:widgetTemplate
-      mode="input"
-      widget=".widgets.ILinkWidget"
-      layer="z3c.form.interfaces.IFormLayer"
-      template="templates/link_input.pt"
-      />
 
 </configure>
