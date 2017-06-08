@@ -4,6 +4,7 @@ from Products.CMFPlone.utils import safe_unicode
 from ZODB.POSException import ConflictError
 from logging import getLogger
 from plone.app.contenttypes.behaviors.richtext import IRichText
+from plone.app.contenttypes.interfaces import ICollection
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IFolder
@@ -67,6 +68,11 @@ def SearchableText_news(obj):
 
 @indexer(IDocument)
 def SearchableText_document(obj):
+    return _unicode_save_string_concat(SearchableText(obj))
+
+
+@indexer(ICollection)
+def SearchableText_collection(obj):
     return _unicode_save_string_concat(SearchableText(obj))
 
 
