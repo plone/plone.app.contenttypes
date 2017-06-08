@@ -2,22 +2,21 @@
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from plone.uuid.interfaces import IUUID
 from Products.CMFPlone.utils import safe_unicode
-
-
 from z3c.form.browser.text import TextWidget
 from z3c.form.converter import BaseDataConverter
-from z3c.form.interfaces import ITextWidget
-from z3c.form.interfaces import IFormLayer
 from z3c.form.interfaces import IFieldWidget
+from z3c.form.interfaces import IFormLayer
+from z3c.form.interfaces import ITextWidget
 from z3c.form.interfaces import NO_VALUE
 from z3c.form.widget import FieldWidget
-
 from zope.component import adapter
 from zope.component import adapts
 from zope.component.hooks import getSite
-from zope.interface import implementsOnly
 from zope.interface import implementer
+from zope.interface import implementsOnly
 from zope.schema.interfaces import IField
+
+import json
 
 
 class ILinkWidget(ITextWidget):
@@ -53,7 +52,7 @@ class LinkDataConverter(BaseDataConverter):
             else:
                 portal = getSite()
                 path = replace_link_variables_by_paths(portal, value)
-                path = path[len(portal.absolute_url())+1:].encode('ascii', 'ignore')
+                path = path[len(portal.absolute_url())+1:].encode('ascii', 'ignore')  # noqa
                 obj = portal.unrestrictedTraverse(path=path, default=None)
                 if obj is not None:
                     uuid = IUUID(obj, None)
@@ -75,8 +74,11 @@ class LinkWidget(TextWidget):
         return getSite().absolute_url(relative)
 
     def pattern_data(self):
-        return '{"vocabularyUrl": "%s/@@getVocabulary?name=plone.app.vocabularies.Catalog"}' \
-               % self.portal_url()
+        pattern_data = {
+            'vocabularyUrl': '{0}/@@getVocabulary?name=plone.app.vocabularies.Catalog'.format(self.portal_url()),  # noqa
+            'maximumSelectionSize': 1
+        }
+        return json.dumps(pattern_data)
 
     def extract(self, default=NO_VALUE):
         form = self.request.form
