@@ -4,12 +4,6 @@ Changelog
 1.1.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
-
-1.1.2 (2017-05-09)
-------------------
-
 Breaking changes:
 
 - *add item here*
@@ -17,6 +11,16 @@ Breaking changes:
 New features:
 
 - *add item here*
+
+Bug fixes:
+
+- Made sure the text field of Collections is searchable.
+  `Issue 406 <https://github.com/plone/plone.app.contenttypes/issues/406>`_.
+  [maurits]
+
+
+1.1.2 (2017-05-09)
+------------------
 
 Bug fixes:
 

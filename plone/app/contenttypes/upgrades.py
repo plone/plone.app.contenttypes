@@ -206,3 +206,12 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
             _fixup(obj, LISTING_VIEW_MAPPING)
         if portal_type == 'Plone Site':
             _fixup(context, LISTING_VIEW_MAPPING)
+
+
+def searchabletext_collections(context):
+    """Reindex Collections for SearchableText."""
+    catalog = getToolByName(context, 'portal_catalog')
+    search = catalog.unrestrictedSearchResults
+    for brain in search(portal_type='Collection'):
+        obj = brain.getObject()
+        obj.reindexObject(idxs=['SearchableText'])

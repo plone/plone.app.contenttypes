@@ -44,6 +44,10 @@ class CatalogIntegrationTest(unittest.TestCase):
             'file'
         )
         self.folder.invokeFactory(
+            'Collection',
+            'collection'
+        )
+        self.folder.invokeFactory(
             'Folder',
             'folder'
         )
@@ -52,6 +56,8 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.link = self.folder.link
         self.image = self.folder.image
         self.file = self.folder.file
+        self.collection = self.folder.collection
+        # Note: this changes self.folder.
         self.folder = self.folder.folder
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
@@ -147,20 +153,58 @@ class CatalogIntegrationTest(unittest.TestCase):
             'text/plain',
             'text/html'
         )
+        self.collection.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
         self.document.reindexObject()
         self.news_item.reindexObject()
+        self.collection.reindexObject()
         brains = self.catalog.searchResults(dict(
             SearchableText=u'Lorem ipsum',
         ))
-        self.assertEqual(len(brains), 2)
-        self.assertEqual(
-            brains[0].getPath(),
-            '/plone/folder/news_item'
+        self.assertEqual(len(brains), 3)
+
+        paths = [it.getPath() for it in brains]
+        self.assertTrue(
+            '/plone/folder/news_item' in paths
         )
-        self.assertEqual(
-            brains[1].getPath(),
-            '/plone/folder/document'
+        self.assertTrue(
+            '/plone/folder/document' in paths
         )
+        self.assertTrue(
+            '/plone/folder/collection' in paths
+        )
+
+    def test_collection_text_in_searchable_text_index_after_upgrade(self):
+        # At first, the text field of Collections did not end up
+        # in the SearchableText index.
+        # To mimic this, we reindex the object and afterwards set the text.
+        self.collection.reindexObject()
+        # Check that nothing is found yet.
+        # This is needed to force a flush of the indexing queue.
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 0)
+        self.collection.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 0)
+        # Now we apply the upgrade.
+        from plone.app.contenttypes.upgrades import searchabletext_collections
+        searchabletext_collections(self.portal.portal_setup)
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEqual(brains[0].getPath(), '/plone/folder/collection')
 
     def test_html_stripped_searchable_text_index(self):
         """Ensure, html tags are stripped out from the content and not indexed.
