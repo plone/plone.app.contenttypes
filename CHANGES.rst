@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Made sure the text field of Collections is searchable.
+  `Issue 406 <https://github.com/plone/plone.app.contenttypes/issues/406>`_.
+  [maurits]
 
 
 1.4 (2017-06-03)
