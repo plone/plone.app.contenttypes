@@ -14,8 +14,13 @@ New features:
 
 Bug fixes:
 
+- Made sure the text field of Collections is searchable.
+  `Issue 406 <https://github.com/plone/plone.app.contenttypes/issues/406>`_.
+  [maurits]
+
 - Fix flaky test in test_indexes.
   [thet]
+
 
 1.2.23 (2017-05-09)
 -------------------
