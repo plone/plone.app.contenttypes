@@ -58,9 +58,18 @@ class LinkRedirectView(BrowserView):
         else:
             return self.index()
 
+    def url(self):
+        """Returns the url with link variables replaced.
+        """
+        url = replace_link_variables_by_paths(
+            self.context,
+            self.context.remoteUrl
+        )
+        return url
+
     def absolute_target_url(self):
         """Compute the absolute target URL."""
-        url = self.context.remoteUrl
+        url = self.url()
 
         if self._url_uses_scheme(NON_RESOLVABLE_URL_SCHEMES):
             # For non http/https url schemes, there is no path to resolve.
@@ -78,7 +87,6 @@ class LinkRedirectView(BrowserView):
                 url
             ])
         else:
-            url = replace_link_variables_by_paths(self.context, url)
             if not (url.startswith('http://') or url.startswith('https://')):
                 url = self.request.physicalPathToURL(url)
 

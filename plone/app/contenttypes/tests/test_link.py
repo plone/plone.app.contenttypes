@@ -346,3 +346,17 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         expected = self.default_result.copy()
         expected['external'] = url
         self.assertEqual(converter.toWidgetValue(url), expected)
+
+    def test_var_replacement_in_view(self):
+        view = getMultiAdapter(
+            (self.link, self.request),
+            name='link_redirect_view'
+        )
+
+        self.link.remoteUrl = '${portal_url}'
+        self.assertEqual(view.url(), '/plone')
+        self.assertEqual(view.absolute_target_url(), 'http://nohost/plone')
+
+        self.link.remoteUrl = '${navigation_root_url}'
+        self.assertEqual(view.url(), '/plone')
+        self.assertEqual(view.absolute_target_url(), 'http://nohost/plone')
