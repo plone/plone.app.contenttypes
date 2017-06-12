@@ -224,46 +224,46 @@ class FolderView(BrowserView):
         )
 
     @memoize
-    def get_thumbSize_table(self):
+    def get_thumb_scale_table(self):
         if getattr(self.context, 'suppress_thumbs', False):
-            return 'none'
-        thsize = getattr(self.context, 'ov_thumbsize_table', '')
-        if thsize > '':
+            return None
+        thsize = getattr(self.context, 'thumb_scale_table', None)
+        if thsize:
             return thsize
         registry = getUtility(IRegistry)
         settings = registry.forInterface(
             ISiteSchema, prefix='plone', check=False)
         if settings.no_thumbs_tables:
-            return 'none'
-        return settings.thumb_size_table
+            return None
+        return settings.thumb_scale_table
 
     @memoize
-    def get_thumbSize_list(self):
+    def get_thumb_scale_list(self):
         if getattr(self.context, 'suppress_thumbs', False):
-            return 'none'
-        thsize = getattr(self.context, 'ov_thumbsize_list', '')
-        if thsize > '':
+            return None
+        thsize = getattr(self.context, 'thumb_scale_list', None)
+        if thsize:
             return thsize
         registry = getUtility(IRegistry)
         settings = registry.forInterface(
             ISiteSchema, prefix='plone', check=False)
         if settings.no_thumbs_lists:
-            return 'none'
-        return settings.thumb_size_listing
+            return None
+        return settings.thumb_scale_listing
 
     @memoize
-    def get_thumbSize_summary(self):
+    def get_thumb_scale_summary(self):
         if getattr(self.context, 'suppress_thumbs', False):
-            return 'none'
-        thsize = getattr(self.context, 'ov_thumbsize_summary', '')
-        if thsize > '':
+            return None
+        thsize = getattr(self.context, 'thumb_scale_summary', None)
+        if thsize:
             return thsize
         registry = getUtility(IRegistry)
         settings = registry.forInterface(
             ISiteSchema, prefix='plone', check=False)
         if settings.no_thumbs_summary:
-            return 'none'
-        return settings.thumb_size_summary
+            return None
+        return settings.thumb_scale_summary
 
     def show_icons(self):
         return not getattr(self.context, 'suppress_icons', False)

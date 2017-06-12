@@ -15,41 +15,45 @@ class IThumbIconHandling(model.Schema):
     model.fieldset(
         'settings',
         label=_(u'Settings'),
-        fields=['ov_thumbsize_list',
-                'ov_thumbsize_table',
-                'ov_thumbsize_summary',
-                'suppress_icons',
-                'suppress_thumbs'
-                ]
+        fields=[
+            'thumb_scale_list',
+            'thumb_scale_table',
+            'thumb_scale_summary',
+            'suppress_icons',
+            'suppress_thumbs'
+        ]
     )
 
-    ov_thumbsize_list = schema.TextLine(
+    thumb_scale_list = schema.TextLine(
         title=_(u'Override thumb size for list view'),
-        description=_(u'<br><ul><li>  valid size '
-                      u'(see `Image Handling` control panel)'
-                      u' e.g. icon, tile, thumb, mini, preview, ... </li>'
-                      u'<li>leave empty to use default'
-                      u'(see `Site` control panel)</li></ul>'),
+        description=_(
+            u"Enter a valid scale name"
+            u" (see 'Image Handling' control panel) to override"
+            u" (e.g. icon, tile, thumb, mini, preview, ... )."
+            u" Leave empty to use default (see 'Site' control panel)."
+        ),
         required=False,
         default=u'')
 
-    ov_thumbsize_table = schema.TextLine(
+    thumb_scale_table = schema.TextLine(
         title=_(u'Override thumb size for table view'),
-        description=_(u'<br><ul><li>   valid size '
-                      u'(see `Image Handling` control panel)'
-                      u' e.g. icon, tile, thumb, mini, preview, ... ,  </li>'
-                      u'<li>leave empty to use default '
-                      u'(see `Site` control panel)</li></ul>'),
+        description=_(
+            u"Enter a valid scale name"
+            u" (see 'Image Handling' control panel) to override"
+            u" (e.g. icon, tile, thumb, mini, preview, ... )."
+            u" Leave empty to use default (see 'Site' control panel)."
+        ),
         required=False,
         default=u'')
 
-    ov_thumbsize_summary = schema.TextLine(
+    thumb_scale_summary = schema.TextLine(
         title=_(u'Override thumb size for summary view'),
-        description=_(u'<br><ul><li>  valid size '
-                      u'(see `Image Handling` control panel)'
-                      u' e.g. icon, tile, thumb, mini, preview, ... ,  </li>'
-                      u'<li>leave empty to use default '
-                      u'(see `Site` control panel)</li></ul>'),
+        description=_(
+            u"Enter a valid scale name"
+            u" (see 'Image Handling' control panel) to override"
+            u" (e.g. icon, tile, thumb, mini, preview, ... )."
+            u" Leave empty to use default (see 'Site' control panel)."
+        ),
         required=False,
         default=u'')
 
@@ -62,26 +66,30 @@ class IThumbIconHandling(model.Schema):
 
     suppress_thumbs = schema.Bool(
         title=_(u'Suppress thumbs in list, table or summary view'),
-        description=_(u''),
         required=False,
         default=False,
     )
 
-    directives.omitted('ov_thumbsize_list',
-                       'ov_thumbsize_table',
-                       'ov_thumbsize_summary',
-                       'suppress_icons',
-                       'suppress_thumbs'
-                       )
-    directives.no_omit(IEditForm, 'ov_thumbsize_list',
-                       'ov_thumbsize_table',
-                       'ov_thumbsize_summary',
-                       'suppress_icons',
-                       'suppress_thumbs'
-                       )
-    directives.no_omit(IAddForm, 'ov_thumbsize_list',
-                       'ov_thumbsize_table',
-                                 'ov_thumbsize_summary',
-                                 'suppress_icons',
-                                 'suppress_thumbs'
-                       )
+    directives.omitted(
+        'thumb_scale_list',
+        'thumb_scale_table',
+        'thumb_scale_summary',
+        'suppress_icons',
+        'suppress_thumbs'
+    )
+    directives.no_omit(
+        IEditForm,
+        'thumb_scale_list',
+        'thumb_scale_table',
+        'thumb_scale_summary',
+        'suppress_icons',
+        'suppress_thumbs'
+    )
+    directives.no_omit(
+        IAddForm,
+        'thumb_scale_list',
+        'thumb_scale_table',
+        'thumb_scale_summary',
+        'suppress_icons',
+        'suppress_thumbs'
+    )
