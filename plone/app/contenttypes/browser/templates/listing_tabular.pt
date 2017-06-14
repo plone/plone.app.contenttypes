@@ -25,8 +25,8 @@
       <div metal:use-macro="context/batch_macros/macros/navigation" />
       <div class="has-table">
         <table
-            tal:define="thumb_size_table python:view.get_thumbSize_table();
-                        img_class python:'image-%s pull-right' % thumb_size_table;
+            tal:define="thumb_scale_table view/get_thumb_scale_table;
+                        img_class python:'image-%s pull-right' % thumb_scale_table;
                         showicons  view/show_icons;
                         "
             class="listing"
@@ -76,9 +76,9 @@
                                          title item_type"
                          tal:content="item_title">Item Title
                       </a>
-                      <a tal:condition="python: item_has_image and (thumb_size_table!='none')">
-                         <img tal:attributes="href item_link;"
-                              tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_size_table, css_class=img_class)" />
+                      <a tal:condition="python:item_has_image and thumb_scale_table">
+                         <img tal:attributes="href item_link"
+                              tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_table, css_class=img_class)" />
                       </a>
                     </td>
                     <td tal:condition="python:field == 'Creator'"
