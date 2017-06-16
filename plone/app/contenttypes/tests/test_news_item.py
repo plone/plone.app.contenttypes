@@ -85,7 +85,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
         )
         self.request.set('URL', news_item.absolute_url())
         self.request.set('ACTUAL_URL', news_item.absolute_url())
-        view = news_item.restrictedTraverse('@@view')
+        view = news_item.restrictedTraverse('newsitem_view')
 
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)

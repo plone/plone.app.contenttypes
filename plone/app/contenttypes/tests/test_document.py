@@ -72,7 +72,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         self.request.set('URL', document.absolute_url())
         self.request.set('ACTUAL_URL', document.absolute_url())
         alsoProvides(self.request, IPloneFormLayer)
-        view = document.restrictedTraverse('@@view')
+        view = document.restrictedTraverse('@@document_view')
         self.assertEqual(view.request.response.status, 200)
         output = view()
         self.assertTrue(output)
