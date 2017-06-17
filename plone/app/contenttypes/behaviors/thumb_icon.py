@@ -25,7 +25,7 @@ class IThumbIconHandling(model.Schema):
     )
 
     thumb_scale_list = schema.TextLine(
-        title=_(u'Override thumb size for list view'),
+        title=_(u'Override thumb scale for list view'),
         description=_(
             u"Enter a valid scale name"
             u" (see 'Image Handling' control panel) to override"
@@ -36,7 +36,7 @@ class IThumbIconHandling(model.Schema):
         default=u'')
 
     thumb_scale_table = schema.TextLine(
-        title=_(u'Override thumb size for table view'),
+        title=_(u'Override thumb scale for table view'),
         description=_(
             u"Enter a valid scale name"
             u" (see 'Image Handling' control panel) to override"
@@ -47,7 +47,7 @@ class IThumbIconHandling(model.Schema):
         default=u'')
 
     thumb_scale_summary = schema.TextLine(
-        title=_(u'Override thumb size for summary view'),
+        title=_(u'Override thumb scale for summary view'),
         description=_(
             u"Enter a valid scale name"
             u" (see 'Image Handling' control panel) to override"
