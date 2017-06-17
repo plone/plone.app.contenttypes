@@ -26,7 +26,7 @@
       <div class="has-table">
         <table
             tal:define="thumb_scale_table view/get_thumb_scale_table;
-                        img_class python:'image-%s pull-right' % thumb_scale_table;
+                        img_class python:'thumb-%s pull-right' % thumb_scale_table;
                         showicons  view/show_icons;
                         "
             class="listing"

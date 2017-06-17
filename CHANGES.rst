@@ -35,6 +35,10 @@ New features:
 
 Bug fixes:
 
+- fixed css-classes for thumb scales ...
+  https://github.com/plone/Products.CMFPlone/issues/2077
+  [fgrcon]
+
 - Fix test for checking if TinyMCE is loaded which broke after https://github.com/plone/Products.CMFPlone/pull/2059
   [thet]
 
