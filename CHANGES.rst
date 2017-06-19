@@ -202,6 +202,10 @@ Bug fixes:
 
 Bug fixes:
 
+- Change "Description" to "Summary" for title of File and Image description fields so they
+  match dublin core behavior title
+  [vangheem]
+
 - Encode the linked url for the Link type to allow for non ascii characters in the url.
   [martior]
 

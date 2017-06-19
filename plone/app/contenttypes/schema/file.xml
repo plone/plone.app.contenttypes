@@ -11,7 +11,7 @@
     <field name="description" type="zope.schema.Text">
       <description />
       <required>False</required>
-      <title>Description</title>
+      <title>Summary</title>
     </field>
     <field name="file" type="plone.namedfile.field.NamedBlobFile"
         marshal:primary="true">
