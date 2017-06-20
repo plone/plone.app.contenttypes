@@ -95,8 +95,6 @@ class FixBaseClasses(BrowserView):
         ]
         catalog = getToolByName(self.context, 'portal_catalog')
         query = {}
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
         for portal_type, portal_type_class in portal_types:
             query['portal_type'] = portal_type
             results = catalog(query)
@@ -207,8 +205,6 @@ class MigrateFromATContentTypes(BrowserView):
                 'object_provides': v['iface'].__identifier__,
                 'meta_type': v['old_meta_type'],
             }
-            if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-                query['Language'] = 'all'
             amount_to_be_migrated = len(catalog(query))
             starttime_for_current = datetime.now()
             logger.info(
@@ -306,8 +302,6 @@ class MigrateFromATContentTypes(BrowserView):
         results = {}
         query = {}
         catalog = self.context.portal_catalog
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
         for brain in catalog(query):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
@@ -507,8 +501,6 @@ class ATCTMigratorHelpers(BrowserView):
         """ Return the number of AT objects in the portal """
         catalog = getToolByName(self.context, 'portal_catalog')
         query = {'meta_type': [i['old_meta_type'] for i in ATCT_LIST.values()]}
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
         brains = catalog(query)
         self._objects_to_be_migrated = len(brains)
         return self._objects_to_be_migrated
