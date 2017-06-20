@@ -10,7 +10,6 @@ from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.patches import patched_insertForwardIndexEntry  # noqa
-from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.migration.utils import restore_references
@@ -530,8 +529,6 @@ class ATCTMigratorHelpers(BrowserView):
         catalog = getToolByName(self.context, 'portal_catalog')
         query = {'meta_type': 'ATTopic'}
         results = []
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
         brains = catalog(query)
         for brain in brains:
             for item in catalog(path={'query': brain.getPath(), 'depth': 1}):
