@@ -126,7 +126,8 @@ class MigrateFromATContentTypes(BrowserView):
                  content_types='all',
                  migrate_schemaextended_content=False,
                  migrate_references=True,
-                 from_form=False):
+                 from_form=False,
+                 reindex_catalog=True):
 
         portal = self.context
         if content_types == 'all':
@@ -245,6 +246,7 @@ class MigrateFromATContentTypes(BrowserView):
         # make sure the view-methods on the plone site are updated
         use_new_view_names(portal, types_to_fix=['Plone Site'])
 
+        if reindex_catalog:
         catalog.clearFindAndRebuild()
 
         # restore references
