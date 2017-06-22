@@ -16,6 +16,7 @@ from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
 
@@ -108,6 +109,8 @@ def SearchableText_file(obj):
             return SearchableText(obj)
         return _unicode_save_string_concat(SearchableText(obj),
                                            transformed_value.getData())
+    except MissingBinary:
+        return SearchableText(obj)
     except (ConflictError, KeyboardInterrupt):
         raise
     except Exception, msg:
