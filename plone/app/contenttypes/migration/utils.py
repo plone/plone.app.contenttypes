@@ -488,6 +488,10 @@ def link_items(  # noqa
                 source_obj.absolute_url(), target_obj.absolute_url()))
             return
         # handle dx-relation
+        if relationship == 'translationOf':
+            # LinguaPlone relations make no sense for Dexterity
+            return
+
         intids = getUtility(IIntIds)
         to_id = intids.getId(target_obj)
         existing_dx_relations = getattr(source_obj, fieldname, [])
