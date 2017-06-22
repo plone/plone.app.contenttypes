@@ -86,7 +86,8 @@ class ATCTContentMigrator(CMFItemMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTContentMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            'Migrating {0}'.format(
+            'Migrating {0} {1}'.format(
+                self.old.portal_type,
                 '/'.join(self.old.getPhysicalPath())
             )
         )
@@ -150,7 +151,9 @@ class ATCTFolderMigrator(CMFFolderMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTFolderMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            'Migrating {0}'.format('/'.join(self.old.getPhysicalPath()))
+            'Migrating {0} {1}'.format(
+                self.old.portal_type,
+                '/'.join(self.old.getPhysicalPath()))
         )
 
     def beforeChange_store_comments_on_portal(self):

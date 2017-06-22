@@ -155,6 +155,16 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
 
+        msg = 'Starting Migration\n\n'
+        msg += '\n-----------------------------\n'
+        msg += 'Content statictics:\n'
+        msg += pformat(stats_before)
+        msg += '\n-----------------------------\n'
+        msg += 'Types to be migrated:\n'
+        msg += pformat(content_types)
+        msg += '\n-----------------------------\n'
+        logger.info(msg)
+
         # store references on the portal
         if migrate_references:
             store_references(portal)
@@ -242,7 +252,7 @@ class MigrateFromATContentTypes(BrowserView):
         use_new_view_names(portal, types_to_fix=['Plone Site'])
 
         if reindex_catalog:
-        catalog.clearFindAndRebuild()
+            catalog.clearFindAndRebuild()
 
         # restore references
         if migrate_references:
@@ -299,9 +309,8 @@ class MigrateFromATContentTypes(BrowserView):
 
     def stats(self):
         results = {}
-        query = {}
         catalog = self.context.portal_catalog
-        for brain in catalog(query):
+        for brain in catalog():
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return results
