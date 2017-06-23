@@ -127,8 +127,6 @@ class MigrateFromATContentTypes(BrowserView):
                  reindex_catalog=True):
 
         portal = self.context
-        if content_types == 'all':
-            content_types = DEFAULT_TYPES
 
         if not from_form and migrate not in ['1', 'True', 'true', 1]:
             url1 = '{0}/@@migrate_from_atct?migrate=1'.format(
@@ -202,7 +200,7 @@ class MigrateFromATContentTypes(BrowserView):
         migrated_types = {}
 
         for (k, v) in ATCT_LIST.items():
-            if k not in content_types:
+            if content_types != 'all' and k not in content_types:
                 not_migrated.append(k)
                 continue
             # test if the ct is extended beyond blobimage and blobfile
