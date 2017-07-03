@@ -4,10 +4,6 @@ Changelog
 1.4.1 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Integrate new link widget from plone.app.z3cform.
@@ -19,6 +15,8 @@ Bug fixes:
   `Issue 406 <https://github.com/plone/plone.app.contenttypes/issues/406>`_.
   [maurits]
 
+- Fix issue preventing disabling icons and/or thumbs globally.
+  [fgrcon]
 
 1.4 (2017-06-03)
 ----------------
