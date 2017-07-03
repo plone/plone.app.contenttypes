@@ -22,10 +22,22 @@ Bug fixes:
 
 New features:
 
+- Index default values when indexing the file fails due to a missing binary.
+  [pbauer]
+
+- Allow to skip rebuilding the catalog when migrating at to dx in code.
+  [pbauer]
+
 - Integrate new link widget from plone.app.z3cform.
   [tomgross]
 
 Bug fixes:
+
+- Remove Language='all' from migration-query since it was removed from p.a.multilingual
+  [pbauer]
+
+- Actually migrate all migratable types when passing 'all' to at-dx migration.
+  [pbauer]
 
 - Made sure the text field of Collections is searchable.
   `Issue 406 <https://github.com/plone/plone.app.contenttypes/issues/406>`_.
