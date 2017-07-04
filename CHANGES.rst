@@ -10,11 +10,19 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Index default values when indexing the file fails due to a missing binary.
+  [pbauer]
+
+- Allow to skip rebuilding the catalog when migrating at to dx in code.
+  [pbauer]
 
 Bug fixes:
 
-- *add item here*
+- Remove Language='all' from migration-query since it was removed from p.a.multilingual
+  [pbauer]
+
+- Actually migrate all migratable types when passing 'all' to at-dx migration.
+  [pbauer]
 
 
 1.4.1 (2017-07-03)
