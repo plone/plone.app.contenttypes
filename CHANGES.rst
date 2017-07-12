@@ -18,6 +18,12 @@ New features:
 
 Bug fixes:
 
+- Use original raw text and mimetype when indexing rich text.
+  This avoids a double transform (raw source to output mimetype to plain text).
+  Includes a reindex of the SearchableText index for Collections, Documents and News Items.
+  `Issue 2066 <https://github.com/plone/Products.CMFPlone/issues/2066>`_.
+  [maurits]
+
 - Remove Language='all' from migration-query since it was removed from p.a.multilingual
   [pbauer]
 

@@ -79,4 +79,12 @@
       handler=".upgrades.searchabletext_collections"
       />
 
+  <genericsetup:upgradeStep
+      source="1105"
+      destination="1106"
+      title="Reindex SearchableText for all rich text types"
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.searchabletext_richtext"
+      />
+
 </configure>
