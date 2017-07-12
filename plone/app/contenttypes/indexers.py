@@ -44,9 +44,12 @@ def SearchableText(obj):
         textvalue = richtext.text
         if IRichTextValue.providedBy(textvalue):
             transforms = getToolByName(obj, 'portal_transforms')
+            # Before you think about switching raw/output
+            # or mimeType/outputMimeType, first read
+            # https://github.com/plone/Products.CMFPlone/issues/2066
             text = transforms.convertTo(
                 'text/plain',
-                safe_unicode(textvalue.output).encode('utf8'),
+                safe_unicode(textvalue.raw).encode('utf-8'),
                 mimetype=textvalue.mimeType,
             ).getData().strip()
 
