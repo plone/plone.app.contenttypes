@@ -24,6 +24,9 @@ Bug fixes:
 - Actually migrate all migratable types when passing 'all' to at-dx migration.
   [pbauer]
 
+- Remove plone.app.robotframework 'reload' extra.
+  This allows to remove quite some other external dependencies that are not Python 3 compatible.
+  [gforcada]
 
 1.4.1 (2017-07-03)
 ------------------
