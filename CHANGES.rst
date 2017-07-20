@@ -4,14 +4,6 @@ Changelog
 1.2.24 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Made sure the text field of Collections is searchable.
