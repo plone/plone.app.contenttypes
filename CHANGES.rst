@@ -18,6 +18,9 @@ New features:
 
 Bug fixes:
 
+- Migrate the richtext-field 'text' when migrating ATTopics to Collections.
+  [pbauer]
+
 - Remove Language='all' from migration-query since it was removed from p.a.multilingual
   [pbauer]
 

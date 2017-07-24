@@ -79,6 +79,7 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
         self.assertEqual(self.portal.topic.portal_type, 'Collection')
         self.assertEqual(new.limit, 42)
         self.assertEqual(new.customViewFields, ('Title', 'Type'))
+        self.assertEqual(self.portal.topic.text.raw, u'<p>Hello</p>')
 
     def test_migrate_layout(self):
         self.portal.topic.setLayout('folder_summary_view')
