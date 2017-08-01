@@ -10,6 +10,7 @@ the default migration to migrate Topics with Subtopics.
 
 from DateTime import DateTime
 from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.migration.field_migrators import migrate_richtextfield  # noqa: E501
 from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.app.querystring.interfaces import IQuerystringRegistryReader
 from plone.registry.interfaces import IRegistry
@@ -546,6 +547,9 @@ class TopicMigrator(InplaceCMFItemMigrator):
         field = self.old.getField('excludeFromNav')
         self.new.exclude_from_nav = field.get(self.old)
 
+    def migrate_schema_fields(self):
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
+
     def migrate_at_uuid(self):
         """Migrate AT universal uid
         """
@@ -650,6 +654,9 @@ class FolderishTopicMigrator(InplaceCMFFolderMigrator):
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
         self.new.exclude_from_nav = field.get(self.old)
+
+    def migrate_schema_fields(self):
+        migrate_richtextfield(self.old, self.new, 'text', 'text')
 
     def migrate_at_uuid(self):
         """Migrate AT universal uid
