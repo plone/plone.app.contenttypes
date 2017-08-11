@@ -14,7 +14,11 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use original raw text and mimetype when indexing rich text.
+  This avoids a double transform (raw source to output mimetype to plain text).
+  Includes a reindex of the SearchableText index for Collections, Documents and News Items.
+  `Issue 2066 <https://github.com/plone/Products.CMFPlone/issues/2066>`_.
+  [maurits]
 
 
 1.1.3 (2017-07-20)

@@ -224,6 +224,30 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.assertEqual(index_data['SearchableText'].count('p'), 0)
         self.assertEqual(index_data['SearchableText'].count('b'), 0)
 
+    def test_raw_text_searchable_text_index(self):
+        """Ensure that raw text is used, instead of output.
+
+        It makes no sense to transform raw text to the output mimetype,
+        and then transform it again to plain text.
+        Note that this does mean that javascript may get in the
+        searchable text, but you will usually have a hard time setting it.
+        """
+        self.document.text = RichTextValue(
+            u"""<script type="text/javascript">alert('Lorem ipsum')
+            </script>""",
+            mimeType='text/html',
+            outputMimeType='text/x-html-safe'
+        )
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 1)
+        rid = brains[0].getRID()
+        index_data = self.catalog.getIndexDataForRID(rid)
+        self.assertEqual(index_data['SearchableText'].count('script'), 0)
+        self.assertEqual(index_data['SearchableText'].count('text'), 0)
+
     def test_file_fulltext_in_searchable_text_index_string(self):
         from plone.namedfile.file import NamedBlobFile
         data = ("Lorem ipsum. Köln <!-- ...oder München, das ist hier die "
