@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 import sys
 
-version = '1.1.4.dev0'
+version = '1.1.4'
 additional_requires = []
 if sys.version_info < (2, 7):
     additional_requires.append('importlib')
