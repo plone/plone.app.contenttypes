@@ -18,6 +18,11 @@ New features:
 
 Bug fixes:
 
+- Add translation namesspace and i18n:translate to the dexterity schema
+  definitions for the content types that have extra field defined on top of the
+  behavior composition. Otherwise no translations can be picked up.
+  [fredvd]
+
 - Use original raw text and mimetype when indexing rich text.
   This avoids a double transform (raw source to output mimetype to plain text).
   Includes a reindex of the SearchableText index for Collections, Documents and News Items.
