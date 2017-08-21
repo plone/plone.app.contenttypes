@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Add translation domain info to Link contenttype schema xml. These texts were
+  never picked up by our translation tools. 
+  [fredvd]
 
 
 1.1.4 (2017-08-14)
