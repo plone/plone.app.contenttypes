@@ -30,6 +30,7 @@ class MetaDataFieldsVocabulary(object):
         ]
         return SimpleVocabulary(items)
 
+
 MetaDataFieldsVocabularyFactory = MetaDataFieldsVocabulary()
 
 

@@ -31,6 +31,7 @@ class PloneAppContenttypesContent(PloneSandboxLayer):
         self.applyProfile(portal, 'Products.CMFPlone:plone')
         self.applyProfile(portal, 'plone.app.contenttypes:plone-content')
 
+
 PLONE_APP_CONTENTTYPES_CONTENT_FIXTURE = PloneAppContenttypesContent()
 PLONE_APP_CONTENTTYPES_CONTENT_INTEGRATION_TESTING = \
     IntegrationTesting(bases=(PLONE_APP_CONTENTTYPES_CONTENT_FIXTURE,),

@@ -1969,7 +1969,8 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
 
     def test_dxmigration_migrate_check_migration_successful_message(self):
         """Check base class migrator view of changed base class names."""
-        self.browser.getControl(name='form.widgets.changed_base_classes:list') \
+        self.browser.getControl(
+            name='form.widgets.changed_base_classes:list') \
             .value = ['true']
         self.browser.getControl('Update').click()
         self.assertIn(
