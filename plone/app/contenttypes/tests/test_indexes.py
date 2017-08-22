@@ -229,7 +229,8 @@ class CatalogIntegrationTest(unittest.TestCase):
         searchable text, but you will usually have a hard time setting it.
         """
         self.document.text = RichTextValue(
-            u"""<script type="text/javascript">alert('Lorem ipsum')</script>""",
+            u"""<script type="text/javascript">alert('Lorem ipsum')"""
+            u"""</script>""",
             mimeType='text/html',
             outputMimeType='text/x-html-safe'
         )

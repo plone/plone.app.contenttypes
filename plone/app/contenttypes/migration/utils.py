@@ -330,7 +330,8 @@ def get_all_references(context):
     relation_catalog = queryUtility(ICatalog)
     for rel in relation_catalog.findRelations():
         if rel.from_path and rel.to_path:
-            from_brain = portal_catalog(path=dict(query=rel.from_path, depth=0))
+            from_brain = portal_catalog(path=dict(query=rel.from_path,
+                                                  depth=0))
             to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))
             if len(from_brain) > 0 and len(to_brain) > 0:
                 results.append({

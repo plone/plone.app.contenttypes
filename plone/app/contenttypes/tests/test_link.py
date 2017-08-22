@@ -281,9 +281,9 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     default_result = {'internal': u'',
-              'external': u'',
-              'email': u'',
-              'email_subject': u''}
+                      'external': u'',
+                      'email': u'',
+                      'email_subject': u''}
 
     def setUp(self):
         self.portal = self.layer['portal']

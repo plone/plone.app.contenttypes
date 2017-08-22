@@ -181,7 +181,8 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my doc file.'
         file_path = os.path.join(os.path.dirname(__file__), 'file.doc')
         file_ctl = self.browser.getControl(name='form.widgets.file')
-        file_ctl.add_file(io.FileIO(file_path), 'application/msword', 'file.doc')
+        file_ctl.add_file(io.FileIO(file_path), 'application/msword',
+                          'file.doc')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.doc/view'))
         self.assertTrue('custom.png' in self.browser.contents)
