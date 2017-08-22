@@ -8,10 +8,10 @@
 <body>
 
 <metal:header fill-slot="header">
-  <div class="portalMessage info"
+  <div class="portalMessage attention"
       tal:define="redirect_links context/portal_properties/site_properties/redirect_links|nothing;"
       tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
-    <strong i18n:translate="">Info</strong>
+    <strong i18n:translate="">Info</strong>:
     <span tal:omit-tag=""
         i18n:translate="message_permissions_blocking_link_redirect">
       You see this page because you have permission to edit this link.

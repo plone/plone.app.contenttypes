@@ -14,6 +14,10 @@ New features:
 
 Bug fixes:
 
+- Change portal message warning on Link view from info to attention, 'info' is
+  not a configured portalMessage style in core Plone 4.
+  [f.vandijk]
+
 - Add translation domain info to Link contenttype schema xml. These texts were
   never picked up by our translation tools. Also add i18n:translate attributes.
   [fredvd]
