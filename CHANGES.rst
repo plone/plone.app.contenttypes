@@ -15,7 +15,7 @@ New features:
 Bug fixes:
 
 - Add translation domain info to Link contenttype schema xml. These texts were
-  never picked up by our translation tools. 
+  never picked up by our translation tools. Also add i18n:translate attributes.
   [fredvd]
 
 
