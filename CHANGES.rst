@@ -4,10 +4,6 @@ Changelog
 1.4.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Index default values when indexing the file fails due to a missing binary.
