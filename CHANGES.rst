@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Disable queuing of indexing-operations (PLIP https://github.com/plone/Products.CMFPlone/issues/1343)
+  during migration to Dexterity to prevent catalog-errors.
+  [pbauer]
 
 
 1.4.2 (2017-08-27)

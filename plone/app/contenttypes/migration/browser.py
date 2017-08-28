@@ -9,32 +9,24 @@ from plone.app.contenttypes.content import Link
 from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
-from plone.app.contenttypes.migration.patches import patched_insertForwardIndexEntry  # noqa
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.migration.utils import restore_references
 from plone.app.contenttypes.migration.utils import store_references
 from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
+from plone.app.contenttypes.migration.patches import patch_before_migration
+from plone.app.contenttypes.migration.patches import undo_patch_after_migration
 from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
-from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.registry.interfaces import IRegistry
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
-from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
-from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.DublinCore import DefaultDublinCoreImpl
-from Products.CMFPlone.interfaces import IEditingSchema
-from Products.contentmigration.utils import patch
-from Products.contentmigration.utils import undoPatch
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import field
@@ -43,7 +35,6 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
 from zope.component import getMultiAdapter
-from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import Interface
 
@@ -60,20 +51,10 @@ else:
 
 logger = logging.getLogger(__name__)
 
-PATCH_NOTIFY = [
-    DexterityContent,
-    DefaultDublinCoreImpl,
-    ExtensibleMetadata
-]
 
 # Average time to migrate one archetype object, in milliseconds.
 # This very much depends on the size of the object and system-speed
 ONE_OBJECT_MIGRATION_TIME = 500
-
-
-def pass_fn(*args, **kwargs):
-    """Empty function used for patching."""
-    pass
 
 
 class FixBaseClasses(BrowserView):
@@ -168,33 +149,8 @@ class MigrateFromATContentTypes(BrowserView):
             store_references(portal)
         catalog = portal.portal_catalog
 
-        # switch linkintegrity temp off
-        ptool = queryUtility(IPropertiesTool)
-        site_props = getattr(ptool, 'site_properties', None)
-        link_integrity_in_props = False
-        if site_props and site_props.hasProperty(
-                'enable_link_integrity_checks'):
-            link_integrity_in_props = True
-            link_integrity = site_props.getProperty(
-                'enable_link_integrity_checks', False)
-            site_props.manage_changeProperties(
-                enable_link_integrity_checks=False)
-        else:
-            # Plone 5
-            registry = getUtility(IRegistry)
-            editing_settings = registry.forInterface(
-                IEditingSchema, prefix='plone')
-            link_integrity = editing_settings.enable_link_integrity_checks
-            editing_settings.enable_link_integrity_checks = False
-
-        # switch of setModificationDate on changes
-        self.patchNotifyModified()
-
-        # patch UUIDIndex
-        patch(
-            UUIDIndex,
-            'insertForwardIndexEntry',
-            patched_insertForwardIndexEntry)
+        # Patch various things that make migration harder
+        link_integrity, queue_indexing = patch_before_migration()
 
         not_migrated = []
         migrated_types = {}
@@ -256,19 +212,8 @@ class MigrateFromATContentTypes(BrowserView):
         if migrate_references:
             restore_references(portal)
 
-        # switch linkintegrity back to what it was before migrating
-        if link_integrity_in_props:
-            site_props.manage_changeProperties(
-                enable_link_integrity_checks=link_integrity
-            )
-        else:
-            editing_settings.enable_link_integrity_checks = link_integrity
-
-        # switch on setModificationDate on changes
-        self.resetNotifyModified()
-
-        # unpatch UUIDIndex
-        undoPatch(UUIDIndex, 'insertForwardIndexEntry')
+        # Revert to the original state
+        undo_patch_after_migration(link_integrity, queue_indexing)
 
         duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
         if not_migrated:
@@ -312,22 +257,6 @@ class MigrateFromATContentTypes(BrowserView):
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return results
-
-    def patchNotifyModified(self):
-        """Patch notifyModified to prevent setModificationDate() on changes
-
-        notifyModified lives in several places and is also used on folders
-        when their content changes.
-        So when we migrate Documents before Folders the folders
-        ModifiedDate gets changed.
-        """
-        for klass in PATCH_NOTIFY:
-            patch(klass, 'notifyModified', pass_fn)
-
-    def resetNotifyModified(self):
-        """reset notifyModified to old state"""
-        for klass in PATCH_NOTIFY:
-            undoPatch(klass, 'notifyModified')
 
 
 class IATCTMigratorForm(Interface):
