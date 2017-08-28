@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Disable queuing of indexing-operations (PLIP https://github.com/plone/Products.CMFPlone/issues/1343)
+  during migration to Dexterity to prevent catalog-errors.
+  [pbauer]
 
 
 1.4.2 (2017-08-27)
@@ -34,9 +36,6 @@ Bug fixes:
   definitions for the content types that have extra field defined on top of the
   behavior composition. Otherwise no translations can be picked up.
   [fredvd]
-- Disable queuing of indexing-operations (PLIP https://github.com/plone/Products.CMFPlone/issues/1343)
-  during migration to Dexterity to prevent catalog-errors.
-  [pbauer]
 
 - Use original raw text and mimetype when indexing rich text.
   This avoids a double transform (raw source to output mimetype to plain text).
