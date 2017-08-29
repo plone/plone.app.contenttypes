@@ -22,6 +22,14 @@ Bug fixes:
   never picked up by our translation tools. Also add i18n:translate attributes.
   [fredvd]
 
+- Check if LingaPlone is installed for adding Language='all' option of
+  query catalog used to migration. No more for plone.app.multilingual.
+  If Products.LingaPlone is in site packages, we adding Language='all' option
+  for query catalog used to migration. Before, it was also check if
+  plone.app.multilingual is in packages, but plone.app.multilingual does not
+  support Language='all' option.
+  see https://github.com/plone/plone.app.multilingual/issues/226
+  [bsuttor]
 
 1.1.4 (2017-08-14)
 ------------------
@@ -67,14 +75,6 @@ Bug fixes:
 Bug fixes:
 
 - Fixed possible cross site scripting (XSS) attack in news item image caption.  [maurits]
-- Check if LingaPlone is installed for adding Language='all' option of 
-  query catalog used to migration. No more for plone.app.multilingual.
-- If Products.LingaPlone is in site packages, we adding Language='all' option 
-  for query catalog used to migration. Before, it was also check if 
-  plone.app.multilingual is in packages, but plone.app.multilingual does not 
-  support Language='all' option.
-  see https://github.com/plone/plone.app.multilingual/issues/226
-  [bsuttor]
 
 - Register explicitly plone.app.event dependency on configure.zcml.
   [hvelarde]
