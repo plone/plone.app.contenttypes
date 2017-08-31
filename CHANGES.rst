@@ -4,14 +4,6 @@ Changelog
 1.4.3 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Disable queuing of indexing-operations (PLIP https://github.com/plone/Products.CMFPlone/issues/1343)
