@@ -14,7 +14,10 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Make sure the effects of the robotframework REMOTE_LIBRARY_BUNDLE_FIXTURE
+  fixture are not accidentally removed as part of tearing down the
+  PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE.
+  [davisagli]
 
 
 1.4.3 (2017-08-30)
@@ -111,10 +114,6 @@ Bug fixes:
 
 - Fix issue where contentFilter could not be read from request
   [datakurre]
-- Make sure the effects of the robotframework REMOTE_LIBRARY_BUNDLE_FIXTURE
-  fixture are not accidentally removed as part of tearing down the
-  PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE.
-  [davisagli]
 
 
 1.3.0 (2017-03-27)
