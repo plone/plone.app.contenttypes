@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Use post_handler instead of import_steps.
+  [pbauer]
 
 Bug fixes:
 
