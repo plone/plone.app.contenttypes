@@ -15,6 +15,9 @@ New features:
 
 Bug fixes:
 
+- Remove obsolete HAS_MULTILINGUAL from utils.
+  [pbauer]
+
 - Clean up all ``__init__`` methods of the browser views to avoid unnecessary code execution.
   [thet]
 
