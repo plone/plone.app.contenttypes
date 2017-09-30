@@ -326,7 +326,7 @@ def configure_members_folder(portal, target_language):
 
 def step_import_content(context):
     """Create default content."""
-    portal = context.__parent__
+    portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
     create_frontpage(portal, target_language)
     create_news_topic(portal, target_language)
@@ -335,7 +335,7 @@ def step_import_content(context):
 
 
 def step_setup_various(context):
-    portal = context.__parent__
+    portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
     _setup_calendar(portal, locale)
     _setup_visible_ids(portal, target_language, locale)
