@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.3 (unreleased)
+1.4.4 (unreleased)
 ------------------
 
 Breaking changes:
@@ -13,6 +13,26 @@ New features:
 - Add leadimage options for choosing scale of it and choosing if you want to
   see it into content.
   [bsuttor]
+
+- Use post_handler instead of import_steps.
+  [pbauer]
+
+Bug fixes:
+
+- Remove obsolete HAS_MULTILINGUAL from utils.
+  [pbauer]
+
+- Clean up all ``__init__`` methods of the browser views to avoid unnecessary code execution.
+  [thet]
+
+- Make sure the effects of the robotframework REMOTE_LIBRARY_BUNDLE_FIXTURE
+  fixture are not accidentally removed as part of tearing down the
+  PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE.
+  [davisagli]
+
+
+1.4.3 (2017-08-30)
+------------------
 
 Bug fixes:
 

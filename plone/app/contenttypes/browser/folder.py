@@ -27,24 +27,48 @@ except ImportError:
 
 class FolderView(BrowserView):
 
-    def __init__(self, context, request):
-        super(FolderView, self).__init__(context, request)
+    text_class = None
+    _plone_view = None
+    _portal_state = None
+    _pas_member = None
 
-        self.plone_view = getMultiAdapter(
-            (context, request), name=u'plone')
-        self.portal_state = getMultiAdapter(
-            (context, request), name=u'plone_portal_state')
-        self.pas_member = getMultiAdapter(
-            (context, request), name=u'pas_member')
+    @property
+    def plone_view(self):
+        if not self._plone_view:
+            self._plone_view = getMultiAdapter(
+                (self.context, self.request),
+                name=u'plone'
+            )
+        return self._plone_view
 
-        self.text_class = None
+    @property
+    def portal_state(self):
+        if not self._portal_state:
+            self._portal_state = getMultiAdapter(
+                (self.context, self.request),
+                name=u'plone_portal_state'
+            )
+        return self._portal_state
 
-        limit_display = getattr(self.request, 'limit_display', None)
-        limit_display = int(limit_display) if limit_display is not None else 20
-        b_size = getattr(self.request, 'b_size', None)
-        self.b_size = int(b_size) if b_size is not None else limit_display
-        b_start = getattr(self.request, 'b_start', None)
-        self.b_start = int(b_start) if b_start is not None else 0
+    @property
+    def pas_member(self):
+        if not self._pas_member:
+            self._pas_member = getMultiAdapter(
+                (self.context, self.request),
+                name=u'pas_member'
+            )
+        return self._pas_member
+
+    @property
+    def b_size(self):
+        b_size = getattr(self.request, 'b_size', None)\
+            or getattr(self.request, 'limit_display', None) or 20
+        return int(b_size)
+
+    @property
+    def b_start(self):
+        b_start = getattr(self.request, 'b_start', None) or 0
+        return int(b_start)
 
     def results(self, **kwargs):
         """Return a content listing based result set with contents of the

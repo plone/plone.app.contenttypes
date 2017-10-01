@@ -18,11 +18,6 @@ class CollectionView(FolderView):
     def b_size(self):
         return getattr(self, '_b_size', self.collection_behavior.item_count)
 
-    @b_size.setter
-    def b_size(self, value):
-        # ignore, FolderView tries to set on init
-        pass
-
     def results(self, **kwargs):
         """Return a content listing based result set with results from the
         collection query.
