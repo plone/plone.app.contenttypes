@@ -209,3 +209,29 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
             _fixup(obj, LISTING_VIEW_MAPPING)
         if portal_type == 'Plone Site':
             _fixup(context, LISTING_VIEW_MAPPING)
+
+
+def searchabletext_collections(context):
+    """Reindex Collections for SearchableText."""
+    catalog = getToolByName(context, 'portal_catalog')
+    search = catalog.unrestrictedSearchResults
+    for brain in search(portal_type='Collection'):
+        obj = brain.getObject()
+        obj.reindexObject(idxs=['SearchableText'])
+
+
+def searchabletext_richtext(context):
+    """Reindex rich text types for SearchableText.
+
+    Our SearchableText indexer has been going back and forth between
+    taking the raw text or the output, and using the original mimetype
+    or the output mimetype.  We are on the third combination now
+    (original raw source with original mimetype) so it is time to reindex.
+
+    See https://github.com/plone/Products.CMFPlone/issues/2066
+    """
+    catalog = getToolByName(context, 'portal_catalog')
+    search = catalog.unrestrictedSearchResults
+    for brain in search(portal_type=['Collection', 'Document', 'News Item']):
+        obj = brain.getObject()
+        obj.reindexObject(idxs=['SearchableText'])

@@ -9,33 +9,24 @@ from plone.app.contenttypes.content import Link
 from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.migration import dxmigration
 from plone.app.contenttypes.migration import migration
-from plone.app.contenttypes.migration.patches import patched_insertForwardIndexEntry  # noqa
-from plone.app.contenttypes.migration.utils import HAS_MULTILINGUAL
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.app.contenttypes.migration.utils import restore_references
 from plone.app.contenttypes.migration.utils import store_references
 from plone.app.contenttypes.migration.vocabularies import ATCT_LIST
+from plone.app.contenttypes.migration.patches import patch_before_migration
+from plone.app.contenttypes.migration.patches import undo_patch_after_migration
 from plone.app.contenttypes.upgrades import use_new_view_names
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
-from plone.dexterity.content import DexterityContent
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.registry.interfaces import IRegistry
 from plone.z3cform.layout import wrap_form
 from pprint import pformat
-from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
-from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.DublinCore import DefaultDublinCoreImpl
-from Products.CMFPlone.interfaces import IEditingSchema
-from Products.contentmigration.utils import patch
-from Products.contentmigration.utils import undoPatch
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import field
@@ -44,7 +35,6 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
 from zope import schema
 from zope.component import getMultiAdapter
-from zope.component import getUtility
 from zope.component import queryUtility
 from zope.interface import Interface
 
@@ -61,20 +51,10 @@ else:
 
 logger = logging.getLogger(__name__)
 
-PATCH_NOTIFY = [
-    DexterityContent,
-    DefaultDublinCoreImpl,
-    ExtensibleMetadata
-]
 
 # Average time to migrate one archetype object, in milliseconds.
 # This very much depends on the size of the object and system-speed
 ONE_OBJECT_MIGRATION_TIME = 500
-
-
-def pass_fn(*args, **kwargs):
-    """Empty function used for patching."""
-    pass
 
 
 class FixBaseClasses(BrowserView):
@@ -95,8 +75,6 @@ class FixBaseClasses(BrowserView):
         ]
         catalog = getToolByName(self.context, 'portal_catalog')
         query = {}
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
         for portal_type, portal_type_class in portal_types:
             query['portal_type'] = portal_type
             results = catalog(query)
@@ -126,11 +104,10 @@ class MigrateFromATContentTypes(BrowserView):
                  content_types='all',
                  migrate_schemaextended_content=False,
                  migrate_references=True,
-                 from_form=False):
+                 from_form=False,
+                 reindex_catalog=True):
 
         portal = self.context
-        if content_types == 'all':
-            content_types = DEFAULT_TYPES
 
         if not from_form and migrate not in ['1', 'True', 'true', 1]:
             url1 = '{0}/@@migrate_from_atct?migrate=1'.format(
@@ -157,44 +134,29 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
 
+        msg = 'Starting Migration\n\n'
+        msg += '\n-----------------------------\n'
+        msg += 'Content statictics:\n'
+        msg += pformat(stats_before)
+        msg += '\n-----------------------------\n'
+        msg += 'Types to be migrated:\n'
+        msg += pformat(content_types)
+        msg += '\n-----------------------------\n'
+        logger.info(msg)
+
         # store references on the portal
         if migrate_references:
             store_references(portal)
         catalog = portal.portal_catalog
 
-        # switch linkintegrity temp off
-        ptool = queryUtility(IPropertiesTool)
-        site_props = getattr(ptool, 'site_properties', None)
-        link_integrity_in_props = False
-        if site_props and site_props.hasProperty(
-                'enable_link_integrity_checks'):
-            link_integrity_in_props = True
-            link_integrity = site_props.getProperty(
-                'enable_link_integrity_checks', False)
-            site_props.manage_changeProperties(
-                enable_link_integrity_checks=False)
-        else:
-            # Plone 5
-            registry = getUtility(IRegistry)
-            editing_settings = registry.forInterface(
-                IEditingSchema, prefix='plone')
-            link_integrity = editing_settings.enable_link_integrity_checks
-            editing_settings.enable_link_integrity_checks = False
-
-        # switch of setModificationDate on changes
-        self.patchNotifyModified()
-
-        # patch UUIDIndex
-        patch(
-            UUIDIndex,
-            'insertForwardIndexEntry',
-            patched_insertForwardIndexEntry)
+        # Patch various things that make migration harder
+        link_integrity, queue_indexing = patch_before_migration()
 
         not_migrated = []
         migrated_types = {}
 
         for (k, v) in ATCT_LIST.items():
-            if k not in content_types:
+            if content_types != 'all' and k not in content_types:
                 not_migrated.append(k)
                 continue
             # test if the ct is extended beyond blobimage and blobfile
@@ -206,8 +168,6 @@ class MigrateFromATContentTypes(BrowserView):
                 'object_provides': v['iface'].__identifier__,
                 'meta_type': v['old_meta_type'],
             }
-            if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-                query['Language'] = 'all'
             amount_to_be_migrated = len(catalog(query))
             starttime_for_current = datetime.now()
             logger.info(
@@ -245,25 +205,15 @@ class MigrateFromATContentTypes(BrowserView):
         # make sure the view-methods on the plone site are updated
         use_new_view_names(portal, types_to_fix=['Plone Site'])
 
-        catalog.clearFindAndRebuild()
+        if reindex_catalog:
+            catalog.clearFindAndRebuild()
 
         # restore references
         if migrate_references:
             restore_references(portal)
 
-        # switch linkintegrity back to what it was before migrating
-        if link_integrity_in_props:
-            site_props.manage_changeProperties(
-                enable_link_integrity_checks=link_integrity
-            )
-        else:
-            editing_settings.enable_link_integrity_checks = link_integrity
-
-        # switch on setModificationDate on changes
-        self.resetNotifyModified()
-
-        # unpatch UUIDIndex
-        undoPatch(UUIDIndex, 'insertForwardIndexEntry')
+        # Revert to the original state
+        undo_patch_after_migration(link_integrity, queue_indexing)
 
         duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
         if not_migrated:
@@ -302,30 +252,11 @@ class MigrateFromATContentTypes(BrowserView):
 
     def stats(self):
         results = {}
-        query = {}
         catalog = self.context.portal_catalog
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
-        for brain in catalog(query):
+        for brain in catalog():
             classname = brain.getObject().__class__.__name__
             results[classname] = results.get(classname, 0) + 1
         return results
-
-    def patchNotifyModified(self):
-        """Patch notifyModified to prevent setModificationDate() on changes
-
-        notifyModified lives in several places and is also used on folders
-        when their content changes.
-        So when we migrate Documents before Folders the folders
-        ModifiedDate gets changed.
-        """
-        for klass in PATCH_NOTIFY:
-            patch(klass, 'notifyModified', pass_fn)
-
-    def resetNotifyModified(self):
-        """reset notifyModified to old state"""
-        for klass in PATCH_NOTIFY:
-            undoPatch(klass, 'notifyModified')
 
 
 class IATCTMigratorForm(Interface):
@@ -363,12 +294,16 @@ class IATCTMigratorForm(Interface):
 
 
 class ATCTMigratorForm(form.Form):
+    template = ViewPageTemplateFile('atct_migrator.pt')
+    results_template = ViewPageTemplateFile('atct_migrator_results.pt')
 
     fields = field.Fields(IATCTMigratorForm)
     fields['content_types'].widgetFactory = CheckBoxFieldWidget
     fields['extended_content'].widgetFactory = CheckBoxFieldWidget
     ignoreContext = True
     enableCSRFProtection = True
+
+    results = None
 
     @button.buttonAndHandler(u'Migrate', name='migrate')
     def handle_migrate(self, action):
@@ -385,18 +320,13 @@ class ATCTMigratorForm(form.Form):
             (context, self.request),
             name=u'migrate_from_atct'
         )
-        # call the migration-view above to actually migrate stuff.
-        results = migration_view(
+        # store results where `render` can find them
+        self.results = migration_view(
             content_types=content_types,
             migrate_schemaextended_content=True,
             migrate_references=data['migrate_references'],
             from_form=True,
         )
-        sdm = getToolByName(context, 'session_data_manager')
-        session = sdm.getSessionData(create=True)
-        session.set('atct_migrator_results', results)
-        url = context.absolute_url()
-        self.request.response.redirect(url + '/@@atct_migrator_results')
 
     def updateActions(self):
         super(ATCTMigratorForm, self).updateActions()
@@ -423,11 +353,11 @@ class ATCTMigratorForm(form.Form):
                 # the vocabulary is empty, we hide the widget
                 widget.mode = HIDDEN_MODE
 
-
-ATCTMigrator = wrap_form(
-    ATCTMigratorForm,
-    index=ViewPageTemplateFile('atct_migrator.pt')
-)
+    def render(self):
+        if self.results:
+            return self.results_template()
+        else:
+            return super(ATCTMigratorForm, self).render()
 
 
 class IBaseClassMigratorForm(Interface):
@@ -506,8 +436,6 @@ class ATCTMigratorHelpers(BrowserView):
         """ Return the number of AT objects in the portal """
         catalog = getToolByName(self.context, 'portal_catalog')
         query = {'meta_type': [i['old_meta_type'] for i in ATCT_LIST.values()]}
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
         brains = catalog(query)
         self._objects_to_be_migrated = len(brains)
         return self._objects_to_be_migrated
@@ -537,8 +465,6 @@ class ATCTMigratorHelpers(BrowserView):
         catalog = getToolByName(self.context, 'portal_catalog')
         query = {'meta_type': 'ATTopic'}
         results = []
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
         brains = catalog(query)
         for brain in brains:
             for item in catalog(path={'query': brain.getPath(), 'depth': 1}):
@@ -612,20 +538,6 @@ class ATCTMigratorHelpers(BrowserView):
                     results['installed_without_behavior'].append(type_name)
             else:
                 results['not_installed'].append(type_name)
-        return results
-
-
-class ATCTMigratorResults(BrowserView):
-
-    index = ViewPageTemplateFile('atct_migrator_results.pt')
-
-    def results(self):
-        sdm = self.context.session_data_manager
-        session = sdm.getSessionData(create=True)
-        results = session.get('atct_migrator_results', None)
-        if not results:
-            return False
-        # results['atct_list'] = ATCT_LIST
         return results
 
 

@@ -3,7 +3,7 @@ from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TE
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 
-import unittest2 as unittest
+import unittest
 
 
 class PloneAppContenttypesSetupTest(unittest.TestCase):

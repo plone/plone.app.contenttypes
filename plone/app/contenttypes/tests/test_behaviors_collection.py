@@ -10,7 +10,7 @@ from plone.testing.z2 import Browser
 from zope.interface import alsoProvides
 
 import json
-import unittest2 as unittest
+import unittest
 
 
 query = [{

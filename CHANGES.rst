@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.2.20 (unreleased)
--------------------
+1.4.4 (unreleased)
+------------------
 
 Breaking changes:
 
@@ -13,9 +13,170 @@ New features:
 - Test SVG handling
   [tomgross]
 
+- Use post_handler instead of import_steps.
+  [pbauer]
+
 Bug fixes:
 
-- *add item here*
+- Remove obsolete HAS_MULTILINGUAL from utils.
+  [pbauer]
+
+- Clean up all ``__init__`` methods of the browser views to avoid unnecessary code execution.
+  [thet]
+
+- Make sure the effects of the robotframework REMOTE_LIBRARY_BUNDLE_FIXTURE
+  fixture are not accidentally removed as part of tearing down the
+  PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE.
+  [davisagli]
+
+
+1.4.3 (2017-08-30)
+------------------
+
+Bug fixes:
+
+- Disable queuing of indexing-operations (PLIP https://github.com/plone/Products.CMFPlone/issues/1343)
+  during migration to Dexterity to prevent catalog-errors.
+  [pbauer]
+
+
+1.4.2 (2017-08-27)
+------------------
+
+New features:
+
+- Index default values when indexing the file fails due to a missing binary.
+  [pbauer]
+
+- Allow to skip rebuilding the catalog when migrating at to dx in code.
+  [pbauer]
+
+Bug fixes:
+
+- Add translation namesspace and i18n:translate to the dexterity schema
+  definitions for the content types that have extra field defined on top of the
+  behavior composition. Otherwise no translations can be picked up.
+  [fredvd]
+
+- Use original raw text and mimetype when indexing rich text.
+  This avoids a double transform (raw source to output mimetype to plain text).
+  Includes a reindex of the SearchableText index for Collections, Documents and News Items.
+  `Issue 2066 <https://github.com/plone/Products.CMFPlone/issues/2066>`_.
+  [maurits]
+
+- Migrate the richtext-field 'text' when migrating ATTopics to Collections.
+  [pbauer]
+
+- Remove Language='all' from migration-query since it was removed from p.a.multilingual
+  [pbauer]
+
+- Actually migrate all migratable types when passing 'all' to at-dx migration.
+  [pbauer]
+
+- Remove plone.app.robotframework 'reload' extra.
+  This allows to remove quite some other external dependencies that are not Python 3 compatible.
+  [gforcada]
+
+1.4.1 (2017-07-03)
+------------------
+
+New features:
+
+- Integrate new link widget from plone.app.z3cform.
+  [tomgross]
+
+Bug fixes:
+
+- Made sure the text field of Collections is searchable.
+  `Issue 406 <https://github.com/plone/plone.app.contenttypes/issues/406>`_.
+  [maurits]
+
+- Fix issue preventing disabling icons and/or thumbs globally.
+  [fgrcon]
+
+1.4 (2017-06-03)
+----------------
+
+
+New features:
+
+- New metadata catalog column MimeType
+  https://github.com/plone/Products.CMFPlone/issues/1995
+  [fgrcon]
+
+- new behavior: IThumbIconHandling, supress thumbs /icons, adjust thumb size, templates adapted
+  https://github.com/plone/Products.CMFPlone/issues/1734 (PLIP)
+
+Bug fixes:
+
+- fixed css-classes for thumb scales ...
+  https://github.com/plone/Products.CMFPlone/issues/2077
+  [fgrcon]
+
+- Fix test for checking if TinyMCE is loaded which broke after https://github.com/plone/Products.CMFPlone/pull/2059
+  [thet]
+
+- Fix flaky test in test_indexes.
+  [thet]
+
+- removed unittest2 dependency
+  [kakshay21]
+
+- Fix issue where contentFilter could not be read from request
+  [datakurre]
+
+
+1.3.0 (2017-03-27)
+------------------
+
+New features:
+
+- Make use of plone.namedfile's tag() function to generate img tags. Part of plip 1483.
+  [didrix]
+
+Bug fixes:
+
+- Avoid failure during migration if relation is broken.
+  [cedricmessiant]
+
+- Fix import location for Products.ATContentTypes.interfaces.
+  [thet]
+
+1.2.22 (2017-02-20)
+-------------------
+
+Bug fixes:
+
+- Add condition so custom folder migration does not fail if there is not
+  an 'excludeFromNav'
+  [cdw9]
+
+
+1.2.21 (2017-02-05)
+-------------------
+
+New features:
+
+- Remove browserlayer from listing views to allow overrides from other packages
+  [agitator]
+
+Bug fixes:
+
+- Use helper method to retrieve all catalog brains in migration code, because Products.ZCatalog removed the ability to get all brains by calling the catalog without arguments.
+  [thet, gogobd]
+
+- Fix use of add_file in testbrowser tests. [davisagli]
+
+- Render migration results without using Zope session. [davisagli]
+
+
+1.2.20 (2017-01-20)
+-------------------
+
+Bug fixes:
+
+- Use unicode string when .format() parameter is unicode for the field migrator
+  [frapell]
 
 
 1.2.19 (2016-12-02)

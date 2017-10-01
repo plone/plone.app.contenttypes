@@ -9,6 +9,7 @@
     directory="profiles/content"
     description="Plone default content-types (plone.app.contenttypes)"
     provides="Products.GenericSetup.interfaces.EXTENSION"
+    post_handler=".setuphandlers.step_import_content"
     />
 
   <!-- All types, no sample content. -->
@@ -18,6 +19,7 @@
     directory="profiles/default"
     description="Plone default content-types (plone.app.contenttypes)"
     provides="Products.GenericSetup.interfaces.EXTENSION"
+    post_handler=".setuphandlers.step_setup_various"
     />
 
   <!-- Uninstall -->

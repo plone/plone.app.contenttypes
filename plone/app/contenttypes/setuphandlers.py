@@ -326,9 +326,7 @@ def configure_members_folder(portal, target_language):
 
 def step_import_content(context):
     """Create default content."""
-    if context.readDataFile('plone.app.contenttypes_content.txt') is None:
-        return
-    portal = context.getSite()
+    portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
     create_frontpage(portal, target_language)
     create_news_topic(portal, target_language)
@@ -337,9 +335,7 @@ def step_import_content(context):
 
 
 def step_setup_various(context):
-    if context.readDataFile('plone.app.contenttypes_default.txt') is None:
-        return
-    portal = context.getSite()
+    portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
     _setup_calendar(portal, locale)
     _setup_visible_ids(portal, target_language, locale)

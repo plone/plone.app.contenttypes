@@ -5,6 +5,7 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone">
 
+  <adapter name="SearchableText" factory=".indexers.SearchableText_collection" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_document" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_file" />
   <adapter name="SearchableText" factory=".indexers.SearchableText_folder" />
@@ -14,5 +15,6 @@
   <adapter name="getObjSize" factory=".indexers.getObjSize_image" />
   <adapter name="getObjSize" factory=".indexers.getObjSize_file" />
   <adapter name="getIcon" factory=".indexers.getIcon" />
+  <adapter name="mime_type" factory=".indexers.mime_type" />
 
 </configure>

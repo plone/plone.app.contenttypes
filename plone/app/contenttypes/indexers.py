@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_base
 from logging import getLogger
 from plone.app.contenttypes.behaviors.richtext import IRichText
+from plone.app.contenttypes.interfaces import ICollection
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
 from plone.app.contenttypes.interfaces import IFolder
@@ -14,6 +16,7 @@ from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
 
@@ -43,9 +46,12 @@ def SearchableText(obj):
         textvalue = richtext.text
         if IRichTextValue.providedBy(textvalue):
             transforms = getToolByName(obj, 'portal_transforms')
+            # Before you think about switching raw/output
+            # or mimeType/outputMimeType, first read
+            # https://github.com/plone/Products.CMFPlone/issues/2066
             text = transforms.convertTo(
                 'text/plain',
-                safe_unicode(textvalue.output).encode('utf8'),
+                safe_unicode(textvalue.raw).encode('utf-8'),
                 mimetype=textvalue.mimeType,
             ).getData().strip()
 
@@ -69,6 +75,11 @@ def SearchableText_news(obj):
 
 @indexer(IDocument)
 def SearchableText_document(obj):
+    return _unicode_save_string_concat(SearchableText(obj))
+
+
+@indexer(ICollection)
+def SearchableText_collection(obj):
     return _unicode_save_string_concat(SearchableText(obj))
 
 
@@ -101,6 +112,8 @@ def SearchableText_file(obj):
             return SearchableText(obj)
         return _unicode_save_string_concat(SearchableText(obj),
                                            transformed_value.getData())
+    except MissingBinary:
+        return SearchableText(obj)
     except (ConflictError, KeyboardInterrupt):
         raise
     except Exception, msg:
@@ -150,6 +163,11 @@ def getObjSize_file(obj):
         )
         return
     return obj.getObjSize(None, primary_field_info.value.size)
+
+
+@indexer(IDexterityContent)
+def mime_type(obj):
+    return aq_base(obj).content_type()
 
 
 @indexer(IDexterityContent)

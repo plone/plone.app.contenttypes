@@ -17,6 +17,8 @@ from plone.app.contenttypes.migration.field_migrators import migrate_filefield
 from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
 from plone.app.contenttypes.migration.field_migrators import migrate_richtextfield  # noqa
 from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
+from plone.app.contenttypes.migration.patches import patch_before_migration
+from plone.app.contenttypes.migration.patches import undo_patch_after_migration
 from plone.app.contenttypes.migration.utils import copy_contentrules
 from plone.app.contenttypes.migration.utils import migrate_leadimage
 from plone.app.contenttypes.migration.utils import migrate_portlets
@@ -86,7 +88,8 @@ class ATCTContentMigrator(CMFItemMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTContentMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            'Migrating {0}'.format(
+            'Migrating {0} {1}'.format(
+                self.old.portal_type,
                 '/'.join(self.old.getPhysicalPath())
             )
         )
@@ -150,7 +153,9 @@ class ATCTFolderMigrator(CMFFolderMigrator):
     def __init__(self, *args, **kwargs):
         super(ATCTFolderMigrator, self).__init__(*args, **kwargs)
         logger.info(
-            'Migrating {0}'.format('/'.join(self.old.getPhysicalPath()))
+            'Migrating {0} {1}'.format(
+                self.old.portal_type,
+                '/'.join(self.old.getPhysicalPath()))
         )
 
     def beforeChange_store_comments_on_portal(self):
@@ -162,7 +167,8 @@ class ATCTFolderMigrator(CMFFolderMigrator):
 
     def migrate_atctmetadata(self):
         field = self.old.getField('excludeFromNav')
-        self.new.exclude_from_nav = field.get(self.old)
+        if field:
+            self.new.exclude_from_nav = field.get(self.old)
 
     def migrate_custom(self):
         """Get all ICustomMigrator registered migrators and run the migration.
@@ -472,6 +478,9 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     """
     portal = getSite()
 
+    # Patch various things that make migration harder
+    link_integrity, queue_indexing = patch_before_migration()
+
     # if the type still exists get the src_meta_type from the portal_type
     portal_types = getToolByName(portal, 'portal_types')
     fti = portal_types.get(src_type, None)
@@ -509,6 +518,7 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
                                     fields_mapping=fields_mapping,
                                     is_folderish=is_folderish,
                                     dry_run=dry_run)
+    walker_infos = None
     if migrator:
         migrator.src_meta_type = src_meta_type
         migrator.dst_meta_type = ''
@@ -530,4 +540,8 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
             logger.error(error.get('message'))
         if dry_run:
             transaction.abort()
-        return walker_infos
+
+    # Revert to the original state
+    undo_patch_after_migration(link_integrity, queue_indexing)
+
+    return walker_infos

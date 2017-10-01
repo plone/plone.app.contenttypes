@@ -11,7 +11,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 
 import pkg_resources
-import unittest2 as unittest
+import unittest
 
 
 try:
@@ -28,6 +28,7 @@ class PloneAppContenttypesContent(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         # Necessary to set up some Plone stuff, such as Workflow.
         self.applyProfile(portal, 'plone.app.contenttypes:plone-content')
+
 
 PLONE_APP_CONTENTTYPES_CONTENT_FIXTURE = PloneAppContenttypesContent()
 PLONE_APP_CONTENTTYPES_CONTENT_INTEGRATION_TESTING = \

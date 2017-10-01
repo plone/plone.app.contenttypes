@@ -19,7 +19,7 @@ from Products.CMFPlone.utils import safe_unicode
 import os.path
 import pytz
 import transaction
-import unittest2 as unittest
+import unittest
 
 
 class MigrateFieldsTest(unittest.TestCase):
@@ -170,7 +170,7 @@ class MigrateCustomATTest(unittest.TestCase):
 
     def createCustomATDocument(self, id, parent=None):
         from Products.Archetypes.atapi import StringField, TextField
-        from Products.ATContentTypes.interface import IATDocument
+        from Products.ATContentTypes.interfaces import IATDocument
         from archetypes.schemaextender.interfaces import ISchemaExtender
         from archetypes.schemaextender.field import ExtensionField
         from zope.component import getGlobalSiteManager

@@ -47,26 +47,9 @@ from zope.lifecycleevent import modified
 import json
 import logging
 import os
-import pkg_resources
 
 
 logger = logging.getLogger(__name__)
-
-# Is there a multilingual addon?
-try:
-    pkg_resources.get_distribution('Products.LinguaPlone')
-except pkg_resources.DistributionNotFound:
-    HAS_MULTILINGUAL = False
-else:
-    HAS_MULTILINGUAL = True
-
-if not HAS_MULTILINGUAL:
-    try:
-        pkg_resources.get_distribution('plone.app.multilingual')
-    except pkg_resources.DistributionNotFound:
-        HAS_MULTILINGUAL = False
-    else:
-        HAS_MULTILINGUAL = True
 
 
 def isSchemaExtended(iface):
@@ -299,13 +282,25 @@ class ExportAllReferences(BrowserView):
         return json.dumps(data)
 
 
+def catalog_get_all(catalog, unique_idx='UID'):
+    """Get all brains from the catalog.
+    """
+    res = [
+        catalog({
+            unique_idx: catalog._catalog.getIndexDataForRID(it)[unique_idx]
+        })[0]
+        for it in catalog._catalog.data
+    ]
+    return res
+
+
 def get_all_references(context):
     results = []
     # Archetypes
     # Get all data from the reference_catalog if it exists
     reference_catalog = getToolByName(context, REFERENCE_CATALOG, None)
     if reference_catalog is not None:
-        for brain in reference_catalog():
+        for brain in catalog_get_all(reference_catalog):
             results.append({
                 'from_uuid': brain.sourceUID,
                 'to_uuid': brain.targetUID,
@@ -317,14 +312,16 @@ def get_all_references(context):
     portal_catalog = getToolByName(context, 'portal_catalog')
     relation_catalog = queryUtility(ICatalog)
     for rel in relation_catalog.findRelations():
-        from_brain = portal_catalog(path=dict(query=rel.from_path, depth=0))
-        to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))
-        if len(from_brain) > 0 and len(to_brain) > 0:
-            results.append({
-                'from_uuid': from_brain[0].UID,
-                'to_uuid': to_brain[0].UID,
-                'relationship': rel.from_attribute,
-            })
+        if rel.from_path and rel.to_path:
+            from_brain = portal_catalog(path=dict(query=rel.from_path,
+                                                  depth=0))
+            to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))
+            if len(from_brain) > 0 and len(to_brain) > 0:
+                results.append({
+                    'from_uuid': from_brain[0].UID,
+                    'to_uuid': to_brain[0].UID,
+                    'relationship': rel.from_attribute,
+                })
     return results
 
 
@@ -475,6 +472,10 @@ def link_items(  # noqa
                 source_obj.absolute_url(), target_obj.absolute_url()))
             return
         # handle dx-relation
+        if relationship == 'translationOf':
+            # LinguaPlone relations make no sense for Dexterity
+            return
+
         intids = getUtility(IIntIds)
         to_id = intids.getId(target_obj)
         existing_dx_relations = getattr(source_obj, fieldname, [])

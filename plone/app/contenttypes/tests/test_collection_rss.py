@@ -10,7 +10,7 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.syndication import ISiteSyndicationSettings
 from zope.component import getUtility
 
-import unittest2 as unittest
+import unittest
 
 
 query = [{

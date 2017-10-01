@@ -14,7 +14,7 @@ from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
 
-import unittest2 as unittest
+import unittest
 
 
 class DocumentIntegrationTest(unittest.TestCase):

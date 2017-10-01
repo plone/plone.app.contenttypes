@@ -19,11 +19,9 @@
       Others will be immediately redirected to the link's target URL.
     </span>
   </div>
-  <p tal:define="portal_url portal_state/portal_url;
-                 navigation_root_url portal_state/navigation_root_url;
-                 url view/absolute_target_url">
+  <p>
     <span i18n:translate="link_address">The link address is:</span>
-    <a tal:attributes="href url" tal:content="context/remoteUrl">remote url</a>
+    <a tal:attributes="href view/absolute_target_url" tal:content="view/url">remote url</a>
   </p>
 </metal:block>
 </metal:content-core>

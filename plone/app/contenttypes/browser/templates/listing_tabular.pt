@@ -24,7 +24,12 @@
 
       <div metal:use-macro="context/batch_macros/macros/navigation" />
       <div class="has-table">
-        <table class="listing"
+        <table
+            tal:define="thumb_scale_table view/get_thumb_scale_table;
+                        img_class python:'thumb-%s pull-right' % thumb_scale_table;
+                        showicons  view/show_icons;
+                        "
+            class="listing"
             summary="Content listing"
             i18n:attributes="summary summary_content_listing;">
           <thead>
@@ -35,17 +40,20 @@
                   tal:content="field">Field name</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody tal:define="portal context/@@plone_portal_state/portal;
+                             image_scale portal/@@image_scale">
             <tal:entries tal:repeat="item batch">
               <tal:block tal:define="item_url item/getURL;
                                      item_title item/Title;
                                      item_description item/Description;
                                      item_type item/PortalType;
-                                     item_type_class python:'contenttype-' + view.normalizeString(item_type);
+                                     item_type_class python:'contenttype-' + view.normalizeString(item_type) if showicons else '';
                                      item_wf_state item/review_state;
                                      item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                                      item_creator item/Creator;
-                                     item_link python:item_type in view.use_view_action and item_url+'/view' or item_url">
+                                     item_has_image python:item.getIcon;
+                                     item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
+                                     ">
                 <tr metal:define-macro="listitem"
                     tal:define="oddrow repeat/item/odd;"
                     tal:attributes="class python: oddrow and 'even' or 'odd'">
@@ -56,18 +64,21 @@
                       <tal:block tal:replace="field_data/value" />
                     </td>
                     <td tal:condition="python:field == 'Title'">
-                      <img class="image-icon"
-                         tal:define="getIcon python:item.getURL()+'/@@images/image/icon'"
-                         tal:condition="python:  item.getIcon"
-                         tal:attributes="href item/getURL;
-                                         src  string:$getIcon"
-                      />
-                      <a href="#"
-                          tal:attributes="href item_link;
-                          class string:$item_wf_state_class $item_type_class;
-                          title item_description;"
-                          tal:content="item_title">
-                        Item Title
+                      <a tal:condition="python:item_type == 'File' and showicons"
+                         tal:attributes="href item_link;
+                                         class string:$item_type_class $item_wf_state_class url;
+                                         title item_type">
+                         <img class="mime-icon"
+                                tal:attributes="src item/MimeTypeIcon">
+                      </a>
+                      <a tal:attributes="href item_link;
+                                         class string:$item_type_class $item_wf_state_class url;
+                                         title item_type"
+                         tal:content="item_title">Item Title
+                      </a>
+                      <a tal:condition="python:item_has_image and thumb_scale_table">
+                         <img tal:attributes="href item_link"
+                              tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_table, css_class=img_class)" />
                       </a>
                     </td>
                     <td tal:condition="python:field == 'Creator'"

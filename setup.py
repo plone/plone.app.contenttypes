@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '1.2.20.dev0'
+version = '1.4.4.dev0'
 
 
 def read(*rnames):
@@ -24,7 +24,6 @@ setup(name='plone.app.contenttypes',
       classifiers=[
           "Development Status :: 6 - Mature",
           "Framework :: Plone",
-          "Framework :: Plone :: 5.0",
           "Framework :: Plone :: 5.1",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.7",
@@ -48,7 +47,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
           'plone.app.relationfield',
-          'plone.namedfile [blobs]',
+          'plone.namedfile [blobs] >= 4.2.0',
           'plone.app.versioningbehavior',
           'plone.app.lockingbehavior',
           'pytz',
@@ -59,7 +58,7 @@ setup(name='plone.app.contenttypes',
           'test': [
               'archetypes.schemaextender',
               'lxml',
-              'plone.app.robotframework [debug, reload] > 0.9.8',  # create image and file content for Image, File and News Item if not given.  # noqa
+              'plone.app.robotframework [debug] > 0.9.8',  # create image and file content for Image, File and News Item if not given.  # noqa
               'plone.app.testing [robot] >= 4.2.4',  # we need ROBOT_TEST_LEVEL
               # 'plone.dexterity >= 2.3.0',  # fixes setting default values # NOT RELEASED YET. # noqa
               'Products.ATContentTypes',

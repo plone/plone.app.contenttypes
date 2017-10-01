@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
@@ -12,7 +13,7 @@ from plone.testing.z2 import Browser
 from zope.component import createObject
 from zope.component import queryUtility
 
-import unittest2 as unittest
+import unittest
 
 
 class FolderIntegrationTest(unittest.TestCase):
@@ -73,8 +74,6 @@ class FolderViewIntegrationTest(unittest.TestCase):
 
         self.portal.invokeFactory('News Item', 'newsitem')
         self.portal.invokeFactory('Document', 'document')
-
-        from plone.app.contenttypes.browser.folder import FolderView
         view = FolderView(self.portal, self.request)
 
         # Test, if all results are found.

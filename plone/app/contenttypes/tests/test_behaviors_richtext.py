@@ -9,7 +9,7 @@ from plone.dexterity.fti import DexterityFTI
 from plone.testing.z2 import Browser
 from Products.CMFCore.utils import getToolByName
 
-import unittest2 as unittest
+import unittest
 
 
 class RichTextBase:
@@ -55,7 +55,7 @@ class RichTextBehaviorFunctionalTest(RichTextBase, unittest.TestCase):
 
     def test_richtext_in_edit_form(self):
         self.browser.open(self.portal_url + '/doc1/edit')
-        self.assertTrue('pat-tinymce' in self.browser.contents)
+        self.assertTrue('tinymce' in self.browser.contents)
 
     def test_richtext_behavior(self):
         IRichText.providedBy(self.portal.doc1)

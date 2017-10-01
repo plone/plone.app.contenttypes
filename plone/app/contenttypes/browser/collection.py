@@ -18,11 +18,6 @@ class CollectionView(FolderView):
     def b_size(self):
         return getattr(self, '_b_size', self.collection_behavior.item_count)
 
-    @b_size.setter
-    def b_size(self, value):
-        # ignore, FolderView tries to set on init
-        pass
-
     def results(self, **kwargs):
         """Return a content listing based result set with results from the
         collection query.
@@ -36,7 +31,7 @@ class CollectionView(FolderView):
                 sequence.
         """
         # Extra filter
-        contentFilter = self.request.get('contentFilter', {})
+        contentFilter = dict(self.request.get('contentFilter', {}))
         contentFilter.update(kwargs.get('contentFilter', {}))
         kwargs.setdefault('custom_query', contentFilter)
         kwargs.setdefault('batch', True)

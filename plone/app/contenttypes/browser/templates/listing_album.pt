@@ -20,17 +20,15 @@
     <div metal:define-slot="inside" tal:replace="structure text">The body</div>
   </div>
 
-  <metal:listingmacro define-macro="listing">
+  <metal:listingmacro define-macro="listing"
+      tal:define="portal context/@@plone_portal_state/portal;
+                  image_scale portal/@@image_scale">
   <tal:images tal:repeat="image images">
-    <div class="photoAlbumEntry"
-         tal:define="ob image/getObject;
-                     scale ob/@@images;
-                     img_tag python:scale.scale('image', scale='thumb')">
+    <div class="photoAlbumEntry">
       <a tal:attributes="href string:${image/getURL}/view;
                          title image/Description">
         <span class="photoAlbumEntryWrapper">
-          <img tal:condition="img_tag"
-              tal:replace="structure img_tag/tag" />
+          <img tal:replace="structure python:image_scale.tag(image, 'image', scale='thumb')" />
         </span>
         <span class="photoAlbumEntryTitle" tal:content="image/Title">
             Title
@@ -51,9 +49,7 @@
       <a tal:attributes="href album/getURL;
                          title album/Description">
         <span class="photoAlbumEntryWrapper">
-          <img tal:define="random_img_ob random_image/getObject;
-                           scales random_img_ob/@@images"
-               tal:replace="structure python:scales.tag(fieldname='image', scale='thumb')" />
+          <img tal:replace="structure python:image_scale.tag(random_image, fieldname='image', scale='thumb')" />
         </span>
         <span class="photoAlbumEntryTitle">
           <tal:title content="album/Title">Title</tal:title>

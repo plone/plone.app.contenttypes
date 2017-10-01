@@ -7,7 +7,7 @@ from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 
 import os
-import unittest2 as unittest
+import unittest
 
 
 class CatalogIntegrationTest(unittest.TestCase):
@@ -40,6 +40,10 @@ class CatalogIntegrationTest(unittest.TestCase):
             'file'
         )
         self.folder.invokeFactory(
+            'Collection',
+            'collection'
+        )
+        self.folder.invokeFactory(
             'Folder',
             'folder'
         )
@@ -48,6 +52,8 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.link = self.folder.link
         self.image = self.folder.image
         self.file = self.folder.file
+        self.collection = self.folder.collection
+        # Note: this changes self.folder.
         self.folder = self.folder.folder
         self.catalog = getToolByName(self.portal, 'portal_catalog')
 
@@ -143,20 +149,58 @@ class CatalogIntegrationTest(unittest.TestCase):
             'text/plain',
             'text/html'
         )
+        self.collection.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
         self.document.reindexObject()
         self.news_item.reindexObject()
+        self.collection.reindexObject()
         brains = self.catalog.searchResults(dict(
             SearchableText=u'Lorem ipsum',
         ))
-        self.assertEqual(len(brains), 2)
-        self.assertEqual(
-            brains[0].getPath(),
-            '/plone/folder/news_item'
+        self.assertEqual(len(brains), 3)
+
+        paths = [it.getPath() for it in brains]
+        self.assertTrue(
+            '/plone/folder/news_item' in paths
         )
-        self.assertEqual(
-            brains[1].getPath(),
-            '/plone/folder/document'
+        self.assertTrue(
+            '/plone/folder/document' in paths
         )
+        self.assertTrue(
+            '/plone/folder/collection' in paths
+        )
+
+    def test_collection_text_in_searchable_text_index_after_upgrade(self):
+        # At first, the text field of Collections did not end up
+        # in the SearchableText index.
+        # To mimic this, we reindex the object and afterwards set the text.
+        self.collection.reindexObject()
+        # Check that nothing is found yet.
+        # This is needed to force a flush of the indexing queue.
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 0)
+        self.collection.text = RichTextValue(
+            u'Lorem ipsum',
+            'text/plain',
+            'text/html'
+        )
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 0)
+        # Now we apply the upgrade.
+        from plone.app.contenttypes.upgrades import searchabletext_collections
+        searchabletext_collections(self.portal.portal_setup)
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 1)
+        self.assertEqual(brains[0].getPath(), '/plone/folder/collection')
 
     def test_html_stripped_searchable_text_index(self):
         """Ensure, html tags are stripped out from the content and not indexed.
@@ -175,6 +219,30 @@ class CatalogIntegrationTest(unittest.TestCase):
         index_data = self.catalog.getIndexDataForRID(rid)
         self.assertEqual(index_data['SearchableText'].count('p'), 0)
         self.assertEqual(index_data['SearchableText'].count('b'), 0)
+
+    def test_raw_text_searchable_text_index(self):
+        """Ensure that raw text is used, instead of output.
+
+        It makes no sense to transform raw text to the output mimetype,
+        and then transform it again to plain text.
+        Note that this does mean that javascript may get in the
+        searchable text, but you will usually have a hard time setting it.
+        """
+        self.document.text = RichTextValue(
+            u"""<script type="text/javascript">alert('Lorem ipsum')"""
+            u"""</script>""",
+            mimeType='text/html',
+            outputMimeType='text/x-html-safe'
+        )
+        self.document.reindexObject()
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum',
+        ))
+        self.assertEqual(len(brains), 1)
+        rid = brains[0].getRID()
+        index_data = self.catalog.getIndexDataForRID(rid)
+        self.assertEqual(index_data['SearchableText'].count('script'), 0)
+        self.assertEqual(index_data['SearchableText'].count('text'), 0)
 
     def test_file_fulltext_in_searchable_text_index_string(self):
         from plone.namedfile.file import NamedBlobFile

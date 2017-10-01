@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from Acquisition import aq_inner
+from Products.CMFPlone.interfaces import ISiteSchema
 from plone.app.contenttypes import _
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
@@ -26,24 +27,48 @@ except ImportError:
 
 class FolderView(BrowserView):
 
-    def __init__(self, context, request):
-        super(FolderView, self).__init__(context, request)
+    text_class = None
+    _plone_view = None
+    _portal_state = None
+    _pas_member = None
 
-        self.plone_view = getMultiAdapter(
-            (context, request), name=u'plone')
-        self.portal_state = getMultiAdapter(
-            (context, request), name=u'plone_portal_state')
-        self.pas_member = getMultiAdapter(
-            (context, request), name=u'pas_member')
+    @property
+    def plone_view(self):
+        if not self._plone_view:
+            self._plone_view = getMultiAdapter(
+                (self.context, self.request),
+                name=u'plone'
+            )
+        return self._plone_view
 
-        self.text_class = None
+    @property
+    def portal_state(self):
+        if not self._portal_state:
+            self._portal_state = getMultiAdapter(
+                (self.context, self.request),
+                name=u'plone_portal_state'
+            )
+        return self._portal_state
 
-        limit_display = getattr(self.request, 'limit_display', None)
-        limit_display = int(limit_display) if limit_display is not None else 20
-        b_size = getattr(self.request, 'b_size', None)
-        self.b_size = int(b_size) if b_size is not None else limit_display
-        b_start = getattr(self.request, 'b_start', None)
-        self.b_start = int(b_start) if b_start is not None else 0
+    @property
+    def pas_member(self):
+        if not self._pas_member:
+            self._pas_member = getMultiAdapter(
+                (self.context, self.request),
+                name=u'pas_member'
+            )
+        return self._pas_member
+
+    @property
+    def b_size(self):
+        b_size = getattr(self.request, 'b_size', None)\
+            or getattr(self.request, 'limit_display', None) or 20
+        return int(b_size)
+
+    @property
+    def b_start(self):
+        b_start = getattr(self.request, 'b_start', None) or 0
+        return int(b_start)
 
     def results(self, **kwargs):
         """Return a content listing based result set with contents of the
@@ -221,3 +246,48 @@ class FolderView(BrowserView):
             'description_no_items_in_folder',
             default=u'There are currently no items in this folder.'
         )
+
+    @memoize
+    def get_thumb_scale_table(self):
+        if getattr(self.context, 'suppress_thumbs', False):
+            return None
+        thsize = getattr(self.context, 'thumb_scale_table', None)
+        if thsize:
+            return thsize
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ISiteSchema, prefix='plone', check=False)
+        if settings.no_thumbs_tables:
+            return None
+        return settings.thumb_scale_table
+
+    @memoize
+    def get_thumb_scale_list(self):
+        if getattr(self.context, 'suppress_thumbs', False):
+            return None
+        thsize = getattr(self.context, 'thumb_scale_list', None)
+        if thsize:
+            return thsize
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ISiteSchema, prefix='plone', check=False)
+        if settings.no_thumbs_lists:
+            return None
+        return settings.thumb_scale_listing
+
+    @memoize
+    def get_thumb_scale_summary(self):
+        if getattr(self.context, 'suppress_thumbs', False):
+            return None
+        thsize = getattr(self.context, 'thumb_scale_summary', None)
+        if thsize:
+            return thsize
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(
+            ISiteSchema, prefix='plone', check=False)
+        if settings.no_thumbs_summary:
+            return None
+        return settings.thumb_scale_summary
+
+    def show_icons(self):
+        return not getattr(self.context, 'suppress_icons', False)

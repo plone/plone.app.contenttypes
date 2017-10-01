@@ -247,6 +247,26 @@ Migrating images created with collective.contentleadimage
 The old types that use leadimages are listed in the navigation-form with the comment *"extended fields: 'leadImage', 'leadImage_caption'"*. The migration-form informs you which new types have the behavior enabled and which do not. Depending on the way you installed plone.app.contenttypes you might have to first install these types by (re-)installing plone.app.contenttypes.
 
 
+Migrating in code (e.g. in a upgrade-step)
+``````````````````````````````````````````
+
+You can run the migration in your own code by using the view `migrate_from_atct`. Here is an example of an upgrade-step that migrates all default content-types.
+
+.. code-block:: python
+
+    def migrate_to_pac(setup):
+      portal = api.portal.get()
+      request = getRequest()
+      pac_migration = api.content.get_view('migrate_from_atct', portal, request)
+      pac_migration(
+          migrate=True,
+          content_types='all',
+          migrate_schemaextended_content=True,
+          reindex_catalog=False)
+
+With `content_types` you can also pass a list of types to be migrated. Make sure to use the key from the dictionary `plone.app.contenttypes.migration.vocabularies.ATCT_LIST` to identify the types.
+
+
 Migrating custom content
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
