@@ -269,6 +269,8 @@ class LinkFunctionalTest(unittest.TestCase):
             .value = 'This is my link.'
         self.browser.getControl(name='form.widgets.IShortName.id')\
             .value = 'my-special-link'
+        self.browser.getControl(name='form.widgets.remoteUrl.external')\
+            .value = 'https://plone.org'
         self.browser.getControl('Save').click()
 
         self.assertTrue(self.browser.url.endswith('my-special-link/view'))
