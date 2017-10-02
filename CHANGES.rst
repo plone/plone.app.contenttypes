@@ -10,6 +10,9 @@ Breaking changes:
 
 New features:
 
+- Test SVG handling
+  [tomgross]
+
 - Use post_handler instead of import_steps.
   [pbauer]
 

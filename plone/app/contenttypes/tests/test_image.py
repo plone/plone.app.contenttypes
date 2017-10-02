@@ -18,9 +18,9 @@ import os.path
 import unittest
 
 
-def dummy_image():
+def dummy_image(filename=u'image.jpg'):
     from plone.namedfile.file import NamedBlobImage
-    filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
+    filename = os.path.join(os.path.dirname(__file__), filename)
     return NamedBlobImage(
         data=open(filename, 'r').read(),
         filename=filename
@@ -107,6 +107,13 @@ class ImageViewIntegrationTest(unittest.TestCase):
 #        self.assertEqual(view.request.response.status, 200)
 #        self.assertTrue('image.jpg' in view())
 
+    def test_svg_image(self):
+        self.image.image = dummy_image(u'image.svg')
+        scale = self.image.restrictedTraverse('@@images')
+        self.assertRegexpMatches(
+            scale.scale('image', scale='large').tag(),
+            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'
+        )
 
 class ImageFunctionalTest(unittest.TestCase):
 
