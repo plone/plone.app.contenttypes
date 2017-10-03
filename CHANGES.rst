@@ -30,6 +30,12 @@ New features:
 
 Bug fixes:
 
+- Do not use a default value in the form of ``http://`` for the link.
+  The new link widget resolves that to the portal root object.
+  Also, it's not a valid URL.
+  Fixes: https://github.com/plone/Products.CMFPlone/issues/2163
+  [thet]
+
 - Remove obsolete HAS_MULTILINGUAL from utils.
   [pbauer]
 
