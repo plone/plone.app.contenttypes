@@ -4,10 +4,6 @@ Changelog
 1.4.4 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Test SVG handling
