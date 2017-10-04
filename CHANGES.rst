@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Do not install plone.app.discussion when installing plone.app.contenttypes.
+  [timo]
+
 - Change portal message warning on Link view from info to attention, 'info' is
   not a configured portalMessage style in core Plone 4.
   [f.vandijk]
@@ -30,6 +33,7 @@ Bug fixes:
   support Language='all' option.
   see https://github.com/plone/plone.app.multilingual/issues/226
   [bsuttor]
+
 
 1.1.4 (2017-08-14)
 ------------------
