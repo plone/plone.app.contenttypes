@@ -15,6 +15,8 @@ New features:
 Bug fixes:
 
 - *add item here*
+- Do not install plone.app.discussion when installing plone.app.contenttypes.
+  [timo]
 
 
 1.4.4 (2017-10-02)
