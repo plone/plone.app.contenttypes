@@ -38,7 +38,7 @@ setup(name='plone.app.contenttypes',
           'setuptools',
           'Products.CMFPlone',
           'plone.app.contentmenu',
-          'plone.app.event [dexterity]',  # You have to pin this to the desired version
+          'plone.app.event [dexterity]',  # You have to pin this to the desired version # noqa
           'plone.app.dexterity < 2.1.0',  # before Plone 5
           'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.dexterity >= 2.2.1',  # behaviors can provide primaryfields
@@ -47,7 +47,7 @@ setup(name='plone.app.contenttypes',
           'plone.namedfile [blobs]',
           'plone.app.versioningbehavior',
           'pytz',
-          'Products.CMFQuickInstallerTool >= 3.0.7',  # allow blacklisting steps
+          'Products.CMFQuickInstallerTool >= 3.0.7',  # allow blacklisting steps # noqa
           'Products.GenericSetup >= 1.7.5',  # allow blacklisting steps
           'zope.deprecation',
       ] + additional_requires,

@@ -4,9 +4,7 @@ from five.intid.intid import IntIds
 from five.intid.site import addUtility
 from lxml import etree
 from persistent.list import PersistentList
-from plone.app.contenttypes.migration.migration import migrate_documents
-from plone.app.contenttypes.migration.migration import migrate_folders
-from plone.app.contenttypes.migration.migration import migrate_newsitems
+from plone.app.contenttypes.migration.browser import migrate_atct_type
 from plone.app.contenttypes.migration.utils import add_portlet
 from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import is_referenceable
@@ -149,7 +147,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     def test_patct_event_is_migrated(self):
         """Can we migrate a Products.ATContentTypes event?"""
         from DateTime import DateTime
-        from plone.app.contenttypes.migration.migration import migrate_events
 
         # create an ATEvent
         self.portal.invokeFactory('Event', 'event')
@@ -181,7 +178,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrate_events(self.portal)
+        migrate_atct_type(self.portal, 'Event')
 
         if oldTZ:
             os.environ['TZ'] = oldTZ
@@ -223,7 +220,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         from DateTime import DateTime
         from plone.testing import z2
         from plone.app.testing import applyProfile
-        from plone.app.contenttypes.migration.migration import migrate_events
 
         # Enable plone.app.event.at
         z2.installProduct(self.layer['app'], 'plone.app.event.at')
@@ -257,7 +253,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrate_events(self.portal)
+        migrate_atct_type(self.portal, 'Event')
 
         # Compare new and old events
         new_event = self.portal['pae-at-event']
@@ -290,7 +286,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     @unittest.skip("Skip this test, until old type is mocked")
     def test_pae_dxevent_is_migrated(self):
         from datetime import datetime
-        from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.textfield.value import RichTextValue
 
         # Enable plone.app.event.dx
@@ -322,7 +317,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrate_events(self.portal)
+        migrate_atct_type(self.portal, 'Event')
 
         # Compare new and old events
         new_event = self.portal['dx-event']
@@ -349,7 +344,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     def test_pact_1_0_dxevent_is_migrated(self):
         from datetime import datetime
         import pytz
-        from plone.app.contenttypes.migration.migration import migrate_events
         from plone.app.textfield.value import RichTextValue
         from plone.app.contenttypes.tests.oldtypes import create1_0EventType
 
@@ -376,7 +370,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrate_events(self.portal)
+        migrate_atct_type(self.portal, 'Event')
 
         # Compare new and old events
         new_event = self.portal['dx-event']
@@ -404,7 +398,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     @unittest.skip("Fails in Plone 4")
     def test_dx_excl_from_nav_is_migrated(self):
         from datetime import datetime
-        from plone.app.contenttypes.migration.migration import DXEventMigrator
+        from plone.app.contenttypes.migration.dxmigration \
+            import DXEventMigrator
 
         # Enable plone.app.event.dx
         from plone.app.testing import applyProfile
@@ -484,8 +479,6 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertTrue(at_document is not dx_document)
 
     def test_collection_is_migrated(self):
-        from plone.app.contenttypes.migration.migration import \
-            migrate_collections
         from plone.app.contenttypes.behaviors.collection import \
             ICollection as ICollectionBehavior
         from plone.app.contenttypes.interfaces import ICollection
@@ -500,7 +493,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_collection.setQuery(query)
         at_collection.setLayout('folder_summary_view')
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrate_collections(self.portal)
+        migrate_atct_type(self.portal, 'Collection')
         dx_collection = self.portal['collection']
         self.assertTrue(ICollection.providedBy(dx_collection))
         self.assertTrue(at_collection is not dx_collection)
@@ -998,9 +991,9 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self._enable_referenceable_for('Document')
         self._enable_referenceable_for('News Item')
         store_references(self.portal)
-        migrate_documents(self.portal)
-        migrate_folders(self.portal)
-        migrate_newsitems(self.portal)
+        migrate_atct_type(self.portal, 'Document')
+        migrate_atct_type(self.portal, 'Folder')
+        migrate_atct_type(self.portal, 'News Item')
 
         # rebuild catalog
         self.portal.portal_catalog.clearFindAndRebuild()
@@ -1069,8 +1062,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         )
         # installTypeIfNeeded('News Item')
         store_references(self.portal)
-        migrate_newsitems(self.portal)
-        migrate_documents(self.portal)
+        migrate_atct_type(self.portal, 'News Item')
+        migrate_atct_type(self.portal, 'Document')
 
         # rebuild catalog
         self.portal.portal_catalog.clearFindAndRebuild()
@@ -1124,7 +1117,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self._enable_referenceable_for('Folder')
 
         store_references(self.portal)
-        migrate_folders(self.portal)
+        migrate_atct_type(self.portal, 'Folder')
 
         # rebuild catalog
         self.portal.portal_catalog.clearFindAndRebuild()
@@ -1176,7 +1169,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             blacklisted_steps=['typeinfo'])
         installTypeIfNeeded('Document')
         store_references(self.portal)
-        migrate_documents(self.portal)
+        migrate_atct_type(self.portal, 'Document')
         self._enable_referenceable_for('Document')
 
         # rebuild catalog
@@ -1360,8 +1353,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         # this is basically be the same as above
         installTypeIfNeeded('Document')
         installTypeIfNeeded('Folder')
-        migrate_folders(self.portal)
-        migrate_documents(self.portal)
+        migrate_atct_type(self.portal, 'Folder')
+        migrate_atct_type(self.portal, 'Document')
         self.portal.portal_catalog.clearFindAndRebuild()
         restore_references(self.portal)
 
@@ -1508,19 +1501,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         from Products.ATContentTypes.content.image import ATImage
         from Products.ATContentTypes.content.file import ATFile
         from plone.app.contenttypes.migration.migration import (
-            migrate_documents,
-            migrate_collections,
-            migrate_images,
-            migrate_blobimages,
-            migrate_files,
-            migrate_blobfiles,
-            migrate_links,
-            migrate_newsitems,
             migrate_blobnewsitems,
-            migrate_folders,
-            migrate_events,
         )
-        from plone.app.contenttypes.migration.topics import migrate_topics
 
         # create all content types
         self.portal.invokeFactory('Document', 'document')
@@ -1538,18 +1520,18 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
 
         # migrate all
         applyProfile(self.portal, 'plone.app.contenttypes:default')
-        migrate_documents(self.portal)
-        migrate_collections(self.portal)
-        migrate_images(self.portal)
-        migrate_blobimages(self.portal)
-        migrate_files(self.portal)
-        migrate_blobfiles(self.portal)
-        migrate_links(self.portal)
-        migrate_newsitems(self.portal)
+        migrate_atct_type(self.portal, 'Document')
+        migrate_atct_type(self.portal, 'Collection')
+        migrate_atct_type(self.portal, 'Image')
+        migrate_atct_type(self.portal, 'BlobImage')
+        migrate_atct_type(self.portal, 'File')
+        migrate_atct_type(self.portal, 'BlobFile')
+        migrate_atct_type(self.portal, 'Link')
+        migrate_atct_type(self.portal, 'News Item')
         migrate_blobnewsitems(self.portal)
-        migrate_folders(self.portal)
-        migrate_events(self.portal)
-        migrate_topics(self.portal)
+        migrate_atct_type(self.portal, 'Folder')
+        migrate_atct_type(self.portal, 'Event')
+        migrate_atct_type(self.portal, 'Topic')
 
         # assertions
         cat = self.catalog

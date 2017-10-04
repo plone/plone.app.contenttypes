@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_inner
 from Products.Archetypes.ExtensibleMetadata import ExtensibleMetadata
 from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.utils import getToolByName
@@ -7,6 +8,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PluginIndexes.UUIDIndex.UUIDIndex import UUIDIndex
+from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.utils import patch, undoPatch
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
@@ -50,6 +52,7 @@ from zope.interface import Interface
 
 import logging
 import pkg_resources
+import transaction
 
 try:
     pkg_resources.get_distribution('collective.contentleadimage')
@@ -113,6 +116,45 @@ class FixBaseClasses(BrowserView):
         return out
 
 
+def migrate_atct_type(portal, atct_name, walker_settings=None):
+    """ Migrates a named ATCT type, where the name is a key in ATCT_LIST
+
+    Replaces the migrate_xx functions
+    """
+
+    atct_type_settings = ATCT_LIST[atct_name]
+
+    if 'migrators' in atct_type_settings:
+        migrators_tuple = atct_type_settings['migrators']
+        logger.info("Migrators supplied by ATCT_LIST: %s",
+                    migrators_tuple)
+    elif 'migrators_selector' in atct_type_settings:
+        migrators_tuple = atct_type_settings['migrators_selector'](portal)
+        logger.info("Migrators supplied by selector %s: %s",
+                    atct_type_settings['migrators_selector'],
+                    migrators_tuple)
+    else:
+        logger.error("No migrator to run! - ATCT_LIST doesn't supply one of " +
+                     "'migrators' or 'migrators_selector' for type %s.",
+                     atct_name)
+        # signal Failure
+        return False
+
+    for migrator in migrators_tuple:
+
+        if walker_settings is None:
+            walker_settings = {}
+        walker_settings.update({'portal': portal,
+                                'migrator': migrator})
+        walker = CatalogWalker(**walker_settings)
+        logger.info("Run migration using migrator %s",
+                    migrator)
+        walker.go()
+
+    # signal success
+    return True
+
+
 class MigrateFromATContentTypes(BrowserView):
     """Migrate the default-types (except event and topic).
     This view can be called directly and it will migrate all content
@@ -125,6 +167,7 @@ class MigrateFromATContentTypes(BrowserView):
                  content_types="all",
                  migrate_schemaextended_content=False,
                  migrate_references=True,
+                 use_savepoints=False,
                  from_form=False):
 
         portal = self.context
@@ -156,6 +199,8 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
 
+        logger.info("Database size before migration: %s",
+                    self.dbstats())
         # store references on the portal
         if migrate_references:
             store_references(portal)
@@ -216,7 +261,13 @@ class MigrateFromATContentTypes(BrowserView):
             installTypeIfNeeded(v['type_name'])
 
             # call the migrator
-            v['migrator'](portal)
+            walker_settings = {'use_savepoint': use_savepoints}
+            migration_done = migrate_atct_type(portal,
+                                               k,
+                                               walker_settings)
+
+            if migration_done and use_savepoints:
+                transaction.commit()
 
             # logging
             duration_current = datetime.now() - starttime_for_current
@@ -226,6 +277,10 @@ class MigrateFromATContentTypes(BrowserView):
                 v['old_meta_type'],
                 v['type_name'],
                 duration_human))
+
+            logger.info("Database size after migrating %s: %s",
+                        v['old_meta_type'],
+                        self.dbstats())
 
             # some data for the results-page
             migrated_types[k] = {}
@@ -291,6 +346,13 @@ class MigrateFromATContentTypes(BrowserView):
             logger.info(msg)
             return stats
 
+    def dbstats(self):
+        # If more stats are required, you could do worse that looking at
+        # plone.app.debugtoolbar.browser.global for inspiration
+        context = aq_inner(self.context)
+        cpanel = context.unrestrictedTraverse('/Control_Panel')
+        return cpanel.db_size()
+
     def stats(self):
         results = {}
         query = {}
@@ -338,6 +400,17 @@ class IATCTMigratorForm(Interface):
         default=True
     )
 
+    use_savepoints = schema.Bool(
+        title=u"Use Savepoints?",
+        description=(
+            u"Save migrated content gradually, rather than all at once. "
+            u"If errors occur then the migration will continue, but you will "
+            u"be left with a half migrated site, and have to solve migration "
+            u"problems somehow before continuing."
+        ),
+        default=False
+    )
+
     extended_content = schema.List(
         title=(
             u"Migrate content that was extended "
@@ -381,6 +454,7 @@ class ATCTMigratorForm(form.Form):
             content_types=content_types,
             migrate_schemaextended_content=True,
             migrate_references=data['migrate_references'],
+            use_savepoints=data['use_savepoints'],
             from_form=True,
         )
         sdm = getToolByName(context, "session_data_manager")
