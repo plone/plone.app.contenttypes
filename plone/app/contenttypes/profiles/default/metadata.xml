@@ -7,7 +7,5 @@
   <dependency>profile-plone.app.relationfield:default</dependency>
   <dependency>profile-plone.formwidget.querystring:default</dependency>
   <dependency>profile-plone.app.versioningbehavior:default</dependency>
-  <!-- XXX: For some reason the p.a.d gs workflow is not applied correctly. -->
-  <dependency>profile-plone.app.discussion:default</dependency>
  </dependencies>
 </metadata>
