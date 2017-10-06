@@ -4,17 +4,8 @@ Changelog
 1.2.26 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
-- *add item here*
 - Do not install plone.app.discussion when installing plone.app.contenttypes.
   [timo]
 
