@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Remove last use of ``atcontenttypes`` translation domain.
+  Fixes `issue 37 <https://github.com/plone/plone.app.contenttypes/issues/37>`_.
+  [maurits]
 
 
 1.4.5 (2017-10-06)

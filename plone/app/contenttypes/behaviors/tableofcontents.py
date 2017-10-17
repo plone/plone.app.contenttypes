@@ -6,7 +6,7 @@ from zope.i18nmessageid import MessageFactory
 from zope.interface import provider
 
 
-_ = MessageFactory('atcontenttypes')
+_ = MessageFactory('plone')
 
 
 @provider(IFormFieldProvider)
