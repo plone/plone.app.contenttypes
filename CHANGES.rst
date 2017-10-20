@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.4 (unreleased)
+1.4.6 (unreleased)
 ------------------
 
 Breaking changes:
@@ -14,10 +14,38 @@ New features:
   see it into content.
   [bsuttor]
 
+Bug fixes:
+
+- *add item here*
+
+
+1.4.5 (2017-10-06)
+------------------
+
+Bug fixes:
+
+- Do not install plone.app.discussion when installing plone.app.contenttypes.
+  [timo]
+
+
+1.4.4 (2017-10-02)
+------------------
+
+New features:
+
+- Test SVG handling
+  [tomgross]
+
 - Use post_handler instead of import_steps.
   [pbauer]
 
 Bug fixes:
+
+- Do not use a default value in the form of ``http://`` for the link.
+  The new link widget resolves that to the portal root object.
+  Also, it's not a valid URL.
+  Fixes: https://github.com/plone/Products.CMFPlone/issues/2163
+  [thet]
 
 - Remove obsolete HAS_MULTILINGUAL from utils.
   [pbauer]
