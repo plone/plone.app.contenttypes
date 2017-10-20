@@ -10,7 +10,9 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Add leadimage options for choosing scale of it and choosing if you want to
+  see it into content.
+  [bsuttor]
 
 Bug fixes:
 
