@@ -96,6 +96,11 @@
             <p i18n:translate="">You can select which AT content type you want to migrate to an existing DX content type.</p>
             <form id="migrateCustomATForm" method="post"
                   tal:attributes="action python:context.absolute_url() + '/@@custom_migration'">
+
+            <input class="field" type="checkbox" name="patch_searchabletext" id="patch_searchabletext" />
+            <label for="patch_searchabletext" i18n:translate="">Disable reindexing objects during migration</label>
+            <span class="formHelp" id="patch_searchabletext_help" i18n:translate="">This can speed up your migration a lot if you have a lot of files with searchabe text.</span>
+
             <table>
                 <tr tal:repeat="at_type at_types">
                   <tal:block tal:define="safe_at_id python:at_type['id'].replace(' ', '_space_')">

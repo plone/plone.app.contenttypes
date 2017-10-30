@@ -5,6 +5,7 @@ from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import iterSchemataForType
 from Products.ATContentTypes.content.schemata import ATContentTypeSchema
+from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser import BrowserView
@@ -109,7 +110,11 @@ class CustomMigrationForm(BrowserView):
         for meta_type in catalog.uniqueValuesFor('meta_type'):
             # querying for meta_type will only return at-types
             brain = catalog(meta_type=meta_type, sort_limit=1)[0]
-            if IDexterityContent.providedBy(brain.getObject()):
+            obj = brain.getObject()
+            if IDexterityContent.providedBy(obj):
+                continue
+            if not IBaseObject.providedBy(obj):
+                # Discussion items are neither AT not DX
                 continue
             typename = brain.portal_type
             if typename not in all_registered_types:
@@ -232,6 +237,7 @@ class CustomMigrationForm(BrowserView):
         '''
         data = {}
         form = self.request.form
+        patch_searchabletext = form.get('patch_searchabletext')
         # manipulate what we receive in the form and build a useable data dict
         for k in self.request.form.keys():
             if k.startswith('dx_select_'):
@@ -281,7 +287,9 @@ class CustomMigrationForm(BrowserView):
                 fields_mapping=fields_mapping,
                 src_type=at_typename,
                 dst_type=data[at_typename]['target_type'],
-                dry_run=dry_run)
+                dry_run=dry_run,
+                patch_searchabletext=patch_searchabletext,
+                )
             migration_results.append({'type': at_typename,
                                       'infos': res})
         return migration_results

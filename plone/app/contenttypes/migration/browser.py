@@ -105,7 +105,9 @@ class MigrateFromATContentTypes(BrowserView):
                  migrate_schemaextended_content=False,
                  migrate_references=True,
                  from_form=False,
-                 reindex_catalog=True):
+                 reindex_catalog=True,
+                 patch_searchabletext=False,
+                 ):
 
         portal = self.context
 
@@ -150,7 +152,9 @@ class MigrateFromATContentTypes(BrowserView):
         catalog = portal.portal_catalog
 
         # Patch various things that make migration harder
-        link_integrity, queue_indexing = patch_before_migration()
+        (link_integrity,
+         queue_indexing,
+         patch_searchabletext) = patch_before_migration(patch_searchabletext)
 
         not_migrated = []
         migrated_types = {}
@@ -213,7 +217,8 @@ class MigrateFromATContentTypes(BrowserView):
             restore_references(portal)
 
         # Revert to the original state
-        undo_patch_after_migration(link_integrity, queue_indexing)
+        undo_patch_after_migration(
+            link_integrity, queue_indexing, patch_searchabletext)
 
         duration = str(timedelta(seconds=(datetime.now() - starttime).seconds))
         if not_migrated:
@@ -275,7 +280,8 @@ class IATCTMigratorForm(Interface):
         description=(
             u'Select this option to migrate references.'
         ),
-        default=True
+        default=True,
+        required=False,
     )
 
     extended_content = schema.List(
@@ -289,6 +295,22 @@ class IATCTMigratorForm(Interface):
         value_type=schema.Choice(
             vocabulary='plone.app.contenttypes.migration.extendedtypes',
         ),
+        required=False,
+    )
+
+    reindex_catalog = schema.Bool(
+        title=_(u'Rebuild the catalog after the migration.'),
+        description=_(u'This operantion can take a very long time.'),
+        default=True,
+        required=False,
+    )
+
+    patch_searchabletext = schema.Bool(
+        title=_(u'Disable reindexing objects during migration?'),
+        description=_(
+            u'This can speed up your migration a lot if you have a lot of files with searchabe text.'
+        ),
+        default=False,
         required=False,
     )
 
@@ -326,6 +348,8 @@ class ATCTMigratorForm(form.Form):
             migrate_schemaextended_content=True,
             migrate_references=data['migrate_references'],
             from_form=True,
+            reindex_catalog=data['reindex_catalog'],
+            patch_searchabletext=data['patch_searchabletext'],
         )
 
     def updateActions(self):

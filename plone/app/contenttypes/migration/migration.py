@@ -470,7 +470,13 @@ def makeCustomATMigrator(
     return CustomATMigrator
 
 
-def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
+def migrateCustomAT(fields_mapping,
+                    src_type,
+                    dst_type,
+                    dry_run=False,
+                    patch_linkintegrity=False,
+                    patch_searchabletext=False,
+                    ):
     """
     Try to get types infos from archetype_tool, then set a migrator and pass it
     given values. There is a dry_run mode that allows to check the success of
@@ -479,7 +485,9 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
     portal = getSite()
 
     # Patch various things that make migration harder
-    link_integrity, queue_indexing = patch_before_migration()
+    (link_integrity,
+     queue_indexing,
+     patch_searchabletext) = patch_before_migration(patch_searchabletext)
 
     # if the type still exists get the src_meta_type from the portal_type
     portal_types = getToolByName(portal, 'portal_types')
@@ -542,6 +550,7 @@ def migrateCustomAT(fields_mapping, src_type, dst_type, dry_run=False):
             transaction.abort()
 
     # Revert to the original state
-    undo_patch_after_migration(link_integrity, queue_indexing)
+    undo_patch_after_migration(
+        link_integrity, queue_indexing, patch_searchabletext)
 
     return walker_infos

@@ -38,7 +38,7 @@ def patched_insertForwardIndexEntry(self, entry, documentId):
         self._length.change(1)
 
 
-def patch_before_migration():
+def patch_before_migration(patch_searchabletext=False):
     """Patch various things that make migration harder."""
     # Switch linkintegrity off
     ptool = queryUtility(IPropertiesTool)
@@ -80,10 +80,18 @@ def patch_before_migration():
         'insertForwardIndexEntry',
         patched_insertForwardIndexEntry)
 
-    return link_integrity, queue_indexing
+    # Patch SearchableText index
+    if patch_searchabletext:
+        patch_indexing_at_blobs()
+        patch_indexing_dx_blobs()
+
+    return link_integrity, queue_indexing, patch_searchabletext
 
 
-def undo_patch_after_migration(link_integrity=True, queue_indexing=None):
+def undo_patch_after_migration(link_integrity=True,
+                               queue_indexing=None,
+                               patch_searchabletext=False,
+                               ):
     """Revert to the original state."""
 
     # Switch linkintegrity back to what it was before migrating
@@ -118,3 +126,28 @@ def undo_patch_after_migration(link_integrity=True, queue_indexing=None):
 
     # Unpatch UUIDIndex
     undoPatch(UUIDIndex, 'insertForwardIndexEntry')
+
+    # Unpatch SearchableText index
+    if patch_searchabletext:
+        unpatch_indexing_at_blobs()
+        unpatch_indexing_dx_blobs()
+
+
+def patch_indexing_at_blobs():
+    from plone.app.blob.content import ATBlob
+    patch(ATBlob, 'getIndexValue', pass_fn)
+
+
+def unpatch_indexing_at_blobs():
+    from plone.app.blob.content import ATBlob
+    undoPatch(ATBlob, 'getIndexValue')
+
+
+def patch_indexing_dx_blobs():
+    from Products.ZCTextIndex.ZCTextIndex import ZCTextIndex
+    patch(ZCTextIndex, 'index_object', pass_fn)
+
+
+def unpatch_indexing_dx_blobs():
+    from Products.ZCTextIndex.ZCTextIndex import ZCTextIndex
+    undoPatch(ZCTextIndex, 'index_object')
