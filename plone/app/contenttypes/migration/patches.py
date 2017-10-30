@@ -22,6 +22,10 @@ def pass_fn(*args, **kwargs):
     """Empty function used for patching."""
     pass
 
+def patched_index_object(*args, **kwargs):
+    """Patched Products.ZCTextIndex.ZCTextIndex.ZCTextIndex.index_object"""
+    return 1
+
 
 # Prevent UUID Error-Messages when migrating folders.
 # Products.PluginIndexes.UUIDIndex.UUIDIndex.UUIDIndex.insertForwardIndexEntry
@@ -145,7 +149,7 @@ def unpatch_indexing_at_blobs():
 
 def patch_indexing_dx_blobs():
     from Products.ZCTextIndex.ZCTextIndex import ZCTextIndex
-    patch(ZCTextIndex, 'index_object', pass_fn)
+    patch(ZCTextIndex, 'index_object', patched_index_object)
 
 
 def unpatch_indexing_dx_blobs():
