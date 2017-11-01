@@ -6,7 +6,10 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- Pass file or image from a webdav PUT to the NamedBlobFile or NamedBlobImage
+  constructor. This requires plone.app.blob that includes the plone.namedfile
+  storage utility for the custom TemporaryFileWrapper.
+  [enfold-josh]
 
 New features:
 

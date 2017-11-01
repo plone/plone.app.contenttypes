@@ -91,7 +91,7 @@ class File(Item):
         infile = request.get('BODYFILE', None)
         filename = request['PATH_INFO'].split('/')[-1]
         self.file = NamedBlobFile(
-            data=infile.read(), filename=unicode(filename))
+            data=infile, filename=unicode(filename))
 
         modified(self)
         return response
@@ -125,7 +125,7 @@ class Image(Item):
         infile = request.get('BODYFILE', None)
         filename = request['PATH_INFO'].split('/')[-1]
         self.image = NamedBlobImage(
-            data=infile.read(), filename=unicode(filename))
+            data=infile, filename=unicode(filename))
 
         modified(self)
         return response
