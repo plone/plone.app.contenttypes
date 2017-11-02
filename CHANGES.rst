@@ -10,7 +10,11 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Allow to patch searchableText index during migrations.
+  [pbauer]
+
+- Expose option to skip catalog-reindex after migration in form.
+  [pbauer]
 
 Bug fixes:
 

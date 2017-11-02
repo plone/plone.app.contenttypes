@@ -1609,7 +1609,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         # request was constructed before. Otherwise, @@view cannot be render
         # it's IRichText widget.
         alsoProvides(self.request, IPloneFormLayer)
-        at_document_view = at_document.restrictedTraverse('')
+        at_document_view = at_document.restrictedTraverse('document_view')
         self.assertTrue(
             'http://nohost/plone/@@atct_migrator' in at_document_view()
         )
@@ -1619,7 +1619,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertTrue(IDocument.providedBy(dx_document))
         dx_document_view = dx_document.restrictedTraverse('@@view')
         self.assertFalse('alert-box' in dx_document_view())
-        at_newsitem_view = at_newsitem.restrictedTraverse('')
+        at_newsitem_view = at_newsitem.restrictedTraverse('newsitem_view')
         self.assertTrue('alert-box' in at_newsitem_view())
         self.assertTrue(
             'http://nohost/plone/@@atct_migrator' in at_newsitem_view()
