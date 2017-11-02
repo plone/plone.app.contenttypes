@@ -99,7 +99,7 @@
 
             <input class="field" type="checkbox" name="patch_searchabletext" id="patch_searchabletext" />
             <label for="patch_searchabletext" i18n:translate="">Disable reindexing objects during migration</label>
-            <span class="formHelp" id="patch_searchabletext_help" i18n:translate="">This can speed up your migration a lot if you have a lot of files with searchabe text.</span>
+            <span class="formHelp" id="patch_searchabletext_help" i18n:translate="">This can speed up your migration a lot if you have a lot of files with searchable text.</span>
 
             <table>
                 <tr tal:repeat="at_type at_types">

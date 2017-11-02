@@ -22,9 +22,10 @@ def pass_fn(*args, **kwargs):
     """Empty function used for patching."""
     pass
 
+
 def patched_index_object(*args, **kwargs):
     """Patched Products.ZCTextIndex.ZCTextIndex.ZCTextIndex.index_object"""
-    return 1
+    return 0
 
 
 # Prevent UUID Error-Messages when migrating folders.

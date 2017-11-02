@@ -300,7 +300,7 @@ class IATCTMigratorForm(Interface):
 
     reindex_catalog = schema.Bool(
         title=_(u'Rebuild the catalog after the migration.'),
-        description=_(u'This operantion can take a very long time.'),
+        description=_(u'This operation can take a very long time.'),
         default=True,
         required=False,
     )
@@ -308,7 +308,7 @@ class IATCTMigratorForm(Interface):
     patch_searchabletext = schema.Bool(
         title=_(u'Disable reindexing objects during migration?'),
         description=_(
-            u'This can speed up your migration a lot if you have a lot of files with searchabe text.'
+            u'This can speed up your migration a lot if you have a lot of files with searchable text.'  # noqa: E501
         ),
         default=False,
         required=False,
