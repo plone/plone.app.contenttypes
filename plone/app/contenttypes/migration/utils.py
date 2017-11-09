@@ -17,6 +17,7 @@ from plone.app.linkintegrity.handlers import modifiedDexterity
 from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
+from plone.contentrules.engine.interfaces import IRuleStorage
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.portlets.constants import CONTEXT_BLACKLIST_STATUS_KEY
@@ -181,7 +182,16 @@ def copy_contentrules(source_object, target_object):
                 )
             )
             return
+        rules_storage = getUtility(IRuleStorage)
+        available_rules = [r for r in rules_storage]
         for rule_id in source_assignable:
+            if rule_id not in available_rules:
+                logger.info(
+                    'Contentrule {0} does not exist, skip assignment!'.format(
+                        rule_id
+                    )
+                )
+                continue
             assign_rule(target_object, rule_id)
 
 
