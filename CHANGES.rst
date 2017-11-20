@@ -22,6 +22,9 @@ Bug fixes:
   Fixes `issue 37 <https://github.com/plone/plone.app.contenttypes/issues/37>`_.
   [maurits]
 
+- Don't overwrite existing settings for Plone Site.
+  [roel]
+
 
 1.4.5 (2017-10-06)
 ------------------

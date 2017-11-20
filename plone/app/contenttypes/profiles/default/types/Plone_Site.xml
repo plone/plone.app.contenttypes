@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <object
     i18n:domain="plone"
-    meta_type="Factory-based Type Information with dynamic views"
     name="Plone Site"
     xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
