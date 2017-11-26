@@ -4,10 +4,6 @@ Changelog
 1.4.6 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Allow to patch searchableText index during migrations.
