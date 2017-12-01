@@ -153,9 +153,7 @@ def _setup_constrains(container, allowed_types):
 
 
 def create_frontpage(portal, target_language):
-    frontpage_id = 'front-page'
-
-    if frontpage_id not in portal.keys():
+    if True:
         title = _translate(
             u'front-title',
             target_language,
@@ -165,12 +163,8 @@ def create_frontpage(portal, target_language):
             u'front-description', target_language,
             u'Congratulations! You have successfully installed Plone.'
         )
-        content = createContent(
-            'Document', id=frontpage_id,
-            title=title,
-            description=description,
-            language=target_language.replace('_', '-').lower())
-        content = addContentToContainer(portal, content)
+        portal.title= title
+        portal.description = description
         front_text = None
         if target_language != 'en':
             util = queryUtility(ITranslationDomain, 'plonefrontpage')
@@ -189,15 +183,12 @@ def create_frontpage(portal, target_language):
             )
             if view is not None:
                 front_text = bodyfinder(view.index()).strip()
-        content.text = RichTextValue(
+        portal.text = RichTextValue(
             front_text,
             'text/html',
             'text/x-html-safe'
         )
-
-        portal.setDefaultPage('front-page')
-        _publish(content)
-        content.reindexObject()
+        portal.reindexObject()
 
 
 def create_news_topic(portal, target_language):
