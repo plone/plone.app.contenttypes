@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Rename post_handlers. Fixes https://github.com/plone/Products.CMFPlone/issues/2238
+  [pbauer]
 
 
 1.4.6 (2017-11-26)

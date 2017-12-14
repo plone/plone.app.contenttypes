@@ -324,7 +324,7 @@ def configure_members_folder(portal, target_language):
             assignable.setBlacklistStatus('content_type', True)
 
 
-def step_import_content(context):
+def import_content(context):
     """Create default content."""
     portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
@@ -334,7 +334,7 @@ def step_import_content(context):
     configure_members_folder(portal, target_language)
 
 
-def step_setup_various(context):
+def setup_various(context):
     portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
     _setup_calendar(portal, locale)
