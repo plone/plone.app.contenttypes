@@ -4,14 +4,6 @@ Changelog
 1.4.7 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Rename post_handlers. Fixes https://github.com/plone/Products.CMFPlone/issues/2238
