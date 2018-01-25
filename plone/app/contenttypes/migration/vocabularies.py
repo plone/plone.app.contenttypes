@@ -21,6 +21,9 @@ from zope.schema.vocabulary import SimpleVocabulary
 import pkg_resources
 
 
+import six
+
+
 try:
     pkg_resources.get_distribution('plone.app.collection')
 except pkg_resources.DistributionNotFound:
@@ -123,7 +126,7 @@ def get_terms(context, counter, ext_dict, show_extended):
     title = translated_meta_type (number_of_instances) - extended fields: list
     """
     results = []
-    for k, v in counter.iteritems():
+    for k, v in six.iteritems(counter):
         if not show_extended:
             if k not in ext_dict:
                 display = u'{0} ({1})'.format(context.translate(_(k)), v)

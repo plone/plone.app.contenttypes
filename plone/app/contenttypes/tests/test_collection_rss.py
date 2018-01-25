@@ -13,6 +13,9 @@ from zope.component import getUtility
 import unittest
 
 
+import six
+
+
 query = [{
     'i': 'Title',
     'o': 'plone.app.querystring.operation.string.is',
@@ -52,7 +55,7 @@ class RSSViewTest(unittest.TestCase):
         # XXX: We might want to validate against a DTD or RelaxNG schema here.
         # schema = etree.XMLSchema(schema_root)
         # parser = etree.XMLParser(dtd_validation=True,schema=schema)
-        if isinstance(rss, unicode):
+        if isinstance(rss, six.text_type):
             rss = rss.encode('utf-8')
         parser = etree.XMLParser()
         return etree.fromstring(rss, parser)
