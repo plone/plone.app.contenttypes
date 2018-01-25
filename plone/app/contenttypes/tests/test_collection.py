@@ -373,7 +373,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
 
         # Create two subsites i.e create two folders and mark them with
         # INavigationRoot
-        for i in xrange(1, 3):
+        for i in range(1, 3):
             folder_id = 'folder{0}'.format(i)
             portal.invokeFactory('Folder',
                                  folder_id,

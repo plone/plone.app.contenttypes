@@ -20,6 +20,9 @@ from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
 
+import six
+
+
 logger = getLogger(__name__)
 
 FALLBACK_CONTENTTYPE = 'application/octet-stream'
@@ -28,11 +31,11 @@ FALLBACK_CONTENTTYPE = 'application/octet-stream'
 def _unicode_save_string_concat(*args):
     """
     concats args with spaces between and returns utf-8 string, it does not
-    matter if input was unicode or str
+    matter if input was text or bytes
     """
     result = ''
     for value in args:
-        if isinstance(value, unicode):
+        if isinstance(value, six.text_type):
             value = value.encode('utf-8', 'replace')
         if value:
             result = ' '.join((result, value))
@@ -116,7 +119,7 @@ def SearchableText_file(obj):
         return SearchableText(obj)
     except (ConflictError, KeyboardInterrupt):
         raise
-    except Exception, msg:
+    except Exception as msg:
         logger.exception(
             'exception while trying to convert blob contents to "text/plain" '
             'for {0}. Error: {1}'.format(obj, str(msg)),

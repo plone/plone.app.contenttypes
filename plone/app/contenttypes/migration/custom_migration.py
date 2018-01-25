@@ -323,7 +323,7 @@ class TestMigration(CustomMigrationForm):
                       u'this configuration')
         try:
             results = self.migrate(dry_run=True)
-        except Exception, e:
+        except Exception as e:
             trace = traceback.format_exc()
             msg = 'Test-Migration failed: {0}\n{1}\n'.format(e, trace)
             logger.error(msg)
