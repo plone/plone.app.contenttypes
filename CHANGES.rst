@@ -14,6 +14,12 @@ New features:
 
 Bug fixes:
 
+- Do not use ``portal_quickinstaller`` in the migration form.
+  Use ``get_installer`` to check if ``plone.app.contenttypes`` is
+  installed or installable.  Use ``portal_setup`` directly for
+  blacklisting the ``type_info`` step when installing our profile.
+  [maurits]
+
 - Add Python 2 / 3 compatibility
   [pbauer]
 
