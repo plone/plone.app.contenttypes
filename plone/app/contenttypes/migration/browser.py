@@ -25,6 +25,7 @@ from plone.z3cform.layout import wrap_form
 from pprint import pformat
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.utils import get_installer
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -574,31 +575,26 @@ class PACInstaller(form.Form):
 
     @property
     def pac_installable(self):
-        qi = getToolByName(self.context, 'portal_quickinstaller')
-        pac_installed = qi.isProductInstalled('plone.app.contenttypes')
-        pac_installable = qi.isProductInstallable('plone.app.contenttypes')
+        qi = get_installer(self.context)
+        pac_installed = qi.is_product_installed('plone.app.contenttypes')
+        pac_installable = qi.is_product_installable('plone.app.contenttypes')
         return pac_installable and not pac_installed
 
     @property
     def pac_installed(self):
-        qi = getToolByName(self.context, 'portal_quickinstaller')
-        return qi.isProductInstalled('plone.app.contenttypes')
+        qi = get_installer(self.context)
+        return qi.is_product_installed('plone.app.contenttypes')
 
     @button.buttonAndHandler(_(u'Install'), name='install')
     def handle_install(self, action):
         """ install p.a.c
         """
         url = self.context.absolute_url()
-        qi = getToolByName(self.context, 'portal_quickinstaller')
-        fail = qi.installProduct(
-            'plone.app.contenttypes',
-            profile='plone.app.contenttypes:default',
-            blacklistedSteps=['typeinfo'],
+        portal_setup = getToolByName(self.context, 'portal_setup')
+        portal_setup.runAllImportStepsFromProfile(
+            'profile-plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'],
         )
-        if fail:
-            messages = IStatusMessage(self.request)
-            messages.addStatusMessage(fail, type='error')
-            self.request.response.redirect(url)
 
         # For types without any instances we want to instantly
         # replace the AT-FTI's with DX-FTI's.

@@ -26,6 +26,7 @@ from plone.event.interfaces import IEventAccessor
 from plone.namedfile.file import NamedBlobImage
 from plone.testing.z2 import Browser
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import get_installer
 from z3c.relationfield import RelationValue
 from z3c.relationfield.index import dump
 from zc.relation.interfaces import ICatalog
@@ -2053,26 +2054,26 @@ class MigrationFunctionalTests(unittest.TestCase):
             pass
 
     def test_pac_installer_cancel(self):
-        qi = self.portal.portal_quickinstaller
+        qi = get_installer(self.portal)
         portal_types = self.portal.portal_types
         self.browser.open('{0}/@@pac_installer'.format(self.portal_url))
-        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertFalse(qi.is_product_installed('plone.app.contenttypes'))
         self.browser.getControl('Cancel').click()
         self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
-        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertFalse(qi.is_product_installed('plone.app.contenttypes'))
         self.assertEqual(self.browser.url, self.portal_url)
 
     def test_pac_installer_without_content(self):
-        qi = self.portal.portal_quickinstaller
+        qi = get_installer(self.portal)
         portal_types = self.portal.portal_types
         self.browser.open('{0}/@@pac_installer'.format(self.portal_url))
-        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertFalse(qi.is_product_installed('plone.app.contenttypes'))
         self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
         self.assertIn('proceed to the migration-form?', self.browser.contents)
         self.browser.getControl('Install').click()
         self.assertTrue(IDexterityFTI.providedBy(portal_types['Document']))
         self.assertTrue(IDexterityFTI.providedBy(portal_types['News Item']))
-        self.assertTrue(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertTrue(qi.is_product_installed('plone.app.contenttypes'))
         self.assertIn('Migration control panel', self.browser.contents)
         self.assertIn('No content to migrate.', self.browser.contents)
 
@@ -2080,16 +2081,16 @@ class MigrationFunctionalTests(unittest.TestCase):
         # add some at content:
         self.portal.invokeFactory('Document', 'doc1')
         transaction.commit()
-        qi = self.portal.portal_quickinstaller
+        qi = get_installer(self.portal)
         portal_types = self.portal.portal_types
         self.browser.open('{0}/@@pac_installer'.format(self.portal_url))
         self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
-        self.assertFalse(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertFalse(qi.is_product_installed('plone.app.contenttypes'))
         self.assertIn('proceed to the migration-form?', self.browser.contents)
         self.browser.getControl('Install').click()
         self.assertFalse(IDexterityFTI.providedBy(portal_types['Document']))
         self.assertTrue(IDexterityFTI.providedBy(portal_types['News Item']))
-        self.assertTrue(qi.isProductInstalled('plone.app.contenttypes'))
+        self.assertTrue(qi.is_product_installed('plone.app.contenttypes'))
         self.assertIn('Migration control panel', self.browser.contents)
         self.assertIn('You currently have <span class="strong">1</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
 

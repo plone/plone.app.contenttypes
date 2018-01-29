@@ -222,12 +222,12 @@ class MigrateCustomATTest(unittest.TestCase):
         from plone.app.contenttypes.migration.migration import migrateCustomAT
         from plone.app.contenttypes.interfaces import INewsItem
         at_document = self.createCustomATDocument('foo-document')
-        qi = self.portal.portal_quickinstaller
         # install pac but only install News Items
-        qi.installProduct(
-            'plone.app.contenttypes',
-            profile='plone.app.contenttypes:default',
-            blacklistedSteps=['typeinfo'])
+        portal_setup = getToolByName(self.portal, 'portal_setup')
+        portal_setup.runAllImportStepsFromProfile(
+            'profile-plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'],
+        )
         installTypeIfNeeded('News Item')
         fields_mapping = (
             {'AT_field_name': 'textExtended',
@@ -285,12 +285,12 @@ class MigrateCustomATTest(unittest.TestCase):
         oldTZ = os.environ.get('TZ', None)
         os.environ['TZ'] = 'Asia/Tbilisi'
 
-        qi = self.portal.portal_quickinstaller
         # install pac but only install News Items
-        qi.installProduct(
-            'plone.app.contenttypes',
-            profile='plone.app.contenttypes:default',
-            blacklistedSteps=['typeinfo'])
+        portal_setup = getToolByName(self.portal, 'portal_setup')
+        portal_setup.runAllImportStepsFromProfile(
+            'profile-plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'],
+        )
         installTypeIfNeeded('News Item')
         fields_mapping = (
             {'AT_field_name': 'text',
@@ -359,12 +359,12 @@ class MigrateCustomATTest(unittest.TestCase):
         os.environ['TZ'] = TZ
         timezone = pytz.timezone(TZ)
 
-        qi = self.portal.portal_quickinstaller
         # install pac but only install Event
-        qi.installProduct(
-            'plone.app.contenttypes',
-            profile='plone.app.contenttypes:default',
-            blacklistedSteps=['typeinfo'])
+        portal_setup = getToolByName(self.portal, 'portal_setup')
+        portal_setup.runAllImportStepsFromProfile(
+            'profile-plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'],
+        )
         installTypeIfNeeded('Event')
         fields_mapping = (
             {'AT_field_name': 'startDate',
@@ -431,12 +431,12 @@ class MigrateCustomATTest(unittest.TestCase):
             u'Some | field is | pipe-delimited | in the field\n'
         )
         at_document.setText(at_text)
-        qi = self.portal.portal_quickinstaller
         # install pac but only install News Items
-        qi.installProduct(
-            'plone.app.contenttypes',
-            profile='plone.app.contenttypes:default',
-            blacklistedSteps=['typeinfo'])
+        portal_setup = getToolByName(self.portal, 'portal_setup')
+        portal_setup.runAllImportStepsFromProfile(
+            'profile-plone.app.contenttypes:default',
+            blacklisted_steps=['typeinfo'],
+        )
         installTypeIfNeeded('News Item')
         fields_mapping = (
             {'AT_field_name': 'text',
