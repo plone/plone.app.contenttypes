@@ -13,6 +13,7 @@ New features:
 - *add item here*
 
 Bug fixes:
+- Changed the members folder from public to private. [mrsaicharan1]
 
 - Do not use ``portal_quickinstaller`` in the migration form.
   Use ``get_installer`` to check if ``plone.app.contenttypes`` is
