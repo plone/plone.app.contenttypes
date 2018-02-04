@@ -116,12 +116,6 @@ class ContentProfileTestCase(unittest.TestCase):
         # Has the object been set on the container as the default page?
         self.assertEqual(self.portal['events'].default_page, 'aggregator')
 
-    def test_events_is_published(self):
-        # Has the content object been published?
-        events = self.portal['events']
-        current_state = self.portal_workflow.getInfoFor(events, 'review_state')
-        self.assertEqual(current_state, 'published')
-
     @unittest.skipUnless(
         DEXTERITY_WITH_CONSTRAINS,
         'Dexterity constraints are not present')
