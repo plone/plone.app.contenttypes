@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Members folder made permanently private. Fixes https://github.com/plone/Products.CMFPlone/issues/2259
+  [mrsaicharan1]
 
 Bug fixes:
 
