@@ -94,12 +94,6 @@ class ContentProfileTestCase(unittest.TestCase):
         self.assertTrue(assignable_manager.getBlacklistStatus('group'))
         self.assertTrue(assignable_manager.getBlacklistStatus('content_type'))
 
-    def test_Members_is_published(self):
-        # Has the content object been published?
-        obj = self.portal['Members']
-        current_state = self.portal_workflow.getInfoFor(obj, 'review_state')
-        self.assertEqual(current_state, 'published')
-
     # ################ #
     #   events tests   #
     # ################ #
