@@ -4,14 +4,6 @@ Changelog
 1.4.8 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Do not use ``portal_quickinstaller`` in the migration form.
