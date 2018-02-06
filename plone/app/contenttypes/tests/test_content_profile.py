@@ -93,6 +93,12 @@ class ContentProfileTestCase(unittest.TestCase):
         self.assertTrue(assignable_manager.getBlacklistStatus('context'))
         self.assertTrue(assignable_manager.getBlacklistStatus('group'))
         self.assertTrue(assignable_manager.getBlacklistStatus('content_type'))
+        
+    def test_Members_is_private(self):
+        # Is the content object public?
+        obj = self.portal['Members']
+        current_state = self.portal_workflow.getInfoFor(obj, 'review_state')
+        self.assertEqual(current_state, 'private')
 
     # ################ #
     #   events tests   #
