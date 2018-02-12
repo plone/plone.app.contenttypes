@@ -4,18 +4,10 @@ Changelog
 1.4.9 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Members folder made permanently private. Fixes https://github.com/plone/Products.CMFPlone/issues/2259
   [mrsaicharan1]
-
-Bug fixes:
-
-- *add item here*
 
 
 1.4.8 (2018-02-05)
