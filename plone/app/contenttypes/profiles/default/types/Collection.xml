@@ -7,6 +7,7 @@
   <property name="title" i18n:translate="">Collection</property>
   <property name="description"
     i18n:translate="">Collection</property>
+  <property name="icon_expr">string:${portal_url}/topic_icon.png</property>
   <property name="global_allow">True</property>
   <property name="filter_content_types">False</property>
   <property name="allowed_content_types" />

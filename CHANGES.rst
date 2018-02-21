@@ -14,18 +14,12 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix content types ``icon_expr`` (`issue 372 <https://github.com/plone/plone.app.contenttypes/issues/372>`_).
+  [hvelarde]
+
 
 1.1.5 (2017-10-06)
 ------------------
-
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
 
 Bug fixes:
 
