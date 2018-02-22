@@ -232,3 +232,23 @@ def searchabletext_richtext(context):
     for brain in search(portal_type=['Collection', 'Document', 'News Item']):
         obj = brain.getObject()
         obj.reindexObject(idxs=['SearchableText'])
+
+
+def fix_icon_expr(context):
+    """Fix content types icon_expr.
+
+    https://github.com/plone/plone.app.contenttypes/issues/372
+    """
+    fixes = {
+        'Collection': 'topic_icon.png',
+        'Document': 'document_icon.png',
+        'Event': 'event_icon.png',
+        'File': 'file_icon.png',
+        'Folder': 'folder_icon.png',
+        'Image': 'image_icon.png',
+        'Link': 'link_icon.png',
+        'News Item': 'newsitem_icon.png',
+    }
+    types = getToolByName(context, 'portal_types')
+    for k, v in fixes.iteritems():
+        types[k].icon_expr = 'string:${portal_url}/' + v

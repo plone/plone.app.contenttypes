@@ -88,4 +88,12 @@
       handler=".upgrades.searchabletext_richtext"
       />
 
+  <genericsetup:upgradeStep
+      source="1106"
+      destination="1107"
+      title="Fix content types icon_expr"
+      profile="plone.app.contenttypes:default"
+      handler=".upgrades.fix_icon_expr"
+      />
+
 </configure>
