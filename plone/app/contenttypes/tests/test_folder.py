@@ -193,3 +193,18 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.assertIn(
             '<img src="http://nohost/plone/folder/image1/@@images',
             self.browser.contents)
+
+    def test_list_item_wout_title(self):
+        """In content listings, if a content object has no title use it's id.
+        """
+        self.folder.invokeFactory('Document', id='doc_wout_title')
+        import transaction
+        transaction.commit()
+
+        # Document should be shown in listing view (and it's siblings)
+        self.browser.open(self.folder_url + "/listing_view")
+        self.assertIn('doc_wout_title', self.browser.contents)
+
+        # And also in tabular view
+        self.browser.open(self.folder_url + "/tabular_view")
+        self.assertIn('doc_wout_title', self.browser.contents)

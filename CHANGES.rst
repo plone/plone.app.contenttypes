@@ -14,8 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
-
+- In folder listings, when a content object has no title show it's id instead of an empty title.
+  [thet]
 
 1.4.9 (2018-02-11)
 ------------------

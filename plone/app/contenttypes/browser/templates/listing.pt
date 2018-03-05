@@ -34,6 +34,7 @@
                 item_url item/getURL;
                 item_id item/getId;
                 item_title item/Title;
+                item_title python:item_title or item_id;
                 item_description item/Description;
                 item_type item/PortalType;
                 item_modified item/ModificationDate;
