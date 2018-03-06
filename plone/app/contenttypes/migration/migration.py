@@ -205,10 +205,15 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         migrate_properties.
         """
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        if old_layout in LISTING_VIEW_MAPPING.keys():
+        if old_layout:
             default_page = self.old.getDefaultPage() or \
                 getattr(self.old, 'default_page', None)
-            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
+            try:
+                # Delete old-style layout attribute.
+                del self.new.layout
+            except AttributeError:
+                pass
+            self.new.setLayout(LISTING_VIEW_MAPPING.get(old_layout, old_layout))  # noqa
             if default_page:
                 # any defaultPage is switched of by setLayout
                 # and needs to set again
@@ -343,10 +348,6 @@ class FolderMigrator(ATCTFolderMigrator):
     dst_portal_type = 'Folder'
     dst_meta_type = None  # not used
 
-    def beforeChange_migrate_layout(self):
-        if self.old.getLayout() == 'atct_album_view':
-            self.old.setLayout('album_view')
-
 
 def migrate_folders(portal):
     return migrate(portal, FolderMigrator)
@@ -381,8 +382,13 @@ class CollectionMigrator(ATCTContentMigrator):
         by a later call to migrate_properties.
         """
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        if old_layout in LISTING_VIEW_MAPPING:
-            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
+        if old_layout:
+            try:
+                # Delete old-style layout attribute.
+                del self.new.layout
+            except AttributeError:
+                pass
+            self.new.setLayout(LISTING_VIEW_MAPPING.get(old_layout, old_layout))  # noqa
 
 
 def migrate_collections(portal):
