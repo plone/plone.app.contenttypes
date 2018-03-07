@@ -16,8 +16,10 @@ New features:
 
 Bug fixes:
 
-- Try to delete the layout attribute before setting the layout.
-  Rework parts where the layout is set by always setting the layout.
+- Migrations:
+  - Handle ignore catalog errors where a brain can't find it's object.
+  - Try to delete the layout attribute before setting the layout.
+    Rework parts where the layout is set by always setting the layout.
   [thet]
 
 - In folder listings, when a content object has no title show it's id instead of an empty title.

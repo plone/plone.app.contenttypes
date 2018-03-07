@@ -32,6 +32,7 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.walker import CustomQueryWalker
+from zExceptions import NotFound
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
@@ -508,7 +509,13 @@ def migrateCustomAT(fields_mapping,
             is_folderish = False
             src_meta_type = src_type
         else:
-            src_obj = brains[0].getObject()
+            try:
+                src_obj = brains[0].getObject()
+            except (KeyError, NotFound):
+                logger.error(
+                    'Could not find the object for brain at %s',
+                    brains[0].getURL())
+                return
             if IDexterityContent.providedBy(src_obj):
                 logger.error(
                     '%s should not be dexterity object!',
