@@ -137,6 +137,8 @@ class MigrateFromATContentTypes(BrowserView):
         stats_before = self.stats()
         starttime = datetime.now()
 
+        self.request['plone.app.contenttypes_migration_running'] = True
+
         msg = 'Starting Migration\n\n'
         msg += '\n-----------------------------\n'
         msg += 'Content statictics:\n'
