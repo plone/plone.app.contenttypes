@@ -14,8 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
-
+- Fix upgrades steps when the catalog is inconsistent
+  [ale-rt]
 
 1.4.9 (2018-02-11)
 ------------------
