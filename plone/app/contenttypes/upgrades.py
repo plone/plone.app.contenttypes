@@ -27,6 +27,22 @@ LISTING_VIEW_MAPPING = {  # OLD (AT and old DX) : NEW
 }
 
 
+def _brains2objs(brains):
+    ''' Generator that takes a brains lazy map and:
+    - yields the objects that can be resolved
+    - logs the brain that cannot be resolved
+    '''
+    for brain in brains:
+        obj = brain.getObject()
+        if obj:
+            yield obj
+        else:
+            logger.warning(
+                'Cannot resolve brain %s',
+                brain.getPath(),
+            )
+
+
 def update_fti(context):
     """ Schema-files moved into their own folder after 1.0b1
     """
@@ -204,8 +220,9 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
     catalog = getToolByName(portal, 'portal_catalog')
     search = catalog.unrestrictedSearchResults
     for portal_type in types_to_fix:
-        for brain in search(portal_type=portal_type):
-            obj = brain.getObject()
+        brains = search(portal_type=portal_type)
+        objs = _brains2objs(brains)
+        for obj in objs:
             _fixup(obj, LISTING_VIEW_MAPPING)
         if portal_type == 'Plone Site':
             _fixup(context, LISTING_VIEW_MAPPING)
@@ -215,8 +232,9 @@ def searchabletext_collections(context):
     """Reindex Collections for SearchableText."""
     catalog = getToolByName(context, 'portal_catalog')
     search = catalog.unrestrictedSearchResults
-    for brain in search(portal_type='Collection'):
-        obj = brain.getObject()
+    brains = search(portal_type='Collection')
+    objs = _brains2objs(brains)
+    for obj in objs:
         obj.reindexObject(idxs=['SearchableText'])
 
 
@@ -232,6 +250,7 @@ def searchabletext_richtext(context):
     """
     catalog = getToolByName(context, 'portal_catalog')
     search = catalog.unrestrictedSearchResults
-    for brain in search(portal_type=['Collection', 'Document', 'News Item']):
-        obj = brain.getObject()
+    brains = search(portal_type=['Collection', 'Document', 'News Item'])
+    objs = _brains2objs(brains)
+    for obj in objs:
         obj.reindexObject(idxs=['SearchableText'])
