@@ -25,6 +25,10 @@ Bug fixes:
 - In folder listings, when a content object has no title show it's id instead of an empty title.
   [thet]
 
+- Fix upgrades steps when the catalog is inconsistent
+  [ale-rt]
+
+
 1.4.9 (2018-02-11)
 ------------------
 
