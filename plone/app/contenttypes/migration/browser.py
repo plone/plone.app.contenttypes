@@ -84,6 +84,7 @@ class FixBaseClasses(BrowserView):
                 try:
                     obj = brain.getObject()
                 except (KeyError, NotFound):
+                    logger.exception('Can not resolve object from brain.')
                     continue
                 if IDexterityContent.providedBy(obj):
                     object_class_name = obj.__class__.__name__
