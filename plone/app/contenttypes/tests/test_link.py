@@ -160,6 +160,21 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self._assert_redirect('http://nohost/plone/my-folder/my-item')
 
+    def test_link_redirect_view_path_with_variable_and_parameters(self):
+        # https://github.com/plone/plone.app.contenttypes/issues/457
+        self.link.remoteUrl = '${portal_url}/@@search?SearchableText=Plone'
+        self._publish(self.link)
+        view = self._get_link_redirect_view(self.link)
+
+        # As manager: do not redirect
+        self.assertTrue(view())
+        self.assertEqual(self.response.status, 200)
+
+        # As anonymous: redirect
+        logout()
+        self.assertTrue(view())
+        self._assert_redirect('http://nohost/plone/@@search?SearchableText=Plone')
+
     def test_mailto_type(self):
         self.link.remoteUrl = 'mailto:stress@test.us'
         view = self._get_link_redirect_view(self.link)
