@@ -14,18 +14,12 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Do not encode query strings on internal link redirections;
+  fixes `issue 457 <https://github.com/plone/plone.app.contenttypes/issues/457>`_.
+  [hvelarde]
 
 1.1.5 (2017-10-06)
 ------------------
-
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
 
 Bug fixes:
 
