@@ -16,6 +16,10 @@ New features:
 
 Bug fixes:
 
+- Do not encode query strings on internal link redirections;
+  fixes `issue 457 <https://github.com/plone/plone.app.contenttypes/issues/457>`_.
+  [hvelarde]
+
 - Migrations:
   - Handle ignore catalog errors where a brain can't find it's object.
   - Try to delete the layout attribute before setting the layout.

@@ -87,7 +87,7 @@ class LinkRedirectView(BrowserView):
                 url
             ])
         else:
-            if not (url.startswith('http://') or url.startswith('https://')):
-                url = self.request.physicalPathToURL(url)
+            if not url.startswith(('http://', 'https://')):
+                url = self.request['SERVER_URL'] + url
 
         return url
