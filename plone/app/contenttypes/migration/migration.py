@@ -32,6 +32,7 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.walker import CustomQueryWalker
+from zExceptions import NotFound
 from zope.component import adapter
 from zope.component import getAdapters
 from zope.component import getMultiAdapter
@@ -205,10 +206,15 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         migrate_properties.
         """
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        if old_layout in LISTING_VIEW_MAPPING.keys():
+        if old_layout:
             default_page = self.old.getDefaultPage() or \
                 getattr(self.old, 'default_page', None)
-            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
+            try:
+                # Delete old-style layout attribute.
+                del self.new.layout
+            except AttributeError:
+                pass
+            self.new.setLayout(LISTING_VIEW_MAPPING.get(old_layout, old_layout))  # noqa
             if default_page:
                 # any defaultPage is switched of by setLayout
                 # and needs to set again
@@ -343,10 +349,6 @@ class FolderMigrator(ATCTFolderMigrator):
     dst_portal_type = 'Folder'
     dst_meta_type = None  # not used
 
-    def beforeChange_migrate_layout(self):
-        if self.old.getLayout() == 'atct_album_view':
-            self.old.setLayout('album_view')
-
 
 def migrate_folders(portal):
     return migrate(portal, FolderMigrator)
@@ -381,8 +383,13 @@ class CollectionMigrator(ATCTContentMigrator):
         by a later call to migrate_properties.
         """
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        if old_layout in LISTING_VIEW_MAPPING:
-            self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
+        if old_layout:
+            try:
+                # Delete old-style layout attribute.
+                del self.new.layout
+            except AttributeError:
+                pass
+            self.new.setLayout(LISTING_VIEW_MAPPING.get(old_layout, old_layout))  # noqa
 
 
 def migrate_collections(portal):
@@ -502,7 +509,13 @@ def migrateCustomAT(fields_mapping,
             is_folderish = False
             src_meta_type = src_type
         else:
-            src_obj = brains[0].getObject()
+            try:
+                src_obj = brains[0].getObject()
+            except (KeyError, NotFound):
+                logger.error(
+                    'Could not find the object for brain at %s',
+                    brains[0].getURL())
+                return
             if IDexterityContent.providedBy(src_obj):
                 logger.error(
                     '%s should not be dexterity object!',
