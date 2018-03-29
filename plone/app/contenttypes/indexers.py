@@ -35,9 +35,14 @@ def _unicode_save_string_concat(*args):
     """
     result = ''
     for value in args:
-        if isinstance(value, six.text_type):
-            value = value.encode('utf-8', 'replace')
-        if value:
+        if six.PY2:
+            if isinstance(value, six.text_type):
+                value = value.encode('utf-8', 'replace')
+            if value:
+                result = ' '.join((result, value))
+        else:
+            if isinstance(value, six.binary_type):
+                value = safe_unicode(value)
             result = ' '.join((result, value))
     return result
 
@@ -52,9 +57,12 @@ def SearchableText(obj):
             # Before you think about switching raw/output
             # or mimeType/outputMimeType, first read
             # https://github.com/plone/Products.CMFPlone/issues/2066
+            raw = safe_unicode(textvalue.raw)
+            if six.PY2:
+                raw = raw.encode('utf-8', 'replace')
             text = transforms.convertTo(
                 'text/plain',
-                safe_unicode(textvalue.raw).encode('utf-8'),
+                raw,
                 mimetype=textvalue.mimeType,
             ).getData().strip()
 
