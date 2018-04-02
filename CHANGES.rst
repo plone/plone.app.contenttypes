@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Implement better human readable file size logic.
+  [hvelarde]
 
 Bug fixes:
 
