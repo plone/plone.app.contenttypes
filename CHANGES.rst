@@ -10,6 +10,9 @@ Breaking changes:
 
 New features:
 
+- Implement better human readable file size logic.
+  [hvelarde]
+
 - Set the ``plone.app.contenttypes_migration_running`` key while running a migration.
   Other addons can check for that and handle accordingly.
   [thet]
