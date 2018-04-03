@@ -10,12 +10,12 @@ Breaking changes:
 
 New features:
 
-- Implement better human readable file size logic.
-  [hvelarde]
+- *add item here*
 
 Bug fixes:
 
-- *add item here*
+- Implement better human readable file size logic.
+  [hvelarde]
 
 
 1.1.6 (2018-03-28)
