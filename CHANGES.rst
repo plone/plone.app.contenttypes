@@ -22,14 +22,14 @@ Bug fixes:
 
 New features:
 
-- Implement better human readable file size logic.
-  [hvelarde]
-
 - Set the ``plone.app.contenttypes_migration_running`` key while running a migration.
   Other addons can check for that and handle accordingly.
   [thet]
 
 Bug fixes:
+
+- Implement better human readable file size logic.
+  [hvelarde]
 
 - Do not encode query strings on internal link redirections;
   fixes `issue 457 <https://github.com/plone/plone.app.contenttypes/issues/457>`_.
