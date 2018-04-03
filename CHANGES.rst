@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.10 (unreleased)
+1.4.11 (unreleased)
 -------------------
 
 Breaking changes:
@@ -9,6 +9,21 @@ Breaking changes:
 - *add item here*
 
 New features:
+
+- *add item here*
+
+Bug fixes:
+
+- *add item here*
+
+
+1.4.10 (2018-04-03)
+-------------------
+
+New features:
+
+- Implement better human readable file size logic.
+  [hvelarde]
 
 - Set the ``plone.app.contenttypes_migration_running`` key while running a migration.
   Other addons can check for that and handle accordingly.
