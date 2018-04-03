@@ -17,10 +17,7 @@
                            alt content_type;" border="0" />
       <tal:name tal:content="context/file/filename" >Filename</tal:name>
     </a>
-    <span class="discreet"
-        tal:define="size context/file/getSize;
-                    kb python:size/1024">
-      &mdash; <span tal:replace="kb" /> KB</span>
+    <span class="discreet">&mdash; <span tal:replace="view/human_readable_size" /></span>
   </p>
 
   <video tal:condition="view/is_videotype" controls="controls">
