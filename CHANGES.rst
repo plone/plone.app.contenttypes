@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix SearchableText in Python 3
+  [pbauer]
 
 
 1.4.10 (2018-04-03)
