@@ -4,10 +4,6 @@ Changelog
 1.4.10 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Implement better human readable file size logic.
