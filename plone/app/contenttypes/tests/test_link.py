@@ -180,6 +180,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
         app = self.layer['app']
         manage_addVirtualHostMonster(app, 'virtual_hosting')
         self.request.set('PATH_INFO', '/VirtualHostBase/http/example.org:80/plone/VirtualHostRoot/link')
+        self.request.set('SERVER_URL', 'http://example.org')
         self.request.set('VIRTUAL_URL', 'http://example.org/link')
         self.request.set('VIRTUAL_URL_PARTS', ('http://example.org/', 'link'))
         self.request.set('VirtualRootPhysicalPath', ('', 'plone'))
