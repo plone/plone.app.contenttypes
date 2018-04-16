@@ -175,6 +175,32 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self._assert_redirect('http://nohost/plone/@@search?SearchableText=Plone')
 
+    def _prepare_VHM_request(self):
+        from Products.SiteAccess.VirtualHostMonster import manage_addVirtualHostMonster
+        app = self.layer['app']
+        manage_addVirtualHostMonster(app, 'virtual_hosting')
+        self.request.set('PATH_INFO', '/VirtualHostBase/http/example.org:80/plone/VirtualHostRoot/link')
+        self.request.set('VIRTUAL_URL', 'http://example.org/link')
+        self.request.set('VIRTUAL_URL_PARTS', ('http://example.org/', 'link'))
+        self.request.set('VirtualRootPhysicalPath', ('', 'plone'))
+
+    def test_link_redirect_view_virtual_host(self):
+        # https://github.com/plone/plone.app.contenttypes/issues/466
+        self._prepare_VHM_request()
+
+        self.link.remoteUrl = '${navigation_root_url}/my-item'
+        self._publish(self.link)
+        view = self._get_link_redirect_view(self.link)
+
+        # As manager: do not redirect
+        self.assertTrue(view())
+        self.assertEqual(self.response.status, 200)
+
+        # As anonymous: redirect
+        logout()
+        self.assertTrue(view())
+        self._assert_redirect('http://example.org/my-item')
+
     def test_mailto_type(self):
         self.link.remoteUrl = 'mailto:stress@test.us'
         view = self._get_link_redirect_view(self.link)
