@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.interfaces import IDocument
-from plone.app.contenttypes.interfaces import IFile
-from plone.app.contenttypes.interfaces import IFolder
-from plone.app.contenttypes.interfaces import IImage
-from plone.app.contenttypes.interfaces import ILink
-from plone.app.contenttypes.interfaces import INewsItem
-from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+from plone.app.contenttypes.testing import TEST_MIGRATION
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
-from plone.app.testing import applyProfile
-from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
-from plone.dexterity.fti import DexterityFTI
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.event.interfaces import IEvent
-from Products.CMFCore.utils import getToolByName
-from zope.interface import directlyProvides
-
 import unittest
+
+if TEST_MIGRATION:
+    from plone.app.contenttypes.interfaces import IDocument
+    from plone.app.contenttypes.interfaces import IFile
+    from plone.app.contenttypes.interfaces import IFolder
+    from plone.app.contenttypes.interfaces import IImage
+    from plone.app.contenttypes.interfaces import ILink
+    from plone.app.contenttypes.interfaces import INewsItem
+    from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+    from plone.app.testing import applyProfile
+    from plone.app.testing import setRoles
+    from plone.app.testing import TEST_USER_ID
+    from plone.dexterity.fti import DexterityFTI
+    from plone.dexterity.interfaces import IDexterityFTI
+    from plone.event.interfaces import IEvent
+    from Products.CMFCore.utils import getToolByName
+    from zope.interface import directlyProvides
 
 
 class FixBaseclassesTest(unittest.TestCase):
@@ -24,6 +26,9 @@ class FixBaseclassesTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()

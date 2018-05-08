@@ -15,6 +15,7 @@ from plone.testing import z2
 from zope.interface import alsoProvides
 
 import pkg_resources
+import unittest
 
 
 def set_browserlayer(request):
@@ -64,6 +65,14 @@ class PloneAppContenttypesRobot(PloneAppContenttypes):
         super(PloneAppContenttypesRobot, self).tearDownPloneSite(portal)
 
 
+try:
+    import Products.ATContentTypes
+except ImportError:
+    TEST_MIGRATION = False
+else:
+    TEST_MIGRATION = True
+
+
 class PloneAppContenttypesMigration(PloneSandboxLayer):
     """ A setup that installs the old default AT-Types to migrate them to
     Dexterity. The profile of pac is not only in the individual tests.
@@ -72,6 +81,8 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
+        if not TEST_MIGRATION:
+            return
 
         # prepare installing Products.ATContentTypes
         import Products.ATContentTypes
@@ -96,6 +107,9 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         self.loadZCML(package=plone.app.referenceablebehavior)
 
     def setUpPloneSite(self, portal):
+        if not TEST_MIGRATION:
+            return
+
         # install Products.ATContentTypes manually if profile is available
         # (this is only needed for Plone >= 5)
         profiles = [x['id'] for x in portal.portal_setup.listProfileInfo()]
@@ -113,9 +127,15 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
         applyProfile(portal, 'plone.app.referenceablebehavior:default')
 
     def tearDownPloneSite(self, portal):
+        if not TEST_MIGRATION:
+            return
+
         applyProfile(portal, 'plone.app.contenttypes:uninstall')
 
     def tearDownZope(self, app):
+        if not TEST_MIGRATION:
+            return
+
         try:
             pkg_resources.get_distribution('plone.app.collection')
             z2.uninstallProduct(app, 'plone.app.collection')
