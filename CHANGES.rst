@@ -17,6 +17,9 @@ Bug fixes:
 - Fix SearchableText in Python 3
   [pbauer]
 
+- Skip migration tests if ATContentTypes is not installed.
+  [davisagli]
+
 
 1.4.10 (2018-04-03)
 -------------------
