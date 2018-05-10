@@ -1,24 +1,26 @@
 # -*- coding: utf-8 -*-
-from DateTime import DateTime
-from plone.app.contenttypes.behaviors.collection import ICollection
-from plone.app.contenttypes.migration.topics import migrate_topics
+from plone.app.contenttypes.testing import TEST_MIGRATION
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
-from plone.app.querystring.queryparser import parseFormquery
-from plone.app.testing import applyProfile
-from plone.app.testing import login
-from plone.dexterity.content import Container
-from plone.dexterity.interfaces import IDexterityFTI
-from Products.CMFCore.utils import getToolByName
-from zope.component import queryUtility
-from zope.interface import implementer
-
 import unittest
 
+if TEST_MIGRATION:
+    from DateTime import DateTime
+    from plone.app.contenttypes.behaviors.collection import ICollection
+    from plone.app.contenttypes.migration.topics import migrate_topics
+    from plone.app.querystring.queryparser import parseFormquery
+    from plone.app.testing import applyProfile
+    from plone.app.testing import login
+    from plone.dexterity.content import Container
+    from plone.dexterity.interfaces import IDexterityFTI
+    from Products.CMFCore.utils import getToolByName
+    from zope.component import queryUtility
+    from zope.interface import implementer
 
-@implementer(ICollection)
-class FolderishCollection(Container):
-    """Test subclass for folderish ``Collections``.
-    """
+
+    @implementer(ICollection)
+    class FolderishCollection(Container):
+        """Test subclass for folderish ``Collections``.
+        """
 
 
 class MigrateTopicsIntegrationTest(unittest.TestCase):
@@ -26,6 +28,9 @@ class MigrateTopicsIntegrationTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()

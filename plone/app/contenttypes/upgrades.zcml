@@ -21,7 +21,7 @@
       handler=".upgrades.enable_collection_behavior"
       />
 
-  <!-- We still need Archetypes to use Products.contentmigrator -->
+  <!-- We still need Archetypes to use Products.contentmigration -->
   <configure zcml:condition="installed Products.Archetypes">
   <configure zcml:condition="installed archetypes.schemaextender">
   <genericsetup:upgradeStep

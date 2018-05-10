@@ -1,49 +1,53 @@
 # -*- coding: utf-8 -*-
-from lxml import etree
-from persistent.list import PersistentList
-from plone.app.contenttypes.migration.migration import migrate_documents
-from plone.app.contenttypes.migration.migration import migrate_folders
-from plone.app.contenttypes.migration.migration import migrate_newsitems
-from plone.app.contenttypes.migration.utils import add_portlet
-from plone.app.contenttypes.migration.utils import installTypeIfNeeded
-from plone.app.contenttypes.migration.utils import is_referenceable
-from plone.app.contenttypes.migration.utils import restore_references
-from plone.app.contenttypes.migration.utils import store_references
+
+from plone.app.contenttypes.testing import TEST_MIGRATION
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
-from plone.app.contenttypes.testing import set_browserlayer
-from plone.app.testing import applyProfile
-from plone.app.testing import login
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.uuid.utils import uuidToObject
-from plone.app.z3cform.interfaces import IPloneFormLayer
-from plone.dexterity.content import Container
-from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.event.interfaces import IEventAccessor
-from plone.namedfile.file import NamedBlobImage
-from plone.testing.z2 import Browser
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import get_installer
-from z3c.relationfield import RelationValue
-from z3c.relationfield.index import dump
-from zc.relation.interfaces import ICatalog
-from zope.annotation.interfaces import IAnnotations
-from zope.component import getMultiAdapter
-from zope.component import getUtility
-from zope.component import queryUtility
-from zope.interface import alsoProvides
-from zope.intid.interfaces import IIntIds
-from zope.lifecycleevent import modified
-from zope.schema.interfaces import IVocabularyFactory
-
-import json
-import os.path
-import time
-import transaction
 import unittest
+
+if TEST_MIGRATION:
+    from lxml import etree
+    from persistent.list import PersistentList
+    from plone.app.contenttypes.migration.migration import migrate_documents
+    from plone.app.contenttypes.migration.migration import migrate_folders
+    from plone.app.contenttypes.migration.migration import migrate_newsitems
+    from plone.app.contenttypes.migration.utils import add_portlet
+    from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+    from plone.app.contenttypes.migration.utils import is_referenceable
+    from plone.app.contenttypes.migration.utils import restore_references
+    from plone.app.contenttypes.migration.utils import store_references
+    from plone.app.contenttypes.testing import set_browserlayer
+    from plone.app.testing import applyProfile
+    from plone.app.testing import login
+    from plone.app.testing import SITE_OWNER_NAME
+    from plone.app.testing import SITE_OWNER_PASSWORD
+    from plone.app.uuid.utils import uuidToObject
+    from plone.app.z3cform.interfaces import IPloneFormLayer
+    from plone.dexterity.content import Container
+    from plone.dexterity.interfaces import IDexterityContent
+    from plone.dexterity.interfaces import IDexterityFTI
+    from plone.event.interfaces import IEventAccessor
+    from plone.namedfile.file import NamedBlobImage
+    from plone.testing.z2 import Browser
+    from Products.CMFCore.utils import getToolByName
+    from Products.CMFPlone.utils import get_installer
+    from z3c.relationfield import RelationValue
+    from z3c.relationfield.index import dump
+    from zc.relation.interfaces import ICatalog
+    from zope.annotation.interfaces import IAnnotations
+    from zope.component import getMultiAdapter
+    from zope.component import getUtility
+    from zope.component import queryUtility
+    from zope.interface import alsoProvides
+    from zope.intid.interfaces import IIntIds
+    from zope.lifecycleevent import modified
+    from zope.schema.interfaces import IVocabularyFactory
+
+    import json
+    import os.path
+    import time
+    import transaction
 
 
 class MigrateFromATContentTypesTest(unittest.TestCase):
@@ -51,6 +55,9 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.request['ACTUAL_URL'] = self.portal.absolute_url()
@@ -197,13 +204,13 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             str(dx_event.__class__),
         )
         self.assertEqual(2013, dx_event.start.year)
-        self.assertEqual(02, dx_event.start.month)
-        self.assertEqual(03, dx_event.start.day)
+        self.assertEqual(2, dx_event.start.month)
+        self.assertEqual(3, dx_event.start.day)
         self.assertEqual(12, dx_event.start.hour)
         self.assertEqual('Asia/Tbilisi', str(dx_event.start.tzinfo))
         self.assertEqual(2013, dx_event.end.year)
-        self.assertEqual(04, dx_event.end.month)
-        self.assertEqual(05, dx_event.end.day)
+        self.assertEqual(4, dx_event.end.month)
+        self.assertEqual(5, dx_event.end.day)
         self.assertEqual(13, dx_event.end.hour)
         self.assertEqual('Asia/Tbilisi', str(dx_event.end.tzinfo))
         self.assertEqual('123456789', dx_event.contact_phone)
@@ -269,13 +276,13 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         )
         self.assertEqual('Event', new_event.portal_type)
         self.assertEqual(2013, new_event.start.year)
-        self.assertEqual(01, new_event.start.month)
-        self.assertEqual(01, new_event.start.day)
+        self.assertEqual(1, new_event.start.month)
+        self.assertEqual(1, new_event.start.day)
         self.assertEqual(12, new_event.start.hour)
         self.assertEqual('Asia/Tbilisi', str(new_event.start.tzinfo))
         self.assertEqual(2013, new_event.end.year)
-        self.assertEqual(02, new_event.end.month)
-        self.assertEqual(01, new_event.end.day)
+        self.assertEqual(2, new_event.end.month)
+        self.assertEqual(1, new_event.end.day)
         self.assertEqual(13, new_event.end.hour)
         self.assertEqual('Asia/Tbilisi', str(new_event.end.tzinfo))
         self.assertEqual(u'Name', new_event.contact_name)
@@ -358,8 +365,8 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
             'Event',
             'dx-event',
             location='Newbraska',
-            start_date=timezone.localize(datetime(2019, 04, 02, 15, 20)),
-            end_date=timezone.localize(datetime(2019, 04, 02, 16, 20)),
+            start_date=timezone.localize(datetime(2019, 4, 2, 15, 20)),
+            end_date=timezone.localize(datetime(2019, 4, 2, 16, 20)),
             attendees='Me & You',
             event_url='http://woo.com',
             contact_name='Frank',
@@ -381,13 +388,13 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertEqual(False, old_event.exclude_from_nav)
         self.assertEqual('Event', new_event.portal_type)
         self.assertEqual(2019, new_event.start.year)
-        self.assertEqual(04, new_event.start.month)
-        self.assertEqual(02, new_event.start.day)
+        self.assertEqual(4, new_event.start.month)
+        self.assertEqual(2, new_event.start.day)
         self.assertEqual(15, new_event.start.hour)
         self.assertEqual('Asia/Tbilisi', str(new_event.start.tzinfo))
         self.assertEqual(2019, new_event.end.year)
-        self.assertEqual(04, new_event.end.month)
-        self.assertEqual(02, new_event.end.day)
+        self.assertEqual(4, new_event.end.month)
+        self.assertEqual(2, new_event.end.day)
         self.assertEqual(16, new_event.end.hour)
         self.assertEqual('Asia/Tbilisi', str(new_event.end.tzinfo))
         self.assertEqual(u'Frank', new_event.contact_name)
@@ -1900,6 +1907,9 @@ class MigrateDexterityBaseClassIntegrationTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         self.portal = self.layer['portal']
 
         applyProfile(self.portal, 'plone.app.dexterity:testing')
@@ -1966,6 +1976,9 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         app = self.layer['app']
         self.portal = self.layer['portal']
         self.request = self.layer['request']
@@ -2024,6 +2037,9 @@ class MigrationFunctionalTests(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         app = self.layer['app']
         self.portal = self.layer['portal']
         self.request = self.layer['request']

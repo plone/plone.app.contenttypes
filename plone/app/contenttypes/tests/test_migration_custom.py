@@ -1,25 +1,29 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from plone.app.contenttypes.migration.field_migrators import migrate_filefield
-from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
-from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
-from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+
+from plone.app.contenttypes.testing import TEST_MIGRATION
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
-from plone.app.testing import applyProfile
-from plone.app.testing import login
-from plone.app.testing import setRoles
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.app.testing import TEST_USER_ID
-from plone.testing.z2 import Browser
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-
-import os.path
-import pytz
-import transaction
 import unittest
+
+if TEST_MIGRATION:
+    from datetime import datetime
+    from plone.app.contenttypes.migration.field_migrators import migrate_filefield
+    from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
+    from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
+    from plone.app.contenttypes.migration.utils import installTypeIfNeeded
+    from plone.app.testing import applyProfile
+    from plone.app.testing import login
+    from plone.app.testing import setRoles
+    from plone.app.testing import SITE_OWNER_NAME
+    from plone.app.testing import SITE_OWNER_PASSWORD
+    from plone.app.testing import TEST_USER_ID
+    from plone.testing.z2 import Browser
+    from Products.CMFCore.utils import getToolByName
+    from Products.CMFPlone.utils import safe_unicode
+
+    import os.path
+    import pytz
+    import transaction
 
 
 class MigrateFieldsTest(unittest.TestCase):
@@ -27,6 +31,9 @@ class MigrateFieldsTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
@@ -158,6 +165,9 @@ class MigrateCustomATTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
@@ -471,6 +481,9 @@ class CustomMigrationFunctionalTests(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_MIGRATION_FUNCTIONAL_TESTING
 
     def setUp(self):
+        if not TEST_MIGRATION:
+            raise unittest.SkipTest('Migration tests require ATContentTypes')
+
         app = self.layer['app']
         self.portal = self.layer['portal']
         self.request = self.layer['request']
