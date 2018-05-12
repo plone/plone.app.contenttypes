@@ -137,7 +137,10 @@ def SearchableText_file(obj):
 
 @indexer(ILink)
 def SearchableText_link(obj):
-    return _unicode_save_string_concat(SearchableText(obj), obj.remoteUrl)
+    if obj.remoteUrl:
+        return _unicode_save_string_concat(SearchableText(obj), obj.remoteUrl)
+    else:
+        SearchableText(obj)
 
 
 @indexer(IFolder)
