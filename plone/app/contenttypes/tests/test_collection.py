@@ -37,7 +37,7 @@ def dummy_image():
     from plone.namedfile.file import NamedBlobImage
     filename = os.path.join(os.path.dirname(__file__), u'image.png')
     return NamedBlobImage(
-        data=open(filename, 'r').read(),
+        data=open(filename, 'rb').read(),
         filename=filename
     )
 
