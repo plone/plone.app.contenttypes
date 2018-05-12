@@ -38,7 +38,7 @@ class WebDAVIntegrationTest(unittest.TestCase):
         """Upload an image through webdav."""
         filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
         request = DAVTestRequest(environ={
-            'BODYFILE': open(filename),
+            'BODYFILE': open(filename, 'rb'),
             'PATH_INFO': '/foo/bar/image.jpg',
         })
         self.image.REQUEST = request
@@ -51,7 +51,7 @@ class WebDAVIntegrationTest(unittest.TestCase):
         """Upload a file through webdav."""
         filename = os.path.join(os.path.dirname(__file__), u'file.pdf')
         request = DAVTestRequest(environ={
-            'BODYFILE': open(filename),
+            'BODYFILE': open(filename, 'rb'),
             'PATH_INFO': '/foo/bar/file.pdf',
         })
         self.file.REQUEST = request
