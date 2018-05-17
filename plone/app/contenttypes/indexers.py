@@ -113,7 +113,9 @@ def SearchableText_file(obj):
     if transforms._findPath(mimetype, 'text/plain') is None:
         # check if there is a valid transform available first
         return SearchableText(obj)
-    value = str(primary_field.value.data)
+    value = primary_field.value.data
+    if six.PY2:
+        value = str(value)
     filename = primary_field.value.filename
     try:
         transformed_value = transforms.convertTo('text/plain', value,
