@@ -47,7 +47,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='News Item'
         )
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(

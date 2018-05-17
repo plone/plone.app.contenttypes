@@ -115,7 +115,7 @@ class PloneAppCollectionIntegrationTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='Collection')
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(IDexterityFTI,
