@@ -49,7 +49,7 @@ class ImageIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Image'
         )
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(
@@ -110,7 +110,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
     def test_svg_image(self):
         self.image.image = dummy_image(u'image.svg')
         scale = self.image.restrictedTraverse('@@images')
-        self.assertRegexpMatches(
+        self.assertRegex(
             scale.scale('image', scale='large').tag(),
             r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'  # noqa E501
         )

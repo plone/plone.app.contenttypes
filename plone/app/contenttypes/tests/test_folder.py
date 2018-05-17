@@ -38,7 +38,7 @@ class FolderIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Folder'
         )
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(
