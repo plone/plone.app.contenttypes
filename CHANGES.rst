@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Fix replace link variable by path for not using acquistion magic.
+  [bsuttor]
+
 - Implement better human readable file size logic.
   [hvelarde]
 
