@@ -14,6 +14,11 @@ New features:
 
 Bug fixes:
 
+- When installing the add'on, use portal_languages tool to find the preferred
+  language, instead of using a fallback on the Plone Site Root's empty language
+  attribute.
+  [fredvd]
+
 - Implement better human readable file size logic.
   [hvelarde]
 
