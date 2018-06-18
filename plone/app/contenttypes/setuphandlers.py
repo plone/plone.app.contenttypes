@@ -108,7 +108,11 @@ def addContentToContainer(container, object, checkConstraints=True):
 
 
 def _get_locales_info(portal):
-    language = portal.Language()
+    ltool = getToolByName(portal, 'portal_languages')
+    language = ltool.getPreferredLanguage()
+    # Original method, but probably only valid for Plone < 3.
+    if not language:
+        language = portal.Language()
     parts = (language.split('-') + [None, None])[:3]
     locale = locales.getLocale(*parts)
 
