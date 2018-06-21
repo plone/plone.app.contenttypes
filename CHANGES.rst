@@ -16,6 +16,7 @@ Bug fixes:
 
 - Fix replace link variable by path for not using acquistion magic.
   [bsuttor]
+
 - When installing the add'on, use portal_languages tool to find the preferred
   language, instead of using a fallback on the Plone Site Root's empty language
   attribute.
