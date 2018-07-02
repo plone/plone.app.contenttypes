@@ -28,6 +28,9 @@ Bug fixes:
 - Skip migration tests if ATContentTypes is not installed.
   [davisagli]
 
+- check if a contentrule exists before assignment on migration
+  [MrTango]
+
 
 1.4.10 (2018-04-03)
 -------------------
@@ -112,7 +115,6 @@ Bug fixes:
 
 - Don't overwrite existing settings for Plone Site.
   [roel]
-
 
 1.4.5 (2017-10-06)
 ------------------
