@@ -14,12 +14,12 @@
     provides=".leadimage.ILeadImage"
     factory=".leadimage.LeadImage"
     for="plone.dexterity.interfaces.IDexterityContent"
-    marker=".leadimage.ILeadImage"
+    marker=".leadimage.ILeadImageMarker"
     />
 
   <browser:viewlet
     name="contentleadimage"
-    for=".leadimage.ILeadImage"
+    for=".leadimage.ILeadImageMarker"
     view="plone.app.layout.globals.interfaces.IViewView"
     class=".viewlets.LeadImageViewlet"
     manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle"

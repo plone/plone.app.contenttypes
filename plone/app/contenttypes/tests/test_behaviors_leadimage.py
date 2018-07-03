@@ -33,8 +33,8 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.fti = fti
         alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
         alsoProvides(self.request, IPloneAppContenttypesLayer)
-        from plone.app.contenttypes.behaviors.leadimage import ILeadImage
-        alsoProvides(self.request, ILeadImage)
+        from plone.app.contenttypes.behaviors.leadimage import ILeadImageMarker
+        alsoProvides(self.request, ILeadImageMarker)
         self.portal.invokeFactory(
             'leadimagefolder',
             id='leadimagefolder',
