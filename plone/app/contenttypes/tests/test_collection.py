@@ -396,11 +396,19 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
                               title='Collection 1')
         collection1 = folder1['collection1']
         wrapped = ICollection_behavior(collection1)
-        wrapped.query = [{
-            'i': 'portal_type',
-            'o': 'plone.app.querystring.operation.string.is',
-            'v': 'Document',
-        }]
+        wrapped.query = [
+            {
+                'i': 'portal_type',
+                'o': 'plone.app.querystring.operation.string.is',
+                'v': 'Document',
+            },
+            # use a / path and navroot works fine!
+            {
+                'i': 'path',
+                'o': 'plone.app.querystring.operation.string.path',
+                'v': '/',
+            },
+        ]
 
         # Check if only the item inside folder1 is returned, since it's a
         # navigation root.
