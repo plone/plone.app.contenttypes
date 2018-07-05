@@ -7,6 +7,7 @@ from archetypes.schemaextender.interfaces import ISchemaModifier
 from copy import deepcopy
 from plone.app.contentrules.api import assign_rule
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+from plone.app.contenttypes.behaviors.leadimage import ILeadImageMarker
 from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
 from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
 from plone.app.contenttypes.utils import DEFAULT_TYPES
@@ -208,7 +209,8 @@ def migrate_leadimage(source_object, target_object):
         # skip if old content has no field
         return
 
-    if ILeadImage(target_object, None) is None:
+    if ILeadImage(target_object, None) is None or\
+            ILeadImageMarker(target_object, None) is None:
         # skip if new content does not have the LeadImage-behavior enabled
         logger.info('Target does not have the behavior "Lead Image" enabled. '
                     'Could not migrate collective.leadimage fields.')

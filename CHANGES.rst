@@ -6,15 +6,20 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- ILeadImage will no more work as an adapter.
+  Use ILeadImageMarker instead!
+  [iham]
 
 New features:
 
-- *add item here*
+- The behavior factory of ILeadImage will be usable in the sense of ZCA
+  [iham]
 
 Bug fixes:
 
-- *add item here*
+- The ZCA registration of ILeadImage was wrong and so the factory was never touched.
+  [iham]
+
 
 
 1.4.11 (2018-06-18)
