@@ -15,7 +15,6 @@ from plone.testing import z2
 from zope.interface import alsoProvides
 
 import pkg_resources
-import unittest
 
 
 def set_browserlayer(request):
