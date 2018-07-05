@@ -402,7 +402,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
                 'o': 'plone.app.querystring.operation.string.is',
                 'v': 'Document',
             },
-            # use a / path and navroot works fine!
+            # use a "/" path and navroot works fine!
             {
                 'i': 'path',
                 'o': 'plone.app.querystring.operation.string.path',
