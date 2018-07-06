@@ -6,15 +6,36 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- ILeadImage and IRichText behaviors now have proper "Marker"-Interfaces.
+  This might break code in other places as
+    ILeadImage.providedBy(<obj>) -> False
+    ILeadImageMarker.providedBy(<obj>) -> True
+    IRichText(<obj>).providedBy(<obj>) -> False
+    IRichTextMarker.providedBy(<obj>) -> True
+  [iham]
 
 New features:
 
-- *add item here*
+- By using correct (Marker-)Interfaces for the ILeadImage and IRichText,
+  the factories are now working properly and can be reconfigured
+  wherever you might need them. ZCA FTW!
+  [iham]
 
 Bug fixes:
 
-- *add item here*
+- Fixed false implemented Factories and Markers for ILeadImage and IRichText.
+  see `issue 457 <https://github.com/plone/plone.app.contenttypes/issues/476>`
+  [iham]
+
+- Fixed Tests for collection and migration.
+  see `issue <https://github.com/plone/plone.app.contenttypes/issues/477>`
+  [iham]
+
+- Pinned pydocstyle as it broke buildout.
+  [iham]
+
+- pep8 cleanup.
+  [iham]
 
 
 1.4.11 (2018-06-18)

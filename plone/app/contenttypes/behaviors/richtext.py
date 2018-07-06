@@ -9,7 +9,12 @@ from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
 from zope.component import adapter
 from zope.interface import implementer
+from zope.interface import Interface
 from zope.interface import provider
+
+
+class IRichTextMarker(Interface):
+    pass
 
 
 @provider(IFormFieldProvider)
@@ -30,6 +35,14 @@ class RichText(object):
 
     def __init__(self, context):
         self.context = context
+
+    @property
+    def text(self):
+        return self.context.text
+
+    @text.setter
+    def text(self, value):
+        self.context.text = value
 
 
 class WidgetView(WidgetsView):

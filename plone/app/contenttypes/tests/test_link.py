@@ -173,7 +173,9 @@ class LinkViewIntegrationTest(unittest.TestCase):
         # As anonymous: redirect
         logout()
         self.assertTrue(view())
-        self._assert_redirect('http://nohost/plone/@@search?SearchableText=Plone')
+        self._assert_redirect(
+            'http://nohost/plone/@@search?SearchableText=Plone',
+        )
 
     def test_mailto_type(self):
         self.link.remoteUrl = 'mailto:stress@test.us'
