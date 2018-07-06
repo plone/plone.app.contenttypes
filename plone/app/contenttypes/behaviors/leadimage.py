@@ -8,6 +8,11 @@ from zope import schema
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
+from zope.interface import Interface
+
+
+class ILeadImageMarker(Interface):
+    pass
 
 
 @provider(IFormFieldProvider)
@@ -32,3 +37,19 @@ class LeadImage(object):
 
     def __init__(self, context):
         self.context = context
+
+    @property
+    def image(self):
+        return self.context.image
+
+    @image.setter
+    def image(self, value):
+        self.context.image = value
+
+    @property
+    def image_caption(self):
+        return self.context.image_caption
+
+    @image_caption.setter
+    def image_caption(self, value):
+        self.context.image_caption = value

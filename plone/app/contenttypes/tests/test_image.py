@@ -112,8 +112,9 @@ class ImageViewIntegrationTest(unittest.TestCase):
         scale = self.image.restrictedTraverse('@@images')
         self.assertRegexpMatches(
             scale.scale('image', scale='large').tag(),
-            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'
+            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'  # noqa E501
         )
+
 
 class ImageFunctionalTest(unittest.TestCase):
 
