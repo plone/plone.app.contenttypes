@@ -11,12 +11,12 @@ from zope.interface import provider
 from zope.interface import Interface
 
 
-class ILeadImageMarker(Interface):
+class ILeadImage(Interface):
     pass
 
 
 @provider(IFormFieldProvider)
-class ILeadImage(model.Schema):
+class ILeadImageBehavior(model.Schema):
 
     image = namedfile.NamedBlobImage(
         title=_(u'label_leadimage', default=u'Lead Image'),
@@ -31,7 +31,7 @@ class ILeadImage(model.Schema):
     )
 
 
-@implementer(ILeadImage)
+@implementer(ILeadImageBehavior)
 @adapter(IDexterityContent)
 class LeadImage(object):
 

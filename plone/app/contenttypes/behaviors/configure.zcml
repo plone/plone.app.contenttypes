@@ -11,15 +11,15 @@
     name="plone.leadimage"
     title="Lead Image"
     description="Adds image and image caption fields"
-    provides=".leadimage.ILeadImage"
+    provides=".leadimage.ILeadImageBehavior"
     factory=".leadimage.LeadImage"
     for="plone.dexterity.interfaces.IDexterityContent"
-    marker=".leadimage.ILeadImageMarker"
+    marker=".leadimage.ILeadImage"
     />
 
   <browser:viewlet
     name="contentleadimage"
-    for=".leadimage.ILeadImageMarker"
+    for=".leadimage.ILeadImage"
     view="plone.app.layout.globals.interfaces.IViewView"
     class=".viewlets.LeadImageViewlet"
     manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle"
@@ -49,10 +49,10 @@
     name="plone.richtext"
     title="RichText"
     description="Adds richtext behavior"
-    provides=".richtext.IRichText"
+    provides=".richtext.IRichTextBehavior"
     factory=".richtext.RichText"
     for="plone.dexterity.interfaces.IDexterityContent"
-    marker=".richtext.IRichTextMarker"
+    marker=".richtext.IRichText"
     />
 
   <plone:behavior
@@ -64,7 +64,7 @@
 
   <browser:page
     name="getText"
-    for=".richtext.IRichTextMarker"
+    for=".richtext.IRichText"
     class=".richtext.WidgetView"
     permission="zope2.View"
     template="richtext_gettext.pt"

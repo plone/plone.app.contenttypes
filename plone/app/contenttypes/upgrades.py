@@ -103,7 +103,7 @@ def enable_collection_behavior(context):
 def migrate_to_richtext(context):
     """Update fti's to add RichText behaviors and remove old text-fields."""
 
-    behavior = 'plone.app.contenttypes.behaviors.richtext.IRichText'
+    behavior = 'plone.app.contenttypes.behaviors.richtext.IRichTextBehavior'
     types = [
         'Document',
         'News Item',

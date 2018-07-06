@@ -194,7 +194,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         browser.getControl(name=widget).value = 'My collection'
         widget = 'form.widgets.IDublinCore.description'
         browser.getControl(name=widget).value = 'This is my collection.'
-        widget = 'form.widgets.IRichText.text'
+        widget = 'form.widgets.IRichTextBehavior.text'
         browser.getControl(name=widget).value = 'Lorem Ipsum'
         widget = 'form.widgets.IShortName.id'
         browser.getControl(name=widget).value = 'my-special-collection'

@@ -13,12 +13,12 @@ from zope.interface import Interface
 from zope.interface import provider
 
 
-class IRichTextMarker(Interface):
+class IRichText(Interface):
     pass
 
 
 @provider(IFormFieldProvider)
-class IRichText(model.Schema):
+class IRichTextBehavior(model.Schema):
 
     text = RichTextField(
         title=_(u'Text'),
@@ -29,7 +29,7 @@ class IRichText(model.Schema):
     model.primary('text')
 
 
-@implementer(IRichText)
+@implementer(IRichTextBehavior)
 @adapter(IDexterityContent)
 class RichText(object):
 

@@ -7,11 +7,16 @@ Changelog
 Breaking changes:
 
 - ILeadImage and IRichText behaviors now have proper "Marker"-Interfaces.
-  This might break code in other places as
-    ILeadImage.providedBy(<obj>) -> False
-    ILeadImageMarker.providedBy(<obj>) -> True
-    IRichText(<obj>).providedBy(<obj>) -> False
-    IRichTextMarker.providedBy(<obj>) -> True
+  As this was only possible by renaming the schema adapter to *Behavior to
+  not break with implementations inside the collective, the FTI-behavior-definition
+  has changed
+    'plone.app.contenttypes.behaviors.leadimage.ILeadImage'
+    becomes
+    'plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior'
+    and
+    'plone.app.contenttypes.behaviors.richtext.IRichText'
+    becomes
+    'plone.app.contenttypes.behaviors.richtext.IRichTextBehavior'
   [iham]
 
 New features:
