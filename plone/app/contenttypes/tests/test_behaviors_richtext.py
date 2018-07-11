@@ -30,7 +30,7 @@ class RichTextBehaviorFunctionalTest(RichTextBase, unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     _behaviors = (
-        'plone.app.contenttypes.behaviors.richtext.IRichText',)
+        'plone.app.contenttypes.behaviors.richtext.IRichTextBehavior',)
     _portal_type = 'SomeDocument'
 
     def setUp(self):
