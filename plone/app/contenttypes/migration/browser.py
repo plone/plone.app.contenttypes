@@ -375,7 +375,7 @@ class ATCTMigratorForm(form.Form):
         # Only override when rendering the form. When you unselect
         # everything the value will be [], not ())
         if ct_widget.value == ():
-            ct_widget.value = ATCT_LIST.keys()
+            ct_widget.value = list(ATCT_LIST)
             # Call update again since the list-items checked-states are
             # assigned in z3c.form.browser.checkbox.CheckBoxWidget.update
             # using the widget.value.
