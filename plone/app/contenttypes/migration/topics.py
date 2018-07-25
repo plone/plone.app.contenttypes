@@ -573,7 +573,7 @@ class TopicMigrator(InplaceCMFItemMigrator):
             return
 
         old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
-        if old_layout in LISTING_VIEW_MAPPING.keys():
+        if old_layout in LISTING_VIEW_MAPPING:
             self.new.setLayout(LISTING_VIEW_MAPPING[old_layout])
 
 
