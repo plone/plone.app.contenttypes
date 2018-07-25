@@ -481,7 +481,7 @@ class ATCTMigratorHelpers(BrowserView):
     def estimated_migration_time(self):
         """ Return the estimated migration time """
         total_time = self.objects_to_be_migrated() * ONE_OBJECT_MIGRATION_TIME
-        hours, remainder = divmod(total_time / 1000, 3600)
+        hours, remainder = divmod(total_time // 1000, 3600)
         minutes, seconds = divmod(remainder, 60)
         return {
             'hours': hours,
