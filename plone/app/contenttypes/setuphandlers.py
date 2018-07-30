@@ -108,7 +108,8 @@ def addContentToContainer(container, object, checkConstraints=True):
 
 
 def _get_locales_info(portal):
-    language = portal.Language()
+    ltool = getToolByName(portal, 'portal_languages')
+    language = ltool.getPreferredLanguage()
     parts = (language.split('-') + [None, None])[:3]
     locale = locales.getLocale(*parts)
 
@@ -120,7 +121,7 @@ def _get_locales_info(portal):
 
 
 def _set_language_settings(portal, uses_combined_lanagage):
-    """Set the portals language settings from the given lanage codes."""
+    """Set the portals language settings from the given language codes."""
     language = portal.Language()
     portal_languages = getToolByName(portal, 'portal_languages')
     portal_languages.manage_setLanguageSettings(
