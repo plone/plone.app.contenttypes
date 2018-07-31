@@ -45,27 +45,6 @@ class ContentProfileTestCase(unittest.TestCase):
         self.portal = self.layer['portal']
         self.portal_workflow = getToolByName(self.portal, 'portal_workflow')
 
-    # #################### #
-    #   front-page tests   #
-    # #################### #
-
-    def test_frontpage_was_created(self):
-        # Was the object created?
-        obj = self.portal['front-page']
-        self.assertEqual(obj.portal_type, 'Document')
-
-    def test_frontpage_is_default_page(self):
-        # Has the object been set on the container as the default page?
-        self.assertEqual(self.portal.default_page, 'front-page')
-
-    def test_frontpage_is_published(self):
-        # Has the content object been published?
-        front_page = self.portal['front-page']
-        current_state = self.portal_workflow.getInfoFor(
-            front_page,
-            'review_state')
-        self.assertEqual(current_state, 'published')
-
     # ################# #
     #   Members tests   #
     # ################# #

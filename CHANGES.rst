@@ -19,6 +19,11 @@ Breaking changes:
     'plone.app.contenttypes.behaviors.richtext.IRichTextBehavior'
   [iham]
 
+- Plone Site is now a DX container. This means that the front-page object no
+  longer exists.
+  Refs PLIP 2454.
+  [jaroel]
+
 New features:
 
 - By using correct (Marker-)Interfaces for the ILeadImage and IRichText,
