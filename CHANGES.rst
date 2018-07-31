@@ -22,6 +22,11 @@ Bug fixes:
 - Implement better human readable file size logic.
   [hvelarde]
 
+- Migrations:
+   - Handle ignore catalog errors where a brain can't find it's object.
+   - Try to delete the layout attribute before setting the layout.
+     Rework parts where the layout is set by always setting the layout.
+  [thet, backport by fredvd]
 
 1.1.6 (2018-03-28)
 ------------------

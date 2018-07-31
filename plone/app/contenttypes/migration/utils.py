@@ -34,6 +34,7 @@ from plone.portlets.interfaces import IPortletManager
 from plone.uuid.interfaces import IUUID
 from z3c.relationfield import RelationValue
 from zc.relation.interfaces import ICatalog
+from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getGlobalSiteManager
 from zope.component import getMultiAdapter
@@ -81,7 +82,10 @@ def _compareSchemata(interface):
         if not brain.meta_type or 'dexterity' in brain.meta_type.lower():
             # There might be DX types with same iface and meta_type than AT
             continue
-        obj = brain.getObject()
+        try:
+            obj = brain.getObject()
+        except (KeyError, NotFound):
+            continue
         real_fields = set(obj.Schema()._names)
         orig_fields = set(obj.schema._names)
         diff = [i for i in real_fields.difference(orig_fields)]

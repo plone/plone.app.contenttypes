@@ -10,6 +10,7 @@ from plone.app.contenttypes.migration.migration import migrateCustomAT
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import iterSchemataForType
+from zExceptions import NotFound
 from zope.i18n import translate
 import json
 import logging
@@ -104,7 +105,11 @@ class CustomMigrationForm(BrowserView):
         for meta_type in catalog.uniqueValuesFor('meta_type'):
             # querying for meta_type will only return at-types
             brain = catalog(meta_type=meta_type, sort_limit=1)[0]
-            if IDexterityContent.providedBy(brain.getObject()):
+            try:
+                obj = brain.getObject()
+            except (KeyError, NotFound):
+                continue
+            if IDexterityContent.providedBy(obj):
                 continue
             typename = brain.portal_type
             if typename not in all_registered_types:
@@ -168,7 +173,10 @@ class CustomMigrationForm(BrowserView):
         brains = catalog(portal_type=typename, sort_limit=1)
         if not brains:
             return results
-        obj = brains[0].getObject()
+        try:
+            obj = brains[0].getObject()
+        except (KeyError, NotFound):
+            return results
         for field_name in obj.schema._fields:
             field = obj.schema._fields[field_name]
             if not field.getName() in self.at_metadata_fields:
