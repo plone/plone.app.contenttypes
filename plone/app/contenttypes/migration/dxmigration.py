@@ -177,7 +177,7 @@ def list_of_objects_with_changed_base_class(context):
     for brain in catalog(query):
         try:
             obj = brain.getObject()
-        except NotFound:
+        except (KeyError, NotFound):
             logger.warn("Object {0} not found".format(brain.getPath()))
             continue
         if get_portal_type_name_string(obj) != get_old_class_name_string(obj):

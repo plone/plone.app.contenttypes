@@ -42,6 +42,7 @@ from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import HIDDEN_MODE
+from zExceptions import NotFound
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -100,7 +101,10 @@ class FixBaseClasses(BrowserView):
             query['portal_type'] = portal_type
             results = catalog(query)
             for brain in results:
-                obj = brain.getObject()
+                try:
+                    obj = brain.getObject()
+                except (KeyError, NotFound):
+                    continue
                 if IDexterityContent.providedBy(obj):
                     object_class_name = obj.__class__.__name__
                     target_class_name = portal_type_class.__name__
@@ -298,7 +302,10 @@ class MigrateFromATContentTypes(BrowserView):
         if HAS_LINGUA_PLONE and 'Language' in catalog.indexes():
             query['Language'] = 'all'
         for brain in catalog(query):
-            classname = brain.getObject().__class__.__name__
+            try:
+                classname = brain.getObject().__class__.__name__
+            except (KeyError, NotFound):
+                continue
             results[classname] = results.get(classname, 0) + 1
         return results
 
@@ -454,7 +461,10 @@ class BaseClassMigratorForm(form.Form):
         migrated = []
         not_migrated = []
         for brain in catalog():
-            obj = brain.getObject()
+            try:
+                obj = brain.getObject()
+            except (KeyError, NotFound):
+                continue
             old_class_name = dxmigration.get_old_class_name_string(obj)
             if old_class_name in changed_base_classes:
                 if dxmigration.migrate_base_class_to_new_class(
