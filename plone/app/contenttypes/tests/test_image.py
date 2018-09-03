@@ -15,6 +15,7 @@ from zope.interface import alsoProvides
 
 import io
 import os.path
+import six
 import unittest
 
 
@@ -72,6 +73,15 @@ class ImageViewIntegrationTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
+    if six.PY2:
+        def assertRegex(self, value, pattern):
+            # Python 2 backwards compatibility
+            import re
+            if not re.search(pattern, value):
+                raise self.failureException(
+                    '%r not found in %s' % (pattern, value)
+                )
+
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
@@ -112,7 +122,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
         scale = self.image.restrictedTraverse('@@images')
         self.assertRegex(
             scale.scale('image', scale='large').tag(),
-            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'  # noqa E501
+            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'  # noqa: E501
         )
 
 
