@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_TESTING  # noqa
+from plone.app.contenttypes.testing import TEST_MIGRATION
 from plone.app.contenttypes.tests.oldtypes import create1_0EventType
 from plone.app.testing import applyProfile
 from plone.app.testing import login
@@ -73,6 +74,10 @@ class MigrateEventContentTypesTest(unittest.TestCase):
             outputMimeType='text/x-html-safe'
         )
 
+    @unittest.skipUnless(
+        TEST_MIGRATION,
+        'Migration tests require ATContentTypes',
+    )
     def test_pact_1_0_dxevent_is_migrated(self):
         def getNewEventDetail(obj):
             acc = IEventAccessor(obj)

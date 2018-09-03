@@ -10,10 +10,8 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.syndication import ISiteSyndicationSettings
 from zope.component import getUtility
 
-import unittest
-
-
 import six
+import unittest
 
 
 query = [{
@@ -69,4 +67,4 @@ class RSSViewTest(unittest.TestCase):
     def test_view_is_valid(self):
         view = self.collection.restrictedTraverse('@@RSS')
         result = self.assertIsValidRSS(view())
-        self.assertTrue('Collection Test Page' in etree.tostring(result))
+        self.assertTrue(b'Collection Test Page' in etree.tostring(result))
