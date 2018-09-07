@@ -28,6 +28,15 @@ New features:
 
 Bug fixes:
 
+- Fix folder layout property migration. The default listing_view layout was
+  always set if a folder didn't have a layout property.
+  Also a default_page property could be inherited from parent folders or
+  the Plone Siteroot, causing 'front-page' default_pages on many folders.
+  Now only a direct layout property is copied and in that case on the local
+  default_page if set is copied again.
+  see `issue 444 <https://github.com/plone/plone.app.contenttypes/issues/444>`
+  [fredvd]
+
 - Fixed false implemented Factories and Markers for ILeadImage and IRichText.
   see `issue 457 <https://github.com/plone/plone.app.contenttypes/issues/476>`
   [iham]
