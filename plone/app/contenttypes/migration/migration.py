@@ -32,6 +32,7 @@ from Products.contentmigration.basemigrator.migrator import CMFFolderMigrator
 from Products.contentmigration.basemigrator.migrator import CMFItemMigrator
 from Products.contentmigration.basemigrator.walker import CatalogWalker
 from Products.contentmigration.walker import CustomQueryWalker
+from Acquisition import aq_base
 from zExceptions import NotFound
 from zope.component import adapter
 from zope.component import getAdapters
@@ -205,19 +206,19 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         migrate_criteria may get overriden by a later call to
         migrate_properties.
         """
-        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        old_layout = getattr(aq_base(self.old), 'layout', None)
         if old_layout:
-            default_page = self.old.getDefaultPage() or \
-                getattr(self.old, 'default_page', None)
+            default_page = getattr(aq_base(self.old), 'default_page', None)
             try:
                 # Delete old-style layout attribute.
                 del self.new.layout
             except AttributeError:
                 pass
+            # always copy over the layout, transform if necessary
             self.new.setLayout(LISTING_VIEW_MAPPING.get(old_layout, old_layout))  # noqa
             if default_page:
                 # any defaultPage is switched of by setLayout
-                # and needs to set again
+                # and needs to set again if it was directly on the object
                 self.new.setDefaultPage(default_page)
 
 
