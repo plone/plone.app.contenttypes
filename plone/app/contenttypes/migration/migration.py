@@ -33,6 +33,7 @@ from plone.app.contenttypes.migration.field_migrators import \
 from plone.app.contenttypes.upgrades import LISTING_VIEW_MAPPING
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
+from Acquisition import aq_base
 from zExceptions import NotFound
 from zope.component import adapter
 from zope.component import getAdapters
@@ -73,6 +74,7 @@ class BaseCustomMigator(object):
     You can use this as base class for your custom migrator adapters.
     You might register it to some specific orginal content interface.
     """
+
     def __init__(self, context):
         self.context = context
 
@@ -192,15 +194,15 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         migrate_criteria may get overriden by a later call to
         migrate_properties.
         """
-        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        old_layout = getattr(aq_base(self.old), 'layout', None)
         if old_layout:
-            default_page = self.old.getDefaultPage() or \
-                getattr(self.old, 'default_page', None)
+            default_page = getattr(aq_base(self.old), 'default_page', None)
             try:
                 # Delete old-style layout attribute.
                 del self.new.layout
             except AttributeError:
                 pass
+            # always copy over the layout, transform if necessary
             self.new.setLayout(LISTING_VIEW_MAPPING.get(old_layout, old_layout))   # noqa
             if default_page:
                 # any defaultPage is switched of by setLayout
@@ -369,7 +371,7 @@ class CollectionMigrator(ATCTContentMigrator):
         This needs to be done last, as otherwise our changes may get overriden
         by a later call to migrate_properties.
         """
-        old_layout = self.old.getLayout() or getattr(self.old, 'layout', None)
+        old_layout = getattr(aq_base(self.old), 'layout', None)
         if old_layout:
             try:
                 # Delete old-style layout attribute.
