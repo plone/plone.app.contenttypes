@@ -100,7 +100,7 @@ class File(Item):
         return response
 
     def get_size(self):
-        return getattr(self.file, 'size', None)
+        return getattr(self.file, 'size', 0)
 
     def content_type(self):
         return getattr(self.file, 'contentType', None)
@@ -134,7 +134,7 @@ class Image(Item):
         return response
 
     def get_size(self):
-        return getattr(self.image, 'size', None)
+        return getattr(self.image, 'size', 0)
 
     def content_type(self):
         return getattr(self.image, 'contentType', None)
