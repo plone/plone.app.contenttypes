@@ -124,6 +124,6 @@ class FixBaseclassesTest(unittest.TestCase):
         with self.assertRaises(KeyError) as e:
             installTypeIfNeeded('Unknown')
         self.assertEqual(
-            e.args[0],
+            e.exception.args[0],
             'Unknown is not one of the default types'
         )
