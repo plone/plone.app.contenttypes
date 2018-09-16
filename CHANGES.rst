@@ -42,6 +42,9 @@ Bug fixes:
 - pep8 cleanup.
   [iham]
 
+- Fix various issues in py3
+  [pbauer]
+
 
 1.4.11 (2018-06-18)
 -------------------
