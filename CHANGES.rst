@@ -14,6 +14,17 @@ New features:
 
 Bug fixes:
 
+- Fix folder layout property migration. The default listing_view layout was
+  always set if a folder didn't have a layout property (with older content
+  created in Plone 3 or older sites, Folders and Collections can have no layout).
+  Also a default_page property could be Acquisition inherited from parent
+  folders or the Plone Siteroot, causing 'front-page' default_pages on many
+  folders. Now only a direct layout property is copied and in that case only
+  a directly set default_page is copied again.
+  For Collection also only pick up a directly set layout, don't inherit it
+  through Acquisition.
+  see `issue 444 <https://github.com/plone/plone.app.contenttypes/issues/444>`
+
 - When installing the add'on, use portal_languages tool to find the preferred
   language, instead of using a fallback on the Plone Site Root's empty language
   attribute.
