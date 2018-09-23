@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.12 (unreleased)
+1.4.12 (2018-09-23)
 -------------------
 
 Breaking changes:
