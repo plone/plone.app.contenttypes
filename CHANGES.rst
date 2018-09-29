@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fixed sorting error after Changing the base class for existing objects.
+  see `issue <https://github.com/plone/plone.app.contenttypes/issues/487>`
+  [jianaijun]
 
 
 1.4.12 (2018-09-23)
