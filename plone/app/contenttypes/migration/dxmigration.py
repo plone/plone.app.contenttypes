@@ -13,7 +13,7 @@ from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
 from zope.component import queryUtility
 from zope.component.hooks import getSite
-from zope.interface import directlyProvides
+from zope.interface import alsoProvides
 
 import importlib
 import logging
@@ -162,7 +162,7 @@ def migrate_base_class_to_new_class(obj,
     is_container = isinstance(obj, BTreeFolder2Base)
 
     if was_item and is_container or migrate_to_folderish and is_container:
-        directlyProvides(obj, IOrdering)
+        alsoProvides(obj, IOrdering)
         #  If Itemish becomes Folderish we have to update obj _tree
         BTreeFolder2Base._initBTrees(obj)
 
