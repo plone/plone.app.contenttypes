@@ -15,6 +15,8 @@ from zope.deprecation import deprecation
 from zope.interface import implementer
 from zope.lifecycleevent import modified
 
+import six
+
 
 @implementer(ICollection)
 class Collection(Item):
