@@ -73,6 +73,14 @@ class Collection(Item):
 class Document(Item):
     """Convenience subclass for ``Document`` portal type
     """
+    def Format(self):
+        ''' Provide a proper accessor for the format attribute
+        See https://github.com/plone/Products.CMFPlone/issues/2540
+        '''
+        format = self.format
+        if six.PY2 and isinstance(format, six.text_type):
+            format = self.format.encode()
+        return format
 
 
 @implementer(IFile)
