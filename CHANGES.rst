@@ -1,7 +1,17 @@
 Changelog
 =========
 
-1.4.12 (unreleased)
+1.4.13 (2018-09-30)
+-------------------
+
+Bug fixes:
+
+- Revert breaking changes in 1.4.12 and move them to 2.0.0 branch of
+  plone.app.contenttypes.
+  [esteele]
+
+
+1.4.12 (2018-09-23)
 -------------------
 
 Breaking changes:
