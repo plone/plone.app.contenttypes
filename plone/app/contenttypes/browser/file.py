@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.browser.utils import Utils
-from plone.app.contenttypes.utils import human_readable_size
+from Products.CMFPlone.utils import human_readable_size
 
 
 class FileView(Utils):

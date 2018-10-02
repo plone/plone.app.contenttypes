@@ -370,9 +370,8 @@ class CatalogIntegrationTest(unittest.TestCase):
             path='/plone/folder/image',
         ))
 
-        # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
         self.assertEqual(
-            self.portal.getObjSize(None, primary_field_info.value.size),
+            '5.0 KB',
             brains[0].getObjSize,
         )
 
@@ -391,8 +390,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             path='/plone/folder/file',
         ))
 
-        # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
         self.assertEqual(
-            self.portal.getObjSize(None, primary_field_info.value.size),
+            '5.0 KB',
             brains[0].getObjSize,
         )

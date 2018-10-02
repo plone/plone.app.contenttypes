@@ -25,6 +25,9 @@ New features:
   the factories are now working properly and can be reconfigured
   wherever you might need them. ZCA FTW!
   [iham]
+- Use human_readable_size from Products.CMFPlone.utils to replace getObjSize
+  script. #1801
+  [reinhardt]
 
 Bug fixes:
 
