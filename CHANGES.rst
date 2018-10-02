@@ -28,7 +28,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- The ``Format`` accessor should actually return the ``format`` attribute
+  (see plone/Products.CMFPlone#2540)
+  [ale-rt]
 
 
 1.4.12 (2018-09-23)
