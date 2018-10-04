@@ -4,14 +4,6 @@ Changelog
 1.4.14 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - The ``Format`` accessor should actually return the ``format`` attribute
