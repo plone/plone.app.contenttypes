@@ -155,7 +155,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        with io.FileIO(image_path) as f:
+        with io.FileIO(image_path, 'rb') as f:
             image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('image.jpg/view'))
@@ -172,7 +172,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        with io.FileIO(image_path) as f:
+        with io.FileIO(image_path, 'rb') as f:
             image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-image.jpg/view'))
@@ -189,7 +189,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my image.'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        with io.FileIO(image_path) as f:
+        with io.FileIO(image_path, 'rb') as f:
             image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.browser.getLink('Click to view full-size image').click()
