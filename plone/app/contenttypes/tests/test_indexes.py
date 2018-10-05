@@ -379,8 +379,11 @@ class CatalogIntegrationTest(unittest.TestCase):
         from plone.namedfile.file import NamedBlobFile
 
         filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
-        test_file = NamedBlobFile(data=open(filename, 'rb').read(),
-                                  filename=filename)
+        with open(filename, 'rb') as f:
+            file_data = f.read()
+        test_file = NamedBlobFile(
+            data=file_data,
+            filename=filename)
 
         primary_field_info = IPrimaryFieldInfo(self.file)
         primary_field_info.field.set(self.file, test_file)

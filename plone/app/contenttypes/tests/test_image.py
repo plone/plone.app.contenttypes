@@ -22,8 +22,10 @@ import unittest
 def dummy_image(filename=u'image.jpg'):
     from plone.namedfile.file import NamedBlobImage
     filename = os.path.join(os.path.dirname(__file__), filename)
+    with open(filename, 'rb') as f:
+        image_data = f.read()
     return NamedBlobImage(
-        data=open(filename, 'rb').read(),
+        data=image_data,
         filename=filename
     )
 
@@ -153,7 +155,8 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
+        with io.FileIO(image_path) as f:
+            image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('image.jpg/view'))
         self.assertIn('My image', self.browser.contents)
@@ -169,7 +172,8 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
+        with io.FileIO(image_path) as f:
+            image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-image.jpg/view'))
 
@@ -185,7 +189,8 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my image.'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
+        with io.FileIO(image_path) as f:
+            image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.browser.getLink('Click to view full-size image').click()
         self.assertTrue(
