@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Really revert breaking behavior marker interface changes in 1.4.12.
+  [maurits]
 
 
 1.4.14 (2018-10-03)

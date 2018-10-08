@@ -7,9 +7,9 @@ import unittest
 
 if TEST_MIGRATION:
     from datetime import datetime
-    from plone.app.contenttypes.migration.field_migrators import migrate_filefield  # noqa E501
-    from plone.app.contenttypes.migration.field_migrators import migrate_imagefield  # noqa E501
-    from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa E501
+    from plone.app.contenttypes.migration.field_migrators import migrate_filefield
+    from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
+    from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
     from plone.app.contenttypes.migration.utils import installTypeIfNeeded
     from plone.app.testing import applyProfile
     from plone.app.testing import login

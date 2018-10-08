@@ -9,16 +9,11 @@ from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
 from zope.component import adapter
 from zope.interface import implementer
-from zope.interface import Interface
 from zope.interface import provider
 
 
-class IRichText(Interface):
-    pass
-
-
 @provider(IFormFieldProvider)
-class IRichTextBehavior(model.Schema):
+class IRichText(model.Schema):
 
     text = RichTextField(
         title=_(u'Text'),
@@ -29,20 +24,12 @@ class IRichTextBehavior(model.Schema):
     model.primary('text')
 
 
-@implementer(IRichTextBehavior)
+@implementer(IRichText)
 @adapter(IDexterityContent)
 class RichText(object):
 
     def __init__(self, context):
         self.context = context
-
-    @property
-    def text(self):
-        return self.context.text
-
-    @text.setter
-    def text(self, value):
-        self.context.text = value
 
 
 class WidgetView(WidgetsView):

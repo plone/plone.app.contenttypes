@@ -28,7 +28,7 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.portal.portal_types._setObject('leadimagefolder', fti)
         fti.klass = 'plone.dexterity.content.Container'
         fti.behaviors = (
-            'plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior',
+            'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
         )
         self.fti = fti
         alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
@@ -60,12 +60,12 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         # Image upload
         file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         file_ctl = self.browser.getControl(
-            name='form.widgets.ILeadImageBehavior.image'
+            name='form.widgets.ILeadImage.image'
         )
         file_ctl.add_file(io.FileIO(file_path), 'image/png', 'image.jpg')
         # Image caption
         self.browser.getControl(
-            name='form.widgets.ILeadImageBehavior.image_caption'
+            name='form.widgets.ILeadImage.image_caption'
         ).value = 'My image caption'
         # Submit form
         self.browser.getControl('Save').click()
