@@ -4,14 +4,6 @@ Changelog
 1.4.15 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Really revert breaking behavior marker interface changes in 1.4.12.
