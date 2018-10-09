@@ -16,6 +16,7 @@ if TEST_MIGRATION:
     from zope.component import queryUtility
     from zope.interface import implementer
 
+
     @implementer(ICollection)
     class FolderishCollection(Container):
         """Test subclass for folderish ``Collections``.

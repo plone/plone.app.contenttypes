@@ -106,7 +106,7 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'My document'
         widget = 'form.widgets.IDublinCore.description'
         self.browser.getControl(name=widget).value = 'This is my document.'
-        widget = 'form.widgets.IRichTextBehavior.text'
+        widget = 'form.widgets.IRichText.text'
         self.browser.getControl(name=widget).value = 'Lorem Ipsum'
         widget = 'form.widgets.IShortName.id'
         self.browser.getControl(name=widget).value = 'my-special-document'

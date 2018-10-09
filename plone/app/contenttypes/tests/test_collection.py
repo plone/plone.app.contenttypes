@@ -194,7 +194,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         browser.getControl(name=widget).value = 'My collection'
         widget = 'form.widgets.IDublinCore.description'
         browser.getControl(name=widget).value = 'This is my collection.'
-        widget = 'form.widgets.IRichTextBehavior.text'
+        widget = 'form.widgets.IRichText.text'
         browser.getControl(name=widget).value = 'Lorem Ipsum'
         widget = 'form.widgets.IShortName.id'
         browser.getControl(name=widget).value = 'my-special-collection'
@@ -396,19 +396,11 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
                               title='Collection 1')
         collection1 = folder1['collection1']
         wrapped = ICollection_behavior(collection1)
-        wrapped.query = [
-            {
-                'i': 'portal_type',
-                'o': 'plone.app.querystring.operation.string.is',
-                'v': 'Document',
-            },
-            # use a "/" path and navroot works fine!
-            {
-                'i': 'path',
-                'o': 'plone.app.querystring.operation.string.path',
-                'v': '/',
-            },
-        ]
+        wrapped.query = [{
+            'i': 'portal_type',
+            'o': 'plone.app.querystring.operation.string.is',
+            'v': 'Document',
+        }]
 
         # Check if only the item inside folder1 is returned, since it's a
         # navigation root.

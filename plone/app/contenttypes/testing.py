@@ -15,6 +15,7 @@ from plone.testing import z2
 from zope.interface import alsoProvides
 
 import pkg_resources
+import unittest
 
 
 def set_browserlayer(request):
@@ -65,11 +66,11 @@ class PloneAppContenttypesRobot(PloneAppContenttypes):
 
 
 try:
-    pkg_resources.get_distribution('Products.ATContentTypes')
     import Products.ATContentTypes
-    TEST_MIGRATION = True
-except pkg_resources.DistributionNotFound:
+except ImportError:
     TEST_MIGRATION = False
+else:
+    TEST_MIGRATION = True
 
 
 class PloneAppContenttypesMigration(PloneSandboxLayer):
@@ -84,6 +85,7 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
             return
 
         # prepare installing Products.ATContentTypes
+        import Products.ATContentTypes
         self.loadZCML(package=Products.ATContentTypes)
         z2.installProduct(app, 'Products.Archetypes')
         z2.installProduct(app, 'Products.ATContentTypes')
