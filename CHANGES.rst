@@ -36,16 +36,16 @@ Bug fixes:
 Breaking changes:
 
 - ILeadImage and IRichText behaviors now have proper "Marker"-Interfaces.
-  As this was only possible by renaming the schema adapter to *Behavior to
+  As this was only possible by renaming the schema adapter to *Behavior* to
   not break with implementations inside the collective, the FTI-behavior-definition
-  has changed
-    'plone.app.contenttypes.behaviors.leadimage.ILeadImage'
-    becomes
-    'plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior'
-    and
-    'plone.app.contenttypes.behaviors.richtext.IRichText'
-    becomes
-    'plone.app.contenttypes.behaviors.richtext.IRichTextBehavior'
+  has changed.
+  ``plone.app.contenttypes.behaviors.leadimage.ILeadImage``
+  becomes
+  ``plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior``
+  and
+  ``plone.app.contenttypes.behaviors.richtext.IRichText``
+  becomes
+  ``plone.app.contenttypes.behaviors.richtext.IRichTextBehavior``
   [iham]
 
 New features:
@@ -118,9 +118,11 @@ Bug fixes:
   [hvelarde]
 
 - Migrations:
+
   - Handle ignore catalog errors where a brain can't find it's object.
   - Try to delete the layout attribute before setting the layout.
     Rework parts where the layout is set by always setting the layout.
+
   [thet]
 
 - In folder listings, when a content object has no title show it's id instead of an empty title.
