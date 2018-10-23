@@ -35,6 +35,8 @@ Bug fixes:
   (see plone/Products.CMFPlone#2540)
   [ale-rt]
 
+- Fix resource warnings. 
+  [davisagli] 
 
 1.4.12 (2018-09-23)
 -------------------
