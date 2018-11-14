@@ -418,7 +418,10 @@ Information for Addon-Developers
 Design decisions
 ^^^^^^^^^^^^^^^^
 
-Schemata that are defined in xml-files using ``plone.supermodel`` allow editing those types' schemata trough the web, as is the case for the default File, Image and Link content types. Scehemata comring from behaviors, on the other hand, are not editable through the web.  The Document, News Item, Folder and Event default types, for example, have no schemata of their own at all, all their fields are provided by behaviors.
+Schemata that are defined in XML-files using ``plone.supermodel`` allow editing those types' schemata through the web. 
+This is the case for the default File, Image and Link content types. 
+Schemata coming from behaviors, on the other hand, are not editable through the web.
+The Document, News Item, Folder and Event default types, for example, have no schemata of their own at all, all their fields are provided by behaviors.
 
 
 Installation as a dependency from another product
