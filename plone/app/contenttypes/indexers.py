@@ -16,6 +16,7 @@ from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from Products.CMFPlone.utils import human_readable_size
 from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
@@ -165,7 +166,7 @@ def getObjSize_image(obj):
             u'please reindex!'.format(obj.absolute_url())
         )
         return
-    return obj.getObjSize(None, primary_field_info.value.size)
+    return human_readable_size(primary_field_info.value.size)
 
 
 @indexer(IFile)
@@ -178,7 +179,7 @@ def getObjSize_file(obj):
             u'please reindex!'.format(obj.absolute_url())
         )
         return
-    return obj.getObjSize(None, primary_field_info.value.size)
+    return human_readable_size(primary_field_info.value.size)
 
 
 @indexer(IDexterityContent)

@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.4.13 (unreleased)
--------------------
+2.0.1 (unreleased)
+------------------
 
 Breaking changes:
 
@@ -18,6 +18,43 @@ Bug fixes:
   see `issue <https://github.com/plone/plone.app.contenttypes/issues/487>`
   [jianaijun]
 
+
+2.0.0 (2018-10-30)
+------------------
+
+Breaking changes:
+
+- ILeadImage and IRichText behaviors now have proper "Marker"-Interfaces.
+  As this was only possible by renaming the schema adapter to *Behavior to
+  not break with implementations inside the collective, the FTI-behavior-definition
+  has changed
+    'plone.app.contenttypes.behaviors.leadimage.ILeadImage'
+    becomes
+    'plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior'
+    and
+    'plone.app.contenttypes.behaviors.richtext.IRichText'
+    becomes
+    'plone.app.contenttypes.behaviors.richtext.IRichTextBehavior'
+  [iham]
+
+New features:
+
+- By using correct (Marker-)Interfaces for the ILeadImage and IRichText,
+  the factories are now working properly and can be reconfigured
+  wherever you might need them. ZCA FTW!
+  [iham]
+- Use human_readable_size from Products.CMFPlone.utils to replace getObjSize
+  script. #1801
+  [reinhardt]
+
+Bug fixes:
+
+- The ``Format`` accessor should actually return the ``format`` attribute
+  (see plone/Products.CMFPlone#2540)
+  [ale-rt]
+
+- Fix resource warnings. 
+  [davisagli] 
 
 1.4.12 (2018-09-23)
 -------------------

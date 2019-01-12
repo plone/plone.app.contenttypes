@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '1.4.13.dev0'
+version = '2.0.1.dev0'
 
 
 def read(*rnames):
@@ -39,7 +39,7 @@ setup(name='plone.app.contenttypes',
       author_email='plone-developers@lists.sourceforge.net',
       url='https://github.com/plone/plone.app.contenttypes',
       license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
+      packages=find_packages(),
       namespace_packages=['plone', 'plone.app'],
       include_package_data=True,
       zip_safe=False,
