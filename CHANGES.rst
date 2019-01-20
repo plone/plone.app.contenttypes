@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Support ILeadImage behavior when display collection album view.
+  [rodferosu]
 
 Bug fixes:
 

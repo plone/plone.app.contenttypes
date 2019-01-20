@@ -8,6 +8,14 @@ from plone.app.contenttypes.interfaces import IImage
 from plone.memoize.view import memoize
 
 
+try:
+    from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+except ImportError:
+    from zope.interface import Interface
+    class ILeadImage(Interface):
+        pass
+
+
 class CollectionView(FolderView):
 
     @property
@@ -56,7 +64,7 @@ class CollectionView(FolderView):
         for it in results:
             # TODO: potentially expensive!
             ob = it.getObject()
-            if IImage.providedBy(ob):
+            if IImage.providedBy(ob) or ILeadImage.providedBy(ob):
                 images.append(it)
             elif IFolder.providedBy(ob):
                 folders.append(it)
