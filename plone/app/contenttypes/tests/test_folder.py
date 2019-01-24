@@ -98,6 +98,33 @@ class FolderViewIntegrationTest(unittest.TestCase):
         )
         self.assertEqual(len(res), 1)
 
+    def test_result_batching(self):
+        for idx in range(5):
+            self.portal.invokeFactory('Document', 'document{}'.format(idx))
+        request = self.request.clone()
+        request.form['b_size'] = 5
+        view = FolderView(self.portal, request)
+
+        batch = view.batch()
+        self.assertEqual(batch.length, 5)
+        self.assertEqual(len([item for item in batch]), 5)
+        self.assertFalse(batch.has_next)
+
+        self.portal.invokeFactory('Document', 'document5')
+
+        batch = view.batch()
+        self.assertEqual(batch.length, 6)
+        self.assertEqual(len([item for item in batch]), 6)
+        self.assertFalse(batch.has_next)
+
+        self.portal.invokeFactory('Document', 'document6')
+
+        batch = view.batch()
+        self.assertEqual(batch.length, 5)
+        self.assertEqual(len([item for item in batch]), 5)
+        self.assertTrue(batch.has_next)
+        self.assertEqual(batch.next_item_count, 2)
+
 
 class FolderFunctionalTest(unittest.TestCase):
 
