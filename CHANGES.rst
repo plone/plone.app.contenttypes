@@ -17,6 +17,9 @@ Bug fixes:
 - Fixed sorting error after Changing the base class for existing objects.
   see `issue <https://github.com/plone/plone.app.contenttypes/issues/487>`
   [jianaijun]
+- Fix for folder view when there is one item more than the batch size.
+  see `issue <https://github.com/plone/plone.app.contenttypes/issues/500>`
+  [reinhardt]
 
 
 2.0.0 (2018-10-30)
