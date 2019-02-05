@@ -20,7 +20,8 @@ Bug fixes:
 - Fix for folder view when there is one item more than the batch size.
   see `issue <https://github.com/plone/plone.app.contenttypes/issues/500>`
   [reinhardt]
-
+- replace catalog_get_all(catalog) with catalog.getAllBrains()
+  [pbauer]
 
 2.0.0 (2018-10-30)
 ------------------
@@ -56,8 +57,8 @@ Bug fixes:
   (see plone/Products.CMFPlone#2540)
   [ale-rt]
 
-- Fix resource warnings. 
-  [davisagli] 
+- Fix resource warnings.
+  [davisagli]
 
 1.4.12 (2018-09-23)
 -------------------
