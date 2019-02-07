@@ -14,6 +14,13 @@ New features:
 
 Bug fixes:
 
+- Fix migrating False boolean values, handling of "unset" values. If an AT
+  schema had a `BooleanField` that defaults to `True` and an instance had a
+  value set to `False`, the migration would take that `False` to mean to leave
+  the value as unset on the new DX instance which would then get the default
+  `True` value.  Fix this bug by properly handling unset values by checking
+  for `AttributeError`.
+
 - Fix folder layout property migration. The default listing_view layout was
   always set if a folder didn't have a layout property (with older content
   created in Plone 3 or older sites, Folders and Collections can have no layout).
