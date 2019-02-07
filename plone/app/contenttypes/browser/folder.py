@@ -24,6 +24,12 @@ try:
 except ImportError:
     HAS_SECURITY_SETTINGS = False
 
+HAS_LEADIMAGE = True
+try:
+    from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+except ImportError:
+    HAS_LEADIMAGE = False
+
 
 class FolderView(BrowserView):
 
@@ -206,9 +212,14 @@ class FolderView(BrowserView):
     def album_images(self):
         """Get all images within this folder.
         """
+        provides = [
+            IImage.__identifier__
+        ]
+        if HAS_LEADIMAGE:
+            provides.append(ILeadImage.__identifier__)
         images = self.results(
             batch=False,
-            object_provides=IImage.__identifier__
+            object_provides=provides
         )
         return images
 
