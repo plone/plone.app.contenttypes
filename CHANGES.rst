@@ -1,27 +1,12 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
-------------------
+.. You should *NOT* be adding new change log entries to this file.
+   You should create a file in the news directory instead.
+   For helpful instructions, please see:
+   https://github.com/plone/plone.releaser/blob/master/ADD-A-NEWS-ITEM.rst
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
-- Fixed sorting error after Changing the base class for existing objects.
-  see `issue <https://github.com/plone/plone.app.contenttypes/issues/487>`
-  [jianaijun]
-- Fix for folder view when there is one item more than the batch size.
-  see `issue <https://github.com/plone/plone.app.contenttypes/issues/500>`
-  [reinhardt]
-- replace catalog_get_all(catalog) with catalog.getAllBrains()
-  [pbauer]
+.. towncrier release notes start
 
 2.0.0 (2018-10-30)
 ------------------

@@ -1,0 +1,4 @@
+Fix for folder view when there is one item more than the batch size.
+see `issue <https://github.com/plone/plone.app.contenttypes/issues/500>`
+[reinhardt]
+
