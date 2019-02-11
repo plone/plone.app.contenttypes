@@ -36,8 +36,10 @@ query = [{
 def dummy_image():
     from plone.namedfile.file import NamedBlobImage
     filename = os.path.join(os.path.dirname(__file__), u'image.png')
+    with open(filename, 'rb') as f:
+        image_data = f.read() 
     return NamedBlobImage(
-        data=open(filename, 'r').read(),
+        data=image_data,
         filename=filename
     )
 
@@ -115,7 +117,7 @@ class PloneAppCollectionIntegrationTest(unittest.TestCase):
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,
                            name='Collection')
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(IDexterityFTI,

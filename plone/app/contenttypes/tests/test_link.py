@@ -48,7 +48,7 @@ class LinkIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Link'
         )
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(

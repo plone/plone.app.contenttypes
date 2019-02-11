@@ -76,6 +76,14 @@ class Collection(Item):
 class Document(Item):
     """Convenience subclass for ``Document`` portal type
     """
+    def Format(self):
+        ''' Provide a proper accessor for the format attribute
+        See https://github.com/plone/Products.CMFPlone/issues/2540
+        '''
+        format = self.format
+        if six.PY2 and isinstance(format, six.text_type):
+            format = self.format.encode()
+        return format
 
 
 @implementer(IFile)
@@ -100,7 +108,7 @@ class File(Item):
         return response
 
     def get_size(self):
-        return getattr(self.file, 'size', None)
+        return getattr(self.file, 'size', 0)
 
     def content_type(self):
         return getattr(self.file, 'contentType', None)
@@ -134,7 +142,7 @@ class Image(Item):
         return response
 
     def get_size(self):
-        return getattr(self.image, 'size', None)
+        return getattr(self.image, 'size', 0)
 
     def content_type(self):
         return getattr(self.image, 'contentType', None)

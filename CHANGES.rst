@@ -1,22 +1,70 @@
 Changelog
 =========
 
-1.4.12 (unreleased)
+.. You should *NOT* be adding new change log entries to this file.
+   You should create a file in the news directory instead.
+   For helpful instructions, please see:
+   https://github.com/plone/plone.releaser/blob/master/ADD-A-NEWS-ITEM.rst
+
+.. towncrier release notes start
+
+2.0.0 (2018-10-30)
+------------------
+
+Breaking changes:
+
+- ILeadImage and IRichText behaviors now have proper "Marker"-Interfaces.
+  As this was only possible by renaming the schema adapter to *Behavior* to
+  not break with implementations inside the collective, the FTI-behavior-definition
+  has changed:
+
+  - ``plone.app.contenttypes.behaviors.leadimage.ILeadImage``
+    becomes
+    ``plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior``
+    and
+  - ``plone.app.contenttypes.behaviors.richtext.IRichText``
+    becomes
+    ``plone.app.contenttypes.behaviors.richtext.IRichTextBehavior``
+
+  [iham]
+
+New features:
+
+- By using correct (Marker-)Interfaces for the ILeadImage and IRichText,
+  the factories are now working properly and can be reconfigured
+  wherever you might need them. ZCA FTW!
+  [iham]
+- Use human_readable_size from Products.CMFPlone.utils to replace getObjSize
+  script. #1801
+  [reinhardt]
+
+Bug fixes:
+
+- The ``Format`` accessor should actually return the ``format`` attribute
+  (see plone/Products.CMFPlone#2540)
+  [ale-rt]
+
+- Fix resource warnings.
+  [davisagli]
+
+1.4.12 (2018-09-23)
 -------------------
 
 Breaking changes:
 
 - ILeadImage and IRichText behaviors now have proper "Marker"-Interfaces.
-  As this was only possible by renaming the schema adapter to *Behavior to
+  As this was only possible by renaming the schema adapter to *Behavior* to
   not break with implementations inside the collective, the FTI-behavior-definition
-  has changed
-    'plone.app.contenttypes.behaviors.leadimage.ILeadImage'
+  has changed:
+
+  - ``plone.app.contenttypes.behaviors.leadimage.ILeadImage``
     becomes
-    'plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior'
+    ``plone.app.contenttypes.behaviors.leadimage.ILeadImageBehavior``
     and
-    'plone.app.contenttypes.behaviors.richtext.IRichText'
+  - ``plone.app.contenttypes.behaviors.richtext.IRichText``
     becomes
-    'plone.app.contenttypes.behaviors.richtext.IRichTextBehavior'
+    ``plone.app.contenttypes.behaviors.richtext.IRichTextBehavior``
+
   [iham]
 
 - Plone Site is now a DX container. This means that the front-page object no
@@ -33,6 +81,15 @@ New features:
 
 Bug fixes:
 
+- Fix folder layout property migration. The default listing_view layout was
+  always set if a folder didn't have a layout property.
+  Also a default_page property could be inherited from parent folders or
+  the Plone Siteroot, causing 'front-page' default_pages on many folders.
+  Now only a direct layout property is copied and in that case on the local
+  default_page if set is copied again.
+  see `issue 444 <https://github.com/plone/plone.app.contenttypes/issues/444>`
+  [fredvd]
+
 - Fixed false implemented Factories and Markers for ILeadImage and IRichText.
   see `issue 457 <https://github.com/plone/plone.app.contenttypes/issues/476>`
   [iham]
@@ -46,6 +103,9 @@ Bug fixes:
 
 - pep8 cleanup.
   [iham]
+
+- Fix various issues in py3
+  [pbauer]
 
 
 1.4.11 (2018-06-18)
@@ -82,9 +142,11 @@ Bug fixes:
   [hvelarde]
 
 - Migrations:
+
   - Handle ignore catalog errors where a brain can't find it's object.
   - Try to delete the layout attribute before setting the layout.
     Rework parts where the layout is set by always setting the layout.
+
   [thet]
 
 - In folder listings, when a content object has no title show it's id instead of an empty title.

@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '1.4.12.dev0'
+version = '2.0.1.dev0'
 
 
 def read(*rnames):
@@ -27,16 +27,19 @@ setup(name='plone.app.contenttypes',
           "Development Status :: 6 - Mature",
           "Framework :: Plone",
           "Framework :: Plone :: 5.1",
+          "Framework :: Plone :: 5.2",
           "License :: OSI Approved :: GNU General Public License (GPL)",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
       ],
       keywords='plone content types dexterity',
       author='Plone Foundation',
       author_email='plone-developers@lists.sourceforge.net',
       url='https://github.com/plone/plone.app.contenttypes',
       license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
+      packages=find_packages(),
       namespace_packages=['plone', 'plone.app'],
       include_package_data=True,
       zip_safe=False,

@@ -15,6 +15,7 @@
     factory=".leadimage.LeadImage"
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".leadimage.ILeadImage"
+    former_dotted_names="plone.app.contenttypes.behaviors.leadimage.ILeadImage"
     />
 
   <browser:viewlet
@@ -53,6 +54,7 @@
     factory=".richtext.RichText"
     for="plone.dexterity.interfaces.IDexterityContent"
     marker=".richtext.IRichText"
+    former_dotted_names="plone.app.contenttypes.behaviors.richtext.IRichText"
     />
 
   <plone:behavior

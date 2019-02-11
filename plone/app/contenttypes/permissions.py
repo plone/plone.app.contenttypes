@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
+from AccessControl.Permission import addPermission
 from AccessControl.SecurityInfo import ModuleSecurityInfo
 from plone.app.contenttypes.utils import DEFAULT_TYPES
-from Products.CMFCore.permissions import setDefaultRoles
-
 
 security = ModuleSecurityInfo('plone.app.contenttypes')
 
@@ -14,7 +13,7 @@ for typename in DEFAULT_TYPES:
     permid = 'Add' + typename
     permname = 'plone.app.contenttypes: Add ' + typename
     security.declarePublic(permid)
-    setDefaultRoles(permname, TYPE_ROLES)
+    addPermission(permname, default_roles=TYPE_ROLES)
 
 AddCollection = 'plone.app.contenttypes: Add Collection'
 AddDocument = 'plone.app.contenttypes: Add Document'

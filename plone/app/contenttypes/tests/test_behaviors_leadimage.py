@@ -62,7 +62,8 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         file_ctl = self.browser.getControl(
             name='form.widgets.ILeadImageBehavior.image'
         )
-        file_ctl.add_file(io.FileIO(file_path), 'image/png', 'image.jpg')
+        with io.FileIO(file_path, 'rb') as f:
+            file_ctl.add_file(f, 'image/png', 'image.jpg')
         # Image caption
         self.browser.getControl(
             name='form.widgets.ILeadImageBehavior.image_caption'

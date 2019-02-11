@@ -244,6 +244,28 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.assertEqual(index_data['SearchableText'].count('script'), 0)
         self.assertEqual(index_data['SearchableText'].count('text'), 0)
 
+    def test_file_fulltext_in_searchable_text_plain(self):
+        from plone.namedfile.file import NamedBlobFile
+        data = ('Lorem ipsum. Köln <!-- ...oder München, das ist hier die '
+                'Frage. -->')
+        test_file = NamedBlobFile(data=data, filename=u'string.txt')
+
+        primary_field_info = IPrimaryFieldInfo(self.file)
+        primary_field_info.field.set(self.file, test_file)
+        self.file.reindexObject()
+
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Lorem ipsum'))
+        self.assertEqual(len(brains), 1)
+
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'Köln'))
+        self.assertEqual(len(brains), 1)
+
+        brains = self.catalog.searchResults(dict(
+            SearchableText=u'München'))
+        self.assertEqual(len(brains), 1)
+
     def test_file_fulltext_in_searchable_text_index_string(self):
         from plone.namedfile.file import NamedBlobFile
         data = ('Lorem ipsum. Köln <!-- ...oder München, das ist hier die '
@@ -348,9 +370,8 @@ class CatalogIntegrationTest(unittest.TestCase):
             path='/plone/folder/image',
         ))
 
-        # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
         self.assertEqual(
-            self.portal.getObjSize(None, primary_field_info.value.size),
+            '5.0 KB',
             brains[0].getObjSize,
         )
 
@@ -358,8 +379,11 @@ class CatalogIntegrationTest(unittest.TestCase):
         from plone.namedfile.file import NamedBlobFile
 
         filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
-        test_file = NamedBlobFile(data=open(filename, 'r').read(),
-                                  filename=filename)
+        with open(filename, 'rb') as f:
+            file_data = f.read()
+        test_file = NamedBlobFile(
+            data=file_data,
+            filename=filename)
 
         primary_field_info = IPrimaryFieldInfo(self.file)
         primary_field_info.field.set(self.file, test_file)
@@ -369,8 +393,7 @@ class CatalogIntegrationTest(unittest.TestCase):
             path='/plone/folder/file',
         ))
 
-        # XXX: Do we still rely on getObjSize in portal_skins/plone_scripts?
         self.assertEqual(
-            self.portal.getObjSize(None, primary_field_info.value.size),
+            '5.0 KB',
             brains[0].getObjSize,
         )

@@ -7,6 +7,8 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.component import getUtility
 
+import six
+
 
 # links starting with these URL scheme should not be redirected to
 NON_REDIRECTABLE_URL_SCHEMES = [
@@ -53,8 +55,10 @@ class LinkRedirectView(BrowserView):
             and not self._url_uses_scheme(NON_REDIRECTABLE_URL_SCHEMES)
 
         if redirect_links and not can_edit:
-            return self.request.RESPONSE.redirect(
-                self.absolute_target_url().encode('utf-8'))
+            target_url = self.absolute_target_url()
+            if six.PY2:
+                target_url = target_url.encode('utf-8')
+            return self.request.RESPONSE.redirect(target_url)
         else:
             return self.index()
 

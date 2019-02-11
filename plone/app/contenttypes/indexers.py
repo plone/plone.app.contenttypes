@@ -16,6 +16,7 @@ from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from Products.CMFPlone.utils import human_readable_size
 from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
@@ -113,7 +114,9 @@ def SearchableText_file(obj):
     if transforms._findPath(mimetype, 'text/plain') is None:
         # check if there is a valid transform available first
         return SearchableText(obj)
-    value = str(primary_field.value.data)
+    value = primary_field.value.data
+    if six.PY2:
+        value = str(value)
     filename = primary_field.value.filename
     try:
         transformed_value = transforms.convertTo('text/plain', value,
@@ -137,7 +140,10 @@ def SearchableText_file(obj):
 
 @indexer(ILink)
 def SearchableText_link(obj):
-    return _unicode_save_string_concat(SearchableText(obj), obj.remoteUrl)
+    if obj.remoteUrl:
+        return _unicode_save_string_concat(SearchableText(obj), obj.remoteUrl)
+    else:
+        SearchableText(obj)
 
 
 @indexer(IFolder)
@@ -160,7 +166,7 @@ def getObjSize_image(obj):
             u'please reindex!'.format(obj.absolute_url())
         )
         return
-    return obj.getObjSize(None, primary_field_info.value.size)
+    return human_readable_size(primary_field_info.value.size)
 
 
 @indexer(IFile)
@@ -173,7 +179,7 @@ def getObjSize_file(obj):
             u'please reindex!'.format(obj.absolute_url())
         )
         return
-    return obj.getObjSize(None, primary_field_info.value.size)
+    return human_readable_size(primary_field_info.value.size)
 
 
 @indexer(IDexterityContent)

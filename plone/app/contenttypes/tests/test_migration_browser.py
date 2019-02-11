@@ -121,11 +121,9 @@ class FixBaseclassesTest(unittest.TestCase):
 
     def test_install_dx_type_if_needed_wrong_type_name(self):
         from plone.app.contenttypes.migration.utils import installTypeIfNeeded
-        self.assertRaises(KeyError, installTypeIfNeeded, ['Unknown'])
-        try:
+        with self.assertRaises(KeyError) as e:
             installTypeIfNeeded('Unknown')
-        except KeyError as e:
-            self.assertEqual(
-                e.message,
-                'Unknown is not one of the default types'
-            )
+        self.assertEqual(
+            e.exception.args[0],
+            'Unknown is not one of the default types'
+        )

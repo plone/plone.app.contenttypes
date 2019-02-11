@@ -15,14 +15,17 @@ from zope.interface import alsoProvides
 
 import io
 import os.path
+import six
 import unittest
 
 
 def dummy_image(filename=u'image.jpg'):
     from plone.namedfile.file import NamedBlobImage
     filename = os.path.join(os.path.dirname(__file__), filename)
+    with open(filename, 'rb') as f:
+        image_data = f.read()
     return NamedBlobImage(
-        data=open(filename, 'r').read(),
+        data=image_data,
         filename=filename
     )
 
@@ -49,7 +52,7 @@ class ImageIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Image'
         )
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(
@@ -71,6 +74,15 @@ class ImageIntegrationTest(unittest.TestCase):
 class ImageViewIntegrationTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
+
+    if six.PY2:
+        def assertRegex(self, value, pattern):
+            # Python 2 backwards compatibility
+            import re
+            if not re.search(pattern, value):
+                raise self.failureException(
+                    '%r not found in %s' % (pattern, value)
+                )
 
     def setUp(self):
         self.portal = self.layer['portal']
@@ -110,9 +122,9 @@ class ImageViewIntegrationTest(unittest.TestCase):
     def test_svg_image(self):
         self.image.image = dummy_image(u'image.svg')
         scale = self.image.restrictedTraverse('@@images')
-        self.assertRegexpMatches(
+        self.assertRegex(
             scale.scale('image', scale='large').tag(),
-            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'  # noqa E501
+            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'  # noqa: E501
         )
 
 
@@ -143,7 +155,8 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
+        with io.FileIO(image_path, 'rb') as f:
+            image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('image.jpg/view'))
         self.assertIn('My image', self.browser.contents)
@@ -159,7 +172,8 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
+        with io.FileIO(image_path, 'rb') as f:
+            image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-image.jpg/view'))
 
@@ -175,7 +189,8 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'This is my image.'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
-        image_ctl.add_file(io.FileIO(image_path), 'image/png', 'image.jpg')
+        with io.FileIO(image_path, 'rb') as f:
+            image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
         self.browser.getLink('Click to view full-size image').click()
         self.assertTrue(

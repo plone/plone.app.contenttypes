@@ -40,7 +40,7 @@ class EventIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Event'
         )
-        self.assertNotEquals(None, fti)
+        self.assertNotEqual(None, fti)
 
     def test_factory(self):
         fti = queryUtility(

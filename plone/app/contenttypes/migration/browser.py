@@ -375,7 +375,7 @@ class ATCTMigratorForm(form.Form):
         # Only override when rendering the form. When you unselect
         # everything the value will be [], not ())
         if ct_widget.value == ():
-            ct_widget.value = ATCT_LIST.keys()
+            ct_widget.value = list(ATCT_LIST)
             # Call update again since the list-items checked-states are
             # assigned in z3c.form.browser.checkbox.CheckBoxWidget.update
             # using the widget.value.
@@ -481,7 +481,7 @@ class ATCTMigratorHelpers(BrowserView):
     def estimated_migration_time(self):
         """ Return the estimated migration time """
         total_time = self.objects_to_be_migrated() * ONE_OBJECT_MIGRATION_TIME
-        hours, remainder = divmod(total_time / 1000, 3600)
+        hours, remainder = divmod(total_time // 1000, 3600)
         minutes, seconds = divmod(remainder, 60)
         return {
             'hours': hours,
