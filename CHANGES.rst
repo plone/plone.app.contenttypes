@@ -8,6 +8,27 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.1 (2019-02-13)
+------------------
+
+Bug fixes:
+
+
+- Following the rename of the lead image and rich text behaviors, use the new
+  setting of plone.behavior to register their ``former_dotted_names``, so that
+  consumers that have stored the old dotted name have a chance of recovering.
+  This is especially needed for plone.app.versioningbehavior, see `issue
+  <https://github.com/plone/plone.app.versioningbehavior/pull/45>` [pysailor]
+  (#480)
+- Fixed sorting error after Changing the base class for existing objects. see
+  `issue <https://github.com/plone/plone.app.contenttypes/issues/487>`
+  [jianaijun] (#497)
+- Fix for folder view when there is one item more than the batch size. see
+  `issue <https://github.com/plone/plone.app.contenttypes/issues/500>`
+  [reinhardt] (#500)
+- replace catalog_get_all(catalog) with catalog.getAllBrains() [pbauer] (#503)
+
+
 2.0.0 (2018-10-30)
 ------------------
 
