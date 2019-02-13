@@ -17,17 +17,24 @@ def migrate_simplefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     to the target-object. The only transform is a safe_unicode of the value.
     """
     field = src_obj.getField(src_fieldname)
-    if field:
-        at_value = field.get(src_obj)
+    try:
+        if field:
+            # Check for existence first
+            field.getStorage(src_obj).get(field.getName(), src_obj)
+            at_value = field.get(src_obj)
+        else:
+            at_value = getattr(src_obj, src_fieldname)
+            if at_value and hasattr(at_value, '__call__'):
+                at_value = at_value()
+    except AttributeError:
+        # The value is "unset" on the old instance and so should be unset on
+        # the new instance
+        pass
     else:
-        at_value = getattr(src_obj, src_fieldname, None)
-        if at_value and hasattr(at_value, '__call__'):
-            at_value = at_value()
-    if isinstance(at_value, tuple):
-        at_value = tuple(safe_unicode(i) for i in at_value)
-    if isinstance(at_value, list):
-        at_value = [safe_unicode(i) for i in at_value]
-    if at_value:
+        if isinstance(at_value, tuple):
+            at_value = tuple(safe_unicode(i) for i in at_value)
+        if isinstance(at_value, list):
+            at_value = [safe_unicode(i) for i in at_value]
         setattr(dst_obj, dst_fieldname, safe_unicode(at_value))
 
 
