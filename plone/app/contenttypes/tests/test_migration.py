@@ -2008,8 +2008,11 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
 
         # Change Document conent type to folderish
         self.browser.open(self.manage_document_url)
-        self.browser.getControl(name='klass:string') \
-            .value = 'plone.app.contenttypes.content.Collection'
+        try:
+            klass_ctlr = self.browser.getControl(name='klass:UTF-8:string')
+        except LookupError:
+            klass_ctlr = self.browser.getControl(name='klass:string')
+        klass_ctlr.value = 'plone.app.contenttypes.content.Collection'
         self.browser.getControl('Save Changes').click()
         self.browser.open(
             '{0}/@@base_class_migrator_form'.format(self.portal_url))
