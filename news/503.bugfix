@@ -1,2 +1,0 @@
-replace catalog_get_all(catalog) with catalog.getAllBrains()
-[pbauer]
