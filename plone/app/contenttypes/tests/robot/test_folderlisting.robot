@@ -14,6 +14,7 @@ Test Teardown  Close all browsers
 
 Scenario: Test listing views
     Given I am logged in as site owner
+    I disable dropdown navigation
 
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/listing_view
     Then Listing should list contained content
@@ -196,3 +197,9 @@ Setup Testcontent
 I go to
     [Arguments]  ${location}
     Go to  ${location}
+
+I disable dropdown navigation
+  Go to  ${PLONE_URL}/@@navigation-controlpanel
+  Input Text  name=form.widgets.navigation_depth  1
+  Click Button  Save
+  Wait until page contains  Changes saved
