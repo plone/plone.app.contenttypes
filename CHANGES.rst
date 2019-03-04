@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.2 (2019-03-03)
+------------------
+
+Bug fixes:
+
+
+- Fix robots test after dropdownnavigation is enabled for new sites. [pbauer]
+  (#511)
+
+
 2.0.1 (2019-02-13)
 ------------------
 
