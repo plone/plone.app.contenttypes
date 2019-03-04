@@ -7,7 +7,15 @@ from zope.publisher.browser import TestRequest
 from ZPublisher.HTTPResponse import HTTPResponse
 
 import os.path
+import pkg_resources
 import unittest
+
+
+HAS_ZSERVER = True
+try:
+    dist = pkg_resources.get_distribution('ZServer')
+except pkg_resources.DistributionNotFound:
+    HAS_ZSERVER = False
 
 
 class DAVTestRequest(TestRequest):
@@ -61,6 +69,7 @@ class WebDAVIntegrationTest(unittest.TestCase):
         self.assertEqual(self.file.get_size(), 8561)
         self.assertEqual(self.file.content_type(), 'application/pdf')
 
+    @unittest.skipIf(not HAS_ZSERVER, 'RFC822 not supported without ZServer')
     def test_image_put_rfc822(self):
         """Upload an image through webdav/rfc822."""
         filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
@@ -83,6 +92,7 @@ Portal-Type: Image
         self.assertEqual(self.image.get_size(), 5131)
         self.assertEqual(self.image.content_type(), 'image/jpeg')
 
+    @unittest.skipIf(not HAS_ZSERVER, 'RFC822 not supported without ZServer')
     def test_file_put_rfc822(self):
         """Upload a file through webdav/rfc822."""
         filename = os.path.join(os.path.dirname(__file__), u'file.pdf')
