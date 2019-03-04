@@ -2,7 +2,7 @@
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
-from six.moves import StringIO
+from io import BytesIO
 from zope.publisher.browser import TestRequest
 from ZPublisher.HTTPResponse import HTTPResponse
 
@@ -64,13 +64,13 @@ class WebDAVIntegrationTest(unittest.TestCase):
     def test_image_put_rfc822(self):
         """Upload an image through webdav/rfc822."""
         filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
-        body = StringIO()
-        body.write("""title: My image
+        body = BytesIO()
+        body.write(b"""title: My image
 Content-Type: image/jpeg
 Content-Disposition: attachment; filename*="utf-8''image.jpg"
 Portal-Type: Image
 
-{body}""".format(body=open(filename, 'rb').read())
+""" + open(filename, 'rb').read()
         )
         body.seek(0)
         request = DAVTestRequest(environ={
@@ -86,13 +86,13 @@ Portal-Type: Image
     def test_file_put_rfc822(self):
         """Upload a file through webdav/rfc822."""
         filename = os.path.join(os.path.dirname(__file__), u'file.pdf')
-        body = StringIO()
-        body.write("""title: My file
+        body = BytesIO()
+        body.write(b"""title: My file
 Content-Type: application/pdf
 Content-Disposition: attachment; filename*="utf-8''file.pdf"
 Portal-Type: File
 
-{body}""".format(body=open(filename, 'rb').read())
+""" + open(filename, 'rb').read()
         )
         body.seek(0)
         request = DAVTestRequest(environ={
