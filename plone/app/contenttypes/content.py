@@ -12,6 +12,7 @@ from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from Products.CMFPlone.utils import safe_text
 from zope.deprecation import deprecation
 from zope.interface import implementer
 from zope.lifecycleevent import modified
@@ -100,7 +101,7 @@ class File(Item):
         infile = request.get('BODYFILE', None)
         first_line = infile.readline()
         infile.seek(0)
-        if not headerRE.match(first_line):
+        if not headerRE.match(safe_text(first_line)):
             self.dav__init(request, response)
             self.dav__simpleifhandler(request, response, refresh=1)
 
@@ -139,7 +140,7 @@ class Image(Item):
         infile = request.get('BODYFILE', None)
         first_line = infile.readline()
         infile.seek(0)
-        if not headerRE.match(first_line):
+        if not headerRE.match(safe_text(first_line)):
             self.dav__init(request, response)
             self.dav__simpleifhandler(request, response, refresh=1)
 
