@@ -1,1 +1,0 @@
-Detect whether a webdav request is RFC822 or pure payload and handle accordingly.
