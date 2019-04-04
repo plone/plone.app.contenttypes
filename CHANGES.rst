@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Add an option to display the result count on a collection view.
+  [instification]
 
 Bug fixes:
 

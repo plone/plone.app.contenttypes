@@ -20,6 +20,11 @@
 
   <metal:listingmacro define-macro="listing">
   <tal:results define="batch view/batch">
+
+    <div class="result_count" condition="view/display_item_count">
+      <p>Showing <span tal:replace="python:view.result_count and view.result_count or 0"/> results</p>
+    </div>
+
     <tal:listing condition="batch">
 
       <div metal:use-macro="context/batch_macros/macros/navigation" />

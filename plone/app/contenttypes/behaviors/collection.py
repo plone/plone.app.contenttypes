@@ -77,6 +77,14 @@ class ICollection(model.Schema):
         min=1,
     )
 
+    display_item_count = schema.Bool(
+        title=_(u'display_item_count', default=u'Display Item Count'),
+        description=_(u'Whether to display the number of results on the '
+                      u'collection'),
+        required=False,
+        default=False
+    )
+
     customViewFields = schema.List(
         title=_(u'Table Columns'),
         description=_(u"Select which fields to display when "

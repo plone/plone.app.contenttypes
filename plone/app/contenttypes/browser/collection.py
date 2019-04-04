@@ -10,6 +10,10 @@ from plone.memoize.view import memoize
 
 class CollectionView(FolderView):
 
+    def __init__(self, context, request):
+        super(CollectionView, self).__init__(context, request)
+        self.result_count = None
+
     @property
     def collection_behavior(self):
         return ICollection(aq_inner(self.context))
@@ -22,6 +26,14 @@ class CollectionView(FolderView):
     def b_size(self, value):
         # ignore, FolderView tries to set on init
         pass
+
+    @property
+    def display_result_count(self):
+        if self.result_count is None:
+            return self.collection_behavior.display_item_count
+        if self.result_count > 0:
+            return self.collection_behavior.display_item_count
+        return False
 
     def results(self, **kwargs):
         """Return a content listing based result set with results from the
@@ -44,6 +56,7 @@ class CollectionView(FolderView):
         kwargs.setdefault('b_start', self.b_start)
 
         results = self.collection_behavior.results(**kwargs)
+        self.result_count = len(results)
         return results
 
     def batch(self):
