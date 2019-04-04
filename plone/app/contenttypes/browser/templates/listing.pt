@@ -21,7 +21,7 @@
   <metal:listingmacro define-macro="listing">
     <tal:results define="batch view/batch">
 
-      <div class="result_count" tal:condition="view/result_count">
+      <div class="result_count" tal:condition="view/display_result_count">
         <p>Showing <span tal:replace="python:view.result_count and view.result_count or 0"/> results</p>
       </div>
 

@@ -161,6 +161,15 @@ class Collection(object):
 
     item_count = property(_get_item_count, _set_item_count)
 
+    def _set_display_item_count(self, value):
+        self.context.display_item_count = value
+
+    def _get_display_item_count(self):
+        return getattr(self.context, 'display_item_count', False)
+
+    display_item_count = property(_get_display_item_count,
+                                  _set_display_item_count)
+
     def _set_sort_on(self, value):
         self.context.sort_on = value
 

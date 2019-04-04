@@ -29,10 +29,11 @@ class CollectionView(FolderView):
 
     @property
     def display_result_count(self):
+        display = getattr(self.collection_behavior, 'display_item_count', False)
         if self.result_count is None:
-            return self.collection_behavior.display_item_count
+            return display
         if self.result_count > 0:
-            return self.collection_behavior.display_item_count
+            return display
         return False
 
     def results(self, **kwargs):
