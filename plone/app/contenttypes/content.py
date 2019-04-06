@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from email.feedparser import headerRE
 from plone.app.contenttypes.interfaces import ICollection
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IEvent
@@ -11,6 +12,7 @@ from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
+from Products.CMFPlone.utils import safe_text
 from zope.deprecation import deprecation
 from zope.interface import implementer
 from zope.lifecycleevent import modified
@@ -96,16 +98,21 @@ class File(Item):
         request = REQUEST if REQUEST is not None else self.REQUEST
         response = RESPONSE if RESPONSE is not None else request.response
 
-        self.dav__init(request, response)
-        self.dav__simpleifhandler(request, response, refresh=1)
-
         infile = request.get('BODYFILE', None)
-        filename = request['PATH_INFO'].split('/')[-1]
-        self.file = NamedBlobFile(
-            data=infile.read(), filename=six.text_type(filename))
+        first_line = infile.readline()
+        infile.seek(0)
+        if not headerRE.match(safe_text(first_line)):
+            self.dav__init(request, response)
+            self.dav__simpleifhandler(request, response, refresh=1)
 
-        modified(self)
-        return response
+            filename = request['PATH_INFO'].split('/')[-1]
+            self.file = NamedBlobFile(
+                data=infile.read(), filename=six.text_type(filename))
+
+            modified(self)
+            return response
+        else:
+            return super(File, self).PUT(REQUEST=request, RESPONSE=response)
 
     def get_size(self):
         return getattr(self.file, 'size', 0)
@@ -130,16 +137,22 @@ class Image(Item):
         request = REQUEST if REQUEST is not None else self.REQUEST
         response = RESPONSE if RESPONSE is not None else request.response
 
-        self.dav__init(request, response)
-        self.dav__simpleifhandler(request, response, refresh=1)
-
         infile = request.get('BODYFILE', None)
-        filename = request['PATH_INFO'].split('/')[-1]
-        self.image = NamedBlobImage(
-            data=infile.read(), filename=six.text_type(filename))
+        first_line = infile.readline()
+        infile.seek(0)
+        if not headerRE.match(safe_text(first_line)):
+            self.dav__init(request, response)
+            self.dav__simpleifhandler(request, response, refresh=1)
 
-        modified(self)
-        return response
+            infile = request.get('BODYFILE', None)
+            filename = request['PATH_INFO'].split('/')[-1]
+            self.image = NamedBlobImage(
+                data=infile.read(), filename=six.text_type(filename))
+
+            modified(self)
+            return response
+        else:
+            return super(Image, self).PUT(REQUEST=request, RESPONSE=response)
 
     def get_size(self):
         return getattr(self.image, 'size', 0)

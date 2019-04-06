@@ -8,6 +8,8 @@
 <body>
 
 <metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core">
+
 <metal:block use-macro="context/@@listing_view/macros/content-core">
 
   <metal:entries fill-slot="entries">
@@ -57,6 +59,8 @@
       </metal:entry>
     </metal:block>
   </metal:entries>
+
+</metal:block>
 
 </metal:block>
 </metal:content-core>
