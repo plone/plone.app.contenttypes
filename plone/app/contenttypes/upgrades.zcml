@@ -87,11 +87,4 @@
       handler=".upgrades.searchabletext_richtext"
       />
    
-   <genericsetup:upgradeStep
-      source="1106"
-      destination="1107"
-      title="Add alt text field for Image content-type"
-      profile="plone.app.contenttypes:default"
-      handler=".upgrades.add_alt_text"
-      />
 </configure>

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone import api
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.dexterity.interfaces import IDexterityFTI
 from Products.CMFCore.utils import getToolByName
@@ -254,17 +255,3 @@ def searchabletext_richtext(context):
     objs = _brains2objs(brains)
     for obj in objs:
         obj.reindexObject(idxs=['SearchableText'])
-
-
-def add_alt_text(context):
-    fti = queryUtility(
-        IDexterityFTI,
-        name='Image'
-    )
-    behavior = 'plone.app.contenttypes.behaviors.alt_text.IAltText'
-    if behavior in fti.behaviors:
-        return
-    behaviors = list(fti.behaviors)
-    behaviors.append(behavior)
-    behaviors = tuple(behaviors)
-    fti._updateProperty('behaviors', behaviors)
