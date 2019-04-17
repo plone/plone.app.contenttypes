@@ -64,6 +64,15 @@
       provides=".thumb_icon.IThumbIconHandling"
       />
 
+  <plone:behavior
+    name="plone.alt_text_image"
+    title="Alt Text"
+    description="Adds alt text field for images"
+    provides=".alt_text.IAltTextBehavior"
+    factory=".alt_text.AltText"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+
   <browser:page
     name="getText"
     for=".richtext.IRichText"
