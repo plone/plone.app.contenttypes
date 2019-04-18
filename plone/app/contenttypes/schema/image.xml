@@ -20,7 +20,7 @@
     </field>
     <field name="alt_text"
            type="zope.schema.TextLine">
-      <description i18n:translate="alt_text_label_help">
+      <description i18n:translate="label_alt_text_help">
         Briefly describe the meaning of the image for people using assistive technology like screen readers. 
         This will be used when the image is viewed by itself. 
         Do not duplicate the Title or Description fields, since they will also be read by screen readers. 
@@ -29,7 +29,7 @@
         This field should never be left blank on sites that want to be compliant with accessibility standards.
       </description>
       <required>False</required>
-      <title i18n:translate="alt_text_label">Alt Text</title>
+      <title i18n:translate="label_alt_text">Alt Text</title>
     </field>
   </schema>
 </model>

@@ -79,3 +79,21 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         # But doesn't show up on folder_contents, which is not a default view
         self.browser.open(self.portal_url + '/leadimagefolder/folder_contents')
         self.assertTrue('<div class="leadImage">' not in self.browser.contents)
+
+    def test_lead_image_viewlet_shows_alt_text(self):
+        self.browser.open(self.portal_url + '/leadimagefolder/edit')
+        # Image upload
+        file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
+        file_ctl = self.browser.getControl(
+            name='form.widgets.ILeadImageBehavior.image'
+        )
+        with io.FileIO(file_path, 'rb') as f:
+            file_ctl.add_file(f, 'image/png', 'image.jpg')
+        # Image caption
+        self.browser.getControl(
+            name='form.widgets.ILeadImageBehavior.alt_text'
+        ).value = 'alternative text'
+        # Submit form
+        self.browser.getControl('Save').click()
+
+        self.assertTrue('alternative text' in self.browser.contents)

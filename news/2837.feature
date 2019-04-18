@@ -1,2 +1,2 @@
-Add alt_text field to images for allow users to set an alt text manually.
+Add alt_text field to images and lead image behavior. This allows users to manually set the value of alt tag.
 [cekk]
