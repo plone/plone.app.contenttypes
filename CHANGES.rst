@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.4 (2019-04-29)
+------------------
+
+Bug fixes:
+
+
+- Add 'content-core' macro definition to summary_view.pt so it can be reused
+  [petschki] (#514)
+- Speed up traversal to main_template by markling it as a browser-view.
+  [pbauer] (#517)
+
+
 2.0.3 (2019-03-21)
 ------------------
 
