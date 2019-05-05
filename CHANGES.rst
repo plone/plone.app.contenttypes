@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.5 (2019-05-04)
+------------------
+
+Bug fixes:
+
+
+- Move dotted behaviors to named behaviors. [iham] (#519)
+
+
 2.0.4 (2019-04-29)
 ------------------
 
