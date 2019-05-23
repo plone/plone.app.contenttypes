@@ -218,6 +218,7 @@ class MigrateFromATContentTypes(BrowserView):
         use_new_view_names(portal, types_to_fix=['Plone Site'])
 
         if reindex_catalog:
+            logger.info('Rebuiling catalog. This may take a while...')
             catalog.clearFindAndRebuild()
 
         # restore references
