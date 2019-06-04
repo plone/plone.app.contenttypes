@@ -2,17 +2,11 @@
 from Acquisition import aq_inner
 from plone.app.contenttypes import _
 from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.memoize.view import memoize
-
-
-HAS_LEADIMAGE = True
-try:
-    from plone.app.contenttypes.behaviors.leadimage import ILeadImage
-except ImportError:
-    HAS_LEADIMAGE = False
 
 
 class CollectionView(FolderView):
@@ -66,7 +60,7 @@ class CollectionView(FolderView):
             if IFolder.providedBy(ob):
                 folders.append(it)
             elif IImage.providedBy(ob) or \
-                 HAS_LEADIMAGE and ILeadImage.providedBy(ob):
+                 ILeadImage.providedBy(ob):
                 images.append(it)
         return {'images': images, 'folders': folders}
 
