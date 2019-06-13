@@ -157,7 +157,9 @@ Listing should list all content in detail
 
 Album should list all images and albums
   Page Should Contain  Test Image
-  Xpath Should Match X Times  //img[@title="Test Image"]  3
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Image"]  1
+  Page Should Contain  Test News Item
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test News Item"]  1
   Page Should Contain  Test Album Image 1
   Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 1"]  1
   Page Should Contain  Test Album Image 2
@@ -172,7 +174,7 @@ Album should list all images and albums
   Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 3"]  1
   Page Should Contain  Test Album
   Page Should Contain  Test Sub Album
-
+  Page Should Contain  Test Folder
 
 
 Setup Testcontent
