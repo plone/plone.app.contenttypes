@@ -1,12 +1,15 @@
 *** Settings ***
 
 Resource  plone/app/robotframework/keywords.robot
+Resource  plone/app/robotframework/saucelabs.robot
+Resource  plone/app/robotframework/selenium.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
 Variables  plone/app/contenttypes/tests/robot/variables.py
 
-Test Setup  Run keywords  Setup Testcontent  Open test browser
-Test Teardown  Close all browsers
+
+Test Setup  Run Keywords  Setup Testcontent  Plone test setup
+Test Teardown  Run keywords  Plone test teardown
 
 *** Variables ***
 

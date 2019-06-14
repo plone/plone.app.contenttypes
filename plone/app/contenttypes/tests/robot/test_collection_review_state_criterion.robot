@@ -11,10 +11,12 @@
 *** Settings *****************************************************************
 
 Resource  plone/app/robotframework/keywords.robot
+Resource  plone/app/robotframework/saucelabs.robot
+Resource  plone/app/robotframework/selenium.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
-Test Setup  Run keywords  Open test browser
-Test Teardown  Close all browsers
+Test Setup  Run Keywords  Plone test setup
+Test Teardown  Run keywords  Plone test teardown
 
 
 *** Test cases ***************************************************************
