@@ -17,13 +17,6 @@ Bug fixes:
 - Move dotted behaviors to named behaviors. [iham] (#519)
 
 
-New features:
-
-
-- Support ILeadImage behavior when display collection album view.
-  [rodfersou]
-
-
 2.0.4 (2019-04-29)
 ------------------
 
