@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from Acquisition import aq_inner
-from Products.CMFPlone.interfaces import ISiteSchema
 from plone.app.contenttypes import _
+from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.event.interfaces import IEvent
 from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
+from Products.CMFPlone.interfaces import ISiteSchema
 from Products.CMFPlone.PloneBatch import Batch
 from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
@@ -23,7 +24,6 @@ try:
     from Products.CMFPlone.interfaces import ISecuritySchema
 except ImportError:
     HAS_SECURITY_SETTINGS = False
-
 
 class FolderView(BrowserView):
 
@@ -206,9 +206,13 @@ class FolderView(BrowserView):
     def album_images(self):
         """Get all images within this folder.
         """
+        provides = [
+            IImage.__identifier__,
+            ILeadImage.__identifier__,
+        ]
         images = self.results(
             batch=False,
-            object_provides=IImage.__identifier__
+            object_provides=provides
         )
         return images
 

@@ -24,11 +24,13 @@
       tal:define="portal context/@@plone_portal_state/portal;
                   image_scale portal/@@image_scale">
   <tal:images tal:repeat="image images">
-    <div class="photoAlbumEntry">
+    <div class="photoAlbumEntry"
+         tal:define="scale python:image_scale.tag(image, 'image', scale='thumb')"
+         tal:condition="scale">
       <a tal:attributes="href string:${image/getURL}/view;
                          title image/Description">
         <span class="photoAlbumEntryWrapper">
-          <img tal:replace="structure python:image_scale.tag(image, 'image', scale='thumb')" />
+          <img tal:replace="structure scale" />
         </span>
         <span class="photoAlbumEntryTitle" tal:content="image/Title">
             Title
