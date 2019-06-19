@@ -8,6 +8,25 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.0 (2019-06-19)
+------------------
+
+New features:
+
+
+- Support ILeadImage behavior when display collection album view.
+  [rodfersou] (#524)
+- Add more log-messages during migration from AT to DX.
+  [pbauer] (#526)
+
+
+Bug fixes:
+
+
+- Use the shared 'Plone test setup' and 'Plone test teardown' keywords in Robot tests.
+  [Rotonen] (#522)
+
+
 2.0.5 (2019-05-04)
 ------------------
 
