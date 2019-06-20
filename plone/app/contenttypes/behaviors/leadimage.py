@@ -30,6 +30,23 @@ class ILeadImageBehavior(model.Schema):
         required=False,
     )
 
+    alt_text = schema.TextLine(
+        title=_(u'label_alt_text', default=u'Alt Text'),
+        description=_(
+            u'label_alt_text_description',
+            default=u'Briefly describe the meaning of the image for people '
+            u'using assistive technology like screen readers. This will be '
+            u'used when the image is viewed by itself. Do not duplicate the '
+            u'Title or Description fields, since they will also be read by '
+            u'screen readers. Alt text should describe what a sighted user '
+            u'sees when looking at the image. This might include text the '
+            u'image contains, or even a description of an abstract pattern. '
+            u'This field should never be left blank on sites that want to be '
+            u'compliant with accessibility standards.'
+        ),
+        required=False,
+    )
+
 
 @implementer(ILeadImageBehavior)
 @adapter(IDexterityContent)
@@ -53,3 +70,11 @@ class LeadImage(object):
     @image_caption.setter
     def image_caption(self, value):
         self.context.image_caption = value
+
+    @property
+    def alt_text(self):
+        return self.context.alt_text
+
+    @alt_text.setter
+    def alt_text(self, value):
+        self.context.alt_text = value

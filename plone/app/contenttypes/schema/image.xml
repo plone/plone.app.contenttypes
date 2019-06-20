@@ -18,5 +18,18 @@
       <description />
       <title i18n:translate="label_image">Image</title>
     </field>
+    <field name="alt_text"
+           type="zope.schema.TextLine">
+      <description i18n:translate="label_alt_text_help">
+        Briefly describe the meaning of the image for people using assistive technology like screen readers. 
+        This will be used when the image is viewed by itself. 
+        Do not duplicate the Title or Description fields, since they will also be read by screen readers. 
+        Alt text should describe what a sighted user sees when looking at the image. 
+        This might include text the image contains, or even a description of an abstract pattern. 
+        This field should never be left blank on sites that want to be compliant with accessibility standards.
+      </description>
+      <required>False</required>
+      <title i18n:translate="label_alt_text">Alt Text</title>
+    </field>
   </schema>
 </model>
