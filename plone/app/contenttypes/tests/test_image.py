@@ -124,7 +124,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
         scale = self.image.restrictedTraverse('@@images')
         self.assertRegex(
             scale.scale('image', scale='large').tag(),
-            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="768" width="768" />'  # noqa: E501
+            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="[0-9]" width="[0-9]" />',  # noqa: E501
         )
 
 
