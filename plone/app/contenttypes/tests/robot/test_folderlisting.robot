@@ -1,12 +1,15 @@
 *** Settings ***
 
 Resource  plone/app/robotframework/keywords.robot
+Resource  plone/app/robotframework/saucelabs.robot
+Resource  plone/app/robotframework/selenium.robot
 Resource  plone/app/contenttypes/tests/robot/keywords.txt
 
 Variables  plone/app/contenttypes/tests/robot/variables.py
 
-Test Setup  Run keywords  Setup Testcontent  Open test browser
-Test Teardown  Close all browsers
+
+Test Setup  Run Keywords  Setup Testcontent  Plone test setup
+Test Teardown  Run keywords  Plone test teardown
 
 *** Variables ***
 
@@ -158,7 +161,9 @@ Listing should list all content in detail
 
 Album should list all images and albums
   Page Should Contain  Test Image
-  Xpath Should Match X Times  //img[@title="Test Image"]  3
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Image"]  1
+  Page Should Contain  Test News Item
+  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test News Item"]  1
   Page Should Contain  Test Album Image 1
   Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 1"]  1
   Page Should Contain  Test Album Image 2
@@ -173,7 +178,7 @@ Album should list all images and albums
   Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 3"]  1
   Page Should Contain  Test Album
   Page Should Contain  Test Sub Album
-
+  Page Should Contain  Test Folder
 
 
 Setup Testcontent

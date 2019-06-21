@@ -334,7 +334,11 @@ def restore_references(context):
     the content-types framework.
     """
     key = 'ALL_REFERENCES'
-    for ref in IAnnotations(context)[key]:
+    all_references = IAnnotations(context)[key]
+    logger.info('Restoring {0} relations.'.format(
+        len(all_references))
+    )
+    for index, ref in enumerate(all_references):
         source_obj = uuidToObject(ref['from_uuid'])
         target_obj = uuidToObject(ref['to_uuid'])
         relationship = ref['relationship']
@@ -350,6 +354,9 @@ def restore_references(context):
                     '/'.join(context.getPhysicalPath())
                 )
             )
+        if not index % 100:
+            logger.info('Restoring relations: {}/{}'.format(
+                index, len(all_references)))
     del IAnnotations(context)[key]
 
 

@@ -8,6 +8,46 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.0 (2019-06-19)
+------------------
+
+New features:
+
+
+- Support ILeadImage behavior when display collection album view.
+  [rodfersou] (#524)
+- Add more log-messages during migration from AT to DX.
+  [pbauer] (#526)
+
+
+Bug fixes:
+
+
+- Use the shared 'Plone test setup' and 'Plone test teardown' keywords in Robot tests.
+  [Rotonen] (#522)
+
+
+2.0.5 (2019-05-04)
+------------------
+
+Bug fixes:
+
+
+- Move dotted behaviors to named behaviors. [iham] (#519)
+
+
+2.0.4 (2019-04-29)
+------------------
+
+Bug fixes:
+
+
+- Add 'content-core' macro definition to summary_view.pt so it can be reused
+  [petschki] (#514)
+- Speed up traversal to main_template by markling it as a browser-view.
+  [pbauer] (#517)
+
+
 2.0.3 (2019-03-21)
 ------------------
 

@@ -32,12 +32,12 @@
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
-    <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
-    <element value="plone.app.dexterity.behaviors.id.IShortName"/>
-    <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
-    <element value="plone.app.content.interfaces.INameFromTitle"/>
-    <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
-    <element value="plone.app.versioningbehavior.behaviors.IVersionable" />
+    <element value="plone.allowdiscussion" />
+    <element value="plone.shortname" />
+    <element value="plone.dublincore" />
+    <element value="plone.namefromtitle" />
+    <element value="plone.excludefromnavigation" />
+    <element value="plone.versioning" />
   </property>
 
   <!-- View information -->

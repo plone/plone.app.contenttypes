@@ -152,6 +152,7 @@ def enable_shortname_behavior(context):
 def use_new_view_names(context, types_to_fix=None):  # noqa
     """Migrate old view names to new view names."""
     # Don't reload the profile. Only change the settings.
+    logger.info('Start updating view names...')
     portal = getSite()
     portal_types = getToolByName(portal, 'portal_types')
     if types_to_fix is None:
@@ -220,6 +221,7 @@ def use_new_view_names(context, types_to_fix=None):  # noqa
     catalog = getToolByName(portal, 'portal_catalog')
     search = catalog.unrestrictedSearchResults
     for portal_type in types_to_fix:
+        logger.info('Updating view names for {}'.format(portal_type))
         brains = search(portal_type=portal_type)
         objs = _brains2objs(brains)
         for obj in objs:
