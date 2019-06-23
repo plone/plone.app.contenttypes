@@ -66,7 +66,7 @@ setup(name='plone.app.contenttypes',
       extras_require={
           'test': [
               'lxml',
-              'plone.app.robotframework [debug] > 0.9.8',  # create image and file content for Image, File and News Item if not given.  # noqa
+              'plone.app.robotframework [debug] >= 1.5.2',
               'plone.app.testing [robot] >= 4.2.4',  # we need ROBOT_TEST_LEVEL
           ],
           'archetypes': [
