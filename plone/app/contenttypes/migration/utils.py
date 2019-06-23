@@ -475,8 +475,8 @@ def link_items(  # noqa
         modified(source_obj)
         return
 
-    if source_type is 'DX':
-        if target_type is 'AT' and not is_referenceable(source_obj):
+    if source_type == 'DX':
+        if target_type == 'AT' and not is_referenceable(source_obj):
             logger.info(drop_msg % (
                 source_obj.absolute_url(), target_obj.absolute_url()))
             return

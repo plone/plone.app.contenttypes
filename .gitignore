@@ -28,3 +28,4 @@ docs/doctrees
 docs/html
 library-settings.txt
 pip-selfcheck.json
+.python-version

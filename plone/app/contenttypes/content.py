@@ -12,7 +12,10 @@ from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
-from Products.CMFPlone.utils import safe_text
+try:
+    from Products.CMFPlone.utils import safe_text
+except ImportError:
+    from Products.CMFPlone.utils import safe_unicode as safe_text
 from zope.deprecation import deprecation
 from zope.interface import implementer
 from zope.lifecycleevent import modified

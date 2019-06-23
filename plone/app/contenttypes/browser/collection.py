@@ -59,8 +59,7 @@ class CollectionView(FolderView):
             ob = it.getObject()
             if IFolder.providedBy(ob):
                 folders.append(it)
-            elif IImage.providedBy(ob) or \
-                 ILeadImage.providedBy(ob):
+            elif IImage.providedBy(ob) or ILeadImage.providedBy(ob):
                 images.append(it)
         return {'images': images, 'folders': folders}
 

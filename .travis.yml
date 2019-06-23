@@ -17,8 +17,8 @@ before_install:
   - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
   - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
 install:
-  - pip install -U setuptools==18.2
-  - python bootstrap-buildout.py --setuptools-version=18.2 -c travis.cfg
+  - pip install -U setuptools==41.0.1
+  - python bootstrap-buildout.py --setuptools-version=41.0.1 -c travis.cfg
   - bin/buildout -Nc travis.cfg
 before_script:
   - "export DISPLAY=:99.0"

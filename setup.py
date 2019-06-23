@@ -57,6 +57,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.versioningbehavior',
           'plone.app.lockingbehavior',
           'plone.behavior >= 1.3.0',
+          'Products.ZCatalog >= 4.1',  # getAllBrains
           'pytz',
           'plone.app.z3cform>=1.1.0.dev0',
           'six',
@@ -72,7 +73,7 @@ setup(name='plone.app.contenttypes',
               'archetypes.schemaextender',
               'Products.ATContentTypes',
               'Products.contentmigration >= 2.1.8.dev0',
-              'plone.app.referenceablebehavior',
+              'plone.app.referenceablebehavior'
           ],
           'atrefs': [
               'plone.app.referenceablebehavior',
