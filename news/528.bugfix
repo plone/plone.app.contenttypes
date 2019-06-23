@@ -1,0 +1,1 @@
+- Fixed broken tests by refactoring use of deprecated robot keywords
