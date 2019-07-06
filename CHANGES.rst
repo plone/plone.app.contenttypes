@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.1 (2019-07-06)
+------------------
+
+Bug fixes:
+
+
+- Don't test for hard coded image size in test.
+  [agitator] (#527)
+
+
 2.1.0 (2019-06-19)
 ------------------
 
