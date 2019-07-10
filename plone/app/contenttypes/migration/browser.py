@@ -268,7 +268,7 @@ class MigrateFromATContentTypes(BrowserView):
     def stats(self):
         results = {}
         catalog = self.context.portal_catalog
-        for brain in catalog.getAllBrains():
+        for brain in catalog():
             descriptor = '{} ({})'.format(brain.portal_type, brain.meta_type)
             results[descriptor] = results.get(descriptor, 0) + 1
         return results
