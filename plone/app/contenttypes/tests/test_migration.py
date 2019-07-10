@@ -1424,15 +1424,15 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         applyProfile(self.portal, 'plone.app.contenttypes:default')
         migrationview = MigrationView(self.portal, None)
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "{'ATDocument': 2}")
+        self.assertEqual(str(stats), "{'Document (ATDocument)': 2}")
         migrator = self.get_migrator(at_doc1, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "{'Document': 1, 'ATDocument': 1}")
+        self.assertEqual(str(stats), "{'Document (ATDocument)': 2, 'Document (Dexterity Item)': 1}")  # noqa: E501
         migrator = self.get_migrator(at_doc2, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "{'Document': 2}")
+        self.assertEqual(str(stats), "{'Document (ATDocument)': 1, 'Document (Dexterity Item)': 2}")  # noqa: E501
 
     def test_migration_atctypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.atctypes'
@@ -2111,13 +2111,15 @@ class MigrationFunctionalTests(unittest.TestCase):
         self.assertTrue(IDexterityFTI.providedBy(portal_types['News Item']))
         self.assertTrue(qi.is_product_installed('plone.app.contenttypes'))
         self.assertIn('Migration control panel', self.browser.contents)
-        self.assertIn('You currently have <span class="strong">1</span> archetypes objects to be migrated.', self.browser.contents)  # noqa
+        self.assertIn('You currently have <span class="strong">1</span> archetypes objects to be migrated.', self.browser.contents)  # noqa E501
 
     def test_atct_migration_form(self):
         # add some at content:
         self.portal.invokeFactory('Document', 'doc1')
         self.portal.invokeFactory('News Item', 'news1')
         self.portal.invokeFactory('News Item', 'news2')
+        self.portal.invokeFactory('Folder', 'folder')
+        self.portal['folder'].invokeFactory('Document', 'doc2')
         transaction.commit()
         from zExceptions import NotFound
         self.assertRaises(
@@ -2129,16 +2131,19 @@ class MigrationFunctionalTests(unittest.TestCase):
         self.browser.getControl('Install').click()
         # check statistics before
         self.assertIn(
-            'You currently have <span class="strong">3</span> archetypes '
+            'You currently have <span class="strong">5</span> archetypes '
             'objects to be migrated.',
             self.browser.contents,
         )
         widget = 'form.widgets.content_types:list'
         ct_widget = self.browser.getControl(name=widget)
-        self.assertEqual(ct_widget.options, ['Document', 'News Item'])
+        self.assertEqual(
+            ct_widget.options,
+            ['Document', 'Folder', 'News Item'])
         # all types are auto-selected
-        self.assertEqual(ct_widget.value, ['Document', 'News Item'])
+        self.assertEqual(ct_widget.value, ['Document', 'Folder', 'News Item'])
         widget = 'form.widgets.content_types:list'
+        # we only migrate Documents
         self.browser.getControl(name=widget).value = ['Document']
         widget = 'form.widgets.migrate_references:list'
         self.assertEqual(
@@ -2148,13 +2153,37 @@ class MigrationFunctionalTests(unittest.TestCase):
         self.browser.getControl(name='form.buttons.migrate').click()
         from plone.app.contenttypes.interfaces import IDocument
         from plone.app.contenttypes.interfaces import INewsItem
+        from plone.app.contenttypes.interfaces import IFolder
         self.assertTrue(IDocument.providedBy(self.portal['doc1']))
         self.assertFalse(INewsItem.providedBy(self.portal['news1']))
+        self.assertFalse(IFolder.providedBy(self.portal['folder']))
+        self.assertTrue(IDocument.providedBy(self.portal['folder']['doc2']))
         self.assertIn(
             'Congratulations! You migrated from Archetypes to Dexterity.',
             self.browser.contents
         )
-        msg = '<td>ATDocument</td>\n      <td>Document</td>\n      <td>1</td>'
+        msg = '<td>ATDocument</td>\n      <td>Document</td>\n      <td>2</td>'
         self.assertIn(msg, self.browser.contents)
-        msg = '<tr>\n      <td>ATNewsItem</td>\n      <td>2</td>\n    </tr>'
+        msg = '<td>Document (ATDocument)</td>\n      <td>2</td>'
+        self.assertIn(msg, self.browser.contents)
+        msg = '<td>News Item (ATNewsItem)</td>\n      <td>2</td>'
+        self.assertIn(msg, self.browser.contents)
+        msg = '<td>Document (Dexterity Item)</td>\n      <td>2</td>'
+        self.assertIn(msg, self.browser.contents)
+        msg = '<td>News Item (Dexterity Item)</td>\n      <td>2</td>'
+        self.assertNotIn(msg, self.browser.contents)
+        msg = '<td>Folder (Dexterity Container)</td>\n      <td>1</td>'
+        self.assertNotIn(msg, self.browser.contents)
+
+        # we only migrated Document, now we migrate the rest
+        self.browser.getLink('Back to the Migration-Form').click()
+        widget = 'form.widgets.content_types:list'
+        ct_widget = self.browser.getControl(name=widget)
+        self.assertEqual(ct_widget.options, ['Folder', 'News Item'])
+        self.browser.getControl(name='form.buttons.migrate').click()
+        self.assertTrue(INewsItem.providedBy(self.portal['news1']))
+        self.assertTrue(IFolder.providedBy(self.portal['folder']))
+        msg = '<td>News Item (Dexterity Item)</td>\n      <td>2</td>'
+        self.assertIn(msg, self.browser.contents)
+        msg = '<td>Folder (Dexterity Container)</td>\n      <td>1</td>'
         self.assertIn(msg, self.browser.contents)
