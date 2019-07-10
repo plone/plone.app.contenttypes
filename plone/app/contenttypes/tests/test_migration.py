@@ -1428,11 +1428,11 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         migrator = self.get_migrator(at_doc1, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "{'Document (ATDocument)': 2, 'Document (Dexterity Item)': 1}")  # noqa: E501
+        self.assertEqual(str(stats), "{'Document (ATDocument)': 1, 'Document (Dexterity Item)': 1}")  # noqa: E501
         migrator = self.get_migrator(at_doc2, DocumentMigrator)
         migrator.migrate()
         stats = migrationview.stats()
-        self.assertEqual(str(stats), "{'Document (ATDocument)': 1, 'Document (Dexterity Item)': 2}")  # noqa: E501
+        self.assertEqual(str(stats), "{'Document (Dexterity Item)': 2}")
 
     def test_migration_atctypes_vocabulary_registered(self):
         name = 'plone.app.contenttypes.migration.atctypes'
