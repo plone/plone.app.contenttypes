@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.2 (2019-07-18)
+------------------
+
+Bug fixes:
+
+
+- Speedup stats during migration by not waking up all objects.
+  [pbauer] (#529)
+
+
 2.1.1 (2019-07-06)
 ------------------
 

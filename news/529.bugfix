@@ -1,2 +1,0 @@
-Speedup stats during migration by not waking up all objects.
-[pbauer]
