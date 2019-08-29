@@ -21,18 +21,14 @@ setup(name='plone.app.contenttypes',
       version=version,
       description="Default content types for Plone based on Dexterity",
       long_description=long_description,
-      # Get more strings from
-      # https://pypi.python.org/pypi?:action=list_classifiers
+      # Get more strings from https://pypi.org/classifiers/
       classifiers=[
           "Development Status :: 6 - Mature",
           "Framework :: Plone",
           "Framework :: Plone :: 5.1",
-          "Framework :: Plone :: 5.2",
           "License :: OSI Approved :: GNU General Public License (GPL)",
           "Programming Language :: Python",
           "Programming Language :: Python :: 2.7",
-          "Programming Language :: Python :: 3.6",
-          "Programming Language :: Python :: 3.7",
       ],
       keywords='plone content types dexterity',
       author='Plone Foundation',
