@@ -4,18 +4,10 @@ Changelog
 1.4.16 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Support ILeadImage behavior when display collection album view.
   [rodferosu]
-
-Bug fixes:
-
-- *add item here*
 
 
 1.4.15 (2018-10-09)
