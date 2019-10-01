@@ -3,6 +3,7 @@ from plone.app.contenttypes.interfaces import IEvent
 from plone.app.contenttypes.migration.field_migrators import datetime_fixer
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.schema import SCHEMA_CACHE
 from plone.event.utils import default_timezone
 from plone.folder.interfaces import IOrdering
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
@@ -47,6 +48,7 @@ def migrate_to_pa_event(context):
     )
     portal = getSite()
     migrate(portal, DXOldEventMigrator)
+    SCHEMA_CACHE.clear()
 
 
 class DXOldEventMigrator(ContentMigrator):
