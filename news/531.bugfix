@@ -1,0 +1,1 @@
+Clear schema cache after migration step ``migrate_to_pa_event``. [jensens]
