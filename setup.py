@@ -21,8 +21,7 @@ setup(name='plone.app.contenttypes',
       version=version,
       description="Default content types for Plone based on Dexterity",
       long_description=long_description,
-      # Get more strings from
-      # https://pypi.python.org/pypi?:action=list_classifiers
+      # Get more strings from https://pypi.org/classifiers/
       classifiers=[
           "Development Status :: 6 - Mature",
           "Framework :: Plone",
