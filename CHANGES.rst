@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.3 (2019-10-12)
+------------------
+
+Bug fixes:
+
+
+- Clear schema cache after migration step ``migrate_to_pa_event``. [jensens] (#531)
+- Explicitly load zcml of dependencies, instead of using ``includeDependencies``
+  [maurits] (#2952)
+
+
 2.1.2 (2019-07-18)
 ------------------
 
