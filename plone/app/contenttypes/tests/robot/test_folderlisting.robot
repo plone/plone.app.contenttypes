@@ -15,38 +15,64 @@ Test Teardown  Run keywords  Plone test teardown
 
 *** Test cases ***
 
-Scenario: Test listing views
+Scenario: Test folder listing view
     Given I am logged in as site owner
     I disable dropdown navigation
 
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/listing_view
     Then Listing should list contained content
 
+Scenario: Test folder summary view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/summary_view
     Then Listing should list contained content
 
+Scenario: Test folder tabular view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/tabular_view
     Then Listing should list contained content
 
+Scenario: Test folder full view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/full_view
     Then Listing should list contained content in detail
 
+Scenario: Test folder album view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_album/album_view
     Then Album should list contained images and albums
 
-
+Scenario: Test collection listing view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/listing_view
     Then Listing should list all content
 
+Scenario: Test collection summary view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/summary_view
     Then Listing should list all content
 
+Scenario: Test collection tabular view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/tabular_view
     Then Listing should list all content
 
+Scenario: Test collection full view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/full_view
     Then Listing should list all content in detail
 
+Scenario: Test collection album view
+    Given I am logged in as site owner
+    I disable dropdown navigation
     When I Go to  ${PLONE_URL}/${TEST_FOLDER_ID}/test_collection/album_view
     Then Album should list all images and albums
 
