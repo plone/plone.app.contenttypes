@@ -107,15 +107,15 @@ I set the criteria ${type} in row ${number} to the option '${label}'
   Wait until page contains element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
   Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
   Sleep  1.5
-  Focus  css=body
+  Set Focus To Element  css=body
   Wait until element is visible  css=#select2-drop input
   Input Text  css=#select2-drop input  ${label}
   Sleep  1.5
-  Focus  css=body
+  Set Focus To Element  css=body
   Wait until element is visible  css=#select2-drop .select2-match
   Click Element  css=#select2-drop .select2-match
   Sleep  1.5
-  Focus  css=body
+  Set Focus To Element  css=body
 
 I set the criteria ${type} in row ${number} to the options '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
@@ -130,5 +130,5 @@ I set the criteria ${type} in row ${number} to the text '${label}'
   Input text  css=${criteria_row} .querystring-criteria-value input  ${label}\t
   [Documentation]  Shift the focus so the input sticks, and wait a bit
   Sleep  1.5
-  Focus  css=.querystring-sortreverse
+  Set Focus To Element  css=.querystring-sortreverse
   Sleep  1.5
