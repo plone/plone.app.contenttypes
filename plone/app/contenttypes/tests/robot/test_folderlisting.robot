@@ -75,7 +75,7 @@ Listing should list contained content in detail
   Page Should Contain  this is a test document
   Page Should Contain  Test News Item
   Page Should Contain  this is a test news item
-  Xpath Should Match X Times  //img[@title="Test News Item"]  2
+  Page Should Contain Element  //img[@title="Test News Item"]  2
   Page Should Contain  Test Event
   Page Should Contain  this is a test event
   Page Should Contain  Test Collection
@@ -85,29 +85,29 @@ Listing should list contained content in detail
   Page Should Contain  Test File
   Page Should Contain  file.pdf
   Page Should Contain  Test Image
-  Xpath Should Match X Times  //img[@title="Test Image"]  3
+  Page Should Contain Element  //img[@title="Test Image"]  3
   Page Should Contain  Test Album
   Page Should Contain  Test Album Image 1
-  Xpath Should Match X Times  //img[@title="Test Album Image 1"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 1"]  2
   Page Should Contain  Test Album Image 2
-  Xpath Should Match X Times  //img[@title="Test Album Image 2"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 2"]  2
   Page Should Contain  Test Album Image 3
-  Xpath Should Match X Times  //img[@title="Test Album Image 3"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 3"]  2
   Page Should Contain  Test Sub Album
   Page Should Contain  Test Sub Album Image 1
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 1"]  1
+  Page Should Contain Element  //img[@title="Test Sub Album Image 1"]  1
   Page Should Contain  Test Sub Album Image 2
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 2"]  1
+  Page Should Contain Element  //img[@title="Test Sub Album Image 2"]  1
   Page Should Contain  Test Sub Album Image 3
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 3"]  1
+  Page Should Contain Element  //img[@title="Test Sub Album Image 3"]  1
 
 Album should list contained images and albums
   Page Should Contain  Test Album Image 1
-  Xpath Should Match X Times  //img[@title="Test Album Image 1"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 1"]  2
   Page Should Contain  Test Album Image 2
-  Xpath Should Match X Times  //img[@title="Test Album Image 2"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 2"]  2
   Page Should Contain  Test Album Image 3
-  Xpath Should Match X Times  //img[@title="Test Album Image 3"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 3"]  2
   Page Should Contain  Test Sub Album
 
 
@@ -133,7 +133,7 @@ Listing should list all content in detail
   Page Should Contain  this is a test document
   Page Should Contain  Test News Item
   Page Should Contain  this is a test news item
-  Xpath Should Match X Times  //img[@title="Test News Item"]  2
+  Page Should Contain Element  //img[@title="Test News Item"]  2
   Page Should Contain  Test Event
   Page Should Contain  this is a test event
   Page Should Contain  Test Collection
@@ -143,39 +143,39 @@ Listing should list all content in detail
   Page Should Contain  Test File
   Page Should Contain  file.pdf
   Page Should Contain  Test Image
-  Xpath Should Match X Times  //img[@title="Test Image"]  3
+  Page Should Contain Element  //img[@title="Test Image"]  3
   Page Should Contain  Test Album
   Page Should Contain  Test Album Image 1
-  Xpath Should Match X Times  //img[@title="Test Album Image 1"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 1"]  2
   Page Should Contain  Test Album Image 2
-  Xpath Should Match X Times  //img[@title="Test Album Image 2"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 2"]  2
   Page Should Contain  Test Album Image 3
-  Xpath Should Match X Times  //img[@title="Test Album Image 3"]  2
+  Page Should Contain Element  //img[@title="Test Album Image 3"]  2
   Page Should Contain  Test Sub Album
   Page Should Contain  Test Sub Album Image 1
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 1"]  2
+  Page Should Contain Element  //img[@title="Test Sub Album Image 1"]  2
   Page Should Contain  Test Sub Album Image 2
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 2"]  2
+  Page Should Contain Element  //img[@title="Test Sub Album Image 2"]  2
   Page Should Contain  Test Sub Album Image 3
-  Xpath Should Match X Times  //img[@title="Test Sub Album Image 3"]  2
+  Page Should Contain Element  //img[@title="Test Sub Album Image 3"]  2
 
 Album should list all images and albums
   Page Should Contain  Test Image
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Image"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Image"]  1
   Page Should Contain  Test News Item
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test News Item"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test News Item"]  1
   Page Should Contain  Test Album Image 1
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 1"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 1"]  1
   Page Should Contain  Test Album Image 2
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 2"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 2"]  1
   Page Should Contain  Test Album Image 3
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 3"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 3"]  1
   Page Should Contain  Test Sub Album Image 1
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 1"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 1"]  1
   Page Should Contain  Test Sub Album Image 2
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 2"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 2"]  1
   Page Should Contain  Test Sub Album Image 3
-  Xpath Should Match X Times  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 3"]  1
+  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 3"]  1
   Page Should Contain  Test Album
   Page Should Contain  Test Sub Album
   Page Should Contain  Test Folder
