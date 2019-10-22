@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.4 (2019-10-22)
+------------------
+
+Bug fixes:
+
+
+- Robot tests: split big content listing scenario, fix deprecations.
+  [maurits] (#533)
+
+
 2.1.3 (2019-10-12)
 ------------------
 
