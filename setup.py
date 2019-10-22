@@ -25,7 +25,6 @@ setup(name='plone.app.contenttypes',
       classifiers=[
           "Development Status :: 6 - Mature",
           "Framework :: Plone",
-          "Framework :: Plone :: 5.1",
           "Framework :: Plone :: 5.2",
           "License :: OSI Approved :: GNU General Public License (GPL)",
           "Programming Language :: Python",
