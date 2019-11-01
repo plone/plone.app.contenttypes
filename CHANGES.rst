@@ -14,8 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
-
+- In album_listing don't list a folderish item with ILeadImage behavior twice. 
+  Fixes `issue 537 <https://github.com/plone/plone.app.contenttypes/issues/537>`_.
+  [fredvd]
 
 1.4.16 (2019-08-29)
 -------------------

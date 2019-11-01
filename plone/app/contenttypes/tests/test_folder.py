@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes.interfaces import IFolder
+from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING  # noqa
 from plone.app.contenttypes.tests.test_image import dummy_image
@@ -10,10 +11,13 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.testing.z2 import Browser
+from zope.interface import alsoProvides
 from zope.component import createObject
 from zope.component import queryUtility
 
+from plone.dexterity.fti import DexterityFTI
 import unittest
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 
 
 class FolderIntegrationTest(unittest.TestCase):
@@ -193,6 +197,59 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.assertIn(
             '<img src="http://nohost/plone/folder/image1/@@images',
             self.browser.contents)
+
+    def test_folder_album_view_newsitem_ileadimage(self):
+        self.folder.invokeFactory('News Item', id='newsitem1', title='My Newsitem')
+        newsitem1 = self.folder['newsitem1']
+        newsitem1.image = dummy_image()
+        import transaction
+        transaction.commit()
+        self.browser.open(self.folder_url + '/album_view')
+        self.assertIn('My Folder', self.browser.contents)
+        self.assertIn(
+            '<img src="http://nohost/plone/folder/newsitem1/@@images',
+            self.browser.contents)
+
+    def test_folder_album_view_ileadimage_folder(self):
+        fti = DexterityFTI('leadimagefolder')
+        self.portal.portal_types._setObject('leadimagefolder', fti)
+        fti.klass = 'plone.dexterity.content.Container'
+        fti.behaviors = (
+            'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
+            'Products.CMFPlone.interfaces.constrains.ISelectableConstrainTypes'
+        )
+        fti.global_allow = True
+        self.fti = fti
+        alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
+        alsoProvides(self.request, IPloneAppContenttypesLayer)
+        from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+        alsoProvides(self.request, ILeadImage)
+        self.folder.invokeFactory(
+            'leadimagefolder',
+            id='leadimagefolder',
+            title=u'Folder with a lead image'
+        )
+        leadimagefolder = self.folder['leadimagefolder']
+        leadimagefolder.image = dummy_image()
+        #behavior = ISelectableConstrainTypes(leadimagefolder)
+        #behavior.setConstrainTypesMode(-1)
+        #behavior.setLocallyAllowedTypes(['Image'])
+        
+        # add an image to the leadimagefolder
+        import transaction
+        transaction.commit()
+        leadimagefolder.invokeFactory('Image', id='image2', title='Image 2')
+        img2 = self.folder['image2']
+        img2.image = dummy_image()
+        import transaction
+        transaction.commit()
+        self.browser.open(self.folder_url + '/album_view')
+        self.assertIn('My Folder', self.browser.contents)
+        self.assertIn(
+            '<img src="http://nohost/plone/folder/leadimagefolder/@@images',
+            self.browser.contents)
+        self.assertEqual(1, self.browser.contents.count('leadimagefolder/@@images'))
+
 
     def test_list_item_wout_title(self):
         """In content listings, if a content object has no title use it's id.

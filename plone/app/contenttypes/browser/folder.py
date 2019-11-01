@@ -214,7 +214,11 @@ class FolderView(BrowserView):
             batch=False,
             object_provides=provides
         )
-        return images
+        # Only return images if they are not also a folder, otherwise we list them twice.
+        # This can happen when ILeadImage behavior is activated on a folder.
+        album_folder_ids = [f.id for f in self.album_folders]
+        return [i for i in images if i.id not in album_folder_ids]
+        
 
     @property
     @memoize
