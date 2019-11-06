@@ -219,6 +219,7 @@ class FolderViewFunctionalTest(unittest.TestCase):
             'Products.CMFPlone.interfaces.constrains.ISelectableConstrainTypes'
         )
         fti.global_allow = True
+        fti.filter_content_types = False
         self.fti = fti
         alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
         alsoProvides(self.request, IPloneAppContenttypesLayer)
@@ -234,12 +235,12 @@ class FolderViewFunctionalTest(unittest.TestCase):
         #behavior = ISelectableConstrainTypes(leadimagefolder)
         #behavior.setConstrainTypesMode(-1)
         #behavior.setLocallyAllowedTypes(['Image'])
-        
+
         # add an image to the leadimagefolder
         import transaction
         transaction.commit()
         leadimagefolder.invokeFactory('Image', id='image2', title='Image 2')
-        img2 = self.folder['image2']
+        img2 = leadimagefolder['image2']
         img2.image = dummy_image()
         import transaction
         transaction.commit()
