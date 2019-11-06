@@ -216,15 +216,9 @@ class FolderViewFunctionalTest(unittest.TestCase):
         fti.klass = 'plone.dexterity.content.Container'
         fti.behaviors = (
             'plone.app.contenttypes.behaviors.leadimage.ILeadImage',
-            'Products.CMFPlone.interfaces.constrains.ISelectableConstrainTypes'
         )
         fti.global_allow = True
         fti.filter_content_types = False
-        self.fti = fti
-        alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
-        alsoProvides(self.request, IPloneAppContenttypesLayer)
-        from plone.app.contenttypes.behaviors.leadimage import ILeadImage
-        alsoProvides(self.request, ILeadImage)
         self.folder.invokeFactory(
             'leadimagefolder',
             id='leadimagefolder',
@@ -232,9 +226,6 @@ class FolderViewFunctionalTest(unittest.TestCase):
         )
         leadimagefolder = self.folder['leadimagefolder']
         leadimagefolder.image = dummy_image()
-        #behavior = ISelectableConstrainTypes(leadimagefolder)
-        #behavior.setConstrainTypesMode(-1)
-        #behavior.setLocallyAllowedTypes(['Image'])
 
         # add an image to the leadimagefolder
         import transaction
@@ -242,7 +233,6 @@ class FolderViewFunctionalTest(unittest.TestCase):
         leadimagefolder.invokeFactory('Image', id='image2', title='Image 2')
         img2 = leadimagefolder['image2']
         img2.image = dummy_image()
-        import transaction
         transaction.commit()
         self.browser.open(self.folder_url + '/album_view')
         self.assertIn('My Folder', self.browser.contents)
@@ -250,7 +240,6 @@ class FolderViewFunctionalTest(unittest.TestCase):
             '<img src="http://nohost/plone/folder/leadimagefolder/@@images',
             self.browser.contents)
         self.assertEqual(1, self.browser.contents.count('leadimagefolder/@@images'))
-
 
     def test_list_item_wout_title(self):
         """In content listings, if a content object has no title use it's id.
