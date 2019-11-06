@@ -12,6 +12,7 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
+from Products.CMFPlone.utils import get_installer
 from zope.interface import alsoProvides
 
 import pkg_resources
@@ -107,6 +108,11 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         if not TEST_MIGRATION:
             return
+
+        # Uninstall plone.app.contenttypes if already installed
+        qi = get_installer(portal)
+        if qi.is_product_installed('plone.app.contenttypes'):
+            qi.uninstall_product('plone.app.contenttypes')
 
         # install Products.ATContentTypes manually if profile is available
         # (this is only needed for Plone >= 5)
