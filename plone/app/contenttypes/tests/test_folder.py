@@ -16,8 +16,8 @@ from zope.component import createObject
 from zope.component import queryUtility
 
 from plone.dexterity.fti import DexterityFTI
+import transaction
 import unittest
-from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 
 
 class FolderIntegrationTest(unittest.TestCase):
@@ -157,7 +157,6 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.folder = self.portal.folder
         self.folder_url = self.folder.absolute_url()
         self.folder.invokeFactory('Document', id='doc1', title='Document 1')
-        import transaction
         transaction.commit()
         self.browser = Browser(app)
         self.browser.handleErrors = False
@@ -190,7 +189,6 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.folder.invokeFactory('Image', id='image1', title='Image 1')
         img1 = self.folder['image1']
         img1.image = dummy_image()
-        import transaction
         transaction.commit()
         self.browser.open(self.folder_url + '/album_view')
         self.assertIn('My Folder', self.browser.contents)
@@ -202,7 +200,6 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.folder.invokeFactory('News Item', id='newsitem1', title='My Newsitem')
         newsitem1 = self.folder['newsitem1']
         newsitem1.image = dummy_image()
-        import transaction
         transaction.commit()
         self.browser.open(self.folder_url + '/album_view')
         self.assertIn('My Folder', self.browser.contents)
@@ -210,7 +207,70 @@ class FolderViewFunctionalTest(unittest.TestCase):
             '<img src="http://nohost/plone/folder/newsitem1/@@images',
             self.browser.contents)
 
-    def test_folder_album_view_ileadimage_folder(self):
+        # Folder should show up in the portal album view with the news item image.
+        self.browser.open(self.portal_url + '/album_view')
+        browser_no_whitespace = self.browser.contents.replace(" ", "").replace("\n", "")
+        self.assertIn('MyFolder(1)', browser_no_whitespace)
+        self.assertIn('My Newsitem', self.browser.contents)
+        self.assertIn(
+            '<img src="http://nohost/plone/folder/newsitem1/@@images',
+            self.browser.contents)
+
+    def _add_leadimage_to_folder_fti_and_create_folder(self):
+        # Change the Folder FTI to have a leadimage, and create one.
+        fti = self.portal.portal_types.Folder
+        behaviors = list(fti.behaviors)
+        behaviors.append('plone.app.contenttypes.behaviors.leadimage.ILeadImage'),
+        fti.behaviors = tuple(behaviors)
+        self.folder.invokeFactory(
+            'Folder',
+            id='leadimagefolder',
+            title=u'Folder with a lead image'
+        )
+        leadimagefolder = self.folder['leadimagefolder']
+        leadimagefolder.image = dummy_image()
+        transaction.commit()
+        return leadimagefolder
+
+    def test_folder_album_view_ileadimage_folder_without_image_object(self):
+        self._add_leadimage_to_folder_fti_and_create_folder()
+        # The folder with lead image should end up in the album view of the parent folder.
+        # Preferably under images, because it has its own image.
+        self.browser.open(self.folder_url + '/album_view')
+        self.assertIn('Folder with a lead image', self.browser.contents)
+        # If our logic is off, it could end up under folders instead,
+        # with an image count of probably zero.
+        browser_no_whitespace = self.browser.contents.replace(" ", "").replace("\n", "")
+        self.assertNotIn('Folderwithaleadimage(', browser_no_whitespace)
+        self.assertIn(
+            '<img src="http://nohost/plone/folder/leadimagefolder/@@images',
+            self.browser.contents)
+        # But it definitely should not be there twice.
+        self.assertEqual(1, self.browser.contents.count('leadimagefolder/@@images'))
+
+    def test_folder_album_view_ileadimage_folder_with_image_object(self):
+        leadimagefolder = self._add_leadimage_to_folder_fti_and_create_folder()
+
+        # add an image to the leadimagefolder
+        leadimagefolder.invokeFactory('Image', id='image2', title='Image 2')
+        img2 = leadimagefolder['image2']
+        img2.image = dummy_image()
+        transaction.commit()
+
+        # The folder with lead image should end up in the album view of the parent folder.
+        self.browser.open(self.folder_url + '/album_view')
+        self.assertIn('Folder with a lead image', self.browser.contents)
+        # It should be under folders, with an image count.
+        browser_no_whitespace = self.browser.contents.replace(" ", "").replace("\n", "")
+        self.assertIn('Folderwithaleadimage(1)', browser_no_whitespace)
+        self.assertIn(
+            '<img src="http://nohost/plone/folder/leadimagefolder/@@images',
+            self.browser.contents)
+        # The image should be there only once.
+        self.assertEqual(1, self.browser.contents.count('leadimagefolder/@@images'))
+
+    def _create_leadimage_fti_and_folder(self):
+        # Register a folderish FTI with leadimage, and create one.
         fti = DexterityFTI('leadimagefolder')
         self.portal.portal_types._setObject('leadimagefolder', fti)
         fti.klass = 'plone.dexterity.content.Container'
@@ -226,26 +286,52 @@ class FolderViewFunctionalTest(unittest.TestCase):
         )
         leadimagefolder = self.folder['leadimagefolder']
         leadimagefolder.image = dummy_image()
+        transaction.commit()
+        return leadimagefolder
+
+    def test_folder_album_view_ileadimage_custom_folder_without_image_object(self):
+        self._create_leadimage_fti_and_folder()
+        # The folder with lead image should end up in the album view of the parent folder.
+        # Preferably under images, because it has its own image.
+        self.browser.open(self.folder_url + '/album_view')
+        self.assertIn('Folder with a lead image', self.browser.contents)
+        # If our logic is off, it could end up under folders instead,
+        # with an image count of probably zero.
+        # But currently this does not happen, because it is not an IFolder.
+        browser_no_whitespace = self.browser.contents.replace(" ", "").replace("\n", "")
+        self.assertNotIn('Folderwithaleadimage(', browser_no_whitespace)
+        self.assertIn(
+            '<img src="http://nohost/plone/folder/leadimagefolder/@@images',
+            self.browser.contents)
+        # But it definitely should not be there twice.
+        self.assertEqual(1, self.browser.contents.count('leadimagefolder/@@images'))
+
+    def test_folder_album_view_ileadimage_custom_folder_with_image_object(self):
+        leadimagefolder = self._create_leadimage_fti_and_folder()
 
         # add an image to the leadimagefolder
-        import transaction
-        transaction.commit()
         leadimagefolder.invokeFactory('Image', id='image2', title='Image 2')
         img2 = leadimagefolder['image2']
         img2.image = dummy_image()
         transaction.commit()
+
+        # The folder with lead image should end up in the album view of the parent folder.
         self.browser.open(self.folder_url + '/album_view')
-        self.assertIn('My Folder', self.browser.contents)
+        self.assertIn('Folder with a lead image', self.browser.contents)
+        # It should be under folders, with an image count.
+        # But currently this does not happen, because it is not an IFolder.
+        # browser_no_whitespace = self.browser.contents.replace(" ", "").replace("\n", "")
+        # self.assertIn('Folderwithaleadimage(1)', browser_no_whitespace)
         self.assertIn(
             '<img src="http://nohost/plone/folder/leadimagefolder/@@images',
             self.browser.contents)
+        # The image should be there only once.
         self.assertEqual(1, self.browser.contents.count('leadimagefolder/@@images'))
 
     def test_list_item_wout_title(self):
         """In content listings, if a content object has no title use it's id.
         """
         self.folder.invokeFactory('Document', id='doc_wout_title')
-        import transaction
         transaction.commit()
 
         # Document should be shown in listing view (and it's siblings)

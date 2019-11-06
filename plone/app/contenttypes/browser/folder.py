@@ -218,13 +218,17 @@ class FolderView(BrowserView):
         # This can happen when ILeadImage behavior is activated on a folder.
         album_folder_ids = [f.id for f in self.album_folders]
         return [i for i in images if i.id not in album_folder_ids]
-        
 
     @property
     @memoize
     def album_folders(self):
         """Get all folders within this folder.
         """
+        # TODO: we should probably not use IFolder, because this only finds
+        # plone.app.contenttypes folders, not all dexterity containers.
+        # So probably use one of these:
+        # from plone.dexterity.interfaces import IDexterityContainer
+        # from Products.CMFCore.interfaces._content import IFolderish
         images = self.results(
             batch=False,
             object_provides=IFolder.__identifier__
