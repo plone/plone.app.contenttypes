@@ -14,6 +14,9 @@ Changelog
 Bug fixes:
 
 
+- Fix richtext ``getText`` view to use the correct schema interface.
+  [thet]
+
 - Robot tests: split big content listing scenario, fix deprecations.
   [maurits] (#533)
 
