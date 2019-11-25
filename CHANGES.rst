@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.5 (2019-11-25)
+------------------
+
+Bug fixes:
+
+
+- for migration tests uninstall plone.app.contenttypes if previously installed
+  [ericof] (#535)
+
+
 2.1.4 (2019-10-22)
 ------------------
 
