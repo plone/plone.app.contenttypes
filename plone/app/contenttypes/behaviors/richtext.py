@@ -46,4 +46,4 @@ class RichText(object):
 
 
 class WidgetView(WidgetsView):
-    schema = IRichText
+    schema = IRichTextBehavior

@@ -8,6 +8,60 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.5 (2019-11-25)
+------------------
+
+Bug fixes:
+
+
+- for migration tests uninstall plone.app.contenttypes if previously installed
+  [ericof] (#535)
+
+
+2.1.4 (2019-10-22)
+------------------
+
+Bug fixes:
+
+
+- Fix richtext ``getText`` view to use the correct schema interface.
+  [thet]
+
+- Robot tests: split big content listing scenario, fix deprecations.
+  [maurits] (#533)
+
+
+2.1.3 (2019-10-12)
+------------------
+
+Bug fixes:
+
+
+- Clear schema cache after migration step ``migrate_to_pa_event``. [jensens] (#531)
+- Explicitly load zcml of dependencies, instead of using ``includeDependencies``
+  [maurits] (#2952)
+
+
+2.1.2 (2019-07-18)
+------------------
+
+Bug fixes:
+
+
+- Speedup stats during migration by not waking up all objects.
+  [pbauer] (#529)
+
+
+2.1.1 (2019-07-06)
+------------------
+
+Bug fixes:
+
+
+- Don't test for hard coded image size in test.
+  [agitator] (#527)
+
+
 2.1.0 (2019-06-19)
 ------------------
 

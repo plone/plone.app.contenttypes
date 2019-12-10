@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '2.1.1.dev0'
+version = '2.1.6.dev0'
 
 
 def read(*rnames):
@@ -21,12 +21,10 @@ setup(name='plone.app.contenttypes',
       version=version,
       description="Default content types for Plone based on Dexterity",
       long_description=long_description,
-      # Get more strings from
-      # https://pypi.python.org/pypi?:action=list_classifiers
+      # Get more strings from https://pypi.org/classifiers/
       classifiers=[
           "Development Status :: 6 - Mature",
           "Framework :: Plone",
-          "Framework :: Plone :: 5.1",
           "Framework :: Plone :: 5.2",
           "License :: OSI Approved :: GNU General Public License (GPL)",
           "Programming Language :: Python",

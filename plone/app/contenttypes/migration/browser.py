@@ -180,7 +180,8 @@ class MigrateFromATContentTypes(BrowserView):
                 'object_provides': v['iface'].__identifier__,
                 'meta_type': v['old_meta_type'],
             }
-            amount_to_be_migrated = len(catalog(query))
+            amount_to_be_migrated = len(
+                catalog.unrestrictedSearchResults(query))
             starttime_for_current = datetime.now()
             logger.info(
                 'Start migrating {0} objects from {1} to {2}'.format(
@@ -268,11 +269,8 @@ class MigrateFromATContentTypes(BrowserView):
         results = {}
         catalog = self.context.portal_catalog
         for brain in catalog():
-            try:
-                classname = brain.getObject().__class__.__name__
-            except (KeyError, NotFound):
-                continue
-            results[classname] = results.get(classname, 0) + 1
+            descriptor = '{} ({})'.format(brain.portal_type, brain.meta_type)
+            results[descriptor] = results.get(descriptor, 0) + 1
         return results
 
 
