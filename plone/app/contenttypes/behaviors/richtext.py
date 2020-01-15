@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_base
 from plone.app.contenttypes import _
 from plone.app.textfield import RichText as RichTextField
 from plone.app.z3cform.widget import RichTextFieldWidget
@@ -38,7 +39,7 @@ class RichText(object):
 
     @property
     def text(self):
-        return self.context.text
+        return getattr(aq_base(self.context), 'text', '')
 
     @text.setter
     def text(self, value):
