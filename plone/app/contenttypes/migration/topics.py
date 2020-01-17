@@ -426,13 +426,10 @@ class ATRelativePathCriterionConverter(CriterionConverter):
     operator_code = 'string.relativePath'
 
     def get_query_value(self, value, index, criterion):
+        path = criterion.getRelativePath()
         if not criterion.Recurse():
-            logger.warn(
-                'Cannot handle non-recursive path search. '
-                'Allowing recursive search. %r',
-                value,
-            )
-        return criterion.getRelativePath()
+            path = path + '::1'
+        return path
 
 
 class ATSimpleIntCriterionConverter(CriterionConverter):
