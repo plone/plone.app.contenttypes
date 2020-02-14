@@ -1,0 +1,3 @@
+Add a guard in the document.pt template to allow the Document type not to have the RichText
+enforce the behavior enabled.
+[sneridagh]
