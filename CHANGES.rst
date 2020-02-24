@@ -8,6 +8,20 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.6 (2020-02-16)
+------------------
+
+Bug fixes:
+
+
+- Integrate PloneHotFix20200121: add more permission checks.
+  See https://plone.org/security/hotfix/20200121/privilege-escalation-for-overwriting-content
+  [maurits] (#3021)
+- Add a guard in the document.pt template to allow the Document type not to have the RichText
+  enforce the behavior enabled.
+  [sneridagh] (#3047)
+
+
 2.1.5 (2019-11-25)
 ------------------
 
