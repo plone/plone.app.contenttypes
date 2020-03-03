@@ -15,11 +15,11 @@ New features:
 Bug fixes:
 
 - Fix migrating False boolean values, handling of "unset" values. If an AT
-  schema had a `BooleanField` that defaults to `True` and an instance had a
-  value set to `False`, the migration would take that `False` to mean to leave
+  schema had a ``BooleanField`` that defaults to ``True`` and an instance had a
+  value set to ``False``, the migration would take that ``False`` to mean to leave
   the value as unset on the new DX instance which would then get the default
-  `True` value.  Fix this bug by properly handling unset values by checking
-  for `AttributeError`.
+  ``True`` value.  Fix this bug by properly handling unset values by checking
+  for ``AttributeError``.
 
 - Fix folder layout property migration. The default listing_view layout was
   always set if a folder didn't have a layout property (with older content
@@ -30,7 +30,7 @@ Bug fixes:
   a directly set default_page is copied again.
   For Collection also only pick up a directly set layout, don't inherit it
   through Acquisition.
-  see `issue 444 <https://github.com/plone/plone.app.contenttypes/issues/444>`
+  See `issue 444 <https://github.com/plone/plone.app.contenttypes/issues/444>`_.
 
 - When installing the add'on, use portal_languages tool to find the preferred
   language, instead of using a fallback on the Plone Site Root's empty language
@@ -41,10 +41,13 @@ Bug fixes:
   [hvelarde]
 
 - Migrations:
-   - Handle ignore catalog errors where a brain can't find it's object.
-   - Try to delete the layout attribute before setting the layout.
-     Rework parts where the layout is set by always setting the layout.
+
+  - Handle ignore catalog errors where a brain can't find it's object.
+  - Try to delete the layout attribute before setting the layout.
+    Rework parts where the layout is set by always setting the layout.
+
   [thet, backport by fredvd]
+
 
 1.1.6 (2018-03-28)
 ------------------
