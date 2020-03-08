@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+1.1.8 (2020-03-08)
+------------------
+
+Bug fixes:
+
+
+- Integrate PloneHotFix20200121: add more permission checks.
+  See https://plone.org/security/hotfix/20200121/privilege-escalation-for-overwriting-content
+  This was already in release 1.1.7, but this changelog entry was missing.
+  [maurits] (#3021)
+
 
 1.1.7 (2020-03-08)
 ------------------
