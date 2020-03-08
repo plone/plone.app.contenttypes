@@ -4,14 +4,6 @@ Changelog
 1.1.7 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fix migrating False boolean values, handling of "unset" values. If an AT
