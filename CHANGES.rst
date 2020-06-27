@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.6 (2020-06-27)
+------------------
+
+Bug fixes:
+
+
+- plone.app.contenttypes 2.0.x can be used with Plone 5.1 to support the latest plone.app.mosaic release, but it needs a conditional import on safe_unicode instead of safe_text which is only available in Plone 5.2. [fredvd] (#549)
+
+
 2.0.5 (2019-05-04)
 ------------------
 
