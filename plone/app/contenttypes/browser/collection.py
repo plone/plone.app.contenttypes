@@ -77,7 +77,7 @@ class CollectionView(FolderView):
         return self._album_results['folders']
 
     def tabular_fields(self):
-        """Returns a list of all metadata fields from the catalog that were
+        """Return a list of all metadata fields from the catalog that were
            selected.
         """
         context = aq_inner(self.context)
