@@ -1,0 +1,3 @@
+Internationalize selectable columns in collection and tabular view.
+This fixes https://github.com/plone/Products.CMFPlone/issues/2597
+[vincentfretin]

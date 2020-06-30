@@ -37,7 +37,7 @@
               <th class="nosort"
                   i18n:translate=""
                   tal:repeat="field view/tabular_fields"
-                  tal:content="field">Field name</th>
+                  tal:content="python:view.tabular_field_label(field)">Field name</th>
             </tr>
           </thead>
           <tbody tal:define="portal context/@@plone_portal_state/portal;
