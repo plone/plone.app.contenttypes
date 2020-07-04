@@ -3,6 +3,7 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from plone.app.contenttypes import _
 from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+from plone.app.vocabularies.metadatafields import get_field_label
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.event.interfaces import IEvent
@@ -166,6 +167,12 @@ class FolderView(BrowserView):
         if self.show_about:
             ret.append('ModificationDate')
         return ret
+
+    def tabular_field_label(self, field):
+        """Return the internationalized label (Message object) corresponding
+           to the field.
+        """
+        return get_field_label(field)
 
     def tabular_fielddata(self, item, fieldname):
         value = getattr(item, fieldname, '')

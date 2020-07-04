@@ -617,4 +617,4 @@ Contributors
 * Bogdan Girman <bogdan.girman@gmail.com>
 * Martin Opstad Reistadbakk <martin@blaastolen.com>
 * Florent Michon <fmichon@atreal.fr>
-* Héctor Velarde <hector.velarde@gmail.com>
+* Hector Velarde <hector.velarde@gmail.com>

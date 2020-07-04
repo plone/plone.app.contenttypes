@@ -8,6 +8,26 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.8 (2020-06-30)
+------------------
+
+Bug fixes:
+
+
+- Internationalize selectable columns in collection and tabular view.
+  This fixes https://github.com/plone/Products.CMFPlone/issues/2597
+  [vincentfretin] (#559)
+
+
+2.1.7 (2020-04-20)
+------------------
+
+Bug fixes:
+
+
+- Minor packaging updates. (#1)
+
+
 2.1.6 (2020-02-16)
 ------------------
 
