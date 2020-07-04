@@ -303,6 +303,7 @@ def configure_members_folder(portal, target_language):
             description=description,
             language=target_language.replace('_', '-').lower())
         container = addContentToContainer(portal, container)
+        container.setOrdering('unordered')
         container.reindexObject()
 
         # set member search as default layout to Members Area
