@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.9 (2020-07-17)
+------------------
+
+Bug fixes:
+
+
+- Display the image size rounded with 1 decimal digit [ale-rt] (#554)
+- Avoid doing the search twice in listings by reusing the batch variable.
+  [vincentfretin] (#560)
+
+
 2.1.8 (2020-06-30)
 ------------------
 
