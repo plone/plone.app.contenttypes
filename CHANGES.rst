@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+1.1.9 (2020-07-18)
+------------------
+
+Bug fixes:
+
+
+- Avoid doing the search twice in listings by reusing the batch variable.
+  [vincentfretin] (#560)
+
+
 1.1.8 (2020-03-08)
 ------------------
 
