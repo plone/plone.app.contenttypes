@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '1.4.18'
+version = '1.4.19.dev0'
 
 
 def read(*rnames):
