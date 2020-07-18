@@ -1,2 +1,0 @@
-Avoid doing the search twice in listings by reusing the batch variable.
-[vincentfretin]
