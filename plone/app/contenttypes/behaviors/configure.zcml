@@ -72,8 +72,10 @@
     template="richtext_gettext.pt"
     />
 
+  <!-- Register the plone.app.vocabularies.MetadataFields under the old
+       name for backward compatibility. -->
   <utility
-      component=".collection.MetaDataFieldsVocabularyFactory"
+      component="plone.app.vocabularies.metadatafields.MetaDataFieldsVocabularyFactory"
       name="plone.app.contenttypes.metadatafields" />
 
   <adapter factory=".collection.CollectionFeed"

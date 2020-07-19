@@ -8,6 +8,28 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.9 (2020-07-17)
+------------------
+
+Bug fixes:
+
+
+- Display the image size rounded with 1 decimal digit [ale-rt] (#554)
+- Avoid doing the search twice in listings by reusing the batch variable.
+  [vincentfretin] (#560)
+
+
+2.1.8 (2020-06-30)
+------------------
+
+Bug fixes:
+
+
+- Internationalize selectable columns in collection and tabular view.
+  This fixes https://github.com/plone/Products.CMFPlone/issues/2597
+  [vincentfretin] (#559)
+
+
 2.1.7 (2020-04-20)
 ------------------
 

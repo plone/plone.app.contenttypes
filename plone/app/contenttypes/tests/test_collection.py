@@ -64,12 +64,12 @@ class PloneAppCollectionClassTest(unittest.TestCase):
     def test_bbb_selectedViewFields(self):
         self.assertEqual(
             self.collection.selectedViewFields(),
-            [('Title', 'Title'), ('Creator', 'Creator'),
-             ('Type', 'Type'), ('ModificationDate', 'ModificationDate')]
+            [('Title', u'Title'), ('Creator', u'Creator'),
+             ('Type', u'Type'), ('ModificationDate', u'Last modified')]
         )
         self.collection.customViewFields = ['Title', 'Description']
         self.assertEqual(self.collection.selectedViewFields(),
-                         [('Title', 'Title'), ('Description', 'Description')])
+                         [('Title', u'Title'), ('Description', u'Description')])
 
     def test_bbb_setQuery(self):
         self.collection.setQuery(query)

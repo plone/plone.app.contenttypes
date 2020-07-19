@@ -13,26 +13,22 @@ from zope import schema
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.deferredimport import deprecated
 from zope.interface import implementer
 from zope.interface import provider
 from zope.schema.interfaces import IVocabularyFactory
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
 
 
-@implementer(IVocabularyFactory)
-class MetaDataFieldsVocabulary(object):
-
-    def __call__(self, context):
-        cat = getToolByName(context, 'portal_catalog')
-        items = [
-            SimpleTerm(column, column, column)
-            for column in cat.schema()
-        ]
-        return SimpleVocabulary(items)
+deprecated(
+    "Import from plone.app.vocabularies.metadatafields instead (this compatibility layer will be removed in Plone 6)",
+    MetaDataFieldsVocabulary='plone.app.vocabularies.metadatafields:MetaDataFieldsVocabulary',
+)
 
 
-MetaDataFieldsVocabularyFactory = MetaDataFieldsVocabulary()
+deprecated(
+    "Import from plone.app.vocabularies.metadatafields instead (this compatibility layer will be removed in Plone 6)",
+    MetaDataFieldsVocabularyFactory='plone.app.vocabularies.metadatafields:MetaDataFieldsVocabularyFactory',
+)
 
 
 @provider(IFormFieldProvider, ISyndicatable)
@@ -84,7 +80,7 @@ class ICollection(model.Schema):
                       u"'Tabular view' is selected in the display menu."),
         default=['Title', 'Creator', 'Type', 'ModificationDate'],
         value_type=schema.Choice(
-            vocabulary='plone.app.contenttypes.metadatafields'),
+            vocabulary='plone.app.vocabularies.MetadataFields'),
         required=False,
     )
 
@@ -130,7 +126,7 @@ class Collection(object):
         """
         _mapping = {}
         vocab = getUtility(IVocabularyFactory,
-                           name='plone.app.contenttypes.metadatafields')
+                           name='plone.app.vocabularies.MetadataFields')
         for field in vocab(self.context):
             _mapping[field.value] = (field.value, field.title)
         ret = [_mapping[field] for field in self.customViewFields]

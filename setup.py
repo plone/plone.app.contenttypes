@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '2.1.8.dev0'
+version = '2.1.10.dev0'
 
 
 def read(*rnames):
@@ -55,6 +55,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.relationfield',
           'plone.namedfile [blobs] >= 4.2.0',
           'plone.app.versioningbehavior',
+          'plone.app.vocabularies>4.1.2',
           'plone.app.lockingbehavior',
           'plone.behavior >= 1.3.0',
           'pytz',

@@ -24,6 +24,7 @@
   <include package="plone.app.querystring" />
   <include package="plone.app.relationfield" />
   <include package="plone.app.versioningbehavior" />
+  <include package="plone.app.vocabularies" />
   <include package="plone.app.z3cform" />
 
   <include file="profiles.zcml" />
