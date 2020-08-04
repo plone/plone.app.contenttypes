@@ -524,6 +524,8 @@ def migrateCustomAT(fields_mapping,
             is_folderish = getattr(src_obj, 'isPrincipiaFolderish', False)
             src_meta_type = src_obj.meta_type
     else:
+        # fallback
+        is_folderish = False
         # Get info from at-fti
         src_meta_type = fti.content_meta_type
         archetype_tool = getToolByName(portal, 'archetype_tool', None)
@@ -533,6 +535,7 @@ def migrateCustomAT(fields_mapping,
             if info.get('meta_type') == src_meta_type:
                 klass = info.get('klass', None)
                 is_folderish = klass.isPrincipiaFolderish
+                break
 
     migrator = makeCustomATMigrator(context=portal,
                                     src_type=src_type,
