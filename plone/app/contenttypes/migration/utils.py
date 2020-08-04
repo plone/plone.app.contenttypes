@@ -10,7 +10,6 @@ from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.migration.field_migrators import migrate_imagefield
 from plone.app.contenttypes.migration.field_migrators import migrate_simplefield  # noqa
 from plone.app.contenttypes.utils import DEFAULT_TYPES
-from plone.app.discussion.conversation import ANNOTATION_KEY as DISCUSSION_KEY
 from plone.app.discussion.interfaces import IConversation
 from plone.app.linkintegrity.handlers import modifiedArchetype
 from plone.app.linkintegrity.handlers import modifiedDexterity
@@ -28,6 +27,7 @@ from plone.uuid.interfaces import IUUID
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.interfaces.referenceable import IReferenceable
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import DISCUSSION_ANNOTATION_KEY
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.utils import safe_hasattr
 from Products.Five.browser import BrowserView
@@ -151,21 +151,25 @@ def move_comments(source_object, target_object):
     and then removing the comments from the source (not the annotation).
     """
     source_annotations = IAnnotations(source_object)
-    comments = source_annotations.get(DISCUSSION_KEY, None)
+    comments = source_annotations.get(DISCUSSION_ANNOTATION_KEY, None)
     if comments is not None:
         target_annotations = IAnnotations(target_object)
-        if target_annotations.get(DISCUSSION_KEY, None) is not None:
+        if target_annotations.get(DISCUSSION_ANNOTATION_KEY, None) is not None:
             logger.error('Comments exist on {0}').format(
                 target_object.absolute_url())
-        target_annotations[DISCUSSION_KEY] = deepcopy(comments)
+        # reset the parent before copying
+        del comments.__parent__
+        copy_of_comments = deepcopy(comments)
+        copy_of_comments.__parent__ = target_object
+        target_annotations[DISCUSSION_ANNOTATION_KEY] = copy_of_comments
 
-        # Delete comments from the portal where wthey were stored temporarily.
+        # Delete comments from the portal where whey were stored temporarily.
         # Comments on the old objects will be removed with the objects.
         if IPloneSiteRoot.providedBy(source_object):
             source_conversation = IConversation(source_object)
             for comment in source_conversation.getComments():
                 del source_conversation[comment.comment_id]
-            del source_annotations[DISCUSSION_KEY]
+            del source_annotations[DISCUSSION_ANNOTATION_KEY]
 
 
 def copy_contentrules(source_object, target_object):
