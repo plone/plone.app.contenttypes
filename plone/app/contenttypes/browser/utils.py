@@ -9,6 +9,9 @@ from zope.interface import implementer
 from zope.interface import Interface
 
 
+PREFIX = "++resource++mimetype.icons/"
+
+
 class IUtils(Interface):
     """
     """
@@ -21,43 +24,39 @@ class IUtils(Interface):
 
 @implementer(IUtils)
 class Utils(BrowserView):
+    def _get_mimes(self, content_file):
+        # We use 'yield' so iteration can be cut short
+        # if the calling code is happy.
+        context = aq_inner(self.context)
+        mtr = getToolByName(context, "mimetypes_registry")
+        if content_file.contentType:
+            # this gives a tuple
+            for mime in mtr.lookup(content_file.contentType):
+                yield mime
+        if content_file.filename:
+            # this gives a single mime type
+            yield mtr.lookupExtension(content_file.filename)
+        for mime in mtr.lookup("application/octet-stream"):
+            yield mime
 
     @memoize
     def getMimeTypeIcon(self, content_file):
+        # Get possible mime types, and try to find an icon path.
+        # Keep the first one, in case there is no good match.
+        first = None
+        for mime in self._get_mimes(content_file):
+            if first is None:
+                first = mime
+            if hasattr(mime, "icon_path"):
+                icon_path = mime.icon_path
+                if not icon_path.startswith("++"):
+                    icon_path = PREFIX + icon_path
+                return icon_path
+
+        if first is None:
+            # Probably does not happen in practice.
+            return ""
         context = aq_inner(self.context)
-        pstate = getMultiAdapter(
-            (context, self.request),
-            name=u'plone_portal_state'
-        )
+        pstate = getMultiAdapter((context, self.request), name=u"plone_portal_state")
         portal_url = pstate.portal_url()
-        mtr = getToolByName(context, 'mimetypes_registry')
-        mime = []
-        if content_file.contentType:
-            mime.append(mtr.lookup(content_file.contentType))
-        if content_file.filename:
-            mime.append(mtr.lookupExtension(content_file.filename))
-        mime.append(mtr.lookup('application/octet-stream')[0])
-        icon_paths = ['++resource++mimetype.icons/' + m.icon_path
-                      for m in mime if hasattr(m, 'icon_path')]
-        if icon_paths:
-            return icon_paths[0]
-
-        return portal_url + '/' + guess_icon_path(mime[0])
-
-        # function works but is possibly not best implementation. following
-        # code might work for files where the mimetype is not directly
-        # recognized
-
-#        if len(mime) > 0:
-#            icon = portal_url + "/" + guess_icon_path(mime[0])
-#        else:
-#            mime = mtr.lookupExtension(content_file.filename)
-#            if mime <> "":
-#                icon = portal_url + "/" + guess_icon_path(mime)
-#            else:
-#                logger.info(
-#                   "No MimeType Icon found for MimeType: " + \
-#                   str(content_file.contentType)
-#                   )
-#                icon = portal_url + "/application.png"
-#        return icon
+        return portal_url + "/" + guess_icon_path(first)
