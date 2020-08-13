@@ -1,0 +1,3 @@
+Fixed problems in ``getMimeTypeIcon``.
+The contentType of the file was ignored, and icon paths could have a duplicate ``++resource++mimetype.icons/``.
+[maurits]
