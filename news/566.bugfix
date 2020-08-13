@@ -1,2 +1,0 @@
-Handle cases where the __parent__ of a discussion was not set to the migrated DX object.
-[pbauer]

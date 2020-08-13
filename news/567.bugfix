@@ -1,2 +1,0 @@
-In the edge case where the meta_type could not be resolved assume is_folderish being false.
-[pbauer]
