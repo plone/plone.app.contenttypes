@@ -1830,6 +1830,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         at_comment = [i for i in at_comments][0]
         at_plone_uuid = getattr(at_comment, '_plone.uuid')
         at_comment_id = getattr(at_comment, 'comment_id')
+        self.assertEqual(at_conversation.__parent__, at_document)
 
         # migrate
         applyProfile(self.portal, 'plone.app.contenttypes:default')
@@ -1843,6 +1844,7 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
         self.assertFalse(portal_conversation)
         # comments were migrated
         dx_conversation = IConversation(dx_document)
+        self.assertEqual(dx_conversation.__parent__, dx_document)
         self.assertEqual(
             len(dx_conversation),
             1

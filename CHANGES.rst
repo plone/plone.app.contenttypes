@@ -8,6 +8,21 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.10 (2020-08-14)
+-------------------
+
+Bug fixes:
+
+
+- Handle cases where the __parent__ of a discussion was not set to the migrated DX object.
+  [pbauer] (#566)
+- In the edge case where the meta_type could not be resolved assume is_folderish being false.
+  [pbauer] (#567)
+- Fixed problems in ``getMimeTypeIcon``.
+  The contentType of the file was ignored, and icon paths could have a duplicate ``++resource++mimetype.icons/``.
+  [maurits] (#569)
+
+
 2.1.9 (2020-07-17)
 ------------------
 
