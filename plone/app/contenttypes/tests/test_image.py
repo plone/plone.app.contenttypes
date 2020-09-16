@@ -8,7 +8,7 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides

@@ -6,7 +6,7 @@ from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 
 import base64
 import os

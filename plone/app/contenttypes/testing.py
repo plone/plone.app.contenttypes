@@ -11,7 +11,7 @@ from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing import z2
+from plone.testing import zope
 from Products.CMFPlone.utils import get_installer
 from zope.interface import alsoProvides
 
@@ -86,19 +86,19 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
 
         # prepare installing Products.ATContentTypes
         self.loadZCML(package=Products.ATContentTypes)
-        z2.installProduct(app, 'Products.Archetypes')
-        z2.installProduct(app, 'Products.ATContentTypes')
-        z2.installProduct(app, 'plone.app.blob')
+        zope.installProduct(app, 'Products.Archetypes')
+        zope.installProduct(app, 'Products.ATContentTypes')
+        zope.installProduct(app, 'plone.app.blob')
 
         # prepare installing plone.app.collection
         try:
             pkg_resources.get_distribution('plone.app.collection')
-            z2.installProduct(app, 'plone.app.collection')
+            zope.installProduct(app, 'plone.app.collection')
         except pkg_resources.DistributionNotFound:
             pass
 
         # prepare installing plone.app.contenttypes
-        z2.installProduct(app, 'Products.DateRecurringIndex')
+        zope.installProduct(app, 'Products.DateRecurringIndex')
 
         import plone.app.contenttypes
         self.loadZCML(package=plone.app.contenttypes)
@@ -142,12 +142,12 @@ class PloneAppContenttypesMigration(PloneSandboxLayer):
 
         try:
             pkg_resources.get_distribution('plone.app.collection')
-            z2.uninstallProduct(app, 'plone.app.collection')
+            zope.uninstallProduct(app, 'plone.app.collection')
         except pkg_resources.DistributionNotFound:
             pass
-        z2.uninstallProduct(app, 'plone.app.blob')
-        z2.uninstallProduct(app, 'Products.ATContentTypes')
-        z2.uninstallProduct(app, 'Products.Archetypes')
+        zope.uninstallProduct(app, 'plone.app.blob')
+        zope.uninstallProduct(app, 'Products.ATContentTypes')
+        zope.uninstallProduct(app, 'Products.Archetypes')
 
 
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()
@@ -163,7 +163,7 @@ PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE = PloneAppContenttypesRobot()
 PLONE_APP_CONTENTTYPES_ROBOT_TESTING = FunctionalTesting(
     bases=(
         PLONE_APP_CONTENTTYPES_ROBOT_FIXTURE,
-        z2.ZSERVER_FIXTURE
+        zope.WSGI_SERVER_FIXTURE
     ),
     name='PloneAppContenttypes:Robot'
 )

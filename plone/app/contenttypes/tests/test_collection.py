@@ -16,7 +16,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.textfield.value import RichTextValue
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 from transaction import commit
 from zope.component import createObject
 from zope.component import queryUtility
