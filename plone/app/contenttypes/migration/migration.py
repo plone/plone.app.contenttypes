@@ -484,6 +484,7 @@ def migrateCustomAT(fields_mapping,
                     dry_run=False,
                     patch_linkintegrity=False,
                     patch_searchabletext=False,
+                    query=None,
                     ):
     """
     Try to get types infos from archetype_tool, then set a migrator and pass it
@@ -554,6 +555,8 @@ def migrateCustomAT(fields_mapping,
                            'src_meta_type': src_meta_type,
                            'dst_meta_type': '',
                            'use_savepoint': True}
+        if query:
+            walker_settings['query'] = query
         if dry_run:
             walker_settings['limit'] = 1
         walker = CustomQueryWalker(**walker_settings)
