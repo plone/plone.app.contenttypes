@@ -8,7 +8,7 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.interfaces import IPloneFormLayer
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 from zope.component import createObject
 from zope.component import queryUtility
 from zope.interface import alsoProvides
@@ -124,7 +124,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
         scale = self.image.restrictedTraverse('@@images')
         self.assertRegex(
             scale.scale('image', scale='large').tag(),
-            r'<img src="http://nohost/plone/image/@@images/[a-z0-9--]*.svg" alt="My Image" title="My Image" height="[a-z0-9--]*" width="[a-z0-9--]*" />',  # noqa: E501
+            r'<img src="http://nohost/plone/image/@@images/[a-z0-9\-]*.svg" alt="My Image" title="My Image" height="[a-z0-9\-]*" width="[a-z0-9\-]*" />',  # noqa: E501
         )
 
 

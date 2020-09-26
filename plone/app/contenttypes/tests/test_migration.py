@@ -29,7 +29,7 @@ if TEST_MIGRATION:
     from plone.dexterity.interfaces import IDexterityFTI
     from plone.event.interfaces import IEventAccessor
     from plone.namedfile.file import NamedBlobImage
-    from plone.testing.z2 import Browser
+    from plone.testing.zope import Browser
     from Products.CMFCore.utils import getToolByName
     from Products.CMFPlone.utils import get_installer
     from z3c.relationfield import RelationValue
@@ -226,12 +226,12 @@ class MigrateFromATContentTypesTest(unittest.TestCase):
     def test_pae_atevent_is_migrated(self):
         """Can we migrate a plone.app.event AT event?"""
         from DateTime import DateTime
-        from plone.testing import z2
+        from plone.testing import zope
         from plone.app.testing import applyProfile
         from plone.app.contenttypes.migration.migration import migrate_events
 
         # Enable plone.app.event.at
-        z2.installProduct(self.layer['app'], 'plone.app.event.at')
+        zope.installProduct(self.layer['app'], 'plone.app.event.at')
         applyProfile(self.portal, 'plone.app.event.at:default')
 
         self.portal.invokeFactory('Event', 'pae-at-event')

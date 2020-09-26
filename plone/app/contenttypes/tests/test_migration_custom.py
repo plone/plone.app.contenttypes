@@ -17,7 +17,7 @@ if TEST_MIGRATION:
     from plone.app.testing import SITE_OWNER_NAME
     from plone.app.testing import SITE_OWNER_PASSWORD
     from plone.app.testing import TEST_USER_ID
-    from plone.testing.z2 import Browser
+    from plone.testing.zope import Browser
     from Products.CMFCore.utils import getToolByName
     from Products.CMFPlone.utils import safe_unicode
 
