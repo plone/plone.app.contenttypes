@@ -8,6 +8,22 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.0 (2020-09-28)
+------------------
+
+New features:
+
+
+- Allow passing a custom catalog-query to migrateCustomAT to constrain which objects to migrate. [pbauer] (#572)
+
+
+Bug fixes:
+
+
+- Fix various deprecation warnings.
+  [maurits] (#3130)
+
+
 2.1.10 (2020-08-14)
 -------------------
 
