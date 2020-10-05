@@ -36,7 +36,7 @@ class FileIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='File')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_File')
+        self.assertTrue(schema.getName().endswith('_0_File'))
 
     def test_fti(self):
         fti = queryUtility(

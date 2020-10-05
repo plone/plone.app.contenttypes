@@ -32,7 +32,7 @@ class DocumentIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Document')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_Document')
+        self.assertTrue(schema.getName().endswith('_0_Document'))
 
     def test_fti(self):
         fti = queryUtility(

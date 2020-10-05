@@ -31,7 +31,7 @@ class FolderIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Folder')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_Folder')
+        self.assertTrue(schema.getName().endswith('_0_Folder'))
 
     def test_fti(self):
         fti = queryUtility(
