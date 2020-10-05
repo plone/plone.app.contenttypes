@@ -112,7 +112,7 @@ class PloneAppCollectionIntegrationTest(unittest.TestCase):
         fti = queryUtility(IDexterityFTI,
                            name='Collection')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_Collection')
+        self.assertTrue(schema.getName().endswith('_0_Collection'))
 
     def test_fti(self):
         fti = queryUtility(IDexterityFTI,

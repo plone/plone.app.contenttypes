@@ -33,7 +33,7 @@ class EventIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Event')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_Event')
+        self.assertTrue(schema.getName().endswith('_0_Event'))
 
     def test_fti(self):
         fti = queryUtility(
