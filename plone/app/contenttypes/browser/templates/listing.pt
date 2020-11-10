@@ -23,7 +23,7 @@
                          thumb_scale_list view/get_thumb_scale_list;
                          thumb_scale_table view/get_thumb_scale_table;
                          thumb_scale_summary view/get_thumb_scale_summary;
-                         img_class python:'thumb-%s pull-right' % thumb_scale_list;
+                         img_class python:'thumb-%s float-right' % thumb_scale_list;
                          showicons view/show_icons">
       <tal:listing condition="batch">
         <div class="entries" metal:define-slot="entries"
