@@ -29,6 +29,7 @@
         <div class="entries" metal:define-slot="entries"
             tal:define="portal context/@@plone_portal_state/portal;
                         image_scale portal/@@image_scale">
+
           <tal:repeat repeat="item batch" metal:define-macro="entries">
             <tal:block tal:define="obj item/getObject;
                 item_url item/getURL;
@@ -48,36 +49,33 @@
                 item_type_class python:('contenttype-' + view.normalizeString(item_type)) if showicons else '' ;
                 ">
               <metal:block define-slot="entry">
-                <article class="entry">
-                  <header metal:define-macro="listitem" tal:attributes="class python:'vevent' if item_is_event else None">
-                    <span class="summary" tal:attributes="title item_type">
-                      <a tal:condition="python:item_type == 'File' and showicons"
-                         tal:attributes="href item_link;
-                                         class string:$item_type_class $item_wf_state_class url;
-                                         title item_type">
-                         <img class="mime-icon"
-                                tal:attributes="src item/MimeTypeIcon">
-                      </a>
-                      <a tal:attributes="href item_link;
-                                            class string:$item_type_class $item_wf_state_class url;
-                                            title item_type"
-                         tal:content="item_title">Item Title
-                      </a>
-                      <a tal:attributes="href item_link;"
-                         tal:condition="python: item_has_image and thumb_scale_list">
-                         <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class)" />
-                      </a>
-                    </span>
-                    <metal:block metal:define-macro="document_byline">
-                      <div class="documentByLine">
+
+                <article class="mb-3">
+
+                  <div metal:define-macro="listitem">
+
+                      <div class="mb-1">
+                        <a tal:attributes="href item_link; class string:$item_type_class $item_wf_state_class url; title item_type" tal:content="item_title">
+                          Item Title
+                        </a>
+                        <a tal:attributes="href item_link;" tal:condition="python: item_has_image and thumb_scale_list">
+                          <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class)" />
+                        </a>
+                      </div>
+
+                      <metal:block metal:define-macro="document_byline">
+                      <div class="mb-1">
+
                         <tal:event condition="item_is_event">
                           <tal:date tal:replace="structure python:view.formatted_date(obj)"/>
-                          <span tal:condition="item/location" i18n:translate="label_event_byline_location">&mdash;
-                            <span tal:content="string:${item/location}" class="location" i18n:name="location">Oslo</span>,
+                          <span tal:condition="item/location" i18n:translate="label_event_byline_location">
+                            &mdash;
+                            <span tal:content="string:${item/location}" class="location" i18n:name="location">Oslo</span>
                           </span>
-                        </tal:event>
-                        <tal:byline condition="view/show_about">
                           &mdash;
+                        </tal:event>
+
+                        <tal:byline condition="view/show_about">
                           <tal:name tal:condition="item_creator"
                               tal:define="author python:view.pas_member.info(item_creator);
                                           creator_short_form author/username;
@@ -108,16 +106,19 @@
                               Place custom listing info for custom types here
                             </tal:comment>
                           </metal:description>
+
                         </tal:byline>
                       </div>
-                    </metal:block>
-                  </header>
-                  <p class="description discreet"
-                      tal:condition="item_description"
-                      tal:content="item_description">
+                      </metal:block>
+
+                  </div>
+
+                  <p class="mr-3" tal:condition="item_description" tal:content="item_description">
                     description
                   </p>
+
                 </article>
+
               </metal:block>
             </tal:block>
           </tal:repeat>
