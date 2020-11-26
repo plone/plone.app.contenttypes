@@ -129,7 +129,7 @@
                         <div class="testConfig">
                             <input type="submit"
                                    name="form.button.Test"
-                                   class="context"
+                                   class="btn btn-primary"
                                    value="Test configuration"
                                    i18n:attributes="value"
                                    i18n:domain="plone"/>&nbsp;
@@ -140,8 +140,8 @@
             </table>
             <div>
               <br />
-              <input type="submit" name="form.button.Migrate" class="context" value="Migrate" i18n:attributes="value" i18n:domain="plone"/>&nbsp;
-              <input type="submit" name="form.button.Cancel" class="standalone" value="Cancel" i18n:attributes="value" i18n:domain="plone"/>
+              <input type="submit" name="form.button.Migrate" class="btn btn-primary" value="Migrate" i18n:attributes="value" i18n:domain="plone"/>&nbsp;
+              <input type="submit" name="form.button.Cancel" class="btn btn-secondary" value="Cancel" i18n:attributes="value" i18n:domain="plone"/>
             </div>
             </form>
           </div>
