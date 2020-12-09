@@ -41,7 +41,7 @@ class LinkIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Link')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_Link')
+        self.assertTrue(schema.getName().endswith('_0_Link'))
 
     def test_fti(self):
         fti = queryUtility(

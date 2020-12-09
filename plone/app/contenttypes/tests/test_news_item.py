@@ -40,7 +40,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='News Item')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_News_1_Item')
+        self.assertTrue(schema.getName().endswith('_0_News_1_Item'))
 
     def test_fti(self):
         fti = queryUtility(

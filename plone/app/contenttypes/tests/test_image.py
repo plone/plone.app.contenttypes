@@ -45,7 +45,7 @@ class ImageIntegrationTest(unittest.TestCase):
             IDexterityFTI,
             name='Image')
         schema = fti.lookupSchema()
-        self.assertEqual(schema.getName(), 'plone_0_Image')
+        self.assertTrue(schema.getName().endswith('_0_Image'))
 
     def test_fti(self):
         fti = queryUtility(
