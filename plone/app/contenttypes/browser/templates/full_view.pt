@@ -8,18 +8,22 @@
 <body>
 
 <metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core"
-             tal:define="uuid context/@@uuid | nothing">
+<metal:block define-macro="content-core" tal:define="uuid context/@@uuid | nothing">
+
   <metal:listing use-macro="context/@@listing_view/macros/content-core">
-    <!-- we don't want the dl -->
     <metal:entries fill-slot="entries">
+
       <metal:block use-macro="context/@@listing_view/macros/entries">
+
         <metal:entry fill-slot="entry" tal:condition="python: item.UID != uuid">
           <div tal:define="obj item/getObject;" tal:replace="structure obj/@@full_view_item | nothing" />
         </metal:entry>
+
       </metal:block>
+
     </metal:entries>
   </metal:listing>
+
 </metal:block>
 </metal:content-core>
 
