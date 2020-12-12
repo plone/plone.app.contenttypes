@@ -8,40 +8,42 @@
 <body>
 
 <metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core"
-    tal:define="content_type context/file/contentType|nothing;
-                download_url string:${context/absolute_url}/@@download/file/${context/file/filename}">
+<metal:block define-macro="content-core" 
+             tal:define="content_type context/file/contentType|nothing;
+                         mimetype_icon python: 'mimetype-' + content_type;
+                         download_url string:${context/absolute_url}/@@download/file/${context/file/filename}">
 
-    <section id="section-details">
-      <div class="file-info">
-        <span class="meta-icon"
-          tal:define="content_type context/file/contentType|nothing;
-                      content_type_icon view/icon"
-          tal:condition="content_type">
-          <tal:icon tal:replace="structure python:icons.tag(content_type_icon, tag_class='', tag_alt='File')" />
-        </span>
-        <a class="" href="string:${context/absolute_url}/@@download/file/${context/file/filename}" tal:content="context/file/filename">Filename</a>
-        <small class="meta-type text-muted">– <span i18n:translate="image_kind_label" tal:omit-tag="">Type</span>: <span tal:replace="content_type">image/jpeg</span></small>
-        <small class="meta-size text-muted">– <span i18n:translate="image_size_label" tal:omit-tag="">Size</span>: <span tal:define="size context/file/getSize" tal:content="size">1000</span> kB</small>
-      </div>
+  <section id="section-details" class="mb-5">
+    <tal:icon tal:replace="structure python:icons.tag(mimetype_icon)" />
+    <a class="" href="string:${context/absolute_url}/@@download/file/${context/file/filename}" tal:content="context/file/filename">Filename</a>
+    <small class="meta-type text-muted">– <span i18n:translate="image_kind_label" tal:omit-tag="">Type</span>: <span tal:replace="content_type">image/jpeg</span></small>
+    <small class="meta-size text-muted">– <span i18n:translate="image_size_label" tal:omit-tag="">Size</span>: <span tal:define="size context/file/getSize" tal:content="size">1000</span> kB</small>
   </section>
 
-  <tal:comment="nothing">
+  <section id="section-video" tal:condition="view/is_videotype">
+    <h2 i18n:translate="heading_file_video">Video</h2>
+    <video class="w-100" controls="controls">
+      <source src="${download_url}" type="${content_type}"></source>
+      <tal:translation i18n:translate="embedded_video_not_supported">Sorry, your browser doesn't support embedded videos.</tal:translation>
+    </video>
+  </section>
 
-  <video tal:condition="view/is_videotype" controls="controls">
-    <source tal:attributes="src download_url; type content_type"></source>
-  </video>
+  <section id="section-audio" tal:condition="view/is_audiotype">
+    <h2 i18n:translate="heading_file_audio">Audio</h2>
+    <audio class="w-100" controls="controls">
+      <source tal:attributes="src download_url; type content_type"></source>
+      <tal:translation i18n:translate="embedded_audio_not_supported">Sorry, your browser doesn't support embedded audio.</tal:translation>
+    </audio>
+  </section>
 
-  <audio tal:condition="view/is_audiotype" controls="controls">
-    <source tal:attributes="src download_url; type content_type"></source>
-  </audio>
-
-  <div tal:condition="python: content_type.startswith('text')">
+  <section id="section-text" tal:condition="python: content_type.startswith('text')">
     <h2 i18n:translate="heading_file_contents">File contents</h2>
-    <pre tal:content="context/file/data|nothing" />
-  </div>
-
-  <tal:comment/>
+    <div class="card">
+      <div class="card-body">
+        <pre tal:content="context/file/data|nothing" />
+      </div>
+    </div>
+  </section>
 
 </metal:block>
 </metal:content-core>
