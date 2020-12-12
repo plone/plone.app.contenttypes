@@ -76,6 +76,8 @@ I set the collection's relative location criterion to
     I set the criteria operator in row 1 to the option 'Relative path'
     I set the criteria value in row 1 to the text '${criterion}'
 
+    Click Element  form.widgets.IDublinCore.title
+    Sleep  1.5
     Click Button  Save
     Wait until page contains  Changes saved
 
@@ -91,5 +93,7 @@ I set the collection's absolute location criterion to
     I set the criteria operator in row 1 to the option 'Absolute path'
     I set the criteria value in row 1 to the text '${criterion}'
 
+    Click Element  form.widgets.IDublinCore.title
+    Sleep  1.5
     Click Button  Save
     Wait until page contains  Changes saved
