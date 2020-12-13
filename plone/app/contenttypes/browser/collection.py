@@ -86,6 +86,7 @@ class CollectionView(FolderView):
         fields = [field[0] for field in fields]
         return fields
 
+    @property
     def no_items_message(self):
         return _(
             'description_no_results_found',
