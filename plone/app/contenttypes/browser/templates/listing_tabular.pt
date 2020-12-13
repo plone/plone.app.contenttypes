@@ -38,7 +38,6 @@
                                       item_id python:item.getId();
                                       item_title python:item.Title();
                                       item_title python:item_title or item_id;
-                                      item_description python:item.Description();
                                       item_type python:item.PortalType();
                                       item_type_class python:'contenttype/' + view.normalizeString(item_type) if showicons else '';
                                       item_wf_state python:item.review_state();
