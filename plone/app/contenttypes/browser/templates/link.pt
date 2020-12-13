@@ -28,7 +28,7 @@
           </div>
           <div class="card-body text-center">
             <strong i18n:translate="link_address_label">Adresse</strong>
-            <p class="card-text"><a href="" class="stretched-link" tal:attributes="href view/absolute_target_url" tal:content="view/url">remote url</a></p>
+            <p class="card-text"><a href="" class="stretched-link" tal:attributes="href python: view.absolute_target_url()" tal:content="python: view.url()">remote url</a></p>
           </div>
         </div>
       </div>
