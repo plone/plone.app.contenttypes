@@ -19,7 +19,7 @@
 
         <article class="d-flex mb-3">
 
-          <div class="mr-3">
+          <div class="me-3">
 
           <h2 metal:define-macro="listitem">
             <a class="summary url" tal:attributes="href item_link; title item_type" tal:content="item_title">
