@@ -22,7 +22,7 @@
 
       <div class="table-responsive">
 
-        <table class="table table-striped" tal:define="thumb_scale_table view/get_thumb_scale_table; img_class python:'thumb-%s float-right' % thumb_scale_table; showicons  view/show_icons;" summary="Content listing" i18n:attributes="summary summary_content_listing;">
+        <table class="table table-striped" tal:define="thumb_scale_table view/get_thumb_scale_table; img_class python:'thumb-%s float-end' % thumb_scale_table; showicons  view/show_icons;" summary="Content listing" i18n:attributes="summary summary_content_listing;">
 
           <thead>
             <tr>
