@@ -10,12 +10,13 @@
 <metal:content-core fill-slot="content-core">
 <metal:block define-macro="content-core"
              tal:define="content_type python: context.file.contentType;
+                         filename python: context.file.filename;
                          mimetype_icon python: 'mimetype-' + content_type;
-                         download_url string:${context/absolute_url}/@@download/file/${context/file/filename}">
+                         download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename)">
 
   <section id="section-details" class="mb-5">
     <tal:icon tal:replace="structure python:icons.tag(mimetype_icon)" />
-    <a class="" href="string:${context/absolute_url}/@@download/file/${context/file/filename}" tal:content="python: context.file.filename">Filename</a>
+    <a class="" href="${python:download_url}" tal:content="python: filename">Filename</a>
     <small class="meta-type text-muted">– <span i18n:translate="image_kind_label" tal:omit-tag="">Type</span>: <span tal:replace="python: content_type">image/jpeg</span></small>
     <small class="meta-size text-muted">– <span i18n:translate="image_size_label" tal:omit-tag="">Size</span>: <span tal:define="size python: context.file.getSize()" tal:content="python: size">1000</span> kB</small>
   </section>
@@ -23,7 +24,7 @@
   <section id="section-video" tal:condition="python: view.is_videotype()">
     <h2 i18n:translate="heading_file_video">Video</h2>
     <video class="w-100" controls="controls">
-      <source src="${download_url}" type="${content_type}"></source>
+      <source src="${python:download_url}" type="${python:content_type}"></source>
       <tal:translation i18n:translate="embedded_video_not_supported">Sorry, your browser doesn't support embedded videos.</tal:translation>
     </video>
   </section>
