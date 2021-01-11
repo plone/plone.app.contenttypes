@@ -1,0 +1,2 @@
+Catch AttributeError for ``getNextPreviousEnabled`` during migration.
+[maurits]
