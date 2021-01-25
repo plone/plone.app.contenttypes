@@ -15,6 +15,7 @@ from plone.app.linkintegrity.handlers import modifiedArchetype
 from plone.app.linkintegrity.handlers import modifiedDexterity
 from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
+from plone.dexterity.utils import iterSchemataForType
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.contentrules.engine.interfaces import IRuleStorage
 from plone.dexterity.interfaces import IDexterityContent
@@ -34,6 +35,9 @@ from Products.Five.browser import BrowserView
 from Products.GenericSetup.context import DirectoryImportContext
 from Products.GenericSetup.utils import importObjects
 from z3c.relationfield import RelationValue
+from z3c.relationfield.schema import Relation
+from z3c.relationfield.schema import RelationChoice
+from z3c.relationfield.schema import RelationList
 from zc.relation.interfaces import ICatalog
 from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
@@ -486,16 +490,38 @@ def link_items(  # noqa
 
         intids = getUtility(IIntIds)
         to_id = intids.getId(target_obj)
-        existing_dx_relations = getattr(source_obj, fieldname, [])
-        # purge broken relations
-        existing_dx_relations = [
-            i for i in existing_dx_relations if i.to_id is not None]
-
-        if to_id not in [i.to_id for i in existing_dx_relations]:
-            existing_dx_relations.append(RelationValue(to_id))
-            setattr(source_obj, fieldname, existing_dx_relations)
+        # Before we set the fieldname attribute on the source object,
+        # we need to know if this should be a list or a single item.
+        # Might be None at the moment.
+        # We check the field definition.
+        fti = getUtility(IDexterityFTI, name=source_obj.portal_type)
+        field = None
+        for schema in iterSchemataForType(fti):
+            field = schema.get(fieldname, None)
+            if field is not None:
+                break
+        if isinstance(field, RelationList):
+            existing_relations = getattr(source_obj, fieldname, [])
+            if existing_relations is None:
+                existing_relations = []
+            else:
+                # purge broken relations
+                existing_relations = [
+                    i for i in existing_relations if i.to_id is not None]
+            if to_id not in [i.to_id for i in existing_relations]:
+                existing_relations.append(RelationValue(to_id))
+                setattr(source_obj, fieldname, existing_relations)
+                modified(source_obj)
+                return
+            return
+        elif isinstance(field, (Relation, RelationChoice)):
+            setattr(source_obj, fieldname, RelationValue(to_id))
             modified(source_obj)
             return
+
+        # We should never end up here!
+        logger.warning('Ignoring unknown fieldname %s when restoring relation %s from %s to %s',
+            fieldname, relationship, source_obj.absolute_url(), target_obj.absolute_url())
 
 
 def is_referenceable(obj):
