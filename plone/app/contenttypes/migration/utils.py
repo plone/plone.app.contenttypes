@@ -335,12 +335,35 @@ def get_all_references(context):
     return results
 
 
-def restore_references(context):
+def restore_references(context, relationship_fieldname_mapping=None):
     """Recreate all references stored in an annotation on the context.
 
     Iterate over the stored references and restore them all according to
     the content-types framework.
+
+    Accepts an optional relationship_fieldname_mapping argument.
+    This must be a dictionary with a relationship name as key and fieldname as value.
+    For example:
+    relationship_fieldname_mapping =  {
+        'advisory_contact': 'contact',
+        'study_contact': 'contact',
+    }
+    In this case, old Archetypes content types Advisory and Study both had a
+    reference field 'contact' to a content type Contact.
+    This relationship was stored under different names for the two contenttypes.
+    After migration to Dexterity, the above mapping makes sure the relation is still
+    stored on the 'contact' field in both cases.
+    The attribute_name of the RelationValue will be the same as this fieldname,
+    which is what happens by default when setting relations.
+
+    By default we will also map the 'relatesTo' relation to the 'relatedItems' field.
+    This is needed for ATContentTypes.
     """
+    if relationship_fieldname_mapping is None:
+        relationship_fieldname_mapping = {}
+    if 'relatesTo' not in relationship_fieldname_mapping:
+        # ATContentTypes used this relation.
+        relationship_fieldname_mapping['relatesTo'] = 'relatedItems'
     key = 'ALL_REFERENCES'
     all_references = IAnnotations(context)[key]
     logger.info('Restoring {0} relations.'.format(
@@ -352,7 +375,9 @@ def restore_references(context):
         relationship = ref['relationship']
         if source_obj and target_obj:
             relationship = ref['relationship']
-            link_items(context, source_obj, target_obj, relationship)
+            # By default use the relationship as fieldname.  Fall back to the relationship.
+            fieldname = relationship_fieldname_mapping.get(relationship, relationship)
+            link_items(context, source_obj, target_obj, relationship, fieldname)
         else:
             logger.warn(
                 'Could not restore reference from uid '
