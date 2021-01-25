@@ -376,6 +376,10 @@ def link_items(  # noqa
     This uses the field 'relatedItems' and works for Archetypes and Dexterity.
     By passing a fieldname and a relationship it can be used to create
     arbitrary relations.
+
+    Note: for the relatedItems field, Products.ATContentTypes uses 'relatesTo'
+    and plone.app.contenttypes uses 'relatedItems'.
+    We switch between these two, based on the source object.
     """
     # relations from AT to DX and from DX to AT are only possible through
     # the referenceable-behavior:
@@ -386,19 +390,6 @@ def link_items(  # noqa
     if source_obj is target_obj:
         # Thou shalt not relate to yourself.
         return
-
-    # if fieldname != 'relatedItems':
-        # 'relatedItems' is the default field for AT and DX
-        # See plone.app.relationfield.behavior.IRelatedItems for DX and
-        # Products.ATContentTypes.content.schemata.relatedItemsField for AT
-        # They always use these relationships:
-        # 'relatesTo' (Archetpyes) and 'relatedItems' (Dexterity)
-        # Maybe be we should handle custom relations somewhat different?
-
-    if relationship in ['relatesTo', 'relatedItems']:
-        # These are the two default-relationships used by AT and DX
-        # for the field 'relatedItems' respectively.
-        pass
 
     if IDexterityContent.providedBy(source_obj):
         source_type = 'DX'
@@ -411,7 +402,7 @@ def link_items(  # noqa
         target_type = 'AT'
 
     if relationship == referencedRelationship:
-        # 'relatesTo' is the relationship for linkintegrity-relations.
+        # 'isReferencing' is the relationship for linkintegrity-relations.
         # Linkintegrity-relations should automatically be (re)created by
         # plone.app.linkintegrity.handlers.modifiedDexterity or
         # plone.app.linkintegrity.handlers.modifiedArchetype
@@ -425,6 +416,8 @@ def link_items(  # noqa
         return
 
     if source_type == 'AT':
+        if relationship == 'relatedItems':
+            relationship = 'relatesTo'
         # If there is any Archetypes-content there is also the
         # reference_catalog. For a site without AT content this
         # might not be there at all.
@@ -480,6 +473,8 @@ def link_items(  # noqa
         return
 
     if source_type is 'DX':
+        if relationship == 'relatesTo':
+            relationship = 'relatedItems'
         if target_type is 'AT' and not is_referenceable(source_obj):
             logger.info(drop_msg % (
                 source_obj.absolute_url(), target_obj.absolute_url()))
