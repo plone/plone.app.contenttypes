@@ -369,7 +369,7 @@ def restore_references(context, relationship_fieldname_mapping=None):
     logger.info('Restoring {0} relations.'.format(
         len(all_references))
     )
-    for index, ref in enumerate(all_references):
+    for index, ref in enumerate(all_references, 1):
         source_obj = uuidToObject(ref['from_uuid'])
         target_obj = uuidToObject(ref['to_uuid'])
         relationship = ref['relationship']
