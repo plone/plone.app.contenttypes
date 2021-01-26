@@ -188,9 +188,14 @@ class ATCTFolderMigrator(CMFFolderMigrator):
         migrate_leadimage(self.old, self.new)
 
     def migrate_nextprevious(self):
-        if self.old.getNextPreviousEnabled():
-            if INextPreviousToggle.providedBy(self.new):
-                self.new.nextPreviousEnabled = True
+        try:
+            enabled = self.old.getNextPreviousEnabled()
+        except AttributeError:
+            # The old type may not have this.
+            # https://github.com/plone/plone.app.contenttypes/issues/582
+            return
+        if enabled and INextPreviousToggle.providedBy(self.new):
+            self.new.nextPreviousEnabled = True
 
     def last_migrate_comments(self):
         """Migrate the plone.app.discussion comments.

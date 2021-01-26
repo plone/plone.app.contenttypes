@@ -148,7 +148,7 @@ def migrate_filefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
 def migrate_datetimefield(src_obj, dst_obj, src_fieldname, dst_fieldname):
     """Migrate a datefield."""
     old_value = src_obj.getField(src_fieldname).get(src_obj)
-    if old_value == '':
+    if old_value == '' or old_value is None:
         return
     if src_obj.getField('timezone', None) is not None:
         old_timezone = src_obj.getField('timezone').get(src_obj)
