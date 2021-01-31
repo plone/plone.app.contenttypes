@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone.app.contenttypes.behaviors.leadimage import ILeadImage
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
 from plone.app.testing import setRoles
@@ -33,8 +34,6 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.fti = fti
         alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
         alsoProvides(self.request, IPloneAppContenttypesLayer)
-        from plone.app.contenttypes.behaviors.leadimage import ILeadImage
-        alsoProvides(self.request, ILeadImage)
         self.portal.invokeFactory(
             'leadimagefolder',
             id='leadimagefolder',
@@ -79,3 +78,10 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         # But doesn't show up on folder_contents, which is not a default view
         self.browser.open(self.portal_url + '/leadimagefolder/folder_contents')
         self.assertTrue('<div class="leadImage">' not in self.browser.contents)
+
+    def test_lead_image_enables_images_view(self):
+        self.portal.invokeFactory('leadimagefolder', id='foo')
+        self.assertTrue(ILeadImage.providedBy(self.portal.foo))
+        self.assertIsNotNone(
+            self.portal.foo.restrictedTraverse("@@images", None)
+        )

@@ -3,15 +3,15 @@ from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
 from plone.namedfile import field as namedfile
+from plone.namedfile.interfaces import IImageScaleTraversable
 from plone.supermodel import model
 from zope import schema
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import provider
-from zope.interface import Interface
 
 
-class ILeadImage(Interface):
+class ILeadImage(IImageScaleTraversable):
     pass
 
 
