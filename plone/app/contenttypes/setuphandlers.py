@@ -153,18 +153,21 @@ def _setup_constrains(container, allowed_types):
 
 
 def create_frontpage(portal, target_language):
-    if True:
-        title = _translate(
+    changed = False
+    if not portal.title:
+        portal.title = _translate(
             u'front-title',
             target_language,
             u'Welcome to Plone'
         )
-        description = _translate(
+        changed = True
+    if not portal.description:
+        portal.description = _translate(
             u'front-description', target_language,
             u'Congratulations! You have successfully installed Plone.'
         )
-        portal.title= title
-        portal.description = description
+        changed = True
+    if not portal.text:
         front_text = None
         if target_language != 'en':
             util = queryUtility(ITranslationDomain, 'plonefrontpage')
@@ -188,6 +191,8 @@ def create_frontpage(portal, target_language):
             'text/html',
             'text/x-html-safe'
         )
+        changed = True
+    if changed:
         portal.reindexObject()
 
 
