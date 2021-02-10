@@ -42,7 +42,6 @@ I set the collection short name (id) criterion to
     I set the criteria operator in row 1 to the option 'Is'
     I set the criteria value in row 1 to the text '${criterion}'
 
-    Click Element  form.widgets.IDublinCore.title
-    Sleep  1.5
+    Sleep  1
     Click Button  Save
     Wait until page contains  Changes saved

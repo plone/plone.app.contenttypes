@@ -45,6 +45,18 @@ class ContentProfileTestCase(unittest.TestCase):
         self.portal = self.layer['portal']
         self.portal_workflow = getToolByName(self.portal, 'portal_workflow')
 
+    # #################### #
+    #   front-page tests   #
+    # #################### #
+
+    def test_homepage(self):
+        self.assertEqual(self.portal.title, "Welcome to Plone")
+        self.assertEqual(
+            self.portal.description,
+            "Congratulations! You have successfully installed Plone."
+        )
+        self.assertIn("Welcome!", self.portal.text.raw)
+
     # ################# #
     #   Members tests   #
     # ################# #
