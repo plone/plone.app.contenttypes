@@ -81,7 +81,7 @@ class CollectionBehaviorFunctionalTest(unittest.TestCase):
         start = browser.contents.find('content-core')
         # The test string should be within the search results.
         self.assertTrue('Collection Test Page' in
-                        browser.contents[start:start + 1000])
+                        browser.contents[start:start + 2000])
 
     def test_collection_in_edit_form(self):
         browser = self._get_browser()

@@ -74,8 +74,8 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.assertTrue('My image caption' in self.browser.contents)
         self.assertTrue('image.jpg' in self.browser.contents)
 
-        self.assertTrue('<div class="leadImage">' in self.browser.contents)
+        self.assertTrue('<section id="section-leadimage">' in self.browser.contents)
 
         # But doesn't show up on folder_contents, which is not a default view
         self.browser.open(self.portal_url + '/leadimagefolder/folder_contents')
-        self.assertTrue('<div class="leadImage">' not in self.browser.contents)
+        self.assertTrue('<section id="section-leadimage">' not in self.browser.contents)
