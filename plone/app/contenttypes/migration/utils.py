@@ -15,6 +15,7 @@ from plone.app.linkintegrity.handlers import modifiedArchetype
 from plone.app.linkintegrity.handlers import modifiedDexterity
 from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
+from plone.dexterity.utils import iterSchemataForType
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from plone.contentrules.engine.interfaces import IRuleStorage
 from plone.dexterity.interfaces import IDexterityContent
@@ -34,6 +35,9 @@ from Products.Five.browser import BrowserView
 from Products.GenericSetup.context import DirectoryImportContext
 from Products.GenericSetup.utils import importObjects
 from z3c.relationfield import RelationValue
+from z3c.relationfield.schema import Relation
+from z3c.relationfield.schema import RelationChoice
+from z3c.relationfield.schema import RelationList
 from zc.relation.interfaces import ICatalog
 from zExceptions import NotFound
 from zope.annotation.interfaces import IAnnotations
@@ -331,24 +335,49 @@ def get_all_references(context):
     return results
 
 
-def restore_references(context):
+def restore_references(context, relationship_fieldname_mapping=None):
     """Recreate all references stored in an annotation on the context.
 
     Iterate over the stored references and restore them all according to
     the content-types framework.
+
+    Accepts an optional relationship_fieldname_mapping argument.
+    This must be a dictionary with a relationship name as key and fieldname as value.
+    For example:
+    relationship_fieldname_mapping =  {
+        'advisory_contact': 'contact',
+        'study_contact': 'contact',
+    }
+    In this case, old Archetypes content types Advisory and Study both had a
+    reference field 'contact' to a content type Contact.
+    This relationship was stored under different names for the two contenttypes.
+    After migration to Dexterity, the above mapping makes sure the relation is still
+    stored on the 'contact' field in both cases.
+    The attribute_name of the RelationValue will be the same as this fieldname,
+    which is what happens by default when setting relations.
+
+    By default we will also map the 'relatesTo' relation to the 'relatedItems' field.
+    This is needed for ATContentTypes.
     """
+    if relationship_fieldname_mapping is None:
+        relationship_fieldname_mapping = {}
+    if 'relatesTo' not in relationship_fieldname_mapping:
+        # ATContentTypes used this relation.
+        relationship_fieldname_mapping['relatesTo'] = 'relatedItems'
     key = 'ALL_REFERENCES'
     all_references = IAnnotations(context)[key]
     logger.info('Restoring {0} relations.'.format(
         len(all_references))
     )
-    for index, ref in enumerate(all_references):
+    for index, ref in enumerate(all_references, 1):
         source_obj = uuidToObject(ref['from_uuid'])
         target_obj = uuidToObject(ref['to_uuid'])
         relationship = ref['relationship']
         if source_obj and target_obj:
             relationship = ref['relationship']
-            link_items(context, source_obj, target_obj, relationship)
+            # By default use the relationship as fieldname.  Fall back to the relationship.
+            fieldname = relationship_fieldname_mapping.get(relationship, relationship)
+            link_items(context, source_obj, target_obj, relationship, fieldname)
         else:
             logger.warn(
                 'Could not restore reference from uid '
@@ -376,6 +405,10 @@ def link_items(  # noqa
     This uses the field 'relatedItems' and works for Archetypes and Dexterity.
     By passing a fieldname and a relationship it can be used to create
     arbitrary relations.
+
+    Note: for the relatedItems field, Products.ATContentTypes uses 'relatesTo'
+    and plone.app.contenttypes uses 'relatedItems'.
+    We switch between these two, based on the source object.
     """
     # relations from AT to DX and from DX to AT are only possible through
     # the referenceable-behavior:
@@ -386,19 +419,6 @@ def link_items(  # noqa
     if source_obj is target_obj:
         # Thou shalt not relate to yourself.
         return
-
-    # if fieldname != 'relatedItems':
-        # 'relatedItems' is the default field for AT and DX
-        # See plone.app.relationfield.behavior.IRelatedItems for DX and
-        # Products.ATContentTypes.content.schemata.relatedItemsField for AT
-        # They always use these relationships:
-        # 'relatesTo' (Archetpyes) and 'relatedItems' (Dexterity)
-        # Maybe be we should handle custom relations somewhat different?
-
-    if relationship in ['relatesTo', 'relatedItems']:
-        # These are the two default-relationships used by AT and DX
-        # for the field 'relatedItems' respectively.
-        pass
 
     if IDexterityContent.providedBy(source_obj):
         source_type = 'DX'
@@ -411,7 +431,7 @@ def link_items(  # noqa
         target_type = 'AT'
 
     if relationship == referencedRelationship:
-        # 'relatesTo' is the relationship for linkintegrity-relations.
+        # 'isReferencing' is the relationship for linkintegrity-relations.
         # Linkintegrity-relations should automatically be (re)created by
         # plone.app.linkintegrity.handlers.modifiedDexterity or
         # plone.app.linkintegrity.handlers.modifiedArchetype
@@ -425,6 +445,8 @@ def link_items(  # noqa
         return
 
     if source_type == 'AT':
+        if relationship == 'relatedItems':
+            relationship = 'relatesTo'
         # If there is any Archetypes-content there is also the
         # reference_catalog. For a site without AT content this
         # might not be there at all.
@@ -480,6 +502,8 @@ def link_items(  # noqa
         return
 
     if source_type is 'DX':
+        if relationship == 'relatesTo':
+            relationship = 'relatedItems'
         if target_type is 'AT' and not is_referenceable(source_obj):
             logger.info(drop_msg % (
                 source_obj.absolute_url(), target_obj.absolute_url()))
@@ -491,16 +515,38 @@ def link_items(  # noqa
 
         intids = getUtility(IIntIds)
         to_id = intids.getId(target_obj)
-        existing_dx_relations = getattr(source_obj, fieldname, [])
-        # purge broken relations
-        existing_dx_relations = [
-            i for i in existing_dx_relations if i.to_id is not None]
-
-        if to_id not in [i.to_id for i in existing_dx_relations]:
-            existing_dx_relations.append(RelationValue(to_id))
-            setattr(source_obj, fieldname, existing_dx_relations)
+        # Before we set the fieldname attribute on the source object,
+        # we need to know if this should be a list or a single item.
+        # Might be None at the moment.
+        # We check the field definition.
+        fti = getUtility(IDexterityFTI, name=source_obj.portal_type)
+        field = None
+        for schema in iterSchemataForType(fti):
+            field = schema.get(fieldname, None)
+            if field is not None:
+                break
+        if isinstance(field, RelationList):
+            existing_relations = getattr(source_obj, fieldname, [])
+            if existing_relations is None:
+                existing_relations = []
+            else:
+                # purge broken relations
+                existing_relations = [
+                    i for i in existing_relations if i.to_id is not None]
+            if to_id not in [i.to_id for i in existing_relations]:
+                existing_relations.append(RelationValue(to_id))
+                setattr(source_obj, fieldname, existing_relations)
+                modified(source_obj)
+                return
+            return
+        elif isinstance(field, (Relation, RelationChoice)):
+            setattr(source_obj, fieldname, RelationValue(to_id))
             modified(source_obj)
             return
+
+        # We should never end up here!
+        logger.warning('Ignoring unknown fieldname %s when restoring relation %s from %s to %s',
+            fieldname, relationship, source_obj.absolute_url(), target_obj.absolute_url())
 
 
 def is_referenceable(obj):
