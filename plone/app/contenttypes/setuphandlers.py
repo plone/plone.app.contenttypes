@@ -153,47 +153,42 @@ def _setup_constrains(container, allowed_types):
 
 
 def create_frontpage(portal, target_language):
-    changed = False
-    if not portal.title:
-        portal.title = _translate(
-            u'front-title',
-            target_language,
-            u'Welcome to Plone'
-        )
-        changed = True
-    if not portal.description:
-        portal.description = _translate(
-            u'front-description', target_language,
-            u'Congratulations! You have successfully installed Plone.'
-        )
-        changed = True
-    if not portal.text:
-        front_text = None
-        if target_language != 'en':
-            util = queryUtility(ITranslationDomain, 'plonefrontpage')
-            if util is not None:
-                translated_text = util.translate(
-                    u'front-text',
-                    target_language=target_language
-                )
-                if translated_text != u'front-text':
-                    front_text = translated_text
-        request = getattr(portal, 'REQUEST', None)
-        if front_text is None and request is not None:
-            view = queryMultiAdapter(
-                (portal, request),
-                name='plone-frontpage-setup'
+    if portal.text:
+        # Do not overwrite existing content
+        return
+    portal.title = _translate(
+        u'front-title',
+        target_language,
+        u'Welcome to Plone'
+    )
+    portal.description = _translate(
+        u'front-description', target_language,
+        u'Congratulations! You have successfully installed Plone.'
+    )
+    front_text = None
+    if target_language != 'en':
+        util = queryUtility(ITranslationDomain, 'plonefrontpage')
+        if util is not None:
+            translated_text = util.translate(
+                u'front-text',
+                target_language=target_language
             )
-            if view is not None:
-                front_text = bodyfinder(view.index()).strip()
-        portal.text = RichTextValue(
-            front_text,
-            'text/html',
-            'text/x-html-safe'
+            if translated_text != u'front-text':
+                front_text = translated_text
+    request = getattr(portal, 'REQUEST', None)
+    if front_text is None and request is not None:
+        view = queryMultiAdapter(
+            (portal, request),
+            name='plone-frontpage-setup'
         )
-        changed = True
-    if changed:
-        portal.reindexObject()
+        if view is not None:
+            front_text = bodyfinder(view.index()).strip()
+    portal.text = RichTextValue(
+        front_text,
+        'text/html',
+        'text/x-html-safe'
+    )
+    portal.reindexObject()
 
 
 def create_news_topic(portal, target_language):
