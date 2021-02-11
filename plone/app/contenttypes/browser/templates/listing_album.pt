@@ -20,8 +20,8 @@
 
   <tal:images tal:repeat="image images">
     <div class="col mb-5">
-      <div class="card h-100" style="width: 18rem;" tal:define="scale python:image_scale.tag(image, 'image', scale='mini')" tal:condition="scale">
-        <div class="card-image d-flex justify-content-center align-items-center" style="height: 14rem;">
+      <div class="card h-100">
+        <div tal:define="scale python:image_scale.tag(image, 'image', scale='mini')" tal:condition="scale" class="card-image d-flex justify-content-center align-items-center" style="height: 14rem;">
           <img tal:replace="structure scale" />
         </div>
         <div class="card-body">
@@ -35,8 +35,8 @@
 
   <tal:albums tal:repeat="album albums">
     <div class="col mb-5">
-      <div class="card album h-100" style="width: 18rem;" tal:define="scale python:image_scale.tag(album, 'image', scale='mini')" tal:condition="scale">
-        <div class="card-image d-flex justify-content-center align-items-center" style="height: 14rem;">
+      <div class="card album h-100">
+        <div tal:define="scale python:image_scale.tag(album, 'image', scale='mini')" tal:condition="scale" class="card-image d-flex justify-content-center align-items-center" style="height: 14rem;">
           <img tal:replace="structure scale" />
         </div>
         <div class="card-body">
