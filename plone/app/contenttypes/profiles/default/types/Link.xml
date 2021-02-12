@@ -15,7 +15,7 @@
 
   <property name="allow_discussion">False</property>
   <property name="factory">Link</property>
-  <property name="icon_expr"></property>
+  <property name="icon_expr">string:contenttype/link</property>
   <property name="link_target"></property>
 
   <!-- Hierarchy control -->
@@ -75,6 +75,7 @@
       i18n:attributes="title"
       title="View"
       url_expr="string:${object_url}"
+      icon_expr="string:toolbar-action/view"
       visible="True">
     <permission value="View"/>
   </action>
@@ -85,6 +86,7 @@
       i18n:attributes="title"
       title="Edit"
       url_expr="string:${object_url}/edit"
+      icon_expr="string:toolbar-action/edit"
       visible="True">
     <permission value="Modify portal content"/>
   </action>
