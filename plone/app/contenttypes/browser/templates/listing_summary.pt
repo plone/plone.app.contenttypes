@@ -13,46 +13,43 @@
 <metal:block use-macro="context/@@listing_view/macros/content-core">
 
   <metal:entries fill-slot="entries">
-    <metal:block use-macro="context/@@listing_view/macros/entries"
-        tal:define="portal context/@@plone_portal_state/portal;
-                    image_scale portal/@@image_scale">
+    <metal:block use-macro="context/@@listing_view/macros/entries" tal:define="portal context/@@plone_portal_state/portal; image_scale portal/@@image_scale">
+
       <metal:entry fill-slot="entry">
 
-        <article class="tileItem">
-          <h2 class="tileHeadline" metal:define-macro="listitem">
-            <a class="summary url"
-                tal:attributes="href item_link;
-                                title item_type"
-                tal:content="item_title">
+        <article class="d-flex mb-3">
+
+          <div class="me-3">
+
+          <h2 metal:define-macro="listitem">
+            <a class="summary url" tal:attributes="href item_link; title item_type" tal:content="item_title">
               Item Title
             </a>
           </h2>
 
-          <div metal:use-macro="context/@@listing_view/macros/document_byline"></div>
-
-          <div tal:define="thumb_url python:item_url + '/@@images/image/' + thumb_scale_summary;"
-               tal:condition="python: item_has_image and thumb_scale_summary"
-               tal:attributes="class python: 'tileImage' if item_description else 'tileImageNoFloat'">
-            <a tal:attributes="href item_link">
-              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='thumb-' + thumb_scale_summary)" />
-
-            </a>
+          <div class="mb-3">
+            <div metal:use-macro="context/@@listing_view/macros/document_byline"></div>
           </div>
 
-          <div class="tileBody" tal:condition="item_description">
+          <div class="mb-1" tal:condition="item_description">
             <span class="description" tal:content="item_description">
               description
             </span>
           </div>
 
-          <div class="tileFooter">
-            <a tal:attributes="href item_link"
-                i18n:translate="read_more">
+          <div class="mb-1">
+            <a tal:attributes="href item_link" i18n:translate="read_more">
               Read More&hellip;
             </a>
           </div>
 
-          <div class="visualClear"><!-- --></div>
+          </div>
+
+          <div tal:define="thumb_url python:item_url + '/@@images/image/' + thumb_scale_summary;" tal:condition="python: item_has_image and thumb_scale_summary" tal:attributes="class python: 'tileImage' if item_description else 'tileImageNoFloat'">
+            <a tal:attributes="href item_link">
+              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='thumb-' + thumb_scale_summary)" />
+            </a>
+          </div>
 
         </article>
 

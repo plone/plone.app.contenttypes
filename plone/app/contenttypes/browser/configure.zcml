@@ -206,18 +206,6 @@
       permission="zope2.View"
       />
 
-  <configure zcml:condition="installed Products.Archetypes">
-    <browser:viewlet
-      name="archetypes_warning_viewlet"
-      for="Products.Archetypes.interfaces.base.IBaseObject"
-      manager="plone.app.layout.viewlets.interfaces.IAboveContent"
-      class=".viewlets.ATWarningViewlet"
-      template="templates/archetypes_warning_viewlet.pt"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
-      permission="cmf.ModifyPortalContent"
-      />
-  </configure>
-
   <!-- BBB OlD VIEW NAME REGISTRATIONS -->
   <browser:pages
       for="plone.dexterity.interfaces.IDexterityContainer"
