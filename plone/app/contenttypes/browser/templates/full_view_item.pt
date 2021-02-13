@@ -7,35 +7,32 @@
     tal:omit-tag="">
 <body tal:omit-tag="">
 
-  <div class="item visualIEFloatFix"
-      tal:define="item_macro nocall:view/item_macros/content-core|nothing;
-      item_url view/item_url;
-      rendering_error python:[];">
+  <div class="item"
+       tal:define="item_macro nocall:view/item_macros/content-core|nothing;
+                   item_url view/item_url;
+                   rendering_error python:[];">
 
     <div tal:replace="structure provider:plone.abovecontenttitle" />
 
-    <h2 class="headline">
-      <a class="summary url" tal:content="context/Title"
-        tal:attributes="href item_url;">
+    <h1>
+      <a class="summary url" tal:content="context/Title" tal:attributes="href item_url;">
         Title
       </a>
-    </h2>
+    </h1>
 
     <div tal:replace="structure provider:plone.belowcontenttitle" />
 
-    <div class="description"
-        tal:content="context/Description"
-        tal:condition="context/Description">
+    <p class="lead" tal:content="context/Description" tal:condition="context/Description">
       Description
-    </div>
+    </p>
 
-    <tal:block tal:condition="item_macro">
-      <!-- tal:on-error="python:rendering_error.append(True)"-->
+    <section id="section-item" class="mb-5" tal:condition="item_macro">
 
       <div tal:replace="structure provider:plone.abovecontentbody" />
 
       <div tal:define="view nocall:view/default_view;
                        plone_view context/@@plone;
+                       icons python:context.restrictedTraverse('@@iconresolver');
                        portal_state context/@@plone_portal_state;
                        context_state context/@@plone_context_state;
                        plone_layout context/@@plone_layout;
@@ -44,27 +41,26 @@
                        portal_url portal_state/portal_url;
                        checkPermission nocall: context/portal_membership/checkPermission;
                        site_properties context/portal_properties/site_properties;">
+
         <div metal:use-macro="item_macro">
           content
         </div>
+
       </div>
 
       <div tal:replace="structure provider:plone.belowcontentbody" />
 
-    </tal:block>
+    </section>
 
     <tal:block tal:condition="rendering_error">
       <!-- Error rendering item macro -->
     </tal:block>
 
     <p class="more" tal:condition="python:not(item_macro) or rendering_error">
-      <a tal:attributes="href item_url"
-          i18n:translate="read_more">
+      <a tal:attributes="href item_url" i18n:translate="read_more">
         Read More&hellip;
       </a>
     </p>
-
-    <div class="visualClear"><!-- --></div>
 
   </div>
 </body>

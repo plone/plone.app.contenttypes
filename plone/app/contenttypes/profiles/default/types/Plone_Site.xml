@@ -4,6 +4,8 @@
     name="Plone Site"
     xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
+  <property name="icon_expr">string:contenttype/plone</property>
+
   <property name="immediate_view">listing_view</property>
   <property name="default_view">listing_view</property>
   <property name="view_methods">

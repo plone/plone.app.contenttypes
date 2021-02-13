@@ -117,6 +117,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         self.portal_url = self.portal.absolute_url()
+        self.icons = self.portal.restrictedTraverse("@@iconresolver")
         self.browser = Browser(app)
         self.browser.handleErrors = False
         self.browser.addHeader(
@@ -168,7 +169,10 @@ class FileFunctionalTest(unittest.TestCase):
             file_ctl.add_file(f, 'application/pdf', 'file.pdf')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.pdf/view'))
-        self.assertTrue('pdf.png' in self.browser.contents)
+        # check icon
+        self.assertEqual(
+            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-richtext.svg',
+            self._get_icon_url(self.portal["file.pdf"].file.contentType))
 
     def test_alternative_mime_icon_doc_for_file(self):
         mtr = self.portal.mimetypes_registry
@@ -188,7 +192,10 @@ class FileFunctionalTest(unittest.TestCase):
             file_ctl.add_file(f, 'application/msword', 'file.doc')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.doc/view'))
-        self.assertTrue('custom.png' in self.browser.contents)
+        # check icon
+        self.assertEqual(
+            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-code.svg',
+            self._get_icon_url(self.portal["file.doc"].file.contentType))
 
     def test_mime_icon_odt_for_file_(self):
         self.browser.open(self.portal_url)
@@ -207,4 +214,10 @@ class FileFunctionalTest(unittest.TestCase):
                 'file.odt')
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('file.odt/view'))
-        self.assertTrue('application.png' in self.browser.contents)
+        # check icon
+        self.assertEqual(
+            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-code.svg',
+            self._get_icon_url(self.portal["file.odt"].file.contentType))
+
+    def _get_icon_url(self, mime_type):
+        return self.icons.url("mimetype-" + mime_type)

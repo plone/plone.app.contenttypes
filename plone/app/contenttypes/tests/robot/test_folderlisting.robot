@@ -187,24 +187,23 @@ Listing should list all content in detail
 
 Album should list all images and albums
   the content area should contain  Test Image
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Image"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Image"]  1
   the content area should contain  Test News Item
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test News Item"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test News Item"]  1
   the content area should contain  Test Album Image 1
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 1"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Album Image 1"]  1
   the content area should contain  Test Album Image 2
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 2"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Album Image 2"]  1
   the content area should contain  Test Album Image 3
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Album Image 3"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Album Image 3"]  1
   the content area should contain  Test Sub Album Image 1
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 1"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 1"]  1
   the content area should contain  Test Sub Album Image 2
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 2"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 2"]  1
   the content area should contain  Test Sub Album Image 3
-  Page Should Contain Element  //div[@class="photoAlbumEntry" and not(@class="photoAlbumFolder")]//img[@title="Test Sub Album Image 3"]  1
+  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 3"]  1
   the content area should contain  Test Album
   the content area should contain  Test Sub Album
-  the content area should contain  Test Folder
 
 
 Setup Testcontent
