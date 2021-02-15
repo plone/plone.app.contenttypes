@@ -87,4 +87,11 @@
       handler=".upgrades.searchabletext_richtext"
       />
 
+  <genericsetup:upgradeDepends
+      source="1106"
+      destination="1107"
+      profile="plone.app.contenttypes:default"
+      title="Update Type icons"
+      import_steps="typeinfo" />
+
 </configure>
