@@ -8,6 +8,28 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.2 (2021-02-16)
+------------------
+
+Bug fixes:
+
+
+- Various fixes for restoring references:
+
+  - Migrate ``relatesTo`` AT relation to ``relatedItems`` DX relation.
+  - In DX check the schema to see if relation field is list or item.
+    Taken over from `collective.relationhelpers <https://github.com/collective/collective.relationhelpers/>`_.
+  - ``restore_references``: accept ``relationship_fieldname_mapping`` argument.
+    This must be a dictionary with a relationship name as key and fieldname as value, instead of always using ``relatedItems`` as fieldname.
+
+  [maurits] (#510)
+- Catch AttributeError for ``getNextPreviousEnabled`` during migration.
+  [maurits] (#582)
+- migrate_datetimefield: do nothing when old value is None.
+  This fixes ``AttributeError: 'NoneType' object has no attribute 'asdatetime'``.
+  [maurits] (#584)
+
+
 2.2.1 (2020-10-12)
 ------------------
 
