@@ -87,11 +87,18 @@
       handler=".upgrades.searchabletext_richtext"
       />
 
+  <genericsetup:registerProfile name="1007"
+      title="Update bundles"
+      description='Configuration for version 1007'
+      directory="profiles/upgrades/1107"
+      for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
+      provides="Products.GenericSetup.interfaces.EXTENSION" />
+
   <genericsetup:upgradeDepends
       source="1106"
       destination="1107"
       profile="plone.app.contenttypes:default"
       title="Update Type icons"
-      import_steps="typeinfo" />
+      import_profile="plone.app.contenttypes:1007" />
 
 </configure>
