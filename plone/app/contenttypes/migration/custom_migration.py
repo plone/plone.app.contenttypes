@@ -63,7 +63,8 @@ class CustomMigrationForm(BrowserView):
                     raw_message = 'Migration applied successfully for {0} ' \
                         '"{1}" items.'
                     msg = translate(
-                        raw_message.format(res_infos.get('counter'), res_type),
+                        raw_message.format(
+                            res_infos.get('counter'), res_type),
                         domain='plone.app.contenttypes',
                     )
                     messages.add(msg, type=u'info')
@@ -165,14 +166,15 @@ class CustomMigrationForm(BrowserView):
             return results
         for field in schema.fields():
             if not field.getName() in self.at_metadata_fields:
-                translated_label = translate(safe_unicode(field.widget.label))
+                translated_label = translate(
+                    safe_unicode(field.widget.label))
                 results.append(
                     {'id': field.getName(),
                      'title': '{0} ({1})'.format(
                          translated_label,
                          field.getType()
-                     ),
-                     'type': field.getType()}
+                    ),
+                        'type': field.getType()}
                 )
         return results
 
@@ -199,8 +201,8 @@ class CustomMigrationForm(BrowserView):
                      'title': '{0} ({1})'.format(
                          translated_label,
                          field.getType()
-                     ),
-                     'type': field.getType()}
+                    ),
+                        'type': field.getType()}
                 )
         return results
 
@@ -257,6 +259,8 @@ class CustomMigrationForm(BrowserView):
                 form_dx_typename = form[k]
                 at_typename = form_at_typename.replace('_space_', ' ')
                 dx_typename = form_dx_typename.replace('_space_', ' ')
+                # the form_dx_typename should contain _space_  to match the dx_key
+                form_dx_typename.replace(' ', '_space_')
 
                 data[at_typename] = {'target_type': dx_typename,
                                      'field_mapping': []}
@@ -296,7 +300,7 @@ class CustomMigrationForm(BrowserView):
                 dst_type=data[at_typename]['target_type'],
                 dry_run=dry_run,
                 patch_searchabletext=patch_searchabletext,
-                )
+            )
             migration_results.append({'type': at_typename,
                                       'infos': res})
         return migration_results
