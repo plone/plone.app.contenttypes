@@ -192,13 +192,13 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         portal_url = self.portal.absolute_url()
         browser.open(portal_url)
         browser.getLink(url='http://nohost/plone/++add++Collection').click()
-        widget = 'form.widgets.IDublinCore.title'
+        widget = 'form.widgets.title'
         browser.getControl(name=widget).value = 'My collection'
-        widget = 'form.widgets.IDublinCore.description'
+        widget = 'form.widgets.description'
         browser.getControl(name=widget).value = 'This is my collection.'
-        widget = 'form.widgets.IRichTextBehavior.text'
+        widget = 'form.widgets.text'
         browser.getControl(name=widget).value = 'Lorem Ipsum'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         browser.getControl(name=widget).value = 'my-special-collection'
         browser.getControl('Save').click()
         self.assertTrue(browser.url.endswith('my-special-collection/view'))
@@ -442,7 +442,7 @@ class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
     def test_search_result(self):
         view = self.collection.restrictedTraverse('@@edit')
         html = view()
-        self.assertTrue('form-widgets-ICollection-query' in html)
+        self.assertTrue('form-widgets-query' in html)
         # from plone.app.contentlisting.interfaces import IContentListing
         # self.assertTrue(IContentListing.providedBy(view.accessor()))
         # self.assertTrue(getattr(accessor(), 'actual_result_count'))

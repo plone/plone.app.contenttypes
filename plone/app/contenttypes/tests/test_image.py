@@ -151,7 +151,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getControl(name=widget).value = 'My image'
         widget = 'form.widgets.description'
         self.browser.getControl(name=widget).value = 'This is my image.'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')
@@ -168,7 +168,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.getLink('Image').click()
         widget = 'form.widgets.title'
         self.browser.getControl(name=widget).value = 'My image'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         self.browser.getControl(name=widget).value = 'my-special-image.jpg'
         image_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         image_ctl = self.browser.getControl(name='form.widgets.image')

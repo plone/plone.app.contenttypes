@@ -280,11 +280,11 @@ class LinkFunctionalTest(unittest.TestCase):
     def test_add_link(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('Link').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
+        self.browser.getControl(name='form.widgets.title')\
             .value = 'My link'
-        self.browser.getControl(name='form.widgets.IDublinCore.description')\
+        self.browser.getControl(name='form.widgets.description')\
             .value = 'This is my link.'
-        self.browser.getControl(name='form.widgets.IShortName.id')\
+        self.browser.getControl(name='form.widgets.id')\
             .value = 'my-special-link'
         self.browser.getControl(name='form.widgets.remoteUrl.external')\
             .value = 'https://plone.org'

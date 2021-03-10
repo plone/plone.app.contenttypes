@@ -124,13 +124,13 @@ class NewsItemFunctionalTest(unittest.TestCase):
     def test_add_news_item(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('News Item').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
+        self.browser.getControl(name='form.widgets.title')\
             .value = 'My news item'
-        self.browser.getControl(name='form.widgets.IDublinCore.description')\
+        self.browser.getControl(name='form.widgets.description')\
             .value = 'This is my news item.'
-        self.browser.getControl(name='form.widgets.IShortName.id')\
+        self.browser.getControl(name='form.widgets.id')\
             .value = ''
-        self.browser.getControl(name='form.widgets.IRichTextBehavior.text')\
+        self.browser.getControl(name='form.widgets.text')\
             .value = 'Lorem Ipsum'
         self.browser.getControl('Save').click()
 
@@ -142,9 +142,9 @@ class NewsItemFunctionalTest(unittest.TestCase):
     def test_add_news_item_with_shortname(self):
         self.browser.open(self.portal_url)
         self.browser.getLink('News Item').click()
-        self.browser.getControl(name='form.widgets.IDublinCore.title')\
+        self.browser.getControl(name='form.widgets.title')\
             .value = 'My news item'
-        self.browser.getControl(name='form.widgets.IShortName.id')\
+        self.browser.getControl(name='form.widgets.id')\
             .value = 'my-special-news'
         self.browser.getControl('Save').click()
 

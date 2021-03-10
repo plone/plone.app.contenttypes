@@ -57,7 +57,7 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
     def test_toc_viewlet_shows_up(self):
         self.browser.open(self.portal_url + '/tocdoc/edit')
         toc_ctl = self.browser.getControl(
-            name='form.widgets.ITableOfContents.table_of_contents:list'
+            name='form.widgets.table_of_contents:list'
         )
         toc_ctl.value = [u'selected', ]
         # Submit form

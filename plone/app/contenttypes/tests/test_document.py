@@ -102,13 +102,13 @@ class DocumentFunctionalTest(unittest.TestCase):
     def test_add_document(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Document').click()
-        widget = 'form.widgets.IDublinCore.title'
+        widget = 'form.widgets.title'
         self.browser.getControl(name=widget).value = 'My document'
-        widget = 'form.widgets.IDublinCore.description'
+        widget = 'form.widgets.description'
         self.browser.getControl(name=widget).value = 'This is my document.'
-        widget = 'form.widgets.IRichTextBehavior.text'
+        widget = 'form.widgets.text'
         self.browser.getControl(name=widget).value = 'Lorem Ipsum'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         self.browser.getControl(name=widget).value = 'my-special-document'
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-document/view'))

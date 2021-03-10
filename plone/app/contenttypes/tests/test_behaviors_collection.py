@@ -86,13 +86,13 @@ class CollectionBehaviorFunctionalTest(unittest.TestCase):
     def test_collection_in_edit_form(self):
         browser = self._get_browser()
         browser.open(self.portal_url + '/collectioncontainer/edit')
-        control = browser.getControl(name='form.widgets.ICollection.query')
+        control = browser.getControl(name='form.widgets.query')
         self.assertTrue(json.loads(control.value)[0]['v'],
                         'Collection Test Page')
         # The customViewFields field is a 'double' control, with a
         # 'from' and 'to' list.
         from_control = browser.getControl(
-            name='form.widgets.ICollection.customViewFields.from')
+            name='form.widgets.customViewFields.from')
         self.assertEqual(from_control.value, [])
         self.assertTrue('Title' not in from_control.options)
         self.assertTrue('portal_type' not in from_control.options)

@@ -2002,9 +2002,9 @@ class MigrateDexterityBaseClassFunctionalTest(unittest.TestCase):
         # Add default content
         self.browser.open(self.portal_url)
         self.browser.getLink('Page').click()
-        widget = 'form.widgets.IDublinCore.title'
+        widget = 'form.widgets.title'
         self.browser.getControl(name=widget).value = 'My item'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         self.browser.getControl(name=widget).value = 'item'
         self.browser.getControl('Save').click()
 

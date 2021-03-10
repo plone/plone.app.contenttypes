@@ -145,7 +145,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getLink('File').click()
         widget = 'form.widgets.title'
         self.browser.getControl(name=widget).value = 'My file'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         self.browser.getControl(name=widget).value = 'my-special-file'
         file_path = os.path.join(os.path.dirname(__file__), 'image.jpg')
         file_ctl = self.browser.getControl(name='form.widgets.file')

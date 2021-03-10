@@ -144,11 +144,11 @@ class FolderFunctionalTest(unittest.TestCase):
     def test_add_folder(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Folder').click()
-        widget = 'form.widgets.IDublinCore.title'
+        widget = 'form.widgets.title'
         self.browser.getControl(name=widget).value = 'My folder'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         self.browser.getControl(name=widget).value = ''
-        widget = 'form.widgets.IDublinCore.description'
+        widget = 'form.widgets.description'
         self.browser.getControl(name=widget).value = 'This is my folder.'
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-folder/view'))
@@ -158,9 +158,9 @@ class FolderFunctionalTest(unittest.TestCase):
     def test_add_folder_with_shortname(self):
         self.browser.open(self.portal_url)
         self.browser.getLink(url='http://nohost/plone/++add++Folder').click()
-        widget = 'form.widgets.IDublinCore.title'
+        widget = 'form.widgets.title'
         self.browser.getControl(name=widget).value = 'My folder'
-        widget = 'form.widgets.IShortName.id'
+        widget = 'form.widgets.id'
         self.browser.getControl(name=widget).value = 'my-special-folder'
         self.browser.getControl('Save').click()
         self.assertTrue(self.browser.url.endswith('my-special-folder/view'))
