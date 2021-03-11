@@ -52,12 +52,12 @@ Scenario: Test Absolute Location Criterion
 
 a folder '${folder-id}' with a document '${document-title}'
     Go to  ${PLONE_URL}/++add++Folder
-    Wait until page contains element  name=form.widgets.IDublinCore.title
-    Input text  name=form.widgets.IDublinCore.title  ${folder-id}
+    Wait until page contains element  name=form.widgets.title
+    Input text  name=form.widgets.title  ${folder-id}
     Click Button  Save
     Go to  ${PLONE_URL}/${folder-id}/++add++Document
-    Wait until page contains element  name=form.widgets.IDublinCore.title
-    Input text  name=form.widgets.IDublinCore.title  ${document-title}
+    Wait until page contains element  name=form.widgets.title
+    Input text  name=form.widgets.title  ${document-title}
     Click Button  Save
     Wait until page contains  Item created
 

@@ -64,7 +64,7 @@ a news item
   [Arguments]  ${title}
   Go to  ${PLONE_URL}/++add++News Item
   Wait until page contains  Add News Item
-  Input text  name=form.widgets.IDublinCore.title  ${title}
+  Input text  name=form.widgets.title  ${title}
   Click Button  Save
   Wait until page contains  Item created
 
