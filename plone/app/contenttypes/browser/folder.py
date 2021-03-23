@@ -12,10 +12,14 @@ from plone.base.utils import safe_callable
 from plone.event.interfaces import IEvent
 from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
+from Products.CMFPlone import PloneMessageFactory
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.component import queryMultiAdapter
 from zope.contentprovider.interfaces import IContentProvider
+from zope.i18n import translate
+from zope.i18nmessageid import Message
 
 import random
 
@@ -25,6 +29,7 @@ class FolderView(BrowserView):
     _plone_view = None
     _portal_state = None
     _pas_member = None
+    _image_scale = None
 
     @property
     def plone_view(self):
@@ -41,6 +46,15 @@ class FolderView(BrowserView):
                 (self.context, self.request), name="plone_portal_state"
             )
         return self._portal_state
+
+    @property
+    def image_scale(self):
+        if not self._image_scale:
+            portal = self.portal_state.portal()
+            self._image_scale = getMultiAdapter(
+                (portal, self.request), name="image_scale"
+            )
+        return self._image_scale
 
     @property
     def pas_member(self):
@@ -142,7 +156,6 @@ class FolderView(BrowserView):
             )
         return text
 
-    @property
     def tabular_fields(self):
         ret = []
         ret.append("Title")
@@ -157,7 +170,10 @@ class FolderView(BrowserView):
         """Return the internationalized label (Message object) corresponding
         to the field.
         """
-        return get_field_label(field)
+        label = get_field_label(field)
+        if not isinstance(label, Message):
+            return PloneMessageFactory(label)
+        return label
 
     def tabular_fielddata(self, item, fieldname):
         value = getattr(item, fieldname, "")
@@ -183,6 +199,35 @@ class FolderView(BrowserView):
             # 'title': _(fieldname, default=fieldname),
             "value": value
         }
+
+    def render_cells(self, item):
+        result = []
+        icon_cell_view = queryMultiAdapter(
+            (item, self.request), name="tabular-cell-icon"
+        )
+        if icon_cell_view is not None:
+            icon_cell_view.table_view = self
+            result.append(icon_cell_view())
+        for field in self.tabular_fields():
+            if field == "getIcon":
+                continue
+            cell_view = queryMultiAdapter(
+                (item, self.request), name=f"tabular-cell-{field}"
+            )
+            if cell_view is not None:
+                cell_view.table_view = self
+                result.append(cell_view())
+            else:
+                field_data = self.tabular_fielddata(item, field)
+                value = translate(field_data["value"], context=self.request)
+                result.append('<td class="text-nowrap">%s</td>' % value)
+        image_cell_view = queryMultiAdapter(
+            (item, self.request), name="tabular-cell-image"
+        )
+        if image_cell_view is not None:
+            image_cell_view.table_view = self
+            result.append(image_cell_view())
+        return "".join(result)
 
     def is_event(self, obj):
         if getattr(obj, "getObject", False):
@@ -248,6 +293,10 @@ class FolderView(BrowserView):
             return None
         return settings.thumb_scale_table
 
+    @property
+    def img_class(self):
+        return "thumb-%s pull-end" % self.get_thumb_scale_table()
+
     @memoize
     def get_thumb_scale_list(self):
         if getattr(self.context, "suppress_thumbs", False):
@@ -276,3 +325,7 @@ class FolderView(BrowserView):
 
     def show_icons(self):
         return not getattr(self.context, "suppress_icons", False)
+
+    @property
+    def iconresolver(self):
+        return self.context.restrictedTraverse("@@iconresolver")
