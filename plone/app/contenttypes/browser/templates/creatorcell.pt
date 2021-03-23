@@ -1,0 +1,5 @@
+<td>
+  <a tal:condition="view/author"
+      tal:attributes="href string:${view/table_view/navigation_root_url}/author/${context/Creator}"
+      tal:content="view/author_name">Jos Henken</a>
+</td>

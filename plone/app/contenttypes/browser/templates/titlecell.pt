@@ -1,0 +1,19 @@
+<td tal:define="table_view nocall:view/table_view;
+                thumb_scale_table view/table_view/get_thumb_scale_table;">
+  <a tal:condition="python:context.PortalType == 'File' and table_view.show_icons()"
+     tal:attributes="href view/link;
+                     class string:${view/type_class} ${view/wf_state_class} url;
+                     title context/PortalType">
+     <img class="mime-icon"
+          tal:attributes="src context/MimeTypeIcon">
+  </a>
+  <a tal:attributes="href view/link;
+                     class string:${view/type_class} ${view/wf_state_class} url;
+                     title context/PortalType"
+     tal:content="view/title">Item Title
+  </a>
+  <a tal:condition="python:context.getIcon and thumb_scale_table">
+    <img tal:attributes="href view/link"
+         tal:replace="structure view/render_image" />
+  </a>
+</td>

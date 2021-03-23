@@ -15,6 +15,8 @@ from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.contentprovider.interfaces import IContentProvider
+from zope.component import queryMultiAdapter
+from zope.i18n import translate
 
 import random
 
@@ -31,6 +33,7 @@ class FolderView(BrowserView):
     _plone_view = None
     _portal_state = None
     _pas_member = None
+    _image_scale = None
 
     @property
     def plone_view(self):
@@ -49,6 +52,16 @@ class FolderView(BrowserView):
                 name=u'plone_portal_state'
             )
         return self._portal_state
+
+    @property
+    def image_scale(self):
+        if not self._image_scale:
+            portal = self.portal_state.portal()
+            self._image_scale = getMultiAdapter(
+                (portal, self.request),
+                name=u'image_scale'
+            )
+        return self._image_scale
 
     @property
     def pas_member(self):
@@ -189,6 +202,21 @@ class FolderView(BrowserView):
             'value': value
         }
 
+    def render_cells(self, item):
+        result = []
+        for field in self.tabular_fields:
+            if field == 'getIcon':
+                continue
+            cell_view = queryMultiAdapter((item, self.request), name=field)
+            if cell_view is not None:
+                cell_view.table_view = self
+                result.append(cell_view())
+            else:
+                field_data = self.tabular_fielddata(item, field)
+                value = translate(field_data['value'], context=self.request)
+                result.append('<td>%s</td>' % value)
+        return ''.join(result)
+
     def is_event(self, obj):
         if getattr(obj, 'getObject', False):
             obj = obj.getObject()
@@ -264,6 +292,10 @@ class FolderView(BrowserView):
         if settings.no_thumbs_tables:
             return None
         return settings.thumb_scale_table
+
+    @property
+    def img_class(self):
+        return 'thumb-%s pull-right' % self.get_thumb_scale_table()
 
     @memoize
     def get_thumb_scale_list(self):
