@@ -14,31 +14,27 @@
                          mimetype_icon python: 'mimetype-' + content_type;
                          download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename)">
 
-
   <section class="section section-main">
     <div>
-      <tal:icon tal:replace="structure python:icons.tag(mimetype_icon)" />
+      <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
     </div>
-    <div>
-      <a class="" href="${python:download_url}" tal:content="python: filename">Filename</a>
+    <div class="h5 mb-2">
+      <a href="${python:download_url}" tal:content="python: filename">Filename</a>
     </div>
-  </section>
-
-  <section class="section section-metadata">
-    <div class="d-flex justify-content-center text-muted">
-      <div class="ms-3 me-3">
-        <tal:icon tal:replace="structure python:icons.tag('code-square')" />
+    <div class="metadata d-flex justify-content-center text-muted small">
+      <div class="px-2">
+        <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-inline', tag_alt=content_type)" />
         <span tal:replace="python: content_type">image/jpeg</span>
       </div>
-      <div class="ms-3 me-3">
-        <tal:icon tal:replace="structure python:icons.tag('file-binary')" />
+      <div class="px-2">
+        <tal:icon tal:replace="structure python:icons.tag('file-binary', tag_class='icon-inline', tag_alt='Size')" />
         <span tal:define="size python: context.file.getSize()" tal:content="python: size">1000</span> kB
       </div>
     </div>
   </section>
 
   <section class="section section-actions">
-    <a class="btn btn-primary" href="${python:download_url}">Download</a>
+    <a class="btn btn-primary download" href="${python:download_url}">Download</a>
   </section>
 
   <section id="section-video" class="content-section" tal:condition="python: view.is_videotype()">
