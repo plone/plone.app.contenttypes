@@ -13,7 +13,7 @@
 
   <section id="section-text">
     <div id="parent-fieldname-text" class="${python: toc and 'pat-autotoc' or ''}"
-         tal:condition="context/text | nothing"
+         tal:condition="python:getattr(context, 'text', None)"
          tal:content="structure python:context.text.output_relative_to(view.context)">
       Text
     </div>
