@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
+from plone.app.uuid.utils import uuidToObject
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import ITypesSchema
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from urllib.parse import urlparse
 from zope.component import getUtility
 
 import six
@@ -70,6 +72,36 @@ class LinkRedirectView(BrowserView):
             self.context.remoteUrl
         )
         return url
+
+    def display_link(self):
+        """Format the url for display 
+        """
+    
+        url = self.url()
+        if 'resolveuid' in url:
+            uid = url.split('/')[-1]
+            obj = uuidToObject(uid)
+            if obj:
+                title = obj.Title()
+                meta = '/'.join(obj.getPhysicalPath()[2:])
+                if not meta.startswith('/'):
+                    meta = '/' + meta
+                return {
+                    'title': title,
+                    'meta': meta,
+                }
+
+        parsed = urlparse(self.url())
+        if parsed.scheme == 'mailto':
+            return {
+                'title': parsed.path,
+                'meta': '',
+            }
+
+        return {
+                'title': url,
+                'meta': '',
+            }
 
     def absolute_target_url(self):
         """Compute the absolute target URL."""
