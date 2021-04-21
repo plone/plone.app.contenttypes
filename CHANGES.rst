@@ -8,6 +8,39 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a1 (2021-04-20)
+--------------------
+
+Breaking changes:
+
+
+- Update for Plone 6 with Bootstrap markup
+  [agitator, ale-rt, ladplone, mliebischer, pbauer, petschki, santonelli] (#589)
+
+
+Bug fixes:
+
+
+- Various fixes for restoring references:
+
+  - Migrate ``relatesTo`` AT relation to ``relatedItems`` DX relation.
+  - In DX check the schema to see if relation field is list or item.
+    Taken over from `collective.relationhelpers <https://github.com/collective/collective.relationhelpers/>`_.
+  - ``restore_references``: accept ``relationship_fieldname_mapping`` argument.
+    This must be a dictionary with a relationship name as key and fieldname as value, instead of always using ``relatedItems`` as fieldname.
+
+  [maurits] (#510)
+- Use python statements in templates.
+  [pbauer, mliebischer, ladplone] (#579)
+- Catch AttributeError for ``getNextPreviousEnabled`` during migration.
+  [maurits] (#582)
+- migrate_datetimefield: do nothing when old value is None.
+  This fixes ``AttributeError: 'NoneType' object has no attribute 'asdatetime'``.
+  [maurits] (#584)
+- Fix condition in ``document.pt``
+  [petschki] (#596)
+
+
 2.2.1 (2020-10-12)
 ------------------
 
