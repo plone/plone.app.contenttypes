@@ -14,13 +14,6 @@
                          link python: not external and not mail;
                          display_link python: view.display_link()">
 
-  <!-- <div class="alert alert-primary mb-4" role="alert" tal:define="redirect_links python:context.portal_registry['plone.redirect_links']" tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
-    <strong i18n:translate="">Info</strong>
-    <span tal:omit-tag="" i18n:translate="message_permissions_blocking_link_redirect">
-      You see this page because you have permission to edit this link.
-      Others will be immediately redirected to the link's target URL.
-    </span>
-  </div> -->
 
   <section class="section section-main">
     <div>
@@ -38,6 +31,15 @@
     <div class="metadata d-flex justify-content-center text-muted small"
         tal:condition="python: display_link['meta']">
       <div tal:replace="python: display_link['meta']"></div>
+    </div>
+
+    <div class="info-redirect small text-muted mt-4" 
+      tal:define="redirect_links python:context.portal_registry['plone.redirect_links']" 
+      tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
+      <span tal:omit-tag="" i18n:translate="message_permissions_blocking_link_redirect">
+        You see this page because you have permission to edit this link.
+        Others will be immediately redirected to the link's target URL.
+      </span>
     </div>
 
   </section>
