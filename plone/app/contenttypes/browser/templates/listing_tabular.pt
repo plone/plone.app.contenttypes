@@ -28,7 +28,7 @@
             <tr>
               <th class="text-nowrap"></th>
               <th class="text-nowrap" tal:repeat="field tabular_fields" tal:content="python:view.tabular_field_label(field)">Field name</th>
-              <th class="text-nowrap" i18n:translate="image">Image</th>
+              <th class="text-nowrap" i18n:translate="image" tal:condition="python:thumb_scale_table">Image</th>
             </tr>
           </thead>
 
