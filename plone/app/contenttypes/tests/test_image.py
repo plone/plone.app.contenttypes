@@ -192,7 +192,7 @@ class ImageFunctionalTest(unittest.TestCase):
         with io.FileIO(image_path, 'rb') as f:
             image_ctl.add_file(f, 'image/png', 'image.jpg')
         self.browser.getControl('Save').click()
-        self.browser.getLink('Click to view full-size image').click()
+        self.browser.getLink(url='/image_view_fullscreen').click()
         self.assertTrue(
             self.browser.url.endswith('image.jpg/image_view_fullscreen')
         )
