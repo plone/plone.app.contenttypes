@@ -91,7 +91,7 @@ class LinkRedirectView(BrowserView):
                     'meta': meta,
                 }
 
-        parsed = urlparse(url())
+        parsed = urlparse(url)
         if parsed.scheme == 'mailto':
             return {
                 'title': parsed.path,
