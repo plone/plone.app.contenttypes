@@ -1,3 +1,0 @@
-migrate_datetimefield: do nothing when old value is None.
-This fixes ``AttributeError: 'NoneType' object has no attribute 'asdatetime'``.
-[maurits]

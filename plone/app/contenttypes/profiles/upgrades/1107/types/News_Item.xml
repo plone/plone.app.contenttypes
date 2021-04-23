@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<object
+    i18n:domain="plone"
+    meta_type="Dexterity FTI"
+    name="News Item"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+  <property name="icon_expr">string:contenttype/news-item</property>
+
+  <action
+      title="View"
+      action_id="view"
+      icon_expr="string:toolbar-action/view" />
+
+  <action
+      title="Edit"
+      action_id="edit"
+      icon_expr="string:toolbar-action/edit" />
+
+</object>
