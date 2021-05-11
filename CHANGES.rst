@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a2 (2021-05-11)
+--------------------
+
+New features:
+
+
+- Rework contenttype views.
+  [agitator] (#598)
+
+
 3.0.0a1 (2021-04-20)
 --------------------
 

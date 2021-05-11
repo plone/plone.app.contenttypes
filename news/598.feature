@@ -1,2 +1,0 @@
-Rework contenttype views.
-[agitator]
