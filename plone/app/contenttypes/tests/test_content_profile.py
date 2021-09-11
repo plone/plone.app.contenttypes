@@ -49,22 +49,13 @@ class ContentProfileTestCase(unittest.TestCase):
     #   front-page tests   #
     # #################### #
 
-    def test_frontpage_was_created(self):
-        # Was the object created?
-        obj = self.portal['front-page']
-        self.assertEqual(obj.portal_type, 'Document')
-
-    def test_frontpage_is_default_page(self):
-        # Has the object been set on the container as the default page?
-        self.assertEqual(self.portal.default_page, 'front-page')
-
-    def test_frontpage_is_published(self):
-        # Has the content object been published?
-        front_page = self.portal['front-page']
-        current_state = self.portal_workflow.getInfoFor(
-            front_page,
-            'review_state')
-        self.assertEqual(current_state, 'published')
+    def test_homepage(self):
+        self.assertEqual(self.portal.title, "Welcome to Plone")
+        self.assertEqual(
+            self.portal.description,
+            "Congratulations! You have successfully installed Plone."
+        )
+        self.assertIn("Welcome!", self.portal.text.raw)
 
     # ################# #
     #   Members tests   #
