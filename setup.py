@@ -45,7 +45,6 @@ setup(
     zip_safe=False,
     install_requires=[
         "setuptools",
-        "Products.CMFPlone",
         "plone.app.contentmenu",
         "plone.app.event >= 2.0a4",
         "plone.app.dexterity >= 2.0.7",  # has a fix for INameFromFilename
