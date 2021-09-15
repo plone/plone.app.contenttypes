@@ -1,3 +1,0 @@
-Removed autoinclude entry point.
-No longer needed, since ``Products.CMFPlone`` explicitly includes our zcml.
-[maurits]

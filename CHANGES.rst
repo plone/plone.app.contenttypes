@@ -8,6 +8,28 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a3 (2021-09-15)
+--------------------
+
+Breaking changes:
+
+
+- Plone Site is now a DX container. This means that the front-page object no
+  longer exists.
+  Refs PLIP 2454.
+  [jaroel] (#475)
+
+
+Bug fixes:
+
+
+- Remove cyclic dependency with Products.CMFPlone
+  [ericof] (#609)
+- Removed autoinclude entry point.
+  No longer needed, since ``Products.CMFPlone`` explicitly includes our zcml.
+  [maurits] (#611)
+
+
 3.0.0a2 (2021-05-11)
 --------------------
 
