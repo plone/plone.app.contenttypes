@@ -8,10 +8,10 @@
 <body>
 
 <metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core" 
+<metal:block define-macro="content-core"
              tal:define="content_type python: context.image.contentType;
-                         size context/image/getSize; 
-                         image_dimension context/image/getImageSize; 
+                         size context/image/getSize;
+                         image_dimension context/image/getImageSize;
                          use_MB python: size > 1024*1024;
                          dimension python: str(image_dimension[0])+'x'+str(image_dimension[1]);
                          filename python: context.image.filename;
@@ -53,7 +53,7 @@
   </section>
 
   <section class="section section-actions">
-    <a class="btn btn-primary download" href="${python:download_url}">Download</a>
+    <a class="btn btn-primary download" href="${python:download_url}" i18n:translate="">Download</a>
     <a class="btn btn-primary fullscreen" href="${context/@@plone_context_state/object_url}/image_view_fullscreen"><span i18n:translate="label_click_to_view_full_image">View full-size image</span></a>
   </section>
 

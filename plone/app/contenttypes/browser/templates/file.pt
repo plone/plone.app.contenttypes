@@ -15,7 +15,7 @@
                          download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename)">
 
   <section class="section section-main">
-    
+
     <div tal:condition="python: not view.is_videotype() and not view.is_audiotype()">
       <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
     </div>

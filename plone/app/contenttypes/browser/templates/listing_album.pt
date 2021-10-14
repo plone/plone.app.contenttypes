@@ -27,7 +27,7 @@
         <div class="card-body">
           <h5 class="card-title" tal:content="image/Title">Image title</h5>
           <p class="card-text" tal:content="image/Description">Description</p>
-          <a class="card-link stretched-link" tal:attributes="href string:${image/getURL}/view; title image/Description">View</a>
+          <a class="card-link stretched-link" tal:attributes="href string:${image/getURL}/view; title image/Description" i18n:translate="label_view">View</a>
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@
         <div class="card-body">
           <h5 class="card-title" tal:content="album/Title">Image title</h5>
           <p class="card-text" tal:content="album/Description">Description</p>
-          <a class="card-link stretched-link" tal:attributes="href string:${album/getURL}/view; title album/Description">View</a>
+          <a class="card-link stretched-link" tal:attributes="href string:${album/getURL}/view; title album/Description" i18n:translate="label_view">View</a>
         </div>
       </div>
     </div>
