@@ -87,13 +87,6 @@
       handler=".upgrades.searchabletext_richtext"
       />
 
-  <genericsetup:registerProfile name="1007"
-      title="Update bundles"
-      description='Configuration for version 1007'
-      directory="profiles/upgrades/1107"
-      for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
-      provides="Products.GenericSetup.interfaces.EXTENSION" />
-
   <genericsetup:upgradeStep
       source="*"
       destination="3000"
