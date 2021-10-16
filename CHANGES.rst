@@ -8,6 +8,19 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a4 (2021-10-16)
+--------------------
+
+Bug fixes:
+
+
+- Upgrade: fix icon expressions for portal_types and their view and edit actions.
+  See `this PR comment <https://github.com/plone/plone.app.upgrade/pull/259#issuecomment-944213712>`_.
+  [maurits] (#259)
+- Add missing i18n:translate tags
+  [erral] (#614)
+
+
 3.0.0a3 (2021-09-15)
 --------------------
 
