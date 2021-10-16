@@ -1,3 +1,0 @@
-Upgrade: fix icon expressions for portal_types and their view and edit actions.
-See `this PR comment <https://github.com/plone/plone.app.upgrade/pull/259#issuecomment-944213712>`_.
-[maurits]
