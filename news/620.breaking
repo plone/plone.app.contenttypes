@@ -1,0 +1,2 @@
+Remove atcontenttypes dependencies, migration, keep BaseClassMigratorForm.
+[agitator]
