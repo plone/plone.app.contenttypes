@@ -246,4 +246,17 @@
     <browser:page name="thumbnail_view" template="templates/listing_album.pt"/>
   </browser:pages>
 
+  <utility
+      factory=".migration.ChangedBaseClasses"
+      name="plone.app.contenttypes.migration.changed_base_classes"
+      provides="zope.schema.interfaces.IVocabularyFactory" />
+
+  <browser:page
+    name="base_class_migrator_form"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".migration.BaseClassMigrator"
+    layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+    permission="cmf.ManagePortal"
+    />
+
 </configure>

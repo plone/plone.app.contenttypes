@@ -60,7 +60,6 @@ setup(
         "plone.behavior >= 1.3.0",
         "pytz",
         "plone.app.z3cform>=1.1.0.dev0",
-        "six",
         "zope.deprecation",
     ],
     extras_require={
@@ -68,15 +67,6 @@ setup(
             "lxml",
             "plone.app.robotframework [debug] > 0.9.8",  # create image and file content for Image, File and News Item if not given.  # noqa
             "plone.app.testing [robot] >= 4.2.4",  # we need ROBOT_TEST_LEVEL
-        ],
-        "archetypes": [
-            "archetypes.schemaextender",
-            "Products.ATContentTypes",
-            "Products.contentmigration >= 2.1.8.dev0",
-            "plone.app.referenceablebehavior",
-        ],
-        "atrefs": [
-            "plone.app.referenceablebehavior",
         ],
     },
 )
