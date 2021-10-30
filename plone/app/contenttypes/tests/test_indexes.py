@@ -131,6 +131,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.link.reindexObject()
         brains = self.catalog.searchResults(dict(
             SearchableText='plone',
+            portal_type='Link',
         ))
         self.assertEqual(len(brains), 1)
         self.assertEqual(
