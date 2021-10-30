@@ -15,7 +15,7 @@ import unittest
 
 
 try:
-    pkg_resources.get_distribution('plone.app.dexterity.behaviors.constraints')
+    pkg_resources.get_distribution('plone.app.dexterity.behaviors.constrains')
 except pkg_resources.DistributionNotFound:
     DEXTERITY_WITH_CONSTRAINS = False
 else:
