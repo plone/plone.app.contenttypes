@@ -36,14 +36,6 @@ It contains the following types:
 These types are editable and extendable through-the-web and you can add or remove fields and behaviors using the control-panel "Dexterity Content Types" (``/@@dexterity-types``).
 
 
-Compatibility
--------------
-
-Version 3 is build for Plone 6 only.
-
-Check previous major releases if you need to support older versions of Plone.
-
-
 Installation
 ------------
 
