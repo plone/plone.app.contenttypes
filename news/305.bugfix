@@ -1,0 +1,6 @@
+in custom_migration.migrate the form_dx_typename should contain _space_  to match the dx_key
+
+the getDXFields javascript function doesn't replace all space in at_typename,
+causing forms to non load right fields list, or not load it at all.
+
+[gianniftp]

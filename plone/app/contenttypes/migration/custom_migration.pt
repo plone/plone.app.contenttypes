@@ -41,7 +41,7 @@
     <script type="text/javascript">
         // function that toggle an icon by calling the p_viewName view
         function getDXFields(at_typename, dx_typename) {
-          at_safe = at_typename.replace(' ', '_space_');
+          at_safe = at_typename.replaceAll(' ', '_space_');
           $.ajax({
             url: '@@display_dx_fields',
             dataType: 'html',
