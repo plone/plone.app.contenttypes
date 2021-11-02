@@ -66,15 +66,6 @@ class ContentProfileTestCase(unittest.TestCase):
         obj = self.portal['Members']
         self.assertEqual(obj.portal_type, 'Folder')
 
-    @unittest.skip('Replaced by new members-search-form')
-    def test_Members__index_html(self):
-        # Was the index_html script created?
-        obj = self.portal['Members']['index_html']
-        self.assertTrue(isinstance(obj, PythonScript))
-        # It's outside the scope of this test to verify the contents of
-        # the script are correct. Simply checking for existence should
-        # be enough.
-
     def test_Members_portlets(self):
         # Have the right column portlet manager setting been added?
         members = self.portal['Members']
