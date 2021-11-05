@@ -10,16 +10,7 @@ from Products.PythonScripts.PythonScript import PythonScript
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 
-import pkg_resources
 import unittest
-
-
-try:
-    pkg_resources.get_distribution('plone.app.dexterity.behaviors.constrains')
-except pkg_resources.DistributionNotFound:
-    DEXTERITY_WITH_CONSTRAINS = False
-else:
-    DEXTERITY_WITH_CONSTRAINS = True
 
 
 class PloneAppContenttypesContent(PloneSandboxLayer):
@@ -113,15 +104,6 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(events, 'review_state')
         self.assertEqual(current_state, 'published')
 
-    @unittest.skipUnless(
-        DEXTERITY_WITH_CONSTRAINS,
-        'Dexterity constraints are not present')
-    def test_events_allowable_types(self):
-        events = self.portal['events']
-        behavior = ISelectableConstrainTypes(events)
-        types = ['Event']
-        self.assertEqual(types, behavior.getImmediatelyAddableTypes())
-
     # ############## #
     #   news tests   #
     # ############## #
@@ -143,15 +125,6 @@ class ContentProfileTestCase(unittest.TestCase):
         news = self.portal['news']
         current_state = self.portal_workflow.getInfoFor(news, 'review_state')
         self.assertEqual(current_state, 'published')
-
-    @unittest.skipUnless(
-        DEXTERITY_WITH_CONSTRAINS,
-        'Dexterity constraints are not present')
-    def test_news_allowable_types(self):
-        news = self.portal['news']
-        behavior = ISelectableConstrainTypes(news)
-        types = ['News Item']
-        self.assertEqual(types, behavior.getImmediatelyAddableTypes())
 
     def test_news_aggregator_settings(self):
         # Has the news aggregator (Collection) been set up?
