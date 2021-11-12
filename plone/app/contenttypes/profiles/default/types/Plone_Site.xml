@@ -6,9 +6,10 @@
 
   <property name="icon_expr">string:contenttype/plone</property>
 
-  <property name="immediate_view">listing_view</property>
-  <property name="default_view">listing_view</property>
+  <property name="immediate_view">document_view</property>
+  <property name="default_view">document_view</property>
   <property name="view_methods">
+    <element value="document_view" />
     <element value="album_view" />
     <element value="event_listing" />
     <element value="full_view" />
