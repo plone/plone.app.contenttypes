@@ -144,7 +144,6 @@
       />
   <browser:page
       name="document_view"
-      for="plone.app.contenttypes.interfaces.IDocument"
       template="templates/document.pt"
       layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
