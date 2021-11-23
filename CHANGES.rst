@@ -8,6 +8,27 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a5 (2021-11-23)
+--------------------
+
+Breaking changes:
+
+
+- Remove atcontenttypes dependencies, migration, keep BaseClassMigratorForm.
+  [agitator] (#620)
+- Remove (ATCT) BBB view name registrations.
+  [agitator] (#621)
+
+
+Bug fixes:
+
+
+- Adapt the tests to cope with the fact the since Plone 6 the Plone site root is cataloged [ale-rt] (#616)
+- Fixed typo in test 'constraints' -> 'constrains'. [iham] (#619) (#619)
+- Use document_view as default for dx site root.
+  [agitator] (#624)
+
+
 3.0.0a4 (2021-10-16)
 --------------------
 
