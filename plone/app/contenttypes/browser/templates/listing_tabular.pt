@@ -69,9 +69,7 @@
                   </td>
 
                   <td class="text-nowrap" tal:condition="python:field == 'Creator'" tal:define="author python:view.pas_member.info(item_creator); name python:author['fullname'] or author['username']">
-                    <a tal:condition="python: author" href="${view/navigation_root_url}/author/${item_creator}">
-                      ${name}
-                    </a>
+                    <a tal:condition="python: author" tal:attributes="href string:${view.navigation_root_url}/author/${item_creator}" tal:content="python: name">Jos Henken</a>
                   </td>
 
                   </tal:block>
