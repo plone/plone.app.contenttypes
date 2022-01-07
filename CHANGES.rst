@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a6 (2022-01-07)
+--------------------
+
+Bug fixes:
+
+
+- Fix author url in tabular listing
+  [petschki] (#627)
+
+
 3.0.0a5 (2021-11-23)
 --------------------
 
