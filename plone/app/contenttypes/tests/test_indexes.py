@@ -174,35 +174,6 @@ class CatalogIntegrationTest(unittest.TestCase):
             '/plone/folder/collection' in paths
         )
 
-    def test_collection_text_in_searchable_text_index_after_upgrade(self):
-        # At first, the text field of Collections did not end up
-        # in the SearchableText index.
-        # To mimic this, we reindex the object and afterwards set the text.
-        self.collection.reindexObject()
-        # Check that nothing is found yet.
-        # This is needed to force a flush of the indexing queue.
-        brains = self.catalog.searchResults(dict(
-            SearchableText=u'Lorem ipsum',
-        ))
-        self.assertEqual(len(brains), 0)
-        self.collection.text = RichTextValue(
-            u'Lorem ipsum',
-            'text/plain',
-            'text/html'
-        )
-        brains = self.catalog.searchResults(dict(
-            SearchableText=u'Lorem ipsum',
-        ))
-        self.assertEqual(len(brains), 0)
-        # Now we apply the upgrade.
-        from plone.app.contenttypes.upgrades import searchabletext_collections
-        searchabletext_collections(self.portal.portal_setup)
-        brains = self.catalog.searchResults(dict(
-            SearchableText=u'Lorem ipsum',
-        ))
-        self.assertEqual(len(brains), 1)
-        self.assertEqual(brains[0].getPath(), '/plone/folder/collection')
-
     def test_html_stripped_searchable_text_index(self):
         """Ensure, html tags are stripped out from the content and not indexed.
         """
