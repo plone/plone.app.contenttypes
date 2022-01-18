@@ -231,5 +231,7 @@ I go to
 I disable dropdown navigation
   Go to  ${PLONE_URL}/@@navigation-controlpanel
   Input Text  name=form.widgets.navigation_depth  1
+  Set Focus To Element  css=#form-buttons-save
+  Wait Until Element Is Visible  css=#form-buttons-save
   Click Button  Save
   Wait until page contains  Changes saved
