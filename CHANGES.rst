@@ -8,6 +8,22 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a7 (2022-01-19)
+--------------------
+
+Breaking changes:
+
+
+- Remove upgrade steps that are not relevant anymore in Plone 6 [ale-rt] (#613)
+
+
+Bug fixes:
+
+
+- Fix tests with ES6.
+  [maurits] (#6)
+
+
 3.0.0a6 (2022-01-07)
 --------------------
 
