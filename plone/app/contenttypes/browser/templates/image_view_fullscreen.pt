@@ -45,16 +45,20 @@
 
 <body>
   <div id="content-core" tal:condition="context/@@images">
-    <a tal:attributes="href request/HTTP_REFERER"
-        tal:condition="request/HTTP_REFERER"
+    <tal:block define="referer request/HTTP_REFERER;
+                       url_tool nocall:context/portal_url;
+                       referer python:referer if referer and url_tool.isURLInPortal(referer) else '';">
+    <a tal:attributes="href referer"
+        tal:condition="referer"
       ><span i18n:translate="label_back_to_site">Back to site</span>
       <tal:block replace="structure context/@@images/image" />
     </a>
-    <a tal:attributes="href context/portal_url"
-        tal:condition="not: request/HTTP_REFERER"
+    <a tal:attributes="href python:url_tool()"
+        tal:condition="not: referer"
       ><span i18n:translate="label_home">Home</span>
       <tal:block replace="structure context/@@images/image" />
     </a>
+  </tal:block>
   </div>
 </body>
 </html>
