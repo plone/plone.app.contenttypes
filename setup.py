@@ -47,19 +47,19 @@ setup(
     install_requires=[
         "setuptools",
         "plone.app.contentmenu",
-        "plone.app.event >= 2.0a4",
+        "plone.app.event >= 2.0",
         "plone.app.dexterity >= 2.0.7",  # has a fix for INameFromFilename
         "plone.app.linkintegrity",
         "plone.app.querystring >= 1.2.2",  # custom_query support
         "plone.dexterity >= 2.2.1",  # behaviors can provide primaryfields
         "plone.app.relationfield",
-        "plone.namedfile [blobs] >= 4.2.0",
+        "plone.namedfile >= 4.2.0",
         "plone.app.versioningbehavior",
-        "plone.app.vocabularies>4.1.2",
+        "plone.app.vocabularies > 4.1.2",
         "plone.app.lockingbehavior",
         "plone.behavior >= 1.3.0",
         "pytz",
-        "plone.app.z3cform>=1.1.0.dev0",
+        "plone.app.z3cform>=1.1.0",
         "zope.deprecation",
     ],
     extras_require={
