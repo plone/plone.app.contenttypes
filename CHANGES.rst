@@ -8,6 +8,19 @@ Changelog
 
 .. towncrier release notes start
 
+2.2.3 (2022-01-28)
+------------------
+
+Bug fixes:
+
+
+- Security fix: prevent cache poisoning with the Referer header.
+  See `security advisory <https://github.com/plone/plone.app.contenttypes/security/advisories/GHSA-f7qw-5fgj-247x>`.
+  [maurits] (#1)
+- Depend on `plone.namedfile` core instead of its empty `[blobs]` extra.
+  [maurits] (#106)
+
+
 2.2.2 (2021-02-16)
 ------------------
 
