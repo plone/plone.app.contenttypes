@@ -212,7 +212,6 @@ def create_news_topic(portal, target_language):
         allowed_types = ['News Item', ]
         _setup_constrains(container, allowed_types)
 
-        container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
         _publish(container)
 
@@ -259,7 +258,6 @@ def create_events_topic(portal, target_language):
 
         _setup_constrains(container, allowed_types)
 
-        container.setOrdering('unordered')
         container.setDefaultPage('aggregator')
         _publish(container)
 
