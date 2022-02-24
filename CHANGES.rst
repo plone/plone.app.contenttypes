@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a10 (2022-02-24)
+---------------------
+
+Bug fixes:
+
+
+- A content type with the richtext behavior might not have a `text` attribute,
+  handle that gracefully.
+  [gforcada] (#1)
+
+
 3.0.0a9 (2022-01-28)
 --------------------
 

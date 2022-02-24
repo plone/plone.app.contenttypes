@@ -1,3 +1,0 @@
-A content type with the richtext behavior might not have a `text` attribute,
-handle that gracefully.
-[gforcada]
