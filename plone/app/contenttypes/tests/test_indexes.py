@@ -328,7 +328,7 @@ class CatalogIntegrationTest(unittest.TestCase):
         ))
         self.assertEqual(
             brains[0].getRemoteUrl,
-            '/plone/my-item'
+            'http://nohost/plone/my-item'
         )
 
     def test_getobjsize_image(self):

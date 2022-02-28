@@ -373,9 +373,9 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         )
 
         self.link.remoteUrl = '${portal_url}'
-        self.assertEqual(view.url(), '/plone')
+        self.assertEqual(view.url(), 'http://nohost/plone')
         self.assertEqual(view.absolute_target_url(), 'http://nohost/plone')
 
         self.link.remoteUrl = '${navigation_root_url}'
-        self.assertEqual(view.url(), '/plone')
+        self.assertEqual(view.url(), 'http://nohost/plone')
         self.assertEqual(view.absolute_target_url(), 'http://nohost/plone')

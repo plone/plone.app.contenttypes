@@ -1,0 +1,2 @@
+Fix "replace link variable by path" indexer to return an url and not a path.
+[bsuttor]
