@@ -32,6 +32,7 @@
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
+    <element value="plone.textindexer" />
     <element value="plone.eventbasic" />
     <element value="plone.eventrecurrence" />
     <element value="plone.eventlocation" />
