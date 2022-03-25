@@ -69,9 +69,9 @@
 
                         <tal:event condition="python:item_is_event">
                           <tal:date tal:replace="structure python:view.formatted_date(obj)"/>
-                          <span tal:condition="python:item.location" i18n:translate="label_event_byline_location">
+                          <span tal:condition="python:obj.location" i18n:translate="label_event_byline_location">
                             &mdash;
-                            <span tal:content="python:item.location" class="location" i18n:name="location">Oslo</span>
+                            <span tal:content="python:obj.location" class="location" i18n:name="location">Oslo</span>
                           </span>
                           &mdash;
                         </tal:event>
