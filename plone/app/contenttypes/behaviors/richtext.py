@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from plone.app.contenttypes import _
+from plone.app.dexterity.textindexer import searchable
 from plone.app.textfield import RichText as RichTextField
 from plone.app.z3cform.widget import RichTextFieldWidget
 from plone.autoform import directives as form
@@ -28,6 +29,7 @@ class IRichTextBehavior(model.Schema):
     )
     form.widget('text', RichTextFieldWidget)
     model.primary('text')
+    searchable("text")
 
 
 @implementer(IRichTextBehavior)
