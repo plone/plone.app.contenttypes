@@ -33,7 +33,7 @@ class LinkRedirectView(BrowserView):
     index = ViewPageTemplateFile('templates/link.pt')
 
     def _url_uses_scheme(self, schemes, url=None):
-        url = url or self.context.remoteUrl
+        url = url or self.context.remoteUrl.strip()
         for scheme in schemes:
             if url.startswith(scheme):
                 return True
@@ -69,14 +69,14 @@ class LinkRedirectView(BrowserView):
         """
         url = replace_link_variables_by_paths(
             self.context,
-            self.context.remoteUrl
+            self.context.remoteUrl.strip()
         )
         return url
 
     def display_link(self):
-        """Format the url for display 
+        """Format the url for display
         """
-    
+
         url = self.url()
         if 'resolveuid' in url:
             uid = url.split('/')[-1]
