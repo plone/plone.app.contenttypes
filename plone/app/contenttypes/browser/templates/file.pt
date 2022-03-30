@@ -43,7 +43,7 @@
       </div>
       <div class="px-2">
         <tal:icon tal:replace="structure python:icons.tag('file-binary', tag_class='icon-inline', tag_alt='Size')" />
-        <span tal:define="size python: context.file.getSize()" tal:content="python: size">1000</span> kB
+        <span tal:define="size python: view.human_readable_size()" tal:content="python: size">1000 kB</span>
       </div>
     </div>
 
