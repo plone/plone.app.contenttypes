@@ -53,7 +53,7 @@
 
                 <article class="mb-3 row">
 
-                  <div class="col-9" metal:define-macro="listitem">
+                  <div class="col" metal:define-macro="listitem">
 
                       <div class="mb-1">
                         <a tal:attributes="href python:item_link; class string:$item_type_class $item_wf_state_class url; title item_type" tal:content="python:item_title">
@@ -114,8 +114,8 @@
                       </p>
                   </div>
 
-                  <div class="col-3 text-end">
-                    <a tal:attributes="href python:item_link;" tal:condition="python:item_has_image and thumb_scale_list">
+                  <div class="col-3 text-end" tal:condition="python:item_has_image and thumb_scale_list">
+                    <a tal:attributes="href python:item_link;">
                       <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class)" />
                     </a>
                   </div>
