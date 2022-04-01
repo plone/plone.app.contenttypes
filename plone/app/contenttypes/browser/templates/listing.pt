@@ -24,7 +24,7 @@
                          thumb_scale_list python:view.get_thumb_scale_list();
                          thumb_scale_table python:view.get_thumb_scale_table();
                          thumb_scale_summary python:view.get_thumb_scale_summary();
-                         img_class python:'thumb-{} float-end'.format(thumb_scale_list);
+                         img_class python:'thumb-{} image-responsive'.format(thumb_scale_list);
                          showicons python:view.show_icons()">
       <tal:listing condition="python:batch">
         <div class="entries" metal:define-slot="entries"
@@ -51,16 +51,13 @@
                 ">
               <metal:block define-slot="entry">
 
-                <article class="mb-3">
+                <article class="mb-3 row">
 
-                  <div metal:define-macro="listitem">
+                  <div class="col-9" metal:define-macro="listitem">
 
                       <div class="mb-1">
                         <a tal:attributes="href python:item_link; class string:$item_type_class $item_wf_state_class url; title item_type" tal:content="python:item_title">
                           Item Title
-                        </a>
-                        <a tal:attributes="href python:item_link;" tal:condition="python:item_has_image and thumb_scale_list">
-                          <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class)" />
                         </a>
                       </div>
 
@@ -112,12 +109,16 @@
                       </div>
                       </metal:block>
 
+                      <p class="me-3" tal:condition="python:item_description" tal:content="python:item_description">
+                        description
+                      </p>
                   </div>
 
-                  <p class="me-3" tal:condition="python:item_description" tal:content="python:item_description">
-                    description
-                  </p>
-
+                  <div class="col-3 text-end">
+                    <a tal:attributes="href python:item_link;" tal:condition="python:item_has_image and thumb_scale_list">
+                      <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class)" />
+                    </a>
+                  </div>
                 </article>
 
               </metal:block>
