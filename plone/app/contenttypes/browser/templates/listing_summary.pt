@@ -17,9 +17,9 @@
 
       <metal:entry fill-slot="entry">
 
-        <article class="d-flex mb-3">
+        <article class="row mb-3">
 
-          <div class="me-3">
+          <div class="col">
 
           <h2 metal:define-macro="listitem">
             <a class="summary url" tal:attributes="href item_link; title item_type" tal:content="item_title">
@@ -45,9 +45,9 @@
 
           </div>
 
-          <div tal:define="thumb_url python:item_url + '/@@images/image/' + thumb_scale_summary;" tal:condition="python: item_has_image and thumb_scale_summary" tal:attributes="class python: 'tileImage' if item_description else 'tileImageNoFloat'">
+          <div class="col-3" tal:define="thumb_url python:item_url + '/@@images/image/' + thumb_scale_summary;" tal:condition="python: item_has_image and thumb_scale_summary">
             <a tal:attributes="href item_link">
-              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='thumb-' + thumb_scale_summary)" />
+              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='image-responsive thumb-' + thumb_scale_summary)" />
             </a>
           </div>
 
