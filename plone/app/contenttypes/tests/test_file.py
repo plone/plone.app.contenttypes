@@ -171,7 +171,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.assertTrue(self.browser.url.endswith('file.pdf/view'))
         # check icon
         self.assertEqual(
-            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-richtext.svg',
+            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-pdf.svg',
             self._get_icon_url(self.portal["file.pdf"].file.contentType))
 
     def test_alternative_mime_icon_doc_for_file(self):
@@ -194,7 +194,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.assertTrue(self.browser.url.endswith('file.doc/view'))
         # check icon
         self.assertEqual(
-            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-code.svg',
+            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-richtext.svg',
             self._get_icon_url(self.portal["file.doc"].file.contentType))
 
     def test_mime_icon_odt_for_file_(self):
@@ -216,7 +216,7 @@ class FileFunctionalTest(unittest.TestCase):
         self.assertTrue(self.browser.url.endswith('file.odt/view'))
         # check icon
         self.assertEqual(
-            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-code.svg',
+            'http://nohost/plone/++plone++bootstrap-icons/file-earmark-richtext.svg',
             self._get_icon_url(self.portal["file.odt"].file.contentType))
 
     def _get_icon_url(self, mime_type):
