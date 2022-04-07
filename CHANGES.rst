@@ -8,6 +8,27 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a11 (2022-04-07)
+---------------------
+
+New features:
+
+
+- PLIP 2780: Move features of collective.dexteritytextindexer to core.
+  [zworkb] (#2780)
+
+
+Bug fixes:
+
+
+- Fix Collections Standard view when showing events
+  [frapell] (#634)
+- listing_view and summary_view cleanup and float fix
+  [petschki] (#638)
+- Aftermath of PLIP 3395 + isort/black on these files.
+  [jensens] (#639)
+
+
 3.0.0a10 (2022-02-24)
 ---------------------
 
