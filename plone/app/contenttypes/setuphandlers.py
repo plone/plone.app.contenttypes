@@ -36,7 +36,6 @@ class HiddenProfiles(object):
         profile list when creating a Plone site.
         """
         return [
-            u'plone.app.contenttypes:uninstall',
             u'plone.app.contenttypes:default',
         ]
 
