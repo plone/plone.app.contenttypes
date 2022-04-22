@@ -205,4 +205,17 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      name="base_class_migrator_form"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class="plone.app.contenttypes.browser.migration.BaseClassMigrator"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+      permission="cmf.ManagePortal"
+      />
+
+  <utility
+      factory="plone.app.contenttypes.browser.migration.ChangedBaseClasses"
+      name="plone.app.contenttypes.migration.changed_base_classes"
+      provides="zope.schema.interfaces.IVocabularyFactory" />
+
 </configure>
