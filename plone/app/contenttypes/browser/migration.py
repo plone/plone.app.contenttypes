@@ -7,7 +7,7 @@ from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.contenttypes.utils import get_old_class_name_string
 from plone.app.contenttypes.utils import migrate_base_class_to_new_class
-from plone.app.contenttypes.utils import list_of_changed_base_class_names
+from plone.app.contenttypes.utils import changed_base_classes
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
@@ -45,40 +45,32 @@ class ChangedBaseClasses(object):
 
     def __call__(self, context):
         """Return a vocabulary with all changed base classes."""
-        list_of_class_names = list_of_changed_base_class_names(context) or {}
-        return SimpleVocabulary(
-            [SimpleVocabulary.createTerm(
-                class_name, class_name,
-                '{0} ({1})'.format(
-                    class_name, list_of_class_names[class_name]))
-             for class_name in list_of_class_names.keys()]
-        )
+        terms = []
+        for class_name, data in changed_base_classes(context).items():
+            title = "{} (➡ {}) - ({} items)".format(data["old"], data["new"], data["amount"])
+            term = SimpleVocabulary.createTerm(class_name, class_name, title)
+            terms.append(term)
+        return SimpleVocabulary(terms)
 
 
 class IBaseClassMigratorForm(Interface):
 
     changed_base_classes = schema.List(
-        title=u'Changed base classes',
-        description=u'Select changed base classes you want to migrate',
+        title=u'Changed base classes (old class, new class and number of items)',
+        description=u'Select changed base classes you want to migrate. '
+            'If the new types are folderish that change is also applied.',
         value_type=schema.Choice(
             vocabulary='plone.app.contenttypes.migration.changed_base_classes',
         ),
         default=[],
         required=True,
     )
-    migrate_to_folderish = schema.Bool(
-        title=u'Migrate to folderish type?',
-        description=(
-            u'Select this option if you changed a type from being '
-            u'itemish to being folderish but the class of the type is still '
-            u'the same.'
-        ),
-        required=False,
-        default=False,
-    )
 
 
 class BaseClassMigratorForm(form.Form):
+
+    label = _("heading_class_migrator",
+        default="Update base-classes for content with changed classes")
 
     fields = field.Fields(IBaseClassMigratorForm)
     fields['changed_base_classes'].widgetFactory = CheckBoxFieldWidget
@@ -106,7 +98,6 @@ class BaseClassMigratorForm(form.Form):
             messages.addStatusMessage(u'No types were selected', type='warning')
             return
 
-        migrate_to_folderish = data.get('changed_base_classes', False)
         catalog = getToolByName(self.context, 'portal_catalog')
         migrated = []
         not_migrated = []
@@ -118,7 +109,7 @@ class BaseClassMigratorForm(form.Form):
             old_class_name = get_old_class_name_string(obj)
             if old_class_name in changed_base_classes:
                 if migrate_base_class_to_new_class(
-                        obj, migrate_to_folderish=migrate_to_folderish):
+                        obj, migrate_to_folderish=True):
                     migrated.append(obj)
                 else:
                     not_migrated.append(obj)

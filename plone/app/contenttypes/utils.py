@@ -65,8 +65,6 @@ def get_old_class_name_string(obj):
 def get_portal_type_name_string(obj):
     """Returns the klass-attribute of the fti."""
     fti = queryUtility(IDexterityFTI, name=obj.portal_type)
-    print(fti.klass)
-    print(fti.id)
     if not fti:
         return False
     return fti.klass
@@ -127,13 +125,18 @@ def list_of_objects_with_changed_base_class(context):
             yield obj
 
 
-def list_of_changed_base_class_names(context):
-    """Returns list of class names that are not longer in portal_types."""
-    changed_base_class_names = {}
+def changed_base_classes(context):
+    """Returns dict of current and new class names ."""
+    results = {}
     for obj in list_of_objects_with_changed_base_class(context):
-        changed_base_class_name = get_old_class_name_string(obj)
-        if changed_base_class_name not in changed_base_class_names:
-            changed_base_class_names[changed_base_class_name] = 1
+        current_class_name = get_old_class_name_string(obj)
+        new_class_name = get_portal_type_name_string(obj)
+        if current_class_name not in results:
+            results[current_class_name] = {
+                "old": current_class_name,
+                "new": new_class_name,
+                "amount": 1,
+            }
         else:
-            changed_base_class_names[changed_base_class_name] += 1
-    return changed_base_class_names
+            results[current_class_name]["amount"] += 1
+    return results
