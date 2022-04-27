@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from . import permissions
 from zope.i18nmessageid import MessageFactory
 

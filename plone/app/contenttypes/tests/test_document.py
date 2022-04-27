@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -56,7 +55,7 @@ class DocumentIntegrationTest(unittest.TestCase):
         document.title = "My Document"
         document.description = "This is my document."
         document.text = RichTextValue(
-            u"Lorem ipsum",
+            "Lorem ipsum",
             "text/plain",
             "text/html",
         )
@@ -89,7 +88,7 @@ class DocumentFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),

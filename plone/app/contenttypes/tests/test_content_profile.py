@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
@@ -123,18 +122,18 @@ class ContentProfileTestCase(unittest.TestCase):
         # Has the news aggregator (Collection) been set up?
         query = [
             dict(
-                i=u"portal_type",
-                o=u"plone.app.querystring.operation.selection.any",
-                v=[u"News Item"],
+                i="portal_type",
+                o="plone.app.querystring.operation.selection.any",
+                v=["News Item"],
             ),
             dict(
-                i=u"review_state",
-                o=u"plone.app.querystring.operation.selection.any",
-                v=[u"published"],
+                i="review_state",
+                o="plone.app.querystring.operation.selection.any",
+                v=["published"],
             ),
         ]
         collection = self.portal["news"]["aggregator"]
-        self.assertEqual(collection.sort_on, u"effective")
+        self.assertEqual(collection.sort_on, "effective")
         self.assertEqual(collection.sort_reversed, True)
         self.assertEqual(collection.query, query)
         self.assertEqual(collection.getLayout(), "summary_view")

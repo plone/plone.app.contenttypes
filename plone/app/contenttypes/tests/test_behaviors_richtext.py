@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.behaviors.richtext import IRichText
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -52,7 +51,7 @@ class RichTextBehaviorFunctionalTest(RichTextBase, unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),

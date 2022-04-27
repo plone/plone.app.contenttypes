@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.testing import (  # noqa
@@ -93,7 +92,7 @@ class FolderViewIntegrationTest(unittest.TestCase):
 
     def test_result_batching(self):
         for idx in range(5):
-            self.portal.invokeFactory("Document", "document{}".format(idx))
+            self.portal.invokeFactory("Document", f"document{idx}")
         request = self.request.clone()
         request.form["b_size"] = 5
         view = FolderView(self.portal, request)
@@ -131,7 +130,7 @@ class FolderFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),
@@ -183,7 +182,7 @@ class FolderViewFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),

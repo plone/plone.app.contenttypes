@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.testing import (  # noqa
@@ -224,7 +223,7 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self._assert_redirect(self.link.remoteUrl)
 
     def test_ftp_type(self):
-        self.link.remoteUrl = "ftp://thereIsNoSuchDomain.isThere{0}".format(
+        self.link.remoteUrl = "ftp://thereIsNoSuchDomain.isThere{}".format(
             datetime.now().isoformat()
         )
         view = self._get_link_redirect_view(self.link)
@@ -261,7 +260,7 @@ class LinkFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),
@@ -292,10 +291,10 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     default_result = {
-        "internal": u"",
-        "external": u"",
-        "email": u"",
-        "email_subject": u"",
+        "internal": "",
+        "external": "",
+        "email": "",
+        "email_subject": "",
     }
 
     def setUp(self):
@@ -332,7 +331,7 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         self.assertEqual(converter.toWidgetValue(url), expected)
 
     def test_dc_towidget_mail(self):
-        url = u"mailto:foo@.example.org"
+        url = "mailto:foo@.example.org"
         converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
         expected["email"] = url[7:]  # mailto is cut
@@ -342,8 +341,8 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         url = "mailto:foo@.example.org?subject=A subject"
         converter = LinkWidgetDataConverter(self.link_field, self.widget)
         expected = self.default_result.copy()
-        expected["email"] = u"foo@.example.org"
-        expected["email_subject"] = u"A subject"
+        expected["email"] = "foo@.example.org"
+        expected["email_subject"] = "A subject"
         self.assertEqual(converter.toWidgetValue(url), expected)
 
     def test_dc_illegal(self):

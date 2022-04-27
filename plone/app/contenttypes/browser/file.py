@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.browser.utils import Utils
 from Products.CMFPlone.utils import human_readable_size
 

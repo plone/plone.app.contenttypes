@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from lxml import etree
 from plone.app.contenttypes.testing import (  # noqa
@@ -56,7 +55,7 @@ class RSSViewTest(unittest.TestCase):
         # XXX: We might want to validate against a DTD or RelaxNG schema here.
         # schema = etree.XMLSchema(schema_root)
         # parser = etree.XMLParser(dtd_validation=True,schema=schema)
-        if isinstance(rss, six.text_type):
+        if isinstance(rss, str):
             rss = rss.encode("utf-8")
         parser = etree.XMLParser()
         return etree.fromstring(rss, parser)

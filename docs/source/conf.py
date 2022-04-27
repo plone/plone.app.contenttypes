@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # plone.app.contenttypes documentation build configuration file, created by
 # sphinx-quickstart on Sat May  4 10:52:54 2013.
@@ -42,8 +41,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"plone.app.contenttypes"
-copyright = u"2013, Plone Foundation"
+project = "plone.app.contenttypes"
+copyright = "2013, Plone Foundation"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -186,8 +185,8 @@ latex_documents = [
     (
         "index",
         "ploneappcontenttypes.tex",
-        u"plone.app.contenttypes Documentation",
-        u"Plone Foundation",
+        "plone.app.contenttypes Documentation",
+        "Plone Foundation",
         "manual",
     ),
 ]
@@ -221,8 +220,8 @@ man_pages = [
     (
         "index",
         "ploneappcontenttypes",
-        u"plone.app.contenttypes Documentation",
-        [u"Plone Foundation"],
+        "plone.app.contenttypes Documentation",
+        ["Plone Foundation"],
         1,
     )
 ]
@@ -240,8 +239,8 @@ texinfo_documents = [
     (
         "index",
         "ploneappcontenttypes",
-        u"plone.app.contenttypes Documentation",
-        u"Plone Foundation",
+        "plone.app.contenttypes Documentation",
+        "Plone Foundation",
         "ploneappcontenttypes",
         "One line description of project.",
         "Miscellaneous",

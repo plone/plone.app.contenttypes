@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 @implementer(IVocabularyFactory)
-class ChangedBaseClasses(object):
+class ChangedBaseClasses:
     def __call__(self, context):
         """Return a vocabulary with all changed base classes."""
         terms = []
@@ -56,8 +56,8 @@ class ChangedBaseClasses(object):
 class IBaseClassMigratorForm(Interface):
 
     changed_base_classes = schema.List(
-        title=u"Changed base classes (old class, new class and number of items)",
-        description=u"Select changed base classes you want to migrate. "
+        title="Changed base classes (old class, new class and number of items)",
+        description="Select changed base classes you want to migrate. "
         "If the new types are folderish that change is also applied.",
         value_type=schema.Choice(
             vocabulary="plone.app.contenttypes.migration.changed_base_classes",
@@ -84,11 +84,11 @@ class BaseClassMigratorForm(form.Form):
         changed_base_classes = self.widgets["changed_base_classes"]
         if not changed_base_classes.terms.terms.by_value:
             IStatusMessage(self.request).addStatusMessage(
-                u"No types with changed classes to migrate!", type="warning"
+                "No types with changed classes to migrate!", type="warning"
             )
             return
 
-    @button.buttonAndHandler(u"Update", name="update")
+    @button.buttonAndHandler("Update", name="update")
     def handle_migrate(self, action):
         data, errors = self.extractData()
 
@@ -98,7 +98,7 @@ class BaseClassMigratorForm(form.Form):
         changed_base_classes = data.get("changed_base_classes", [])
         messages = IStatusMessage(self.request)
         if not changed_base_classes:
-            messages.addStatusMessage(u"No types were selected", type="warning")
+            messages.addStatusMessage("No types were selected", type="warning")
             return
 
         catalog = getToolByName(self.context, "portal_catalog")

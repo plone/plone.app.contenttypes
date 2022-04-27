@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_ROBOT_TESTING
 from plone.app.testing import ROBOT_TEST_LEVEL
 from plone.testing import layered

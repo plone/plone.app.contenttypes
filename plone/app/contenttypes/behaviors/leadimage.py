@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes import _
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityContent
@@ -19,21 +18,21 @@ class ILeadImage(Interface):
 class ILeadImageBehavior(model.Schema):
 
     image = namedfile.NamedBlobImage(
-        title=_(u"label_leadimage", default=u"Lead Image"),
-        description=u"",
+        title=_("label_leadimage", default="Lead Image"),
+        description="",
         required=False,
     )
 
     image_caption = schema.TextLine(
-        title=_(u"label_leadimage_caption", default=u"Lead Image Caption"),
-        description=u"",
+        title=_("label_leadimage_caption", default="Lead Image Caption"),
+        description="",
         required=False,
     )
 
 
 @implementer(ILeadImageBehavior)
 @adapter(IDexterityContent)
-class LeadImage(object):
+class LeadImage:
     def __init__(self, context):
         self.context = context
 

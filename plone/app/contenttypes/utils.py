@@ -54,7 +54,7 @@ def _replace_variable_by_path(url, variable, obj):
 
 def get_old_class_name_string(obj):
     """Returns the current class name string."""
-    return "{0}.{1}".format(obj.__module__, obj.__class__.__name__)
+    return f"{obj.__module__}.{obj.__class__.__name__}"
 
 
 def get_portal_type_name_string(obj):
@@ -79,7 +79,7 @@ def migrate_base_class_to_new_class(
     if not new_class_name:
         new_class_name = get_portal_type_name_string(obj)
         if not new_class_name:
-            logger.warning("The type {0} has no fti!".format(obj.portal_type))
+            logger.warning(f"The type {obj.portal_type} has no fti!")
             return False
 
     was_item = not isinstance(obj, BTreeFolder2Base)
@@ -114,7 +114,7 @@ def list_of_objects_with_changed_base_class(context):
         try:
             obj = brain.getObject()
         except (KeyError, NotFound):
-            logger.warn("Object {0} not found".format(brain.getPath()))
+            logger.warn(f"Object {brain.getPath()} not found")
             continue
         if get_portal_type_name_string(obj) != get_old_class_name_string(obj):
             yield obj

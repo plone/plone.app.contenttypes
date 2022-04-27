@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -28,14 +27,14 @@ from zope.interface import implementer
 
 
 @implementer(INonInstallable)
-class HiddenProfiles(object):
+class HiddenProfiles:
     def getNonInstallableProfiles(self):
         """
         Prevents all profiles but 'plone-content' from showing up in the
         profile list when creating a Plone site.
         """
         return [
-            u"plone.app.contenttypes:default",
+            "plone.app.contenttypes:default",
         ]
 
 
@@ -48,7 +47,7 @@ def _publish(content):
     return False
 
 
-def _translate(name, target_language, default=u""):
+def _translate(name, target_language, default=""):
     """Simple function to translate a string."""
     result = None
     if target_language != "en":
@@ -73,13 +72,13 @@ def addContentToContainer(container, object, checkConstraints=True):
 
         fti = getUtility(IDexterityFTI, name=object.portal_type)
         if not fti.isConstructionAllowed(container):
-            raise Unauthorized("Cannot create {0}".format(object.portal_type))
+            raise Unauthorized(f"Cannot create {object.portal_type}")
 
         if container_fti is not None and not container_fti.allowType(
             object.portal_type
         ):
             raise ValueError(
-                "Disallowed subobject type: {0}".format(object.portal_type)
+                f"Disallowed subobject type: {object.portal_type}"
             )
 
     chooser = INameChooser(container)
@@ -112,7 +111,7 @@ def _get_locales_info(portal):
 
 def _setup_calendar(portal, locale):
     """Set the calendar's date system to reflect the default locale"""
-    gregorian_calendar = locale.dates.calendars.get(u"gregorian", None)
+    gregorian_calendar = locale.dates.calendars.get("gregorian", None)
     portal_calendar = getToolByName(portal, "portal_calendar", None)
     if portal_calendar is not None:
         first = 6
@@ -155,20 +154,20 @@ def create_frontpage(portal, target_language):
     if portal.text:
         # Do not overwrite existing content
         return
-    portal.title = _translate(u"front-title", target_language, u"Welcome to Plone")
+    portal.title = _translate("front-title", target_language, "Welcome to Plone")
     portal.description = _translate(
-        u"front-description",
+        "front-description",
         target_language,
-        u"Congratulations! You have successfully installed Plone.",
+        "Congratulations! You have successfully installed Plone.",
     )
     front_text = None
     if target_language != "en":
         util = queryUtility(ITranslationDomain, "plonefrontpage")
         if util is not None:
             translated_text = util.translate(
-                u"front-text", target_language=target_language
+                "front-text", target_language=target_language
             )
-            if translated_text != u"front-text":
+            if translated_text != "front-text":
                 front_text = translated_text
     request = getattr(portal, "REQUEST", None)
     if front_text is None and request is not None:
@@ -183,8 +182,8 @@ def create_news_topic(portal, target_language):
     news_id = "news"
 
     if news_id not in portal.keys():
-        title = _translate(u"news-title", target_language, u"News")
-        description = _translate(u"news-description", target_language, u"Site News")
+        title = _translate("news-title", target_language, "News")
+        description = _translate("news-description", target_language, "Site News")
         container = createContent(
             "Folder",
             id=news_id,
@@ -214,19 +213,19 @@ def create_news_topic(portal, target_language):
 
         # Set the Collection criteria.
         #: Sort on the Effective date
-        aggregator.sort_on = u"effective"
+        aggregator.sort_on = "effective"
         aggregator.sort_reversed = True
         #: Query by Type and Review State
         aggregator.query = [
             {
-                "i": u"portal_type",
-                "o": u"plone.app.querystring.operation.selection.any",
-                "v": [u"News Item"],
+                "i": "portal_type",
+                "o": "plone.app.querystring.operation.selection.any",
+                "v": ["News Item"],
             },
             {
-                "i": u"review_state",
-                "o": u"plone.app.querystring.operation.selection.any",
-                "v": [u"published"],
+                "i": "review_state",
+                "o": "plone.app.querystring.operation.selection.any",
+                "v": ["published"],
             },
         ]
         aggregator.setLayout("summary_view")
@@ -238,8 +237,8 @@ def create_events_topic(portal, target_language):
     events_id = "events"
 
     if events_id not in portal.keys():
-        title = _translate(u"events-title", target_language, u"Events")
-        description = _translate(u"events-description", target_language, u"Site Events")
+        title = _translate("events-title", target_language, "Events")
+        description = _translate("events-description", target_language, "Site Events")
         container = createContent(
             "Folder",
             id=events_id,
@@ -270,7 +269,7 @@ def create_events_topic(portal, target_language):
 
         # Set the Collection criteria.
         #: Sort on the Event start date
-        aggregator.sort_on = u"start"
+        aggregator.sort_on = "start"
         aggregator.sort_reversed = True
         #: Query by Type and Review State
         aggregator.query = [
@@ -293,8 +292,8 @@ def configure_members_folder(portal, target_language):
     members_id = "Members"
 
     if members_id not in portal.keys():
-        title = _translate(u"members-title", target_language, u"Users")
-        description = _translate(u"members-description", target_language, u"Site Users")
+        title = _translate("members-title", target_language, "Users")
+        description = _translate("members-description", target_language, "Site Users")
         container = createContent(
             "Folder",
             id=members_id,

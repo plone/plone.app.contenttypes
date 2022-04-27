@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
 from plone.app.event.testing import PAEvent_FIXTURE
@@ -52,13 +51,13 @@ class PloneAppContenttypesRobot(PloneAppContenttypes):
             SITE_OWNER_NAME, SITE_OWNER_PASSWORD, ["Manager"], []
         )
         login(portal, SITE_OWNER_NAME)
-        super(PloneAppContenttypesRobot, self).setUpPloneSite(portal)
-        portal.invokeFactory("Folder", id=TEST_FOLDER_ID, title=u"Test Folder")
+        super().setUpPloneSite(portal)
+        portal.invokeFactory("Folder", id=TEST_FOLDER_ID, title="Test Folder")
 
     def tearDownPloneSite(self, portal):
         login(portal, "admin")
         portal.manage_delObjects([TEST_FOLDER_ID])
-        super(PloneAppContenttypesRobot, self).tearDownPloneSite(portal)
+        super().tearDownPloneSite(portal)
 
 
 PLONE_APP_CONTENTTYPES_FIXTURE = PloneAppContenttypes()

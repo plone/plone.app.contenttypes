@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from io import BytesIO
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -220,14 +219,14 @@ class TestSecurity(unittest.TestCase):
                 self.assertEqual(
                     mapping.get(method),
                     "View",
-                    "Method {0} missing view protection".format(method),
+                    f"Method {method} missing view protection",
                 )
         for method in WRITE_METHODS:
             if method in klass.__dict__.keys():
                 self.assertEqual(
                     mapping.get(method),
                     "Modify portal content",
-                    "Method {0} missing edit protection".format(method),
+                    f"Method {method} missing edit protection",
                 )
 
     def testCollection_protected(self):

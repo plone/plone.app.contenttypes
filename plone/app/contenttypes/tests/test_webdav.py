@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
 )
@@ -38,7 +37,7 @@ class WebDAVIntegrationTest(unittest.TestCase):
 
     def test_image_put(self):
         """Upload an image through webdav."""
-        filename = os.path.join(os.path.dirname(__file__), u"image.jpg")
+        filename = os.path.join(os.path.dirname(__file__), "image.jpg")
         with open(filename, "rb") as myfile:
             request = DAVTestRequest(
                 environ={
@@ -48,13 +47,13 @@ class WebDAVIntegrationTest(unittest.TestCase):
             )
             self.image.REQUEST = request
             self.image.PUT()
-        self.assertEqual(self.image.image.filename, u"image.jpg")
+        self.assertEqual(self.image.image.filename, "image.jpg")
         self.assertEqual(self.image.get_size(), 5131)
         self.assertEqual(self.image.content_type(), "image/jpeg")
 
     def test_file_put(self):
         """Upload a file through webdav."""
-        filename = os.path.join(os.path.dirname(__file__), u"file.pdf")
+        filename = os.path.join(os.path.dirname(__file__), "file.pdf")
         with open(filename, "rb") as myfile:
             request = DAVTestRequest(
                 environ={
@@ -64,6 +63,6 @@ class WebDAVIntegrationTest(unittest.TestCase):
             )
             self.file.REQUEST = request
             self.file.PUT()
-        self.assertEqual(self.file.file.filename, u"file.pdf")
+        self.assertEqual(self.file.file.filename, "file.pdf")
         self.assertEqual(self.file.get_size(), 8561)
         self.assertEqual(self.file.content_type(), "application/pdf")

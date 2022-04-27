@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.registry.interfaces import IRegistry
 from Products.Five.browser import BrowserView
 from zope.component import getUtility
@@ -27,5 +26,5 @@ class FullViewItem(BrowserView):
         use_view_action = registry.get("plone.types_use_view_action_in_listings", [])
         url = self.context.absolute_url()
         if self.context.portal_type in use_view_action:
-            url = u"{0}/view".format(url)
+            url = f"{url}/view"
         return url

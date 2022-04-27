@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
 )
@@ -13,7 +12,7 @@ FALLBACK = "++resource++mimetype.icons/application.png"
 PREFIX = "++resource++mimetype.icons/"
 
 
-class DummyFile(object):
+class DummyFile:
     """Dummy file object.
 
     For these tests, we only need a contentType and filename.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.supermodel import model
 from zope import schema
@@ -12,14 +11,14 @@ _ = MessageFactory("plone")
 @provider(IFormFieldProvider)
 class ITableOfContents(model.Schema):
 
-    model.fieldset("settings", label=_(u"Settings"), fields=["table_of_contents"])
+    model.fieldset("settings", label=_("Settings"), fields=["table_of_contents"])
 
     table_of_contents = schema.Bool(
-        title=_(u"help_enable_table_of_contents", default=u"Table of contents"),
+        title=_("help_enable_table_of_contents", default="Table of contents"),
         description=_(
-            u"help_enable_table_of_contents_description",
-            default=u"If selected, this will show a table of contents"
-            u" at the top of the page.",
+            "help_enable_table_of_contents_description",
+            default="If selected, this will show a table of contents"
+            " at the top of the page.",
         ),
         required=False,
     )

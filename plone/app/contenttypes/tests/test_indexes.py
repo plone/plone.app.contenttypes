@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
 )
@@ -119,15 +118,15 @@ class CatalogIntegrationTest(unittest.TestCase):
         self.assertEqual(brains[0].getPath(), "/plone/folder/link")
 
     def test_text_in_searchable_text_index(self):
-        self.document.text = RichTextValue(u"Lorem ipsum", "text/plain", "text/html")
-        self.news_item.text = RichTextValue(u"Lorem ipsum", "text/plain", "text/html")
-        self.collection.text = RichTextValue(u"Lorem ipsum", "text/plain", "text/html")
+        self.document.text = RichTextValue("Lorem ipsum", "text/plain", "text/html")
+        self.news_item.text = RichTextValue("Lorem ipsum", "text/plain", "text/html")
+        self.collection.text = RichTextValue("Lorem ipsum", "text/plain", "text/html")
         self.document.reindexObject()
         self.news_item.reindexObject()
         self.collection.reindexObject()
         brains = self.catalog.searchResults(
             dict(
-                SearchableText=u"Lorem ipsum",
+                SearchableText="Lorem ipsum",
             )
         )
         self.assertEqual(len(brains), 3)
@@ -140,14 +139,14 @@ class CatalogIntegrationTest(unittest.TestCase):
     def test_html_stripped_searchable_text_index(self):
         """Ensure, html tags are stripped out from the content and not indexed."""
         self.document.text = RichTextValue(
-            u"<p>Lorem <b>ipsum</b></p>",
+            "<p>Lorem <b>ipsum</b></p>",
             mimeType="text/html",
             outputMimeType="text/html",
         )
         self.document.reindexObject()
         brains = self.catalog.searchResults(
             dict(
-                SearchableText=u"Lorem ipsum",
+                SearchableText="Lorem ipsum",
             )
         )
         self.assertEqual(len(brains), 1)
@@ -165,14 +164,14 @@ class CatalogIntegrationTest(unittest.TestCase):
         searchable text, but you will usually have a hard time setting it.
         """
         self.document.text = RichTextValue(
-            u"""<script type="text/javascript">alert('Lorem ipsum')""" u"""</script>""",
+            """<script type="text/javascript">alert('Lorem ipsum')""" """</script>""",
             mimeType="text/html",
             outputMimeType="text/x-html-safe",
         )
         self.document.reindexObject()
         brains = self.catalog.searchResults(
             dict(
-                SearchableText=u"Lorem ipsum",
+                SearchableText="Lorem ipsum",
             )
         )
         self.assertEqual(len(brains), 1)
@@ -185,57 +184,57 @@ class CatalogIntegrationTest(unittest.TestCase):
         from plone.namedfile.file import NamedBlobFile
 
         data = "Lorem ipsum. Köln <!-- ...oder München, das ist hier die " "Frage. -->"
-        test_file = NamedBlobFile(data=data, filename=u"string.txt")
+        test_file = NamedBlobFile(data=data, filename="string.txt")
 
         primary_field_info = IPrimaryFieldInfo(self.file)
         primary_field_info.field.set(self.file, test_file)
         self.file.reindexObject()
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"Lorem ipsum"))
+        brains = self.catalog.searchResults(dict(SearchableText="Lorem ipsum"))
         self.assertEqual(len(brains), 1)
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"Köln"))
+        brains = self.catalog.searchResults(dict(SearchableText="Köln"))
         self.assertEqual(len(brains), 1)
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"München"))
+        brains = self.catalog.searchResults(dict(SearchableText="München"))
         self.assertEqual(len(brains), 1)
 
     def test_file_fulltext_in_searchable_text_index_string(self):
         from plone.namedfile.file import NamedBlobFile
 
         data = "Lorem ipsum. Köln <!-- ...oder München, das ist hier die " "Frage. -->"
-        test_file = NamedBlobFile(data=data, filename=u"string.html")
+        test_file = NamedBlobFile(data=data, filename="string.html")
 
         primary_field_info = IPrimaryFieldInfo(self.file)
         primary_field_info.field.set(self.file, test_file)
         self.file.reindexObject()
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"Lorem ipsum"))
+        brains = self.catalog.searchResults(dict(SearchableText="Lorem ipsum"))
         self.assertEqual(len(brains), 1)
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"Köln"))
+        brains = self.catalog.searchResults(dict(SearchableText="Köln"))
         self.assertEqual(len(brains), 1)
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"München"))
+        brains = self.catalog.searchResults(dict(SearchableText="München"))
         self.assertEqual(len(brains), 0)  # hint: html comment is stripped
 
     def test_file_fulltext_in_searchable_text_index_unicode(self):
         from plone.namedfile.file import NamedBlobFile
 
-        data = u"Lorem ipsum Köln <!-- ...oder München, das ist hier die " u"Frage. -->"
-        test_file = NamedBlobFile(data=data, filename=u"unicode.html")
+        data = "Lorem ipsum Köln <!-- ...oder München, das ist hier die " "Frage. -->"
+        test_file = NamedBlobFile(data=data, filename="unicode.html")
 
         primary_field_info = IPrimaryFieldInfo(self.file)
         primary_field_info.field.set(self.file, test_file)
         self.file.reindexObject()
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"Lorem ipsum"))
+        brains = self.catalog.searchResults(dict(SearchableText="Lorem ipsum"))
         self.assertEqual(len(brains), 1)
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"Köln"))
+        brains = self.catalog.searchResults(dict(SearchableText="Köln"))
         self.assertEqual(len(brains), 1)
 
-        brains = self.catalog.searchResults(dict(SearchableText=u"München"))
+        brains = self.catalog.searchResults(dict(SearchableText="München"))
         self.assertEqual(len(brains), 0)  # hint: html comment is stripped
 
     def test_title_in_metadata(self):
@@ -304,7 +303,7 @@ class CatalogIntegrationTest(unittest.TestCase):
     def test_getobjsize_file(self):
         from plone.namedfile.file import NamedBlobFile
 
-        filename = os.path.join(os.path.dirname(__file__), u"image.jpg")
+        filename = os.path.join(os.path.dirname(__file__), "image.jpg")
         with open(filename, "rb") as f:
             file_data = f.read()
         test_file = NamedBlobFile(data=file_data, filename=filename)

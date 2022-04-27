@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
 )

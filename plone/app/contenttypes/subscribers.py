@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IImage
 
 
@@ -20,4 +19,4 @@ def set_title_description(obj, event):
 
     description = obj.description
     if not description:
-        obj.description = u""
+        obj.description = ""

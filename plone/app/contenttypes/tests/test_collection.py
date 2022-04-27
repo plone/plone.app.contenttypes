@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from DateTime import DateTime
 from plone.app.contenttypes.behaviors.collection import (
@@ -44,7 +43,7 @@ query = [
 def dummy_image():
     from plone.namedfile.file import NamedBlobImage
 
-    filename = os.path.join(os.path.dirname(__file__), u"image.png")
+    filename = os.path.join(os.path.dirname(__file__), "image.png")
     with open(filename, "rb") as f:
         image_data = f.read()
     return NamedBlobImage(data=image_data, filename=filename)
@@ -71,16 +70,16 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.assertEqual(
             self.collection.selectedViewFields(),
             [
-                ("Title", u"Title"),
-                ("Creator", u"Creator"),
-                ("Type", u"Type"),
-                ("ModificationDate", u"Last modified"),
+                ("Title", "Title"),
+                ("Creator", "Creator"),
+                ("Type", "Type"),
+                ("ModificationDate", "Last modified"),
             ],
         )
         self.collection.customViewFields = ["Title", "Description"]
         self.assertEqual(
             self.collection.selectedViewFields(),
-            [("Title", u"Title"), ("Description", u"Description")],
+            [("Title", "Title"), ("Description", "Description")],
         )
 
     def test_bbb_setQuery(self):
@@ -195,7 +194,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         browser.handleErrors = False
         browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),
@@ -242,7 +241,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
             }
         ]
         collection.text = RichTextValue(
-            u"Lorem collection ipsum", "text/plain", "text/html"
+            "Lorem collection ipsum", "text/plain", "text/html"
         )
 
         wrapped = ICollection_behavior(collection)
@@ -260,22 +259,22 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         self.assertIn("Image example", browser.contents)
 
         # open summary_view template
-        browser.open("{0}/@@summary_view".format(url))
+        browser.open(f"{url}/@@summary_view")
         self.assertIn("Lorem collection ipsum", browser.contents)
         self.assertIn("Image example", browser.contents)
 
         # open full_view template
-        browser.open("{0}/@@full_view".format(url))
+        browser.open(f"{url}/@@full_view")
         self.assertIn("Lorem collection ipsum", browser.contents)
         self.assertIn("Image example", browser.contents)
 
         # open tabular_view template
-        browser.open("{0}/@@tabular_view".format(url))
+        browser.open(f"{url}/@@tabular_view")
         self.assertIn("Lorem collection ipsum", browser.contents)
         self.assertIn("Image example", browser.contents)
 
         # open thumbnail_view template
-        browser.open("{0}/@@album_view".format(url))
+        browser.open(f"{url}/@@album_view")
         self.assertIn("Lorem collection ipsum", browser.contents)
         self.assertIn("Image example", browser.contents)
 
@@ -387,8 +386,8 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         # Create two subsites i.e create two folders and mark them with
         # INavigationRoot
         for i in range(1, 3):
-            folder_id = "folder{0}".format(i)
-            portal.invokeFactory("Folder", folder_id, title="Folder{0}".format(i))
+            folder_id = f"folder{i}"
+            portal.invokeFactory("Folder", folder_id, title=f"Folder{i}")
             folder = portal[folder_id]
             alsoProvides(folder, INavigationRoot)
         folders = (portal["folder1"], portal["folder2"])
@@ -397,7 +396,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         for f in folders:
             f_id = f.getId()
             f.invokeFactory(
-                "Document", "item_in_{0}".format(f_id), title="Item In {0}".format(f_id)
+                "Document", f"item_in_{f_id}", title=f"Item In {f_id}"
             )
 
         # Add a collection to folder1

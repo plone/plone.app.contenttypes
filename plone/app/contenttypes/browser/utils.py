@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from plone.memoize.view import memoize
 from Products.CMFCore.utils import getToolByName
@@ -28,13 +27,11 @@ class Utils(BrowserView):
         mtr = getToolByName(context, "mimetypes_registry")
         if content_file.contentType:
             # this gives a tuple
-            for mime in mtr.lookup(content_file.contentType):
-                yield mime
+            yield from mtr.lookup(content_file.contentType)
         if content_file.filename:
             # this gives a single mime type
             yield mtr.lookupExtension(content_file.filename)
-        for mime in mtr.lookup("application/octet-stream"):
-            yield mime
+        yield from mtr.lookup("application/octet-stream")
 
     @memoize
     def getMimeTypeIcon(self, content_file):
@@ -54,6 +51,6 @@ class Utils(BrowserView):
             # Probably does not happen in practice.
             return ""
         context = aq_inner(self.context)
-        pstate = getMultiAdapter((context, self.request), name=u"plone_portal_state")
+        pstate = getMultiAdapter((context, self.request), name="plone_portal_state")
         portal_url = pstate.portal_url()
         return portal_url + "/" + guess_icon_path(first)

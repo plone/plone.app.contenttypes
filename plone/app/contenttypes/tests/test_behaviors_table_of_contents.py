@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -37,7 +36,7 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
 
         alsoProvides(self.request, ITableOfContents)
         self.portal.invokeFactory(
-            "tocdocument", id="tocdoc", title=u"Document with a table of contents"
+            "tocdocument", id="tocdoc", title="Document with a table of contents"
         )
         import transaction
 
@@ -47,7 +46,7 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),
@@ -63,7 +62,7 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
             name="form.widgets.ITableOfContents.table_of_contents:list"
         )
         toc_ctl.value = [
-            u"selected",
+            "selected",
         ]
         # Submit form
         self.browser.getControl("Save").click()

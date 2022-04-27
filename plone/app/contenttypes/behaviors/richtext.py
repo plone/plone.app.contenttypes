@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from plone.app.contenttypes import _
 from plone.app.dexterity.textindexer import searchable
@@ -23,8 +22,8 @@ class IRichText(Interface):
 class IRichTextBehavior(model.Schema):
 
     text = RichTextField(
-        title=_(u"Text"),
-        description=u"",
+        title=_("Text"),
+        description="",
         required=False,
     )
     form.widget("text", RichTextFieldWidget)
@@ -34,7 +33,7 @@ class IRichTextBehavior(model.Schema):
 
 @implementer(IRichTextBehavior)
 @adapter(IDexterityContent)
-class RichText(object):
+class RichText:
     def __init__(self, context):
         self.context = context
 

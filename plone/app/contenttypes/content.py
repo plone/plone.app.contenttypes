@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from email.feedparser import headerRE
 from plone.app.contenttypes.interfaces import ICollection
@@ -105,7 +104,7 @@ class Document(Item):
         See https://github.com/plone/Products.CMFPlone/issues/2540
         """
         format = self.format
-        if six.PY2 and isinstance(format, six.text_type):
+        if six.PY2 and isinstance(format, str):
             format = self.format.encode()
         return format
 
@@ -131,13 +130,13 @@ class File(Item):
 
             filename = request["PATH_INFO"].split("/")[-1]
             self.file = NamedBlobFile(
-                data=infile.read(), filename=six.text_type(filename)
+                data=infile.read(), filename=str(filename)
             )
 
             modified(self)
             return response
         else:
-            return super(File, self).PUT(REQUEST=request, RESPONSE=response)
+            return super().PUT(REQUEST=request, RESPONSE=response)
 
     @security.protected(permissions.View)
     def get_size(self):
@@ -175,13 +174,13 @@ class Image(Item):
             infile = request.get("BODYFILE", None)
             filename = request["PATH_INFO"].split("/")[-1]
             self.image = NamedBlobImage(
-                data=infile.read(), filename=six.text_type(filename)
+                data=infile.read(), filename=str(filename)
             )
 
             modified(self)
             return response
         else:
-            return super(Image, self).PUT(REQUEST=request, RESPONSE=response)
+            return super().PUT(REQUEST=request, RESPONSE=response)
 
     @security.protected(permissions.View)
     def get_size(self):

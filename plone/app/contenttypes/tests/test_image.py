@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IImage
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -23,7 +22,7 @@ import six
 import unittest
 
 
-def dummy_image(filename=u"image.jpg"):
+def dummy_image(filename="image.jpg"):
     from plone.namedfile.file import NamedBlobImage
 
     filename = os.path.join(os.path.dirname(__file__), filename)
@@ -73,7 +72,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
             import re
 
             if not re.search(pattern, value):
-                raise self.failureException("%r not found in %s" % (pattern, value))
+                raise self.failureException(f"{pattern!r} not found in {value}")
 
     def setUp(self):
         self.portal = self.layer["portal"]
@@ -111,7 +110,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
     #        self.assertTrue('image.jpg' in view())
 
     def test_svg_image(self):
-        self.image.image = dummy_image(u"image.svg")
+        self.image.image = dummy_image("image.svg")
         scale = self.image.restrictedTraverse("@@images")
         self.assertRegex(
             scale.scale("image", scale="large").tag(),
@@ -132,7 +131,7 @@ class ImageFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),

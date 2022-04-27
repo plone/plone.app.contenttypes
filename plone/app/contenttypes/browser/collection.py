@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from plone.app.contenttypes import _
 from plone.app.contenttypes.behaviors.collection import ICollection
@@ -83,4 +82,4 @@ class CollectionView(FolderView):
 
     @property
     def no_items_message(self):
-        return _("description_no_results_found", default=u"No results were found.")
+        return _("description_no_results_found", default="No results were found.")

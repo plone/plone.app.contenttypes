@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl.Permission import addPermission
 from AccessControl.SecurityInfo import ModuleSecurityInfo
 from plone.app.contenttypes.utils import DEFAULT_TYPES

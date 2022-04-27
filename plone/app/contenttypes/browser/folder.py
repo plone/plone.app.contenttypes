@@ -31,7 +31,7 @@ class FolderView(BrowserView):
     def plone_view(self):
         if not self._plone_view:
             self._plone_view = getMultiAdapter(
-                (self.context, self.request), name=u"plone"
+                (self.context, self.request), name="plone"
             )
         return self._plone_view
 
@@ -39,7 +39,7 @@ class FolderView(BrowserView):
     def portal_state(self):
         if not self._portal_state:
             self._portal_state = getMultiAdapter(
-                (self.context, self.request), name=u"plone_portal_state"
+                (self.context, self.request), name="plone_portal_state"
             )
         return self._portal_state
 
@@ -47,7 +47,7 @@ class FolderView(BrowserView):
     def pas_member(self):
         if not self._pas_member:
             self._pas_member = getMultiAdapter(
-                (self.context, self.request), name=u"pas_member"
+                (self.context, self.request), name="pas_member"
             )
         return self._pas_member
 
@@ -233,7 +233,7 @@ class FolderView(BrowserView):
     def no_items_message(self):
         return _(
             "description_no_items_in_folder",
-            default=u"There are currently no items in this folder.",
+            default="There are currently no items in this folder.",
         )
 
     @memoize

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -46,14 +45,14 @@ class CollectionBehaviorFunctionalTest(unittest.TestCase):
         self.portal.invokeFactory(
             "collectioncontainer",
             id="collectioncontainer",
-            title=u"Container with a collection",
+            title="Container with a collection",
             customViewFields=["Title", "portal_type"],
             query=query,
         )
         self.portal.invokeFactory(
             "Document",
             id="doc",
-            title=u"Collection Test Page",
+            title="Collection Test Page",
         )
 
     def _get_browser(self):
@@ -68,7 +67,7 @@ class CollectionBehaviorFunctionalTest(unittest.TestCase):
         browser.handleErrors = False
         browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),

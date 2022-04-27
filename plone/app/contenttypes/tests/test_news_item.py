@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -62,7 +61,7 @@ class NewsItemIntegrationTest(unittest.TestCase):
         news_item = self.portal["news_item"]
         news_item.title = "My News Item"
         news_item.description = "This is my news item."
-        news_item.text = RichTextValue(u"Lorem ipsum", "text/plain", "text/html")
+        news_item.text = RichTextValue("Lorem ipsum", "text/plain", "text/html")
         self.request.set("URL", news_item.absolute_url())
         self.request.set("ACTUAL_URL", news_item.absolute_url())
         view = news_item.restrictedTraverse("@@view")
@@ -106,7 +105,7 @@ class NewsItemFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -39,7 +38,7 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
 
         alsoProvides(self.request, ILeadImage)
         self.portal.invokeFactory(
-            "leadimagefolder", id="leadimagefolder", title=u"Folder with a lead image"
+            "leadimagefolder", id="leadimagefolder", title="Folder with a lead image"
         )
         import transaction
 
@@ -49,7 +48,7 @@ class LeadImageBehaviorFunctionalTest(unittest.TestCase):
         self.browser.handleErrors = False
         self.browser.addHeader(
             "Authorization",
-            "Basic {0}:{1}".format(
+            "Basic {}:{}".format(
                 SITE_OWNER_NAME,
                 SITE_OWNER_PASSWORD,
             ),

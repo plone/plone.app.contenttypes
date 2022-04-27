@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from logging import getLogger
 from plone.app.contenttypes.behaviors.richtext import IRichText
@@ -36,19 +35,19 @@ def _unicode_save_string_concat(*args):
     result = ""
     for value in args:
         if six.PY2:
-            if isinstance(value, six.text_type):
+            if isinstance(value, str):
                 value = value.encode("utf-8", "replace")
             if value:
                 result = " ".join((result, value))
         else:
-            if isinstance(value, six.binary_type):
+            if isinstance(value, bytes):
                 value = safe_unicode(value)
             result = " ".join((result, value))
     return result
 
 
 def SearchableText(obj):
-    text = u""
+    text = ""
     richtext = IRichText(obj, None)
     if richtext:
         textvalue = richtext.text
@@ -70,13 +69,13 @@ def SearchableText(obj):
                 .strip()
             )
 
-    subject = u" ".join([safe_unicode(s) for s in obj.Subject()])
+    subject = " ".join([safe_unicode(s) for s in obj.Subject()])
 
-    return u" ".join(
+    return " ".join(
         (
             safe_unicode(obj.id),
-            safe_unicode(obj.title) or u"",
-            safe_unicode(obj.description) or u"",
+            safe_unicode(obj.title) or "",
+            safe_unicode(obj.description) or "",
             safe_unicode(text),
             safe_unicode(subject),
         )
@@ -104,8 +103,8 @@ def SearchableText_file(obj):
         primary_field = IPrimaryFieldInfo(obj)
     except TypeError:
         logger.warn(
-            u"Lookup of PrimaryField failed for {0} "
-            u"If renaming or importing please reindex!".format(obj.absolute_url())
+            "Lookup of PrimaryField failed for {} "
+            "If renaming or importing please reindex!".format(obj.absolute_url())
         )
         return
     if primary_field.value is None:
@@ -135,7 +134,7 @@ def SearchableText_file(obj):
     except Exception as msg:
         logger.exception(
             'exception while trying to convert blob contents to "text/plain" '
-            "for {0}. Error: {1}".format(obj, str(msg)),
+            "for {}. Error: {}".format(obj, str(msg)),
         )
         return SearchableText(obj)
 
@@ -164,8 +163,8 @@ def getObjSize_image(obj):
         primary_field_info = IPrimaryFieldInfo(obj)
     except TypeError:
         logger.warn(
-            u"Lookup of PrimaryField failed for {0} If renaming or importing "
-            u"please reindex!".format(obj.absolute_url())
+            "Lookup of PrimaryField failed for {} If renaming or importing "
+            "please reindex!".format(obj.absolute_url())
         )
         return
     return human_readable_size(primary_field_info.value.size)
@@ -177,8 +176,8 @@ def getObjSize_file(obj):
         primary_field_info = IPrimaryFieldInfo(obj)
     except TypeError:
         logger.warn(
-            u"Lookup of PrimaryField failed for {0} If renaming or importing "
-            u"please reindex!".format(obj.absolute_url())
+            "Lookup of PrimaryField failed for {} If renaming or importing "
+            "please reindex!".format(obj.absolute_url())
         )
         return
     return human_readable_size(primary_field_info.value.size)
