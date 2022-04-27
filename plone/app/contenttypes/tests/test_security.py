@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from io import BytesIO
-from plone.app.contenttypes.testing import (
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
-)  # noqa
+)
 from plone.app.testing import login
 from plone.app.testing import logout
 from plone.app.testing import setRoles
@@ -99,11 +99,10 @@ class TestSecurity(unittest.TestCase):
         """
         Mostly pulled from Testing.functional
         """
-        from ZPublisher.Request import Request
-        from ZPublisher.Response import Response
-
         # Note: the next import fail in Python 3, because it needs ZServer.
         from ZPublisher.Publish import publish_module
+        from ZPublisher.Request import Request
+        from ZPublisher.Response import Response
 
         transaction.commit()
 

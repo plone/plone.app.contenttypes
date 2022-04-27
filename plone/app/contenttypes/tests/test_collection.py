@@ -5,12 +5,12 @@ from plone.app.contenttypes.behaviors.collection import (
     ICollection as ICollection_behavior,
 )  # noqa
 from plone.app.contenttypes.interfaces import ICollection
-from plone.app.contenttypes.testing import (
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
-)  # noqa
-from plone.app.contenttypes.testing import (
+)
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)  # noqa
+)
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.testing import login

@@ -15,11 +15,10 @@ from plone.dexterity.interfaces import IDexterityContent
 from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
 from Products.CMFPlone.utils import human_readable_size
+from Products.CMFPlone.utils import safe_unicode
 from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
-
 
 import six
 

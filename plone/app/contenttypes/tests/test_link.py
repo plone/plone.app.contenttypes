@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from plone.app.z3cform.converters import LinkWidgetDataConverter
-from plone.app.z3cform.widget import LinkWidget
 from plone.app.contenttypes.interfaces import ILink
-from plone.app.contenttypes.testing import (
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
-)  # noqa
-from plone.app.contenttypes.testing import (
+)
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)  # noqa
+)
 from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
+from plone.app.z3cform.converters import LinkWidgetDataConverter
 from plone.app.z3cform.interfaces import IPloneFormLayer
+from plone.app.z3cform.widget import LinkWidget
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.testing.zope import Browser
 from plone.uuid.interfaces import IUUID

@@ -4,10 +4,10 @@ from plone.app.contenttypes.content import Folder
 from plone.app.contenttypes.content import Image
 from plone.app.contenttypes.content import Link
 from plone.app.contenttypes.content import NewsItem
+from plone.app.contenttypes.utils import changed_base_classes
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.contenttypes.utils import get_old_class_name_string
 from plone.app.contenttypes.utils import migrate_base_class_to_new_class
-from plone.app.contenttypes.utils import changed_base_classes
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
@@ -27,10 +27,10 @@ from zExceptions import NotFound
 from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import queryUtility
+from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
-from zope.interface import implementer
 
 import logging
 import pkg_resources

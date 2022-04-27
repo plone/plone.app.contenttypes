@@ -3,6 +3,7 @@ from AccessControl.Permission import addPermission
 from AccessControl.SecurityInfo import ModuleSecurityInfo
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 
+
 security = ModuleSecurityInfo("plone.app.contenttypes")
 
 TYPE_ROLES = ("Manager", "Site Administrator", "Owner", "Contributor")

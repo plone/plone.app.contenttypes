@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.testing import (
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)  # noqa
+)
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 
@@ -32,7 +32,7 @@ class PloneAppContenttypesSetupTest(unittest.TestCase):
         self.assertEqual(self.types["News Item"].meta_type, "Dexterity FTI")
 
     def test_browserlayer_available(self):
-        from plone.browserlayer import utils
         from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
+        from plone.browserlayer import utils
 
         self.assertTrue(IPloneAppContenttypesLayer in utils.registered_layers())

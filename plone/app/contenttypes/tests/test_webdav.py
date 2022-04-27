@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.testing import (
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)  # noqa
+)
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from zope.publisher.browser import TestRequest

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from plone.app.contenttypes.testing import (
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)  # noqa
+)
 from zope.component import getMultiAdapter
 
 import unittest

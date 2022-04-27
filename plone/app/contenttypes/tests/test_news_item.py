@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import INewsItem
-from plone.app.contenttypes.testing import (
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
-)  # noqa
-from plone.app.contenttypes.testing import (
+)
+from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)  # noqa
+)
 from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
@@ -74,8 +74,8 @@ class NewsItemIntegrationTest(unittest.TestCase):
         self.assertTrue("Lorem ipsum" in view())
 
     def test_leadimage_viewlet_does_not_show_up_for_newsitems(self):
-        from zope.interface import alsoProvides
         from plone.app.contenttypes.behaviors.leadimage import ILeadImage
+        from zope.interface import alsoProvides
 
         alsoProvides(self.request, ILeadImage)
         view = View(self.portal, self.request)

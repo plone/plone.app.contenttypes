@@ -1,14 +1,15 @@
+from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
-from zope.component import queryUtility
-from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
-from zope.interface import alsoProvides
 from plone.folder.interfaces import IOrdering
+from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2Base
 from Products.CMFCore.utils import getToolByName
 from zExceptions import NotFound
-from plone.dexterity.interfaces import IDexterityContent
+from zope.component import queryUtility
+from zope.interface import alsoProvides
 
 import importlib
 import logging
+
 
 logger = logging.getLogger(__name__)
 
