@@ -6,4 +6,4 @@ from . import permissions
 
 permissions  # pyflakes
 
-_ = MessageFactory('plone')
+_ = MessageFactory("plone")

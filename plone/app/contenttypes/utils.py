@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_TYPES = [
-    'Collection',
-    'Document',
-    'Event',
-    'File',
-    'Folder',
-    'Image',
-    'Link',
-    'News Item',
+    "Collection",
+    "Document",
+    "Event",
+    "File",
+    "Folder",
+    "Image",
+    "Link",
+    "News Item",
 ]
 
 
@@ -33,33 +33,27 @@ def replace_link_variables_by_paths(context, url):
     if not url:
         return url
 
-    portal_state = context.restrictedTraverse('@@plone_portal_state')
+    portal_state = context.restrictedTraverse("@@plone_portal_state")
 
-    if '${navigation_root_url}' in url:
+    if "${navigation_root_url}" in url:
         url = _replace_variable_by_path(
-            url,
-            '${navigation_root_url}',
-            portal_state.navigation_root()
+            url, "${navigation_root_url}", portal_state.navigation_root()
         )
 
-    if '${portal_url}' in url:
-        url = _replace_variable_by_path(
-            url,
-            '${portal_url}',
-            portal_state.portal()
-        )
+    if "${portal_url}" in url:
+        url = _replace_variable_by_path(url, "${portal_url}", portal_state.portal())
 
     return url
 
 
 def _replace_variable_by_path(url, variable, obj):
-    path = '/'.join(obj.getPhysicalPath())
+    path = "/".join(obj.getPhysicalPath())
     return url.replace(variable, path)
 
 
 def get_old_class_name_string(obj):
     """Returns the current class name string."""
-    return '{0}.{1}'.format(obj.__module__, obj.__class__.__name__)
+    return "{0}.{1}".format(obj.__module__, obj.__class__.__name__)
 
 
 def get_portal_type_name_string(obj):
@@ -70,27 +64,27 @@ def get_portal_type_name_string(obj):
     return fti.klass
 
 
-def migrate_base_class_to_new_class(obj,
-                                    indexes=None,
-                                    old_class_name='',
-                                    new_class_name='',
-                                    migrate_to_folderish=False,
-                                    ):
+def migrate_base_class_to_new_class(
+    obj,
+    indexes=None,
+    old_class_name="",
+    new_class_name="",
+    migrate_to_folderish=False,
+):
     if indexes is None:
-        indexes = ['is_folderish', 'object_provides']
+        indexes = ["is_folderish", "object_provides"]
     if not old_class_name:
         old_class_name = get_old_class_name_string(obj)
     if not new_class_name:
         new_class_name = get_portal_type_name_string(obj)
         if not new_class_name:
-            logger.warning(
-                'The type {0} has no fti!'.format(obj.portal_type))
+            logger.warning("The type {0} has no fti!".format(obj.portal_type))
             return False
 
     was_item = not isinstance(obj, BTreeFolder2Base)
     if old_class_name != new_class_name:
         obj_id = obj.getId()
-        module_name, class_name = new_class_name.rsplit('.', 1)
+        module_name, class_name = new_class_name.rsplit(".", 1)
         module = importlib.import_module(module_name)
         new_class = getattr(module, class_name)
 
@@ -114,12 +108,12 @@ def migrate_base_class_to_new_class(obj,
 
 
 def list_of_objects_with_changed_base_class(context):
-    catalog = getToolByName(context, 'portal_catalog')
+    catalog = getToolByName(context, "portal_catalog")
     for brain in catalog(object_provides=IDexterityContent.__identifier__):
         try:
             obj = brain.getObject()
         except (KeyError, NotFound):
-            logger.warn('Object {0} not found'.format(brain.getPath()))
+            logger.warn("Object {0} not found".format(brain.getPath()))
             continue
         if get_portal_type_name_string(obj) != get_old_class_name_string(obj):
             yield obj

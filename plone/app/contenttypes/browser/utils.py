@@ -13,13 +13,10 @@ PREFIX = "++resource++mimetype.icons/"
 
 
 class IUtils(Interface):
-    """
-    """
+    """ """
 
     def getMimeTypeIcon(content_file):
-        """
-
-        """
+        """ """
 
 
 @implementer(IUtils)

@@ -4,7 +4,7 @@ from plone.app.layout.viewlets import ViewletBase
 
 
 class LeadImageViewlet(ViewletBase):
-    """ A simple viewlet which renders leadimage """
+    """A simple viewlet which renders leadimage"""
 
     def update(self):
         self.context = ILeadImage(self.context)

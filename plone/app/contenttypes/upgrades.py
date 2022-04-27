@@ -5,7 +5,7 @@ from zope.component import queryUtility
 import logging
 
 
-logger = logging.getLogger(name='plone.app.contenttypes upgrade')
+logger = logging.getLogger(name="plone.app.contenttypes upgrade")
 
 
 def update_type_icons(context):

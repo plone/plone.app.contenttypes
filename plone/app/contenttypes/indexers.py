@@ -26,7 +26,7 @@ import six
 
 logger = getLogger(__name__)
 
-FALLBACK_CONTENTTYPE = 'application/octet-stream'
+FALLBACK_CONTENTTYPE = "application/octet-stream"
 
 
 def _unicode_save_string_concat(*args):
@@ -34,50 +34,54 @@ def _unicode_save_string_concat(*args):
     concats args with spaces between and returns utf-8 string, it does not
     matter if input was text or bytes
     """
-    result = ''
+    result = ""
     for value in args:
         if six.PY2:
             if isinstance(value, six.text_type):
-                value = value.encode('utf-8', 'replace')
+                value = value.encode("utf-8", "replace")
             if value:
-                result = ' '.join((result, value))
+                result = " ".join((result, value))
         else:
             if isinstance(value, six.binary_type):
                 value = safe_unicode(value)
-            result = ' '.join((result, value))
+            result = " ".join((result, value))
     return result
 
 
 def SearchableText(obj):
-    text = u''
+    text = u""
     richtext = IRichText(obj, None)
     if richtext:
         textvalue = richtext.text
         if IRichTextValue.providedBy(textvalue):
-            transforms = getToolByName(obj, 'portal_transforms')
+            transforms = getToolByName(obj, "portal_transforms")
             # Before you think about switching raw/output
             # or mimeType/outputMimeType, first read
             # https://github.com/plone/Products.CMFPlone/issues/2066
             raw = safe_unicode(textvalue.raw)
             if six.PY2:
-                raw = raw.encode('utf-8', 'replace')
-            text = transforms.convertTo(
-                'text/plain',
-                raw,
-                mimetype=textvalue.mimeType,
-            ).getData().strip()
+                raw = raw.encode("utf-8", "replace")
+            text = (
+                transforms.convertTo(
+                    "text/plain",
+                    raw,
+                    mimetype=textvalue.mimeType,
+                )
+                .getData()
+                .strip()
+            )
 
-    subject = u' '.join(
-        [safe_unicode(s) for s in obj.Subject()]
+    subject = u" ".join([safe_unicode(s) for s in obj.Subject()])
+
+    return u" ".join(
+        (
+            safe_unicode(obj.id),
+            safe_unicode(obj.title) or u"",
+            safe_unicode(obj.description) or u"",
+            safe_unicode(text),
+            safe_unicode(subject),
+        )
     )
-
-    return u' '.join((
-        safe_unicode(obj.id),
-        safe_unicode(obj.title) or u'',
-        safe_unicode(obj.description) or u'',
-        safe_unicode(text),
-        safe_unicode(subject),
-    ))
 
 
 @indexer(INewsItem)
@@ -101,17 +105,15 @@ def SearchableText_file(obj):
         primary_field = IPrimaryFieldInfo(obj)
     except TypeError:
         logger.warn(
-            u'Lookup of PrimaryField failed for {0} '
-            u'If renaming or importing please reindex!'.format(
-                obj.absolute_url()
-            )
+            u"Lookup of PrimaryField failed for {0} "
+            u"If renaming or importing please reindex!".format(obj.absolute_url())
         )
         return
     if primary_field.value is None:
         return SearchableText(obj)
     mimetype = primary_field.value.contentType
-    transforms = getToolByName(obj, 'portal_transforms')
-    if transforms._findPath(mimetype, 'text/plain') is None:
+    transforms = getToolByName(obj, "portal_transforms")
+    if transforms._findPath(mimetype, "text/plain") is None:
         # check if there is a valid transform available first
         return SearchableText(obj)
     value = primary_field.value.data
@@ -119,13 +121,14 @@ def SearchableText_file(obj):
         value = str(value)
     filename = primary_field.value.filename
     try:
-        transformed_value = transforms.convertTo('text/plain', value,
-                                                 mimetype=mimetype,
-                                                 filename=filename)
+        transformed_value = transforms.convertTo(
+            "text/plain", value, mimetype=mimetype, filename=filename
+        )
         if not transformed_value:
             return SearchableText(obj)
-        return _unicode_save_string_concat(SearchableText(obj),
-                                           transformed_value.getData())
+        return _unicode_save_string_concat(
+            SearchableText(obj), transformed_value.getData()
+        )
     except MissingBinary:
         return SearchableText(obj)
     except (ConflictError, KeyboardInterrupt):
@@ -133,7 +136,7 @@ def SearchableText_file(obj):
     except Exception as msg:
         logger.exception(
             'exception while trying to convert blob contents to "text/plain" '
-            'for {0}. Error: {1}'.format(obj, str(msg)),
+            "for {0}. Error: {1}".format(obj, str(msg)),
         )
         return SearchableText(obj)
 
@@ -162,8 +165,8 @@ def getObjSize_image(obj):
         primary_field_info = IPrimaryFieldInfo(obj)
     except TypeError:
         logger.warn(
-            u'Lookup of PrimaryField failed for {0} If renaming or importing '
-            u'please reindex!'.format(obj.absolute_url())
+            u"Lookup of PrimaryField failed for {0} If renaming or importing "
+            u"please reindex!".format(obj.absolute_url())
         )
         return
     return human_readable_size(primary_field_info.value.size)
@@ -175,8 +178,8 @@ def getObjSize_file(obj):
         primary_field_info = IPrimaryFieldInfo(obj)
     except TypeError:
         logger.warn(
-            u'Lookup of PrimaryField failed for {0} If renaming or importing '
-            u'please reindex!'.format(obj.absolute_url())
+            u"Lookup of PrimaryField failed for {0} If renaming or importing "
+            u"please reindex!".format(obj.absolute_url())
         )
         return
     return human_readable_size(primary_field_info.value.size)

@@ -19,14 +19,14 @@ class ILeadImage(Interface):
 class ILeadImageBehavior(model.Schema):
 
     image = namedfile.NamedBlobImage(
-        title=_(u'label_leadimage', default=u'Lead Image'),
-        description=u'',
+        title=_(u"label_leadimage", default=u"Lead Image"),
+        description=u"",
         required=False,
     )
 
     image_caption = schema.TextLine(
-        title=_(u'label_leadimage_caption', default=u'Lead Image Caption'),
-        description=u'',
+        title=_(u"label_leadimage_caption", default=u"Lead Image Caption"),
+        description=u"",
         required=False,
     )
 
@@ -34,7 +34,6 @@ class ILeadImageBehavior(model.Schema):
 @implementer(ILeadImageBehavior)
 @adapter(IDexterityContent)
 class LeadImage(object):
-
     def __init__(self, context):
         self.context = context
 

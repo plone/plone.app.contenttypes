@@ -23,25 +23,24 @@ class IRichText(Interface):
 class IRichTextBehavior(model.Schema):
 
     text = RichTextField(
-        title=_(u'Text'),
-        description=u'',
+        title=_(u"Text"),
+        description=u"",
         required=False,
     )
-    form.widget('text', RichTextFieldWidget)
-    model.primary('text')
+    form.widget("text", RichTextFieldWidget)
+    model.primary("text")
     searchable("text")
 
 
 @implementer(IRichTextBehavior)
 @adapter(IDexterityContent)
 class RichText(object):
-
     def __init__(self, context):
         self.context = context
 
     @property
     def text(self):
-        return getattr(aq_base(self.context), 'text', '')
+        return getattr(aq_base(self.context), "text", "")
 
     @text.setter
     def text(self, value):

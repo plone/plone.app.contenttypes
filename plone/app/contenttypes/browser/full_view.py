@@ -6,7 +6,6 @@ from zope.publisher.interfaces.browser import IBrowserView
 
 
 class FullViewItem(BrowserView):
-
     @property
     def default_view(self):
         item_layout = self.context.getLayout()
@@ -25,9 +24,8 @@ class FullViewItem(BrowserView):
     @property
     def item_url(self):
         registry = getUtility(IRegistry)
-        use_view_action = registry.get(
-            'plone.types_use_view_action_in_listings', [])
+        use_view_action = registry.get("plone.types_use_view_action_in_listings", [])
         url = self.context.absolute_url()
         if self.context.portal_type in use_view_action:
-            url = u'{0}/view'.format(url)
+            url = u"{0}/view".format(url)
         return url
