@@ -1,8 +1,6 @@
 from Acquisition import aq_inner
 from lxml import etree
-from plone.app.contenttypes.testing import (  # noqa
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -11,7 +9,6 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.interfaces.syndication import ISiteSyndicationSettings
 from zope.component import getUtility
 
-import six
 import unittest
 
 

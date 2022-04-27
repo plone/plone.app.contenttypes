@@ -19,8 +19,6 @@ from Products.CMFPlone.utils import safe_unicode
 from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
-import six
-
 
 logger = getLogger(__name__)
 
@@ -34,15 +32,9 @@ def _unicode_save_string_concat(*args):
     """
     result = ""
     for value in args:
-        if six.PY2:
-            if isinstance(value, str):
-                value = value.encode("utf-8", "replace")
-            if value:
-                result = " ".join((result, value))
-        else:
-            if isinstance(value, bytes):
-                value = safe_unicode(value)
-            result = " ".join((result, value))
+        if isinstance(value, bytes):
+            value = safe_unicode(value)
+        result = " ".join((result, value))
     return result
 
 
@@ -57,8 +49,6 @@ def SearchableText(obj):
             # or mimeType/outputMimeType, first read
             # https://github.com/plone/Products.CMFPlone/issues/2066
             raw = safe_unicode(textvalue.raw)
-            if six.PY2:
-                raw = raw.encode("utf-8", "replace")
             text = (
                 transforms.convertTo(
                     "text/plain",
@@ -115,8 +105,6 @@ def SearchableText_file(obj):
         # check if there is a valid transform available first
         return SearchableText(obj)
     value = primary_field.value.data
-    if six.PY2:
-        value = str(value)
     filename = primary_field.value.filename
     try:
         transformed_value = transforms.convertTo(

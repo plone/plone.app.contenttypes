@@ -18,8 +18,6 @@ from zope.deprecation import deprecation
 from zope.interface import implementer
 from zope.lifecycleevent import modified
 
-import six
-
 
 @implementer(ICollection)
 class Collection(Item):
@@ -103,10 +101,7 @@ class Document(Item):
         """Provide a proper accessor for the format attribute
         See https://github.com/plone/Products.CMFPlone/issues/2540
         """
-        format = self.format
-        if six.PY2 and isinstance(format, str):
-            format = self.format.encode()
-        return format
+        return self.format
 
 
 @implementer(IFile)
@@ -129,9 +124,7 @@ class File(Item):
             self.dav__simpleifhandler(request, response, refresh=1)
 
             filename = request["PATH_INFO"].split("/")[-1]
-            self.file = NamedBlobFile(
-                data=infile.read(), filename=str(filename)
-            )
+            self.file = NamedBlobFile(data=infile.read(), filename=str(filename))
 
             modified(self)
             return response
@@ -173,9 +166,7 @@ class Image(Item):
 
             infile = request.get("BODYFILE", None)
             filename = request["PATH_INFO"].split("/")[-1]
-            self.image = NamedBlobImage(
-                data=infile.read(), filename=str(filename)
-            )
+            self.image = NamedBlobImage(data=infile.read(), filename=str(filename))
 
             modified(self)
             return response

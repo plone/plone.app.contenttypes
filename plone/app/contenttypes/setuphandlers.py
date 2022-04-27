@@ -77,9 +77,7 @@ def addContentToContainer(container, object, checkConstraints=True):
         if container_fti is not None and not container_fti.allowType(
             object.portal_type
         ):
-            raise ValueError(
-                f"Disallowed subobject type: {object.portal_type}"
-            )
+            raise ValueError(f"Disallowed subobject type: {object.portal_type}")
 
     chooser = INameChooser(container)
     if hasattr(object, "id") and chooser.checkName(object.id, object):

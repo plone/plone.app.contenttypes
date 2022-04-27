@@ -18,7 +18,6 @@ from zope.interface import alsoProvides
 
 import io
 import os.path
-import six
 import unittest
 
 
@@ -64,15 +63,6 @@ class ImageIntegrationTest(unittest.TestCase):
 class ImageViewIntegrationTest(unittest.TestCase):
 
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
-
-    if six.PY2:
-
-        def assertRegex(self, value, pattern):
-            # Python 2 backwards compatibility
-            import re
-
-            if not re.search(pattern, value):
-                raise self.failureException(f"{pattern!r} not found in {value}")
 
     def setUp(self):
         self.portal = self.layer["portal"]

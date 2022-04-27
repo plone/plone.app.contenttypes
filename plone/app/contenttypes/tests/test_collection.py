@@ -395,9 +395,7 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
         # Add a content item to each folder
         for f in folders:
             f_id = f.getId()
-            f.invokeFactory(
-                "Document", f"item_in_{f_id}", title=f"Item In {f_id}"
-            )
+            f.invokeFactory("Document", f"item_in_{f_id}", title=f"Item In {f_id}")
 
         # Add a collection to folder1
         folder1 = folders[0]
