@@ -14,9 +14,6 @@ class FileView(Utils):
         ct = self.context.file.contentType
         return 'audio/' in ct
 
-    def get_mimetype_icon(self):
-        return super(FileView, self).getMimeTypeIcon(self.context.file)
-
     def human_readable_size(self):
         return human_readable_size(self.context.file.getSize())
 
