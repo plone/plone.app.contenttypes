@@ -2,14 +2,14 @@ from plone.app.contenttypes import _
 from plone.app.z3cform.widget import QueryStringFieldWidget
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
+from plone.base.interfaces.syndication import IFeed
+from plone.base.interfaces.syndication import ISyndicatable
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.browser.syndication.adapters import (
     CollectionFeed as BaseCollectionFeed,
-)  # noqa
-from Products.CMFPlone.interfaces.syndication import IFeed
-from Products.CMFPlone.interfaces.syndication import ISyndicatable
+)
 from zope import schema
 from zope.component import adapter
 from zope.component import getMultiAdapter

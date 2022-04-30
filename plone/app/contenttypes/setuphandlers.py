@@ -3,6 +3,9 @@ from Acquisition import aq_base
 from Acquisition import aq_inner
 from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
+from plone.base.interfaces import INonInstallable
+from plone.base.interfaces.constrains import ISelectableConstrainTypes
+from plone.base.utils import unrestricted_construct_instance
 from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
@@ -10,10 +13,6 @@ from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import INonInstallable
-from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from Products.CMFPlone.utils import _createObjectByType
-from Products.CMFPlone.utils import bodyfinder
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -148,6 +147,24 @@ def _setup_constrains(container, allowed_types):
     return True
 
 
+def _bodyfinder(text):
+    """Return body or unchanged text if no body tags found.
+
+    Always use html_headcheck() first.
+    """
+    lowertext = text.lower()
+    bodystart = lowertext.find("<body")
+    if bodystart == -1:
+        return text
+    bodystart = lowertext.find(">", bodystart) + 1
+    if bodystart == 0:
+        return text
+    bodyend = lowertext.rfind("</body>", bodystart)
+    if bodyend == -1:
+        return text
+    return text[bodystart:bodyend]
+
+
 def create_frontpage(portal, target_language):
     if portal.text:
         # Do not overwrite existing content
@@ -171,7 +188,7 @@ def create_frontpage(portal, target_language):
     if front_text is None and request is not None:
         view = queryMultiAdapter((portal, request), name="plone-frontpage-setup")
         if view is not None:
-            front_text = bodyfinder(view.index()).strip()
+            front_text = _bodyfinder(view.index()).strip()
     portal.text = RichTextValue(front_text, "text/html", "text/x-html-safe")
     portal.reindexObject()
 
@@ -190,7 +207,7 @@ def create_news_topic(portal, target_language):
             language=target_language.replace("_", "-").lower(),
         )
         container = addContentToContainer(portal, container)
-        _createObjectByType(
+        unrestricted_construct_instance(
             "Collection",
             container,
             id="aggregator",
@@ -245,7 +262,7 @@ def create_events_topic(portal, target_language):
             language=target_language.replace("_", "-").lower(),
         )
         container = addContentToContainer(portal, container)
-        _createObjectByType(
+        unrestricted_construct_instance(
             "Collection",
             container,
             id="aggregator",

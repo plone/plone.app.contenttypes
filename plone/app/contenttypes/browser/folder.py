@@ -8,10 +8,10 @@ from plone.app.vocabularies.metadatafields import get_field_label
 from plone.base.batch import Batch
 from plone.base.interfaces import ISecuritySchema
 from plone.base.interfaces import ISiteSchema
+from plone.base.utils import safe_callable
 from plone.event.interfaces import IEvent
 from plone.memoize.view import memoize
 from plone.registry.interfaces import IRegistry
-from Products.CMFPlone.utils import safe_callable
 from Products.Five import BrowserView
 from zope.component import getMultiAdapter
 from zope.component import getUtility

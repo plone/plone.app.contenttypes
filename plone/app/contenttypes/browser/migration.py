@@ -8,13 +8,13 @@ from plone.app.contenttypes.utils import changed_base_classes
 from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.contenttypes.utils import get_old_class_name_string
 from plone.app.contenttypes.utils import migrate_base_class_to_new_class
+from plone.base import PloneMessageFactory as _
+from plone.base.utils import get_installer
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.z3cform.layout import wrap_form
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.utils import get_installer
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage

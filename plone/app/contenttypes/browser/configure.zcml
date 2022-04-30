@@ -9,7 +9,7 @@
 
   <!-- VIEWS FOR PLONE SITE ROOT -->
   <browser:pages
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      for="plone.base.interfaces.IPloneSiteRoot"
       class=".folder.FolderView"
       permission="zope2.View">
     <browser:page
@@ -207,7 +207,7 @@
 
   <browser:page
       name="base_class_migrator_form"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      for="plone.base.interfaces.IPloneSiteRoot"
       class="plone.app.contenttypes.browser.migration.BaseClassMigrator"
       layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="cmf.ManagePortal"

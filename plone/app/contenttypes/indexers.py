@@ -10,12 +10,12 @@ from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from plone.app.textfield.value import IRichTextValue
+from plone.base.utils import human_readable_size
+from plone.base.utils import safe_text
 from plone.dexterity.interfaces import IDexterityContent
 from plone.indexer.decorator import indexer
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import human_readable_size
-from Products.CMFPlone.utils import safe_unicode
 from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
@@ -33,7 +33,7 @@ def _unicode_save_string_concat(*args):
     result = ""
     for value in args:
         if isinstance(value, bytes):
-            value = safe_unicode(value)
+            value = safe_text(value)
         result = " ".join((result, value))
     return result
 
@@ -48,7 +48,7 @@ def SearchableText(obj):
             # Before you think about switching raw/output
             # or mimeType/outputMimeType, first read
             # https://github.com/plone/Products.CMFPlone/issues/2066
-            raw = safe_unicode(textvalue.raw)
+            raw = safe_text(textvalue.raw)
             text = (
                 transforms.convertTo(
                     "text/plain",
@@ -59,15 +59,15 @@ def SearchableText(obj):
                 .strip()
             )
 
-    subject = " ".join([safe_unicode(s) for s in obj.Subject()])
+    subject = " ".join([safe_text(s) for s in obj.Subject()])
 
     return " ".join(
         (
-            safe_unicode(obj.id),
-            safe_unicode(obj.title) or "",
-            safe_unicode(obj.description) or "",
-            safe_unicode(text),
-            safe_unicode(subject),
+            safe_text(obj.id),
+            safe_text(obj.title) or "",
+            safe_text(obj.description) or "",
+            safe_text(text),
+            safe_text(subject),
         )
     )
 

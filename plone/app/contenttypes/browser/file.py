@@ -1,5 +1,5 @@
 from plone.app.contenttypes.browser.utils import Utils
-from Products.CMFPlone.utils import human_readable_size
+from plone.base.utils import human_readable_size
 
 import re
 

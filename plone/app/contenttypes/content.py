@@ -8,12 +8,12 @@ from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.interfaces import IImage
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.interfaces import INewsItem
+from plone.base.utils import safe_text
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.namedfile.file import NamedBlobFile
 from plone.namedfile.file import NamedBlobImage
 from Products.CMFCore import permissions
-from Products.CMFPlone.utils import safe_text
 from zope.deprecation import deprecation
 from zope.interface import implementer
 from zope.lifecycleevent import modified

@@ -5,8 +5,8 @@ from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.base.interfaces.syndication import ISiteSyndicationSettings
 from plone.registry.interfaces import IRegistry
-from Products.CMFPlone.interfaces.syndication import ISiteSyndicationSettings
 from zope.component import getUtility
 
 import unittest

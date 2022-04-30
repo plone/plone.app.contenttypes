@@ -2,14 +2,10 @@ from Acquisition import aq_inner
 from DateTime import DateTime
 from plone.app.contenttypes.behaviors.collection import (
     ICollection as ICollection_behavior,
-)  # noqa
+)
 from plone.app.contenttypes.interfaces import ICollection
-from plone.app.contenttypes.testing import (  # noqa
-    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
-)
-from plone.app.contenttypes.testing import (  # noqa
-    PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING,
-)
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 from plone.app.contenttypes.testing import set_browserlayer
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.testing import login
@@ -103,7 +99,7 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.assertEqual(self.collection.sort_reversed, True)
 
     def test_syndicatable(self):
-        from Products.CMFPlone.interfaces.syndication import ISyndicatable
+        from plone.base.interfaces.syndication import ISyndicatable
 
         self.assertTrue(ISyndicatable.providedBy(self.collection))
 
