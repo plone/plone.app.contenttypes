@@ -150,55 +150,55 @@ class Collection:
 
     # Getters and setters for our fields.
 
-    def _set_sort_reversed(self, value):
-        self.context.sort_reversed = value
-
-    def _get_sort_reversed(self):
+    @property
+    def sort_reversed(self):
         return getattr(self.context, "sort_reversed", None)
 
-    sort_reversed = property(_get_sort_reversed, _set_sort_reversed)
+    @sort_reversed.setter
+    def sort_reversed(self, value):
+        self.context.sort_reversed = value
 
-    def _set_item_count(self, value):
-        self.context.item_count = value
-
-    def _get_item_count(self):
+    @property
+    def item_count(self):
         return getattr(self.context, "item_count", 30)
 
-    item_count = property(_get_item_count, _set_item_count)
+    @item_count.setter
+    def item_count(self, value):
+        self.context.item_count = value
 
-    def _set_sort_on(self, value):
-        self.context.sort_on = value
-
-    def _get_sort_on(self):
+    @property
+    def sort_on(self):
         return getattr(self.context, "sort_on", None)
 
-    sort_on = property(_get_sort_on, _set_sort_on)
+    @sort_on.setter
+    def sort_on(self, value):
+        self.context.sort_on = value
 
-    def _set_limit(self, value):
-        self.context.limit = value
-
-    def _get_limit(self):
+    @property
+    def limit(self):
         return getattr(self.context, "limit", 1000)
 
-    limit = property(_get_limit, _set_limit)
+    @limit.setter
+    def limit(self, value):
+        self.context.limit = value
 
-    def _set_query(self, value):
-        self.context.query = value
-
-    def _get_query(self):
+    @property
+    def query(self):
         return getattr(self.context, "query", None)
 
-    query = property(_get_query, _set_query)
+    @query.setter
+    def query(self, value):
+        self.context.query = value
 
-    def _set_customViewFields(self, value):
-        self.context.customViewFields = value
-
-    def _get_customViewFields(self):
+    @property
+    def customViewFields(self):
         # Note: in corner cases customViewFields might be None, but we
         # always want a list.
         return getattr(self.context, "customViewFields", []) or []
 
-    customViewFields = property(_get_customViewFields, _set_customViewFields)
+    @customViewFields.setter
+    def customViewFields(self, value):
+        self.context.customViewFields = value
 
 
 @implementer(IFeed)
