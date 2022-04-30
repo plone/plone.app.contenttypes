@@ -56,48 +56,6 @@ class PloneAppCollectionClassTest(unittest.TestCase):
         self.portal.invokeFactory("Collection", "collection")
         self.collection = self.portal["collection"]
 
-    def test_bbb_listMetaDataFields(self):
-        self.assertEqual(self.collection.listMetaDataFields(), [])
-
-    def test_results(self):
-        pass
-
-    def test_bbb_selectedViewFields(self):
-        self.assertEqual(
-            self.collection.selectedViewFields(),
-            [
-                ("Title", "Title"),
-                ("Creator", "Creator"),
-                ("Type", "Type"),
-                ("ModificationDate", "Last modified"),
-            ],
-        )
-        self.collection.customViewFields = ["Title", "Description"]
-        self.assertEqual(
-            self.collection.selectedViewFields(),
-            [("Title", "Title"), ("Description", "Description")],
-        )
-
-    def test_bbb_setQuery(self):
-        self.collection.setQuery(query)
-        self.assertEqual(self.collection.query, query)
-
-    def test_bbb_getQuery(self):
-        self.collection.query = query
-        self.assertEqual(self.collection.getQuery(), query)
-
-    def test_bbb_getRawQuery(self):
-        self.collection.query = query
-        self.assertEqual(self.collection.getRawQuery(), query)
-
-    def test_bbb_setSort_on(self):
-        self.collection.setSort_on("start")
-        self.assertEqual(self.collection.sort_on, "start")
-
-    def test_bbb_setSort_reversed(self):
-        self.collection.setSort_reversed(True)
-        self.assertEqual(self.collection.sort_reversed, True)
-
     def test_syndicatable(self):
         from plone.base.interfaces.syndication import ISyndicatable
 
