@@ -7,12 +7,12 @@
            xmlns:plone="http://namespaces.plone.org/plone"
            i18n_domain="plone">
 
-  <include package="Products.CMFPlone" file="meta.zcml"/>
+  <include package="Products.CMFCore" file="meta.zcml" />
+  <include package="Products.GenericSetup" file="meta.zcml" />
   <include package="plone.behavior" file="meta.zcml"/>
   <include package="plone.dexterity" file="meta.zcml"/>
   <include package="plone.app.dexterity" file="meta.zcml"/>
 
-  <include package="Products.CMFPlone" />
   <include package="plone.behavior" />
   <include package="plone.dexterity" />
   <include package="plone.namedfile" />
@@ -41,6 +41,6 @@
   <utility
       factory=".setuphandlers.HiddenProfiles"
       name="plone.app.contenttypes"
-      provides="Products.CMFPlone.interfaces.INonInstallable" />
+      provides="plone.base.interfaces.INonInstallable" />
 
 </configure>

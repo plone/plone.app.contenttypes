@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from plone.app.contenttypes import _
 from plone.app.contenttypes.behaviors.collection import ICollection
@@ -10,14 +9,13 @@ from plone.memoize.view import memoize
 
 
 class CollectionView(FolderView):
-
     @property
     def collection_behavior(self):
         return ICollection(aq_inner(self.context))
 
     @property
     def b_size(self):
-        return getattr(self, '_b_size', self.collection_behavior.item_count)
+        return getattr(self, "_b_size", self.collection_behavior.item_count)
 
     def results(self, **kwargs):
         """Return a content listing based result set with results from the
@@ -32,12 +30,12 @@ class CollectionView(FolderView):
                 sequence.
         """
         # Extra filter
-        contentFilter = dict(self.request.get('contentFilter', {}))
-        contentFilter.update(kwargs.get('contentFilter', {}))
-        kwargs.setdefault('custom_query', contentFilter)
-        kwargs.setdefault('batch', True)
-        kwargs.setdefault('b_size', self.b_size)
-        kwargs.setdefault('b_start', self.b_start)
+        contentFilter = dict(self.request.get("contentFilter", {}))
+        contentFilter.update(kwargs.get("contentFilter", {}))
+        kwargs.setdefault("custom_query", contentFilter)
+        kwargs.setdefault("batch", True)
+        kwargs.setdefault("b_size", self.b_size)
+        kwargs.setdefault("b_start", self.b_start)
 
         results = self.collection_behavior.results(**kwargs)
         return results
@@ -49,8 +47,7 @@ class CollectionView(FolderView):
     @property
     @memoize
     def _album_results(self):
-        """Get results to display an album with subalbums.
-        """
+        """Get results to display an album with subalbums."""
         results = self.results()
         images = []
         folders = []
@@ -59,26 +56,23 @@ class CollectionView(FolderView):
             ob = it.getObject()
             if IFolder.providedBy(ob):
                 folders.append(it)
-            elif IImage.providedBy(ob) or \
-                 ILeadImage.providedBy(ob):
+            elif IImage.providedBy(ob) or ILeadImage.providedBy(ob):
                 images.append(it)
-        return {'images': images, 'folders': folders}
+        return {"images": images, "folders": folders}
 
     @property
     def album_images(self):
-        """Get all images within this collection.
-        """
-        return self._album_results['images']
+        """Get all images within this collection."""
+        return self._album_results["images"]
 
     @property
     def album_folders(self):
-        """Get all folders within this collection.
-        """
-        return self._album_results['folders']
+        """Get all folders within this collection."""
+        return self._album_results["folders"]
 
     def tabular_fields(self):
         """Return a list of all metadata fields from the catalog that were
-           selected.
+        selected.
         """
         context = aq_inner(self.context)
         wrapped = ICollection(context)
@@ -88,7 +82,4 @@ class CollectionView(FolderView):
 
     @property
     def no_items_message(self):
-        return _(
-            'description_no_results_found',
-            default=u'No results were found.'
-        )
+        return _("description_no_results_found", default="No results were found.")

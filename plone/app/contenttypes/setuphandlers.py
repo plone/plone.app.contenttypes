@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
+from plone.base.interfaces import INonInstallable
+from plone.base.interfaces.constrains import ISelectableConstrainTypes
+from plone.base.utils import unrestricted_construct_instance
 from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.utils import createContent
 from plone.i18n.normalizer.interfaces import IURLNormalizer
@@ -11,10 +13,6 @@ from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import INonInstallable
-from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from Products.CMFPlone.utils import _createObjectByType
-from Products.CMFPlone.utils import bodyfinder
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import queryMultiAdapter
@@ -28,35 +26,35 @@ from zope.interface import implementer
 
 
 @implementer(INonInstallable)
-class HiddenProfiles(object):
-
+class HiddenProfiles:
     def getNonInstallableProfiles(self):
         """
         Prevents all profiles but 'plone-content' from showing up in the
         profile list when creating a Plone site.
         """
         return [
-            u'plone.app.contenttypes:default',
+            "plone.app.contenttypes:default",
         ]
 
 
 def _publish(content):
     """Publish the object if it hasn't been published."""
-    portal_workflow = getToolByName(getSite(), 'portal_workflow')
-    if portal_workflow.getInfoFor(content, 'review_state') != 'published':
-        portal_workflow.doActionFor(content, 'publish')
+    portal_workflow = getToolByName(getSite(), "portal_workflow")
+    if portal_workflow.getInfoFor(content, "review_state") != "published":
+        portal_workflow.doActionFor(content, "publish")
         return True
     return False
 
 
-def _translate(name, target_language, default=u''):
+def _translate(name, target_language, default=""):
     """Simple function to translate a string."""
     result = None
-    if target_language != 'en':
-        util = queryUtility(ITranslationDomain, 'plonefrontpage')
+    if target_language != "en":
+        util = queryUtility(ITranslationDomain, "plonefrontpage")
         if util is not None:
-            result = util.translate(name, target_language=target_language,
-                                    default=default)
+            result = util.translate(
+                name, target_language=target_language, default=default
+            )
     return result and result or default
 
 
@@ -64,8 +62,8 @@ def addContentToContainer(container, object, checkConstraints=True):
     """Copy of plone.dexterity.util.addContentToContainer.
     Modified to check the existing Id on the object before paving over it.
     """
-    if not hasattr(aq_base(object), 'portal_type'):
-        raise ValueError('object must have its portal_type set')
+    if not hasattr(aq_base(object), "portal_type"):
+        raise ValueError("object must have its portal_type set")
 
     container = aq_inner(container)
     if checkConstraints:
@@ -73,16 +71,15 @@ def addContentToContainer(container, object, checkConstraints=True):
 
         fti = getUtility(IDexterityFTI, name=object.portal_type)
         if not fti.isConstructionAllowed(container):
-            raise Unauthorized('Cannot create {0}'.format(object.portal_type))
+            raise Unauthorized(f"Cannot create {object.portal_type}")
 
-        if container_fti is not None and \
-                not container_fti.allowType(object.portal_type):
-            raise ValueError(
-                'Disallowed subobject type: {0}'.format(object.portal_type)
-            )
+        if container_fti is not None and not container_fti.allowType(
+            object.portal_type
+        ):
+            raise ValueError(f"Disallowed subobject type: {object.portal_type}")
 
     chooser = INameChooser(container)
-    if hasattr(object, 'id') and chooser.checkName(object.id, object):
+    if hasattr(object, "id") and chooser.checkName(object.id, object):
         name = object.id
     else:
         name = INameChooser(container).chooseName(None, object)
@@ -94,29 +91,29 @@ def addContentToContainer(container, object, checkConstraints=True):
 
 def _get_locales_info(portal):
     reg = queryUtility(IRegistry, context=portal)
-    language = reg['plone.default_language']
-    parts = (language.split('-') + [None, None])[:3]
+    language = reg["plone.default_language"]
+    parts = (language.split("-") + [None, None])[:3]
 
     try:
         locale = locales.getLocale(*parts)
 
         # If we get a territory, we enable the combined language codes
         if locale.id.territory:
-            return locale.id.language + '_' + locale.id.territory, True, locale
+            return locale.id.language + "_" + locale.id.territory, True, locale
         return locale.id.language, False, locale
     except LoadLocaleError:
         # default to *some* language so we don't error out
-        return language, False, locales.getLocale('en')
+        return language, False, locales.getLocale("en")
 
 
 def _setup_calendar(portal, locale):
     """Set the calendar's date system to reflect the default locale"""
-    gregorian_calendar = locale.dates.calendars.get(u'gregorian', None)
-    portal_calendar = getToolByName(portal, 'portal_calendar', None)
+    gregorian_calendar = locale.dates.calendars.get("gregorian", None)
+    portal_calendar = getToolByName(portal, "portal_calendar", None)
     if portal_calendar is not None:
         first = 6
         if gregorian_calendar is not None:
-            first = gregorian_calendar.week.get('firstDay', None)
+            first = gregorian_calendar.week.get("firstDay", None)
             # on the locale object we have: mon : 1 ... sun : 7
             # on the calendar tool we have: mon : 0 ... sun : 6
             if first is not None:
@@ -125,7 +122,7 @@ def _setup_calendar(portal, locale):
 
 
 def _setup_visible_ids(portal, target_language, locale):
-    portal_properties = getToolByName(portal, 'portal_properties')
+    portal_properties = getToolByName(portal, "portal_properties")
     site_properties = portal_properties.site_properties
 
     # See if we have a URL normalizer
@@ -135,7 +132,7 @@ def _setup_visible_ids(portal, target_language, locale):
 
     # If we get a script other than Latn we enable visible_ids
     if locale.id.script is not None:
-        if locale.id.script.lower() != 'latn':
+        if locale.id.script.lower() != "latn":
             site_properties.visible_ids = True
 
     # If we have a normalizer it is safe to disable the visible ids
@@ -150,166 +147,191 @@ def _setup_constrains(container, allowed_types):
     return True
 
 
+def _bodyfinder(text):
+    """Return body or unchanged text if no body tags found.
+
+    Always use html_headcheck() first.
+    """
+    lowertext = text.lower()
+    bodystart = lowertext.find("<body")
+    if bodystart == -1:
+        return text
+    bodystart = lowertext.find(">", bodystart) + 1
+    if bodystart == 0:
+        return text
+    bodyend = lowertext.rfind("</body>", bodystart)
+    if bodyend == -1:
+        return text
+    return text[bodystart:bodyend]
+
+
 def create_frontpage(portal, target_language):
     if portal.text:
         # Do not overwrite existing content
         return
-    portal.title = _translate(
-        u'front-title',
-        target_language,
-        u'Welcome to Plone'
-    )
+    portal.title = _translate("front-title", target_language, "Welcome to Plone")
     portal.description = _translate(
-        u'front-description', target_language,
-        u'Congratulations! You have successfully installed Plone.'
+        "front-description",
+        target_language,
+        "Congratulations! You have successfully installed Plone.",
     )
     front_text = None
-    if target_language != 'en':
-        util = queryUtility(ITranslationDomain, 'plonefrontpage')
+    if target_language != "en":
+        util = queryUtility(ITranslationDomain, "plonefrontpage")
         if util is not None:
             translated_text = util.translate(
-                u'front-text',
-                target_language=target_language
+                "front-text", target_language=target_language
             )
-            if translated_text != u'front-text':
+            if translated_text != "front-text":
                 front_text = translated_text
-    request = getattr(portal, 'REQUEST', None)
+    request = getattr(portal, "REQUEST", None)
     if front_text is None and request is not None:
-        view = queryMultiAdapter(
-            (portal, request),
-            name='plone-frontpage-setup'
-        )
+        view = queryMultiAdapter((portal, request), name="plone-frontpage-setup")
         if view is not None:
-            front_text = bodyfinder(view.index()).strip()
-    portal.text = RichTextValue(
-        front_text,
-        'text/html',
-        'text/x-html-safe'
-    )
+            front_text = _bodyfinder(view.index()).strip()
+    portal.text = RichTextValue(front_text, "text/html", "text/x-html-safe")
     portal.reindexObject()
 
 
 def create_news_topic(portal, target_language):
-    news_id = 'news'
+    news_id = "news"
 
     if news_id not in portal.keys():
-        title = _translate(u'news-title', target_language, u'News')
-        description = _translate(u'news-description', target_language,
-                                 u'Site News')
+        title = _translate("news-title", target_language, "News")
+        description = _translate("news-description", target_language, "Site News")
         container = createContent(
-            'Folder', id=news_id,
+            "Folder",
+            id=news_id,
             title=title,
             description=description,
-            language=target_language.replace('_', '-').lower())
+            language=target_language.replace("_", "-").lower(),
+        )
         container = addContentToContainer(portal, container)
-        _createObjectByType('Collection', container,
-                            id='aggregator', title=title,
-                            description=description)
-        aggregator = container['aggregator']
+        unrestricted_construct_instance(
+            "Collection",
+            container,
+            id="aggregator",
+            title=title,
+            description=description,
+        )
+        aggregator = container["aggregator"]
 
         # Constrain types
-        allowed_types = ['News Item', ]
+        allowed_types = [
+            "News Item",
+        ]
         _setup_constrains(container, allowed_types)
 
-        container.setOrdering('unordered')
-        container.setDefaultPage('aggregator')
+        container.setOrdering("unordered")
+        container.setDefaultPage("aggregator")
         _publish(container)
 
         # Set the Collection criteria.
         #: Sort on the Effective date
-        aggregator.sort_on = u'effective'
+        aggregator.sort_on = "effective"
         aggregator.sort_reversed = True
         #: Query by Type and Review State
         aggregator.query = [
-            {'i': u'portal_type',
-             'o': u'plone.app.querystring.operation.selection.any',
-             'v': [u'News Item'],
-             },
-            {'i': u'review_state',
-             'o': u'plone.app.querystring.operation.selection.any',
-             'v': [u'published'],
-             },
+            {
+                "i": "portal_type",
+                "o": "plone.app.querystring.operation.selection.any",
+                "v": ["News Item"],
+            },
+            {
+                "i": "review_state",
+                "o": "plone.app.querystring.operation.selection.any",
+                "v": ["published"],
+            },
         ]
-        aggregator.setLayout('summary_view')
+        aggregator.setLayout("summary_view")
 
         _publish(aggregator)
 
 
 def create_events_topic(portal, target_language):
-    events_id = 'events'
+    events_id = "events"
 
     if events_id not in portal.keys():
-        title = _translate(u'events-title', target_language, u'Events')
-        description = _translate(u'events-description', target_language,
-                                 u'Site Events')
+        title = _translate("events-title", target_language, "Events")
+        description = _translate("events-description", target_language, "Site Events")
         container = createContent(
-            'Folder', id=events_id,
+            "Folder",
+            id=events_id,
             title=title,
             description=description,
-            language=target_language.replace('_', '-').lower())
+            language=target_language.replace("_", "-").lower(),
+        )
         container = addContentToContainer(portal, container)
-        _createObjectByType('Collection', container,
-                            id='aggregator', title=title,
-                            description=description)
-        aggregator = container['aggregator']
+        unrestricted_construct_instance(
+            "Collection",
+            container,
+            id="aggregator",
+            title=title,
+            description=description,
+        )
+        aggregator = container["aggregator"]
 
         # Constain types
-        allowed_types = ['Event', ]
+        allowed_types = [
+            "Event",
+        ]
 
         _setup_constrains(container, allowed_types)
 
-        container.setOrdering('unordered')
-        container.setDefaultPage('aggregator')
+        container.setOrdering("unordered")
+        container.setDefaultPage("aggregator")
         _publish(container)
 
         # Set the Collection criteria.
         #: Sort on the Event start date
-        aggregator.sort_on = u'start'
+        aggregator.sort_on = "start"
         aggregator.sort_reversed = True
         #: Query by Type and Review State
         aggregator.query = [
-            {'i': 'portal_type',
-             'o': 'plone.app.querystring.operation.selection.any',
-             'v': ['Event']
-             },
-            {'i': 'review_state',
-             'o': 'plone.app.querystring.operation.selection.any',
-             'v': ['published']
-             },
+            {
+                "i": "portal_type",
+                "o": "plone.app.querystring.operation.selection.any",
+                "v": ["Event"],
+            },
+            {
+                "i": "review_state",
+                "o": "plone.app.querystring.operation.selection.any",
+                "v": ["published"],
+            },
         ]
-        aggregator.setLayout('event_listing')
+        aggregator.setLayout("event_listing")
         _publish(aggregator)
 
 
 def configure_members_folder(portal, target_language):
-    members_id = 'Members'
+    members_id = "Members"
 
     if members_id not in portal.keys():
-        title = _translate(u'members-title', target_language, u'Users')
-        description = _translate(u'members-description', target_language,
-                                 u'Site Users')
+        title = _translate("members-title", target_language, "Users")
+        description = _translate("members-description", target_language, "Site Users")
         container = createContent(
-            'Folder', id=members_id,
+            "Folder",
+            id=members_id,
             title=title,
             description=description,
-            language=target_language.replace('_', '-').lower())
+            language=target_language.replace("_", "-").lower(),
+        )
         container = addContentToContainer(portal, container)
-        container.setOrdering('unordered')
+        container.setOrdering("unordered")
         container.reindexObject()
 
         # set member search as default layout to Members Area
-        container.setLayout('@@member-search')
+        container.setLayout("@@member-search")
 
         # Block all right column portlets by default
-        manager = queryUtility(IPortletManager, name='plone.rightcolumn')
+        manager = queryUtility(IPortletManager, name="plone.rightcolumn")
         if manager is not None:
             assignable = getMultiAdapter(
-                (container, manager),
-                ILocalPortletAssignmentManager
+                (container, manager), ILocalPortletAssignmentManager
             )
-            assignable.setBlacklistStatus('context', True)
-            assignable.setBlacklistStatus('group', True)
-            assignable.setBlacklistStatus('content_type', True)
+            assignable.setBlacklistStatus("context", True)
+            assignable.setBlacklistStatus("group", True)
+            assignable.setBlacklistStatus("content_type", True)
 
 
 def import_content(context):

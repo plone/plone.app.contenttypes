@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
 from io import BytesIO
-from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING  # noqa
+from plone.app.contenttypes.testing import (  # noqa
+    PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
+)
 from plone.app.testing import login
 from plone.app.testing import logout
 from plone.app.testing import setRoles
@@ -79,10 +80,10 @@ class TestSecurity(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
         # self.request['ACTUAL_URL'] = self.portal.absolute_url()
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
 
     def publish(
         self,
@@ -97,11 +98,10 @@ class TestSecurity(unittest.TestCase):
         """
         Mostly pulled from Testing.functional
         """
-        from ZPublisher.Request import Request
-        from ZPublisher.Response import Response
-
         # Note: the next import fail in Python 3, because it needs ZServer.
         from ZPublisher.Publish import publish_module
+        from ZPublisher.Request import Request
+        from ZPublisher.Response import Response
 
         transaction.commit()
 
@@ -219,14 +219,14 @@ class TestSecurity(unittest.TestCase):
                 self.assertEqual(
                     mapping.get(method),
                     "View",
-                    "Method {0} missing view protection".format(method),
+                    f"Method {method} missing view protection",
                 )
         for method in WRITE_METHODS:
             if method in klass.__dict__.keys():
                 self.assertEqual(
                     mapping.get(method),
                     "Modify portal content",
-                    "Method {0} missing edit protection".format(method),
+                    f"Method {method} missing edit protection",
                 )
 
     def testCollection_protected(self):

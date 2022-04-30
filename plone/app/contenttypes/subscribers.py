@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.interfaces import IImage
 
 
 def set_title_description(obj, event):
-    ''' Sets title to filename if no title
-        was provided.
-        Also sets an empty unicode as description if
-        no description was provided.
-    '''
+    """Sets title to filename if no title
+    was provided.
+    Also sets an empty unicode as description if
+    no description was provided.
+    """
     title = obj.title
     if not title:
         if IImage.providedBy(obj):
@@ -20,4 +19,4 @@ def set_title_description(obj, event):
 
     description = obj.description
     if not description:
-        obj.description = u''
+        obj.description = ""

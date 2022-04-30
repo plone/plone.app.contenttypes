@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from zope.interface import Interface
 
 
@@ -13,40 +12,32 @@ class IPloneAppContenttypesLayer(Interface):
 
 
 class ICollection(Interface):
-    """Explicit marker interface for Collection
-    """
+    """Explicit marker interface for Collection"""
 
 
 class IDocument(Interface):
-    """Explicit marker interface for Document
-    """
+    """Explicit marker interface for Document"""
 
 
 class IFile(Interface):
-    """Explicit marker interface for File
-    """
+    """Explicit marker interface for File"""
 
 
 class IFolder(Interface):
-    """Explicit marker interface for Folder
-    """
+    """Explicit marker interface for Folder"""
 
 
 class IImage(Interface):
-    """Explicit marker interface for Image
-    """
+    """Explicit marker interface for Image"""
 
 
 class ILink(Interface):
-    """Explicit marker interface for Link
-    """
+    """Explicit marker interface for Link"""
 
 
 class INewsItem(Interface):
-    """Explicit marker interface for News Item
-    """
+    """Explicit marker interface for News Item"""
 
 
 class IEvent(Interface):
-    """Explicit marker interface for Event
-    """
+    """Explicit marker interface for Event"""

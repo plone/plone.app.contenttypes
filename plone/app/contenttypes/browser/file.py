@@ -1,18 +1,17 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.browser.utils import Utils
-from Products.CMFPlone.utils import human_readable_size
+from plone.base.utils import human_readable_size
 
 import re
 
-class FileView(Utils):
 
+class FileView(Utils):
     def is_videotype(self):
         ct = self.context.file.contentType
-        return 'video/' in ct
+        return "video/" in ct
 
     def is_audiotype(self):
         ct = self.context.file.contentType
-        return 'audio/' in ct
+        return "audio/" in ct
 
     def human_readable_size(self):
         return human_readable_size(self.context.file.getSize())

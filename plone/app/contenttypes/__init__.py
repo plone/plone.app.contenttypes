@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-from zope.i18nmessageid import MessageFactory
-
 from . import permissions
+from zope.i18nmessageid import MessageFactory
 
 
 permissions  # pyflakes
 
-_ = MessageFactory('plone')
+_ = MessageFactory("plone")
