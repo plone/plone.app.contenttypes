@@ -89,6 +89,7 @@ class FolderView(BrowserView):
         kwargs.setdefault('batch', True)
         kwargs.setdefault('b_size', self.b_size)
         kwargs.setdefault('b_start', self.b_start)
+        kwargs.setdefault('orphan', 1)
 
         listing = aq_inner(self.context).restrictedTraverse(
             '@@folderListing', None)
