@@ -8,6 +8,25 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a12 (2022-05-14)
+---------------------
+
+Breaking changes:
+
+
+- Use plone.base, code style black, isort, pyupgrade, manual overhaul.
+  [jensens] (#644)
+
+
+Bug fixes:
+
+
+- Removed unused migration and uninstall code, and rfc822 tests.
+  [maurits] (#641)
+- Re-register and improve @@base_class_migrator_form required to migrate to foilderish items.
+  [pbauer] (#642)
+
+
 3.0.0a11 (2022-04-07)
 ---------------------
 
