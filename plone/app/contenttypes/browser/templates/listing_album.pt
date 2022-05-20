@@ -36,7 +36,8 @@
   <tal:albums tal:repeat="album albums">
     <div class="col mb-5">
       <div class="card album h-100">
-        <div tal:define="scale python:image_scale.tag(album, 'image', scale='mini')" tal:condition="scale" class="card-image d-flex justify-content-center align-items-center" style="height: 14rem;">
+        <div tal:define="scale python:image_scale.tag(album, 'image', scale='mini') if getattr(album, 'image', None) else None"
+         tal:condition="scale" class="card-image d-flex justify-content-center align-items-center" style="height: 14rem;">
           <img tal:replace="structure scale" />
         </div>
         <div class="card-body">
