@@ -103,7 +103,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
         self.image.image = dummy_image("image.svg")
         scale = self.image.restrictedTraverse("@@images")
         self.assertRegex(
-            scale.scale("image", scale="large").tag(),
+            scale.tag("image", scale="large"),
             r'<img src="http://nohost/plone/image/@@images/[a-z0-9\-]*.svg" alt="My Image" title="My Image" height="[a-z0-9\-]*" width="[a-z0-9\-]*" />',  # noqa: E501
         )
 

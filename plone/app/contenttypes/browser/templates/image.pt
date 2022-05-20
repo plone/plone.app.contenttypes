@@ -22,7 +22,7 @@
   <section class="section section-main">
     <figure class="figure">
       <a tal:attributes="href string:${context/@@plone_context_state/object_url}/image_view_fullscreen"
-         tal:define="scale context/@@images; img_tag python:scale.scale('image', scale='large').tag(css_class='figure-img img-fluid')"
+         tal:define="scale context/@@images; img_tag python:scale.tag('image', scale='large', css_class='figure-img img-fluid')"
          tal:on-error="string: Image cannot be displayed">
         <img tal:replace="structure img_tag" />
       </a>
