@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a13 (2022-05-24)
+---------------------
+
+Bug fixes:
+
+
+- When using ``@@images`` view, call ``tag`` directly.
+  [maurits] (#3535)
+
+
 3.0.0a12 (2022-05-14)
 ---------------------
 
