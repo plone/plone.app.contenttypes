@@ -50,7 +50,7 @@
   </section>
 
   <section class="section section-actions">
-    <a class="btn btn-primary download" href="${python:download_url}">Download</a>
+    <a class="btn btn-primary download" href="${python:download_url}" i18n:translate="">Download</a>
   </section>
 
 </metal:block>
