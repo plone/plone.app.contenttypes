@@ -1,0 +1,3 @@
+Robot tests: use more specific element when clicking Save button.
+'Click Button Save' sometimes failed.
+[maurits]
