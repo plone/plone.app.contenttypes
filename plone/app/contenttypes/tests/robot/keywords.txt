@@ -37,7 +37,7 @@ a file
   Wait until page contains  Add File
   Input text  name=form.widgets.title  ${title}
   Choose File  name=form.widgets.file  ${PATH_TO_TEST_FILES}/file.pdf
-  Click Button  Save
+  Wait For Then Click Element  css=#form-buttons-save
   Wait until page contains  Item created
 
 a folder
@@ -51,7 +51,7 @@ a image
   Wait until page contains  Add Image
   Input text  name=form.widgets.title  ${title}
   Choose File  name=form.widgets.image  ${PATH_TO_TEST_FILES}/image.png
-  Click Button  Save
+  Wait For Then Click Element  css=#form-buttons-save
   Wait until page contains  Item created  error=Image could not be created.
 
 a link
@@ -65,7 +65,7 @@ a news item
   Go to  ${PLONE_URL}/++add++News Item
   Wait until page contains  Add News Item
   Input text  name=form.widgets.IDublinCore.title  ${title}
-  Click Button  Save
+  Wait For Then Click Element  css=#form-buttons-save
   Wait until page contains  Item created
 
 
