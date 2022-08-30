@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0b2 (2022-08-30)
+--------------------
+
+Bug fixes:
+
+
+- Robot tests: use more specific element when clicking Save button.
+  'Click Button Save' sometimes failed.
+  [maurits] (#3582)
+
+
 3.0.0b1 (2022-06-23)
 --------------------
 
