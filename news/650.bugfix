@@ -1,0 +1,2 @@
+Doesn't create content of type Folder, when we are installing a Site Volto (fixes `plone/Products.CMFPlone#3628 <https://github.com/plone/Products.CMFPlone/issues/3628>`_).
+[wesleybl]

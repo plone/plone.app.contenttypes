@@ -1,13 +1,16 @@
+from plone.api.content import delete
+from plone.api.env import adopt_roles
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
-from plone.base.interfaces.constrains import ISelectableConstrainTypes
+from plone.app.testing import quickInstallProduct
+from plone.app.testing.helpers import applyProfile
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from Products.CMFCore.utils import getToolByName
-from Products.PythonScripts.PythonScript import PythonScript
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.configuration import xmlconfig
 
 import unittest
 
@@ -35,6 +38,27 @@ class ContentProfileTestCase(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer["portal"]
         self.portal_workflow = getToolByName(self.portal, "portal_workflow")
+
+    def delete_content(self, obj_id):
+        with adopt_roles(["Manager"]):
+            delete(self.portal[obj_id])
+
+    def delete_content_and_apply_profile_with_plone_volto_extension_id(self, obj_id):
+        self.delete_content(obj_id)
+        self.portal.REQUEST.form["extension_ids"] = ["plone.volto:default"]
+        applyProfile(self.portal, "plone.app.contenttypes:plone-content")
+
+    def delete_content_and_apply_profile_with_plone_volto_installed(self, obj_id):
+        self.delete_content(obj_id)
+        import plone.volto
+
+        xmlconfig.file(
+            "configure.zcml",
+            package=plone.volto,
+            context=self.layer["configurationContext"],
+        )
+        quickInstallProduct(self.portal, "plone.volto")
+        applyProfile(self.portal, "plone.app.contenttypes:plone-content")
 
     # #################### #
     #   front-page tests   #
@@ -74,6 +98,16 @@ class ContentProfileTestCase(unittest.TestCase):
         current_state = self.portal_workflow.getInfoFor(obj, "review_state")
         self.assertEqual(current_state, "private")
 
+    def test_members_type_with_plone_volto_in_request(self):
+        self.delete_content_and_apply_profile_with_plone_volto_extension_id("Members")
+        obj = self.portal["Members"]
+        self.assertEqual(obj.portal_type, "Document")
+
+    def test_members_type_with_plone_volto_installed(self):
+        self.delete_content_and_apply_profile_with_plone_volto_installed("Members")
+        obj = self.portal["Members"]
+        self.assertEqual(obj.portal_type, "Document")
+
     # ################ #
     #   events tests   #
     # ################ #
@@ -95,6 +129,16 @@ class ContentProfileTestCase(unittest.TestCase):
         events = self.portal["events"]
         current_state = self.portal_workflow.getInfoFor(events, "review_state")
         self.assertEqual(current_state, "published")
+
+    def test_events_type_with_plone_volto_in_request(self):
+        self.delete_content_and_apply_profile_with_plone_volto_extension_id("events")
+        obj = self.portal["events"]
+        self.assertEqual(obj.portal_type, "Document")
+
+    def test_events_type_with_plone_volto_installed(self):
+        self.delete_content_and_apply_profile_with_plone_volto_installed("events")
+        obj = self.portal["events"]
+        self.assertEqual(obj.portal_type, "Document")
 
     # ############## #
     #   news tests   #
@@ -137,3 +181,13 @@ class ContentProfileTestCase(unittest.TestCase):
         self.assertEqual(collection.sort_reversed, True)
         self.assertEqual(collection.query, query)
         self.assertEqual(collection.getLayout(), "summary_view")
+
+    def test_news_type_with_plone_volto_in_request(self):
+        self.delete_content_and_apply_profile_with_plone_volto_extension_id("news")
+        obj = self.portal["news"]
+        self.assertEqual(obj.portal_type, "Document")
+
+    def test_news_type_with_plone_volto_installed(self):
+        self.delete_content_and_apply_profile_with_plone_volto_installed("news")
+        obj = self.portal["news"]
+        self.assertEqual(obj.portal_type, "Document")

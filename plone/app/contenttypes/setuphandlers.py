@@ -5,6 +5,7 @@ from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
 from plone.base.interfaces import INonInstallable
 from plone.base.interfaces.constrains import ISelectableConstrainTypes
+from plone.base.utils import get_installer
 from plone.base.utils import unrestricted_construct_instance
 from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.utils import createContent
@@ -23,6 +24,9 @@ from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.i18n.locales.provider import LoadLocaleError
 from zope.interface import implementer
+
+
+container_type = "Folder"
 
 
 @implementer(INonInstallable)
@@ -200,7 +204,7 @@ def create_news_topic(portal, target_language):
         title = _translate("news-title", target_language, "News")
         description = _translate("news-description", target_language, "Site News")
         container = createContent(
-            "Folder",
+            container_type,
             id=news_id,
             title=title,
             description=description,
@@ -255,7 +259,7 @@ def create_events_topic(portal, target_language):
         title = _translate("events-title", target_language, "Events")
         description = _translate("events-description", target_language, "Site Events")
         container = createContent(
-            "Folder",
+            container_type,
             id=events_id,
             title=title,
             description=description,
@@ -310,7 +314,7 @@ def configure_members_folder(portal, target_language):
         title = _translate("members-title", target_language, "Users")
         description = _translate("members-description", target_language, "Site Users")
         container = createContent(
-            "Folder",
+            container_type,
             id=members_id,
             title=title,
             description=description,
@@ -334,10 +338,35 @@ def configure_members_folder(portal, target_language):
             assignable.setBlacklistStatus("content_type", True)
 
 
+def set_container_type(portal):
+    global container_type
+    request = portal.REQUEST
+    if (
+        request.has_key("extension_ids")
+        and "plone.volto:default" in request["extension_ids"]
+    ):
+        container_type = "Document"
+
+        # When the installation reaches this point, plone.volto has not yet been
+        # installed. So we need to configure the Document type to behave like a
+        # container.
+        document_portal_type = portal.portal_types.Document
+        document_portal_type.klass = "plone.volto.content.FolderishDocument"
+        document_behaviors = list(document_portal_type.behaviors)
+        document_behaviors.append("plone.constraintypes")
+        document_portal_type.behaviors = tuple(document_behaviors)
+        document_portal_type.filter_content_types = False
+    else:
+        installer = get_installer(portal)
+        if installer.is_product_installed("plone.volto"):
+            container_type = "Document"
+
+
 def import_content(context):
     """Create default content."""
     portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
+    set_container_type(portal)
     create_frontpage(portal, target_language)
     create_news_topic(portal, target_language)
     create_events_topic(portal, target_language)
