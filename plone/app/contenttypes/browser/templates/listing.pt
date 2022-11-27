@@ -116,7 +116,7 @@
 
                   <div class="col-3 text-end" tal:condition="python:item_has_image and thumb_scale_list">
                     <a tal:attributes="href python:item_link;">
-                      <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class)" />
+                      <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class, loading='lazy')" />
                     </a>
                   </div>
                 </article>
