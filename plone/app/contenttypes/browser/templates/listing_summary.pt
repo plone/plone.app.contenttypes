@@ -48,7 +48,7 @@
           <div class="col-3"
                tal:condition="python: item_has_image and thumb_scale_summary">
             <a tal:attributes="href item_link">
-              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='image-responsive thumb-' + thumb_scale_summary)" />
+              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='image-responsive thumb-' + thumb_scale_summary, loading='lazy')" />
             </a>
           </div>
 
