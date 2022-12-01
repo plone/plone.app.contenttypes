@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0 (2022-12-01)
+------------------
+
+New features:
+
+
+- add loading='lazy' to img tag in listing album, summary and tabular
+  [yurj] (#655)
+
+
 3.0.0b2 (2022-08-30)
 --------------------
 
