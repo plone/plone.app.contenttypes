@@ -12,7 +12,10 @@
                     tal:define="toc python: getattr(context, 'table_of_contents', False)">
 
   <section id="section-text">
-    <div id="parent-fieldname-text" tal:condition="python: context.text" tal:content="structure python:context.text.output_relative_to(view.context)" tal:attributes="class python: toc and 'pat-autotoc' or ''">
+    <div id="parent-fieldname-text"
+         tal:condition="python:getattr(context, 'text', None)"
+         tal:content="structure python:context.text.output_relative_to(view.context)"
+         tal:attributes="class python: toc and 'pat-autotoc' or ''">
       Text
     </div>
   </section>
