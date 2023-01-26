@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.1 (2023-01-26)
+------------------
+
+Bug fixes:
+
+
+- Fix error in News Item view when it doesn't have a text field. [davisagli] (#652)
+
+
 3.0.0 (2022-12-01)
 ------------------
 
