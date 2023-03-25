@@ -1,31 +1,43 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:metal="http://xml.zope.org/namespaces/metal"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    lang="en"
-    metal:use-macro="context/@@main_template/macros/master"
-    i18n:domain="plone">
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      lang="en"
+      metal:use-macro="context/@@main_template/macros/master"
+      xml:lang="en"
+      i18n:domain="plone"
+>
+  <body>
 
-<metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core" tal:define="uuid context/@@uuid | nothing">
+    <metal:content-core fill-slot="content-core">
+      <metal:block define-macro="content-core"
+                   tal:define="
+                     uuid context/@@uuid | nothing;
+                   "
+      >
 
-  <metal:listing use-macro="context/@@listing_view/macros/content-core">
-    <metal:entries fill-slot="entries">
+        <metal:listing use-macro="context/@@listing_view/macros/content-core">
+          <metal:entries fill-slot="entries">
 
-      <metal:block use-macro="context/@@listing_view/macros/entries">
+            <metal:block use-macro="context/@@listing_view/macros/entries">
 
-        <metal:entry fill-slot="entry" tal:condition="python: item.UID != uuid">
-          <div tal:define="obj item/getObject;" tal:replace="structure obj/@@full_view_item | nothing" />
-        </metal:entry>
+              <metal:entry fill-slot="entry"
+                           tal:condition="python: item.UID != uuid"
+              >
+                <div tal:define="
+                       obj item/getObject;
+                     "
+                     tal:replace="structure obj/@@full_view_item | nothing"
+                ></div>
+              </metal:entry>
+
+            </metal:block>
+
+          </metal:entries>
+        </metal:listing>
 
       </metal:block>
+    </metal:content-core>
 
-    </metal:entries>
-  </metal:listing>
-
-</metal:block>
-</metal:content-core>
-
-</body>
+  </body>
 </html>

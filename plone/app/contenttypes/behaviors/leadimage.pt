@@ -1,9 +1,17 @@
 <section id="section-leadimage"
-         tal:condition="view/available">
-  <figure class="newsImageContainer" tal:define="images context/@@images">
-      <img tal:replace="structure python: images.tag('image', scale='large', css_class='figure-img img-fluid')" />
-      <figcaption class="figure-caption" tal:condition="python: getattr(context, 'image_caption', None)" tal:content="python: context.image_caption">
+         tal:condition="view/available"
+>
+  <figure class="newsImageContainer"
+          tal:define="
+            images context/@@images;
+          "
+  >
+    <img tal:replace="structure python: images.tag('image', scale='large', css_class='figure-img img-fluid')" />
+    <figcaption class="figure-caption"
+                tal:condition="python: getattr(context, 'image_caption', None)"
+                tal:content="python: context.image_caption"
+    >
         Image caption
-      </figcaption>
+    </figcaption>
   </figure>
 </section>

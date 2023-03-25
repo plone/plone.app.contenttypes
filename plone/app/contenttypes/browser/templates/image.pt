@@ -1,65 +1,88 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:metal="http://xml.zope.org/namespaces/metal"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    lang="en"
-    metal:use-macro="context/@@main_template/macros/master"
-    i18n:domain="plone">
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      lang="en"
+      metal:use-macro="context/@@main_template/macros/master"
+      xml:lang="en"
+      i18n:domain="plone"
+>
+  <body>
 
-<metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core"
-             tal:define="content_type python: context.image.contentType;
-                         size context/image/getSize;
-                         image_dimension context/image/getImageSize;
-                         use_MB python: size > 1024*1024;
-                         dimension python: str(image_dimension[0])+'x'+str(image_dimension[1]);
-                         filename python: context.image.filename;
-                         mimetype_icon python: 'mimetype-' + content_type;
-                         download_url python: '{}/@@download/image/{}'.format(context.absolute_url(), filename)
-                                                     ">
+    <metal:content-core fill-slot="content-core">
+      <metal:block define-macro="content-core"
+                   tal:define="
+                     content_type python: context.image.contentType;
+                     size context/image/getSize;
+                     image_dimension context/image/getImageSize;
+                     use_MB python: size &gt; 1024*1024;
+                     dimension python: str(image_dimension[0])+'x'+str(image_dimension[1]);
+                     filename python: context.image.filename;
+                     mimetype_icon python: 'mimetype-' + content_type;
+                     download_url python: '{}/@@download/image/{}'.format(context.absolute_url(), filename);
+                   "
+      >
 
-  <section class="section section-main">
-    <figure class="figure">
-      <a tal:attributes="href string:${context/@@plone_context_state/object_url}/image_view_fullscreen"
-         tal:define="scale context/@@images; img_tag python:scale.tag('image', scale='large', css_class='figure-img img-fluid')"
-         tal:on-error="string: Image cannot be displayed">
-        <img tal:replace="structure img_tag" />
-      </a>
-    </figure>
+        <section class="section section-main">
+          <figure class="figure">
+            <a tal:define="
+                 scale context/@@images;
+                 img_tag python:scale.tag('image', scale='large', css_class='figure-img img-fluid');
+               "
+               tal:attributes="
+                 href string:${context/@@plone_context_state/object_url}/image_view_fullscreen;
+               "
+               tal:on-error="string: Image cannot be displayed"
+            >
+              <img tal:replace="structure img_tag" />
+            </a>
+          </figure>
 
-    <div class="h5 mb-2">
-      <a href="${python:download_url}" tal:content="python: filename">Filename</a>
-    </div>
-    <div class="metadata d-flex justify-content-center text-muted small">
-      <div class="px-2">
-        <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-inline', tag_alt=content_type)" />
-        <span i18n:translate="image_kind_label" class="d-none">Type</span>
-        <span tal:replace="python: content_type">image/jpeg</span>
-      </div>
-      <div class="px-2">
-        <tal:icon tal:replace="structure python:icons.tag('aspect-ratio', tag_class='icon-inline', tag_alt='Dimension')" />
-        <span i18n:translate="image_dimension_label" class="d-none">Dimension</span>
-        <span tal:replace="python: dimension">400x300</span>
-      </div>
-      <div class="px-2">
-        <tal:icon tal:replace="structure python:icons.tag('file-binary', tag_class='icon-inline', tag_alt='Size')" />
-        <span i18n:translate="image_size_label" class="d-none">File size</span>
-        <tal:MB condition="use_MB">${python:round(size/1024/1024, 1)} MB</tal:MB>
-        <tal:KB condition="not: use_MB">${python:round(size/1024, 1)} KB</tal:KB>
-      </div>
-    </div>
+          <div class="h5 mb-2">
+            <a href="${python:download_url}"
+               tal:content="python: filename"
+            >Filename</a>
+          </div>
+          <div class="metadata d-flex justify-content-center text-muted small">
+            <div class="px-2">
+              <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-inline', tag_alt=content_type)" />
+              <span class="d-none"
+                    i18n:translate="image_kind_label"
+              >Type</span>
+              <span tal:replace="python: content_type">image/jpeg</span>
+            </div>
+            <div class="px-2">
+              <tal:icon tal:replace="structure python:icons.tag('aspect-ratio', tag_class='icon-inline', tag_alt='Dimension')" />
+              <span class="d-none"
+                    i18n:translate="image_dimension_label"
+              >Dimension</span>
+              <span tal:replace="python: dimension">400x300</span>
+            </div>
+            <div class="px-2">
+              <tal:icon tal:replace="structure python:icons.tag('file-binary', tag_class='icon-inline', tag_alt='Size')" />
+              <span class="d-none"
+                    i18n:translate="image_size_label"
+              >File size</span>
+              <tal:mb condition="use_MB">${python:round(size/1024/1024, 1)} MB</tal:mb>
+              <tal:kb condition="not: use_MB">${python:round(size/1024, 1)} KB</tal:kb>
+            </div>
+          </div>
 
-  </section>
+        </section>
 
-  <section class="section section-actions">
-    <a class="btn btn-primary download" href="${python:download_url}" i18n:translate="">Download</a>
-    <a class="btn btn-primary fullscreen" href="${context/@@plone_context_state/object_url}/image_view_fullscreen"><span i18n:translate="label_click_to_view_full_image">View full-size image</span></a>
-  </section>
+        <section class="section section-actions">
+          <a class="btn btn-primary download"
+             href="${python:download_url}"
+             i18n:translate=""
+          >Download</a>
+          <a class="btn btn-primary fullscreen"
+             href="${context/@@plone_context_state/object_url}/image_view_fullscreen"
+          ><span i18n:translate="label_click_to_view_full_image">View full-size image</span></a>
+        </section>
 
 
-</metal:block>
-</metal:content-core>
+      </metal:block>
+    </metal:content-core>
 
-</body>
+  </body>
 </html>
