@@ -786,7 +786,7 @@ New features:
   https://github.com/plone/Products.CMFPlone/issues/1995
   [fgrcon]
 
-- new behavior: IThumbIconHandling, supress thumbs /icons, adjust thumb size, templates adapted
+- new behavior: IThumbIconHandling, suppress thumbs /icons, adjust thumb size, templates adapted
   https://github.com/plone/Products.CMFPlone/issues/1734 (PLIP)
 
 Bug fixes:
@@ -904,7 +904,7 @@ New features:
 - Configure edit urls for locking support, where locking support is enabled.
   [thet]
 
-- Add ``i18n:attribute`` properies to all action nodes for FTI types.
+- Add ``i18n:attribute`` properties to all action nodes for FTI types.
   [thet]
 
 - added few pypi links in 'Migration' section
@@ -1145,7 +1145,7 @@ Fixes:
 - Fixed full_view error when collection contains itself.
   [vangheem]
 
-- test_content_profile: do not appy Products.CMFPlone:plone.
+- test_content_profile: do not apply Products.CMFPlone:plone.
   [maurits]
 
 
@@ -1162,7 +1162,7 @@ Fixes:
   [pbauer]
 
 - Fix an error with logging an exception on indexing SearchableText for files
-  and concating utf-8 encoded strings.
+  and concatenating utf-8 encoded strings.
   [thet]
 
 - Make consistent use of LeadImage behavior everywhere. Related to
@@ -1173,7 +1173,7 @@ Fixes:
 - Fixed the summary_view styling
   [sneridagh]
 - redirect_links property has moved to the configuration registry.
-- redirect_links, types_view_action_in_listings properies have moved to the
+- redirect_links, types_view_action_in_listings properties have moved to the
   configuration registry.
   [esteele]
 
@@ -1440,7 +1440,7 @@ Fixes:
 - Code modernization: sorted imports, use decorators, utf8 headers.
   [jensens]
 
-- Fix: Added missing types to CMFDiffTool configuraion.
+- Fix: Added missing types to CMFDiffTool configuration.
   [jensens]
 
 - Integration of the new markup update and CSS for both Plone and Barceloneta
@@ -1480,7 +1480,7 @@ Fixes:
 - Replace AT-fti with DX-fti when migrating a type.
   [esteele, pbauer]
 
-- Only show migrateable types (fixes #155)
+- Only show migratable types (fixes #155)
   [pbauer]
 
 - Add logging during and after migration (fixes #156)
@@ -1579,7 +1579,7 @@ Fixes:
 - Remove enabling simple_publication_workflow from testing fixture.
   [timo]
 
-- Only show migrateable types (fixes #155)
+- Only show migratable types (fixes #155)
   [pbauer]
 
 - Add logging during and after migration (fixes #156)
@@ -1745,7 +1745,7 @@ Fixes:
   [jensens]
 
 - Add contributor role as default for all add permissions in order to
-  work together with the different plone worklfows, which assume it is
+  work together with the different plone workflows, which assume it is
   set this way.
   [jensens]
 
@@ -1760,7 +1760,7 @@ Fixes:
   [jensens]
 
 - Fix Bug on SearchableText_file indexer when input stream contains
-  characters not convertable in ASCII. Assumes now utf-8 and replaces
+  characters not convertible in ASCII. Assumes now utf-8 and replaces
   all unknown. Even if search can not find the words with special
   characters in, indexer does not break completely on those items.
   [jensens]

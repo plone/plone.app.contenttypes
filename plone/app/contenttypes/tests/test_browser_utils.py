@@ -36,7 +36,7 @@ class MimeTypeIconIntegrationTest(unittest.TestCase):
 
     def test_unknown(self):
         self.assertEqual(
-            self.view.getMimeTypeIcon(DummyFile("some/unknown", "unkown.unknown")),
+            self.view.getMimeTypeIcon(DummyFile("some/unknown", "unknown.unknown")),
             FALLBACK,
         )
 
