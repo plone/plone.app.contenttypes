@@ -1,23 +1,21 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <portlets>
- <!-- Assign the standard portlets -->
- <assignment
-     manager="plone.leftcolumn"
-     category="context"
-     key="/"
-     type="portlets.Navigation"
-     name="navigation"
-     />
+  <!-- Assign the standard portlets -->
+  <assignment category="context"
+              key="/"
+              manager="plone.leftcolumn"
+              name="navigation"
+              type="portlets.Navigation"
+  />
 
- <assignment
-     manager="plone.rightcolumn"
-     category="context"
-     key="/"
-     type="portlets.News"
-     name="news"
-     />
+  <assignment category="context"
+              key="/"
+              manager="plone.rightcolumn"
+              name="news"
+              type="portlets.News"
+  />
 
-<!--  <assignment
+  <!--  <assignment
      manager="plone.rightcolumn"
      category="context"
      key="/"

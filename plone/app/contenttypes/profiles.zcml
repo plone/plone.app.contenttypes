@@ -1,25 +1,27 @@
-<configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:gs="http://namespaces.zope.org/genericsetup"
-           xmlns:zcml="http://namespaces.zope.org/zcml">
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:gs="http://namespaces.zope.org/genericsetup"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    >
 
   <!-- Default plone content (frontpage etc.), depends default -->
   <gs:registerProfile
-    name="plone-content"
-    title="Content-types plus example content (plone.app.contenttypes)"
-    directory="profiles/content"
-    description="Plone default content-types (plone.app.contenttypes)"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    post_handler=".setuphandlers.import_content"
-    />
+      name="plone-content"
+      title="Content-types plus example content (plone.app.contenttypes)"
+      description="Plone default content-types (plone.app.contenttypes)"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/content"
+      post_handler=".setuphandlers.import_content"
+      />
 
   <!-- All types, no sample content. -->
   <gs:registerProfile
-    name="default"
-    title="Content-types (plone.app.contenttypes)"
-    directory="profiles/default"
-    description="Plone default content-types (plone.app.contenttypes)"
-    provides="Products.GenericSetup.interfaces.EXTENSION"
-    post_handler=".setuphandlers.setup_various"
-    />
+      name="default"
+      title="Content-types (plone.app.contenttypes)"
+      description="Plone default content-types (plone.app.contenttypes)"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/default"
+      post_handler=".setuphandlers.setup_various"
+      />
 
 </configure>

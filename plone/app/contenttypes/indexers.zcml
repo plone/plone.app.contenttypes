@@ -1,20 +1,54 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    i18n_domain="plone">
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="plone"
+    >
 
-  <adapter name="SearchableText" factory=".indexers.SearchableText_collection" />
-  <adapter name="SearchableText" factory=".indexers.SearchableText_document" />
-  <adapter name="SearchableText" factory=".indexers.SearchableText_file" />
-  <adapter name="SearchableText" factory=".indexers.SearchableText_folder" />
-  <adapter name="SearchableText" factory=".indexers.SearchableText_link" />
-  <adapter name="SearchableText" factory=".indexers.SearchableText_news" />
-  <adapter name="getRemoteUrl" factory=".indexers.getRemoteUrl" />
-  <adapter name="getObjSize" factory=".indexers.getObjSize_image" />
-  <adapter name="getObjSize" factory=".indexers.getObjSize_file" />
-  <adapter name="getIcon" factory=".indexers.getIcon" />
-  <adapter name="mime_type" factory=".indexers.mime_type" />
+  <adapter
+      factory=".indexers.SearchableText_collection"
+      name="SearchableText"
+      />
+  <adapter
+      factory=".indexers.SearchableText_document"
+      name="SearchableText"
+      />
+  <adapter
+      factory=".indexers.SearchableText_file"
+      name="SearchableText"
+      />
+  <adapter
+      factory=".indexers.SearchableText_folder"
+      name="SearchableText"
+      />
+  <adapter
+      factory=".indexers.SearchableText_link"
+      name="SearchableText"
+      />
+  <adapter
+      factory=".indexers.SearchableText_news"
+      name="SearchableText"
+      />
+  <adapter
+      factory=".indexers.getRemoteUrl"
+      name="getRemoteUrl"
+      />
+  <adapter
+      factory=".indexers.getObjSize_image"
+      name="getObjSize"
+      />
+  <adapter
+      factory=".indexers.getObjSize_file"
+      name="getObjSize"
+      />
+  <adapter
+      factory=".indexers.getIcon"
+      name="getIcon"
+      />
+  <adapter
+      factory=".indexers.mime_type"
+      name="mime_type"
+      />
 
 </configure>

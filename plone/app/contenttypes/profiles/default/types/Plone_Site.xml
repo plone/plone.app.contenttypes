@@ -1,8 +1,8 @@
-<?xml version="1.0"?>
-<object
-    i18n:domain="plone"
-    name="Plone Site"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+<?xml version="1.0" encoding="utf-8"?>
+<object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        name="Plone Site"
+        i18n:domain="plone"
+>
 
   <property name="icon_expr">string:contenttype/plone</property>
 

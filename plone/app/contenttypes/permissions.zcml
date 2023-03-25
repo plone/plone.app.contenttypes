@@ -1,42 +1,43 @@
 <configure
-  xmlns="http://namespaces.zope.org/zope"
-  xmlns:zcml="http://namespaces.zope.org/zcml"
-  i18n_domain="plone">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="plone"
+    >
 
   <configure zcml:condition="installed AccessControl.security">
 
     <permission
-      id="plone.app.contenttypes.addCollection"
-      title="plone.app.contenttypes: Add Collection"
-      />
+        id="plone.app.contenttypes.addCollection"
+        title="plone.app.contenttypes: Add Collection"
+        />
     <permission
-      id="plone.app.contenttypes.addDocument"
-      title="plone.app.contenttypes: Add Document"
-      />
+        id="plone.app.contenttypes.addDocument"
+        title="plone.app.contenttypes: Add Document"
+        />
     <permission
-      id="plone.app.contenttypes.addEvent"
-      title="plone.app.contenttypes: Add Event"
-      />
+        id="plone.app.contenttypes.addEvent"
+        title="plone.app.contenttypes: Add Event"
+        />
     <permission
-      id="plone.app.contenttypes.addFile"
-      title="plone.app.contenttypes: Add File"
-      />
+        id="plone.app.contenttypes.addFile"
+        title="plone.app.contenttypes: Add File"
+        />
     <permission
-      id="plone.app.contenttypes.addFolder"
-      title="plone.app.contenttypes: Add Folder"
-      />
+        id="plone.app.contenttypes.addFolder"
+        title="plone.app.contenttypes: Add Folder"
+        />
     <permission
-      id="plone.app.contenttypes.addImage"
-      title="plone.app.contenttypes: Add Image"
-      />
+        id="plone.app.contenttypes.addImage"
+        title="plone.app.contenttypes: Add Image"
+        />
     <permission
-      id="plone.app.contenttypes.addLink"
-      title="plone.app.contenttypes: Add Link"
-      />
+        id="plone.app.contenttypes.addLink"
+        title="plone.app.contenttypes: Add Link"
+        />
     <permission
-      id="plone.app.contenttypes.addNewsItem"
-      title="plone.app.contenttypes: Add News Item"
-      />
+        id="plone.app.contenttypes.addNewsItem"
+        title="plone.app.contenttypes: Add News Item"
+        />
 
   </configure>
 

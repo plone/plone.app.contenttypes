@@ -1,56 +1,72 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <rolemap>
   <roles>
-    <role name="Manager"></role>
+    <role name="Manager" />
   </roles>
   <permissions>
-    <permission name="plone.app.contenttypes: Add Collection" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add Collection"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
-    <permission name="plone.app.contenttypes: Add Document" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add Document"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
-    <permission name="plone.app.contenttypes: Add Event" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add Event"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
-    <permission name="plone.app.contenttypes: Add File" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add File"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
-    <permission name="plone.app.contenttypes: Add Folder" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add Folder"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
-    <permission name="plone.app.contenttypes: Add Image" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add Image"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
-    <permission name="plone.app.contenttypes: Add Link" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add Link"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
-    <permission name="plone.app.contenttypes: Add News Item" acquire="True">
+    <permission acquire="True"
+                name="plone.app.contenttypes: Add News Item"
+    >
       <role name="Manager" />
       <role name="Site Administrator" />
-      <role name="Owner"/>
-      <role name="Contributor"/>
+      <role name="Owner" />
+      <role name="Contributor" />
     </permission>
   </permissions>
 </rolemap>

@@ -1,13 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <model xmlns="http://namespaces.plone.org/supermodel/schema"
        xmlns:form="http://namespaces.plone.org/supermodel/form"
-       xmlns:marshal="http://namespaces.plone.org/supermodel/marshal"
        xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-       i18n:domain="plone">
-    <schema>
-      <field name="remoteUrl" type="zope.schema.TextLine" form:widget="plone.app.z3cform.widget.LinkFieldWidget">
-        <description i18n:translate="description_linktype_url">The link is used almost verbatim, relative links become absolute and the strings "${navigation_root_url}" and "${portal_url}" get replaced with the real navigation_root_url or portal_url. If in doubt which one to use, please use navigation_root_url.
+       xmlns:marshal="http://namespaces.plone.org/supermodel/marshal"
+       i18n:domain="plone"
+>
+  <schema>
+    <field form:widget="plone.app.z3cform.widget.LinkFieldWidget"
+           name="remoteUrl"
+           type="zope.schema.TextLine"
+    >
+      <description i18n:translate="description_linktype_url">The link is used almost verbatim, relative links become absolute and the strings "${navigation_root_url}" and "${portal_url}" get replaced with the real navigation_root_url or portal_url. If in doubt which one to use, please use navigation_root_url.
         </description>
-        <title i18n:translate="">URL</title>
-      </field>
-    </schema>
+      <title i18n:translate="">URL</title>
+    </field>
+  </schema>
 </model>
