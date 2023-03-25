@@ -10,7 +10,6 @@ from zope.interface import provider
 
 @provider(IFormFieldProvider)
 class IThumbIconHandling(model.Schema):
-
     model.fieldset(
         "settings",
         label=_("Settings"),

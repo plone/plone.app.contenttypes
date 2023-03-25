@@ -21,7 +21,6 @@ import random
 
 
 class FolderView(BrowserView):
-
     text_class = None
     _plone_view = None
     _portal_state = None

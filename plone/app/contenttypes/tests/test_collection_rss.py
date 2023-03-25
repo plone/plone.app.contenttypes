@@ -22,7 +22,6 @@ query = [
 
 
 class RSSViewTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):

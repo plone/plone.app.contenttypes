@@ -24,7 +24,6 @@ import unittest
 
 
 class NewsItemIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -93,7 +92,6 @@ class NewsItemIntegrationTest(unittest.TestCase):
 
 
 class NewsItemFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):

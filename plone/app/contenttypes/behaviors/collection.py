@@ -34,7 +34,6 @@ deprecated(
 
 @provider(IFormFieldProvider, ISyndicatable)
 class ICollection(model.Schema):
-
     query = schema.List(
         title=_("Search terms"),
         description=_(

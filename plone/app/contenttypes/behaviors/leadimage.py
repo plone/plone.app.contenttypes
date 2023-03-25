@@ -16,7 +16,6 @@ class ILeadImage(Interface):
 
 @provider(IFormFieldProvider)
 class ILeadImageBehavior(model.Schema):
-
     image = namedfile.NamedBlobImage(
         title=_("label_leadimage", default="Lead Image"),
         description="",

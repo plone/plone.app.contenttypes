@@ -20,7 +20,6 @@ class IRichText(Interface):
 
 @provider(IFormFieldProvider)
 class IRichTextBehavior(model.Schema):
-
     text = RichTextField(
         title=_("Text"),
         description="",

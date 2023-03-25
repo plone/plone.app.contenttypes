@@ -10,7 +10,6 @@ _ = MessageFactory("plone")
 
 @provider(IFormFieldProvider)
 class ITableOfContents(model.Schema):
-
     model.fieldset("settings", label=_("Settings"), fields=["table_of_contents"])
 
     table_of_contents = schema.Bool(

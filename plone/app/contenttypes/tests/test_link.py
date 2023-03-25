@@ -30,7 +30,6 @@ import unittest
 
 
 class LinkIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -60,7 +59,6 @@ class LinkIntegrationTest(unittest.TestCase):
 
 
 class LinkViewIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -248,7 +246,6 @@ class LinkViewIntegrationTest(unittest.TestCase):
 
 
 class LinkFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):
@@ -287,7 +284,6 @@ class LinkFunctionalTest(unittest.TestCase):
 
 
 class LinkWidgetIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     default_result = {

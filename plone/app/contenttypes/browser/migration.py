@@ -54,7 +54,6 @@ class ChangedBaseClasses:
 
 
 class IBaseClassMigratorForm(Interface):
-
     changed_base_classes = schema.List(
         title="Changed base classes (old class, new class and number of items)",
         description="Select changed base classes you want to migrate. "
@@ -68,7 +67,6 @@ class IBaseClassMigratorForm(Interface):
 
 
 class BaseClassMigratorForm(form.Form):
-
     label = _(
         "heading_class_migrator",
         default="Update base-classes for content with changed classes",

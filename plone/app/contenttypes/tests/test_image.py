@@ -31,7 +31,6 @@ def dummy_image(filename="image.jpg"):
 
 
 class ImageIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -61,7 +60,6 @@ class ImageIntegrationTest(unittest.TestCase):
 
 
 class ImageViewIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -109,7 +107,6 @@ class ImageViewIntegrationTest(unittest.TestCase):
 
 
 class ImageFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):

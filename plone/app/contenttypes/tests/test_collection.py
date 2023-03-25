@@ -46,7 +46,6 @@ def dummy_image():
 
 
 class PloneAppCollectionClassTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -63,7 +62,6 @@ class PloneAppCollectionClassTest(unittest.TestCase):
 
 
 class PloneAppCollectionIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -96,7 +94,6 @@ class PloneAppCollectionIntegrationTest(unittest.TestCase):
 
 
 class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):
@@ -378,7 +375,6 @@ class PloneAppCollectionViewsIntegrationTest(unittest.TestCase):
 
 
 class PloneAppCollectionEditViewsIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):
