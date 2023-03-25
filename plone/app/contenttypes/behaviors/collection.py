@@ -6,7 +6,6 @@ from plone.base.interfaces.syndication import IFeed
 from plone.base.interfaces.syndication import ISyndicatable
 from plone.dexterity.interfaces import IDexterityContent
 from plone.supermodel import model
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.browser.syndication.adapters import (
     CollectionFeed as BaseCollectionFeed,
 )
