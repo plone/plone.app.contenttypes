@@ -26,7 +26,6 @@ NON_RESOLVABLE_URL_SCHEMES = NON_REDIRECTABLE_URL_SCHEMES + [
 
 
 class LinkRedirectView(BrowserView):
-
     index = ViewPageTemplateFile("templates/link.pt")
 
     def _url_uses_scheme(self, schemes, url=None):

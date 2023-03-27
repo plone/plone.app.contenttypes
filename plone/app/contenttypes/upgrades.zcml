@@ -1,13 +1,15 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:zcml="http://namespaces.zope.org/zcml">
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    >
 
   <genericsetup:upgradeStep
+      title="Update Type icons"
+      profile="plone.app.contenttypes:default"
       source="*"
       destination="3000"
-      profile="plone.app.contenttypes:default"
-      title="Update Type icons"
-      handler=".upgrades.update_type_icons" />
+      handler=".upgrades.update_type_icons"
+      />
 
 </configure>

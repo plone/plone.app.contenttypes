@@ -1,9 +1,10 @@
 <configure
-  xmlns="http://namespaces.zope.org/zope"
-  xmlns:browser="http://namespaces.zope.org/browser"
-  xmlns:z3c="http://namespaces.zope.org/z3c"
-  xmlns:zcml="http://namespaces.zope.org/zcml"
-  i18n_domain="plone">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="plone"
+    >
 
   <include package="plone.app.contentmenu" />
 
@@ -11,7 +12,8 @@
   <browser:pages
       for="plone.base.interfaces.IPloneSiteRoot"
       class=".folder.FolderView"
-      permission="zope2.View">
+      permission="zope2.View"
+      >
     <browser:page
         name="listing_view"
         template="templates/listing.pt"
@@ -49,7 +51,8 @@
   <browser:pages
       for="plone.dexterity.interfaces.IDexterityContainer"
       class=".folder.FolderView"
-      permission="zope2.View">
+      permission="zope2.View"
+      >
     <browser:page
         name="listing_view"
         template="templates/listing.pt"
@@ -99,7 +102,8 @@
   <browser:pages
       for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
       class=".collection.CollectionView"
-      permission="zope2.View">
+      permission="zope2.View"
+      >
     <browser:page
         name="listing_view"
         template="templates/listing.pt"
@@ -139,14 +143,14 @@
       for="*"
       class=".full_view.FullViewItem"
       template="templates/full_view_item.pt"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       />
   <browser:page
       name="document_view"
       template="templates/document.pt"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       menu="plone_displayviews"
       title="View Document"
       />
@@ -155,8 +159,8 @@
       for="plone.app.contenttypes.interfaces.IFile"
       class=".file.FileView"
       template="templates/file.pt"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       menu="plone_displayviews"
       title="View File"
       />
@@ -164,8 +168,8 @@
       name="image_view"
       for="plone.app.contenttypes.interfaces.IImage"
       template="templates/image.pt"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       menu="plone_displayviews"
       title="View Image"
       />
@@ -173,8 +177,8 @@
       name="image_view_fullscreen"
       for="plone.app.contenttypes.interfaces.IImage"
       template="templates/image_view_fullscreen.pt"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       menu="plone_displayviews"
       title="View Image Fullscreen"
       />
@@ -182,8 +186,8 @@
       name="link_redirect_view"
       for="plone.app.contenttypes.interfaces.ILink"
       class=".link_redirect_view.LinkRedirectView"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       menu="plone_displayviews"
       title="View Link"
       />
@@ -191,8 +195,8 @@
       name="newsitem_view"
       for="plone.app.contenttypes.interfaces.INewsItem"
       template="templates/newsitem.pt"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       menu="plone_displayviews"
       title="View News Item"
       />
@@ -201,21 +205,22 @@
       for="*"
       class=".utils.Utils"
       allowed_interface="plone.app.contenttypes.browser.utils.IUtils"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       />
 
   <browser:page
       name="base_class_migrator_form"
       for="plone.base.interfaces.IPloneSiteRoot"
       class="plone.app.contenttypes.browser.migration.BaseClassMigrator"
-      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       permission="cmf.ManagePortal"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
       />
 
   <utility
       factory="plone.app.contenttypes.browser.migration.ChangedBaseClasses"
+      provides="zope.schema.interfaces.IVocabularyFactory"
       name="plone.app.contenttypes.migration.changed_base_classes"
-      provides="zope.schema.interfaces.IVocabularyFactory" />
+      />
 
 </configure>

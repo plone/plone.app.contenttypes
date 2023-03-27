@@ -1,27 +1,35 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:metal="http://xml.zope.org/namespaces/metal"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    lang="en"
-    metal:use-macro="context/@@main_template/macros/master"
-    i18n:domain="plone">
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      lang="en"
+      metal:use-macro="context/@@main_template/macros/master"
+      xml:lang="en"
+      i18n:domain="plone"
+>
+  <body>
 
-<metal:content-core fill-slot="content-core">
-<metal:content-core define-macro="content-core"
-                    tal:define="toc python: getattr(context, 'table_of_contents', False)">
+    <metal:content-core fill-slot="content-core">
+      <metal:content-core define-macro="content-core"
+                          tal:define="
+                            toc python: getattr(context, 'table_of_contents', False);
+                          "
+      >
 
-  <section id="section-text">
-    <div id="parent-fieldname-text"
-         tal:condition="python:getattr(context, 'text', None)"
-         tal:content="structure python:context.text.output_relative_to(view.context)"
-         tal:attributes="class python: toc and 'pat-autotoc' or ''">
+        <section id="section-text">
+          <div id="parent-fieldname-text"
+               tal:condition="python:getattr(context, 'text', None)"
+               tal:content="structure python:context.text.output_relative_to(view.context)"
+               tal:attributes="
+                 class python: toc and 'pat-autotoc' or '';
+               "
+          >
       Text
-    </div>
-  </section>
+          </div>
+        </section>
 
-</metal:content-core>
-</metal:content-core>
+      </metal:content-core>
+    </metal:content-core>
 
-</body>
+  </body>
 </html>

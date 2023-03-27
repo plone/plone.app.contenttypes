@@ -271,7 +271,7 @@ def create_events_topic(portal, target_language):
         )
         aggregator = container["aggregator"]
 
-        # Constain types
+        # Constrain types
         allowed_types = [
             "Event",
         ]

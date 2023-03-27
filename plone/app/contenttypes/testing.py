@@ -23,7 +23,6 @@ def set_browserlayer(request):
 
 
 class PloneAppContenttypes(PloneSandboxLayer):
-
     defaultBases = (
         PAEvent_FIXTURE,
         PLONE_FIXTURE,

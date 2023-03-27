@@ -24,7 +24,6 @@ class DummyFile:
 
 
 class MimeTypeIconIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -37,7 +36,7 @@ class MimeTypeIconIntegrationTest(unittest.TestCase):
 
     def test_unknown(self):
         self.assertEqual(
-            self.view.getMimeTypeIcon(DummyFile("some/unknown", "unkown.unknown")),
+            self.view.getMimeTypeIcon(DummyFile("some/unknown", "unknown.unknown")),
             FALLBACK,
         )
 

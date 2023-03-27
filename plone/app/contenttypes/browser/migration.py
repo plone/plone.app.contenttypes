@@ -1,39 +1,22 @@
-from plone.app.contenttypes.content import Document
-from plone.app.contenttypes.content import File
-from plone.app.contenttypes.content import Folder
-from plone.app.contenttypes.content import Image
-from plone.app.contenttypes.content import Link
-from plone.app.contenttypes.content import NewsItem
 from plone.app.contenttypes.utils import changed_base_classes
-from plone.app.contenttypes.utils import DEFAULT_TYPES
 from plone.app.contenttypes.utils import get_old_class_name_string
 from plone.app.contenttypes.utils import migrate_base_class_to_new_class
 from plone.base import PloneMessageFactory as _
-from plone.base.utils import get_installer
-from plone.browserlayer.interfaces import ILocalBrowserLayerType
-from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.interfaces import IDexterityFTI
 from plone.z3cform.layout import wrap_form
 from Products.CMFCore.utils import getToolByName
-from Products.Five.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
-from z3c.form.interfaces import HIDDEN_MODE
 from zExceptions import NotFound
 from zope import schema
-from zope.component import getMultiAdapter
-from zope.component import queryUtility
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 
 import logging
-import pkg_resources
 
 
 logger = logging.getLogger(__name__)
@@ -54,7 +37,6 @@ class ChangedBaseClasses:
 
 
 class IBaseClassMigratorForm(Interface):
-
     changed_base_classes = schema.List(
         title="Changed base classes (old class, new class and number of items)",
         description="Select changed base classes you want to migrate. "
@@ -68,7 +50,6 @@ class IBaseClassMigratorForm(Interface):
 
 
 class BaseClassMigratorForm(form.Form):
-
     label = _(
         "heading_class_migrator",
         default="Update base-classes for content with changed classes",

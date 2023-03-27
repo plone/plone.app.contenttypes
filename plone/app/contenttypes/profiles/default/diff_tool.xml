@@ -1,26 +1,40 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <object>
   <difftypes>
     <type portal_type="Document">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
+      <field difftype="Compound Diff for Dexterity types"
+             name="any"
+      />
     </type>
     <type portal_type="Event">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
+      <field difftype="Compound Diff for Dexterity types"
+             name="any"
+      />
     </type>
     <type portal_type="File">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
+      <field difftype="Compound Diff for Dexterity types"
+             name="any"
+      />
     </type>
     <type portal_type="Folder">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
+      <field difftype="Compound Diff for Dexterity types"
+             name="any"
+      />
     </type>
     <type portal_type="Image">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
+      <field difftype="Compound Diff for Dexterity types"
+             name="any"
+      />
     </type>
     <type portal_type="Link">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
+      <field difftype="Compound Diff for Dexterity types"
+             name="any"
+      />
     </type>
     <type portal_type="News Item">
-      <field name="any" difftype="Compound Diff for Dexterity types"/>
+      <field difftype="Compound Diff for Dexterity types"
+             name="any"
+      />
     </type>
   </difftypes>
 </object>

@@ -24,7 +24,6 @@ query = [
 
 
 class CollectionBehaviorFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):

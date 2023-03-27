@@ -1,51 +1,69 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:metal="http://xml.zope.org/namespaces/metal"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    lang="en"
-    metal:use-macro="context/@@main_template/macros/master"
-    i18n:domain="plone">
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      lang="en"
+      metal:use-macro="context/@@main_template/macros/master"
+      xml:lang="en"
+      i18n:domain="plone"
+>
+  <body>
 
-<metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core"
-             tal:define="external python:view.url().startswith('http');
-                         mail python:view.url().startswith('mailto');
-                         link python: not external and not mail;
-                         display_link python: view.display_link()">
+    <metal:content-core fill-slot="content-core">
+      <metal:block define-macro="content-core"
+                   tal:define="
+                     external python:view.url().startswith('http');
+                     mail python:view.url().startswith('mailto');
+                     link python: not external and not mail;
+                     display_link python: view.display_link();
+                   "
+      >
 
 
-  <section class="section section-main">
-    <div>
-      <tal:icon tal:condition="link"
-        tal:replace="structure python:icons.tag('plone-link', tag_class='icon-x4 mb-2')" />
-      <tal:icon tal:condition="external"
-        tal:replace="structure python:icons.tag('plone-link/external', tag_class='icon-x4 mb-2')" />
-      <tal:icon tal:condition="mail"
-        tal:replace="structure python:icons.tag('plone-link/mail', tag_class='icon-x4 mb-2')" />
-    </div>
-    <div class="h5 mb-2">
-      <a href="" tal:attributes="href python: view.absolute_target_url()" 
-         tal:content="python: display_link['title']">remote url</a>
-    </div>
-    <div class="metadata d-flex justify-content-center text-muted small"
-        tal:condition="python: display_link['meta']">
-      <div tal:replace="python: display_link['meta']"></div>
-    </div>
+        <section class="section section-main">
+          <div>
+            <tal:icon tal:condition="link"
+                      tal:replace="structure python:icons.tag('plone-link', tag_class='icon-x4 mb-2')"
+            />
+            <tal:icon tal:condition="external"
+                      tal:replace="structure python:icons.tag('plone-link/external', tag_class='icon-x4 mb-2')"
+            />
+            <tal:icon tal:condition="mail"
+                      tal:replace="structure python:icons.tag('plone-link/mail', tag_class='icon-x4 mb-2')"
+            />
+          </div>
+          <div class="h5 mb-2">
+            <a href=""
+               tal:content="python: display_link['title']"
+               tal:attributes="
+                 href python: view.absolute_target_url();
+               "
+            >remote url</a>
+          </div>
+          <div class="metadata d-flex justify-content-center text-muted small"
+               tal:condition="python: display_link['meta']"
+          >
+            <div tal:replace="python: display_link['meta']"></div>
+          </div>
 
-    <div class="info-redirect small text-muted mt-4" 
-      tal:define="redirect_links python:context.portal_registry['plone.redirect_links']" 
-      tal:condition="python: redirect_links and checkPermission('Modify portal content', context)">
-      <span tal:omit-tag="" i18n:translate="message_permissions_blocking_link_redirect">
+          <div class="info-redirect small text-muted mt-4"
+               tal:define="
+                 redirect_links python:context.portal_registry['plone.redirect_links'];
+               "
+               tal:condition="python: redirect_links and checkPermission('Modify portal content', context)"
+          >
+            <span tal:omit-tag=""
+                  i18n:translate="message_permissions_blocking_link_redirect"
+            >
         You see this page because you have permission to edit this link.
         Others will be immediately redirected to the link's target URL.
-      </span>
-    </div>
+            </span>
+          </div>
 
-  </section>
+        </section>
 
-</metal:block>
-</metal:content-core>
+      </metal:block>
+    </metal:content-core>
 
-</body>
+  </body>
 </html>

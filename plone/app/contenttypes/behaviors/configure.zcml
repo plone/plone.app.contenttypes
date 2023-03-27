@@ -1,61 +1,65 @@
 <configure
-  xmlns="http://namespaces.zope.org/zope"
-  xmlns:browser="http://namespaces.zope.org/browser"
-  xmlns:plone="http://namespaces.plone.org/plone"
-  xmlns:zcml="http://namespaces.zope.org/zcml"
-  i18n_domain="plone">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
+    i18n_domain="plone"
+    >
 
-  <include package="plone.behavior" file="meta.zcml"/>
+  <include
+      package="plone.behavior"
+      file="meta.zcml"
+      />
 
   <plone:behavior
-    name="plone.leadimage"
-    title="Lead Image"
-    description="Adds image and image caption fields"
-    provides=".leadimage.ILeadImageBehavior"
-    factory=".leadimage.LeadImage"
-    for="plone.dexterity.interfaces.IDexterityContent"
-    marker=".leadimage.ILeadImage"
-    former_dotted_names="plone.app.contenttypes.behaviors.leadimage.ILeadImage"
-    />
+      name="plone.leadimage"
+      title="Lead Image"
+      description="Adds image and image caption fields"
+      factory=".leadimage.LeadImage"
+      provides=".leadimage.ILeadImageBehavior"
+      for="plone.dexterity.interfaces.IDexterityContent"
+      marker=".leadimage.ILeadImage"
+      former_dotted_names="plone.app.contenttypes.behaviors.leadimage.ILeadImage"
+      />
 
   <browser:viewlet
-    name="contentleadimage"
-    for=".leadimage.ILeadImage"
-    view="plone.app.layout.globals.interfaces.IViewView"
-    class=".viewlets.LeadImageViewlet"
-    manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle"
-    template="leadimage.pt"
-    permission="zope2.View"
-    />
+      name="contentleadimage"
+      for=".leadimage.ILeadImage"
+      view="plone.app.layout.globals.interfaces.IViewView"
+      manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle"
+      class=".viewlets.LeadImageViewlet"
+      template="leadimage.pt"
+      permission="zope2.View"
+      />
 
   <plone:behavior
-    name="plone.tableofcontents"
-    title="Table of contents"
-    description="Adds a table of contents"
-    provides=".tableofcontents.ITableOfContents"
-    marker=".tableofcontents.ITableOfContents"
-    />
+      name="plone.tableofcontents"
+      title="Table of contents"
+      description="Adds a table of contents"
+      provides=".tableofcontents.ITableOfContents"
+      marker=".tableofcontents.ITableOfContents"
+      />
 
   <plone:behavior
-    name="plone.collection"
-    title="Collection"
-    description="Adds collection behavior"
-    provides=".collection.ICollection"
-    factory=".collection.Collection"
-    for="plone.dexterity.interfaces.IDexterityContent"
-    marker=".collection.ISyndicatableCollection"
-    />
+      name="plone.collection"
+      title="Collection"
+      description="Adds collection behavior"
+      factory=".collection.Collection"
+      provides=".collection.ICollection"
+      for="plone.dexterity.interfaces.IDexterityContent"
+      marker=".collection.ISyndicatableCollection"
+      />
 
   <plone:behavior
-    name="plone.richtext"
-    title="RichText"
-    description="Adds richtext behavior"
-    provides=".richtext.IRichTextBehavior"
-    factory=".richtext.RichText"
-    for="plone.dexterity.interfaces.IDexterityContent"
-    marker=".richtext.IRichText"
-    former_dotted_names="plone.app.contenttypes.behaviors.richtext.IRichText"
-    />
+      name="plone.richtext"
+      title="RichText"
+      description="Adds richtext behavior"
+      factory=".richtext.RichText"
+      provides=".richtext.IRichTextBehavior"
+      for="plone.dexterity.interfaces.IDexterityContent"
+      marker=".richtext.IRichText"
+      former_dotted_names="plone.app.contenttypes.behaviors.richtext.IRichText"
+      />
 
   <plone:behavior
       name="plone.thumb_icon"
@@ -65,20 +69,23 @@
       />
 
   <browser:page
-    name="getText"
-    for=".richtext.IRichText"
-    class=".richtext.WidgetView"
-    permission="zope2.View"
-    template="richtext_gettext.pt"
-    />
+      name="getText"
+      for=".richtext.IRichText"
+      class=".richtext.WidgetView"
+      template="richtext_gettext.pt"
+      permission="zope2.View"
+      />
 
   <!-- Register the plone.app.vocabularies.MetadataFields under the old
        name for backward compatibility. -->
   <utility
+      name="plone.app.contenttypes.metadatafields"
       component="plone.app.vocabularies.metadatafields.MetaDataFieldsVocabularyFactory"
-      name="plone.app.contenttypes.metadatafields" />
+      />
 
-  <adapter factory=".collection.CollectionFeed"
-           for=".collection.ISyndicatableCollection" />
+  <adapter
+      factory=".collection.CollectionFeed"
+      for=".collection.ISyndicatableCollection"
+      />
 
 </configure>

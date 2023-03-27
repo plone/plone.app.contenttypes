@@ -21,7 +21,6 @@ import unittest
 
 
 class EventIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -72,7 +71,6 @@ class EventIntegrationTest(unittest.TestCase):
 
 
 class EventFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):

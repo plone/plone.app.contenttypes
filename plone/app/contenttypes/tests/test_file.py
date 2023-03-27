@@ -25,7 +25,6 @@ import unittest
 
 
 class FileIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -101,7 +100,6 @@ class FileIntegrationTest(unittest.TestCase):
 
 
 class FileFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):

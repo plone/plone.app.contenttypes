@@ -1,1 +1,1 @@
-<div tal:replace="structure view/++widget++text/render" />
+<div tal:replace="structure view/++widget++text/render"></div>

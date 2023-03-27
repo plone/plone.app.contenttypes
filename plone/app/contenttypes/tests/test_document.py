@@ -21,7 +21,6 @@ import unittest
 
 
 class DocumentIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -76,7 +75,6 @@ class DocumentIntegrationTest(unittest.TestCase):
 
 
 class DocumentFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):

@@ -20,7 +20,6 @@ import unittest
 
 
 class FolderIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -50,7 +49,6 @@ class FolderIntegrationTest(unittest.TestCase):
 
 
 class FolderViewIntegrationTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 
     def setUp(self):
@@ -119,7 +117,6 @@ class FolderViewIntegrationTest(unittest.TestCase):
 
 
 class FolderFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):
@@ -162,7 +159,6 @@ class FolderFunctionalTest(unittest.TestCase):
 
 
 class FolderViewFunctionalTest(unittest.TestCase):
-
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 
     def setUp(self):

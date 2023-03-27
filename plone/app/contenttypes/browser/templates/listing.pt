@@ -1,148 +1,194 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:metal="http://xml.zope.org/namespaces/metal"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    lang="en"
-    metal:use-macro="context/@@main_template/macros/master"
-    i18n:domain="plone">
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      lang="en"
+      metal:use-macro="context/@@main_template/macros/master"
+      xml:lang="en"
+      i18n:domain="plone"
+>
+  <body>
 
-<metal:content-core fill-slot="content-core">
-<metal:block define-macro="content-core">
+    <metal:content-core fill-slot="content-core">
+      <metal:block define-macro="content-core">
 
-  <div metal:define-macro="text-field-view"
-      id="parent-fieldname-text" class="stx"
-      tal:define="text python:view.text"
-      tal:condition="python:text"
-      tal:attributes="class python:view.text_class">
-    <div metal:define-slot="inside" tal:replace="structure text">The body</div>
-  </div>
+        <div class="stx"
+             id="parent-fieldname-text"
+             metal:define-macro="text-field-view"
+             tal:define="
+               text python:view.text;
+             "
+             tal:condition="python:text"
+             tal:attributes="
+               class python:view.text_class;
+             "
+        >
+          <div metal:define-slot="inside"
+               tal:replace="structure text"
+          >The body</div>
+        </div>
 
 
-  <metal:listingmacro define-macro="listing">
-    <tal:results define="batch python:view.batch();
+        <metal:listingmacro define-macro="listing">
+          <tal:results define="
+                         batch python:view.batch();
                          thumb_scale_list python:view.get_thumb_scale_list();
                          thumb_scale_table python:view.get_thumb_scale_table();
                          thumb_scale_summary python:view.get_thumb_scale_summary();
                          img_class python:'thumb-{} image-responsive'.format(thumb_scale_list);
-                         showicons python:view.show_icons()">
-      <tal:listing condition="python:batch">
-        <div class="entries" metal:define-slot="entries"
-            tal:define="portal python:portal_state.portal();
-                        image_scale portal/@@image_scale">
+                         showicons python:view.show_icons();
+                       ">
+            <tal:listing condition="python:batch">
+              <div class="entries"
+                   metal:define-slot="entries"
+                   tal:define="
+                     portal python:portal_state.portal();
+                     image_scale portal/@@image_scale;
+                   "
+              >
 
-          <tal:repeat repeat="item python:batch" metal:define-macro="entries">
-            <tal:block tal:define="obj python:item.getObject();
-                item_url python:item.getURL();
-                item_id python:item.getId();
-                item_title python:item.Title();
-                item_title python:item_title or item_id;
-                item_description python:item.Description();
-                item_type python:item.PortalType();
-                item_modified python:item.ModificationDate();
-                item_created python:item.CreationDate();
-                item_wf_state python:item.review_state();
-                item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
-                item_creator python:item.Creator();
-                item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
-                item_is_event python:view.is_event(obj);
-                item_has_image python:item.getIcon;
-                item_type_class python:('contenttype-' + view.normalizeString(item_type)) if showicons else '' ;
-                ">
-              <metal:block define-slot="entry">
+                <tal:repeat metal:define-macro="entries"
+                            repeat="item python:batch"
+                >
+                  <tal:block tal:define="
+                               obj python:item.getObject();
+                               item_url python:item.getURL();
+                               item_id python:item.getId();
+                               item_title python:item.Title();
+                               item_title python:item_title or item_id;
+                               item_description python:item.Description();
+                               item_type python:item.PortalType();
+                               item_modified python:item.ModificationDate();
+                               item_created python:item.CreationDate();
+                               item_wf_state python:item.review_state();
+                               item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
+                               item_creator python:item.Creator();
+                               item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
+                               item_is_event python:view.is_event(obj);
+                               item_has_image python:item.getIcon;
+                               item_type_class python:('contenttype-' + view.normalizeString(item_type)) if showicons else '';
+                             ">
+                    <metal:block define-slot="entry">
 
-                <article class="mb-3 row">
+                      <article class="mb-3 row">
 
-                  <div class="col" metal:define-macro="listitem">
+                        <div class="col"
+                             metal:define-macro="listitem"
+                        >
 
-                      <div class="mb-1">
-                        <a tal:attributes="href python:item_link; class string:$item_type_class $item_wf_state_class url; title item_type" tal:content="python:item_title">
+                          <div class="mb-1">
+                            <a tal:content="python:item_title"
+                               tal:attributes="
+                                 href python:item_link;
+                                 class string:$item_type_class $item_wf_state_class url;
+                                 title item_type;
+                               "
+                            >
                           Item Title
-                        </a>
-                      </div>
-
-                      <metal:block metal:define-macro="document_byline">
-                      <div class="mb-1">
-
-                        <tal:event condition="python:item_is_event">
-                          <tal:date tal:replace="structure python:view.formatted_date(obj)"/>
-                          <span tal:condition="python:obj.location" i18n:translate="label_event_byline_location">
-                            &mdash;
-                            <span tal:content="python:obj.location" class="location" i18n:name="location">Oslo</span>
-                          </span>
-                          &mdash;
-                        </tal:event>
-
-                        <tal:byline condition="python:view.show_about">
-                          <tal:name tal:condition="python:item_creator"
-                              tal:define="author python:view.pas_member.info(item_creator);
-                                          creator_short_form python:author.get('username');
-                                          creator_long_form string:?author=$${python:author.username};
-                                          creator_is_openid python:'/' in creator_short_form;
-                                          creator_id python:(creator_short_form, creator_long_form)[creator_is_openid];">
-                          <span i18n:translate="label_by_author">
-                            by
-                            <a tal:attributes="href string:${view/navigation_root_url}/author/${item_creator}"
-                                tal:content="python: author.get('name_or_id')"
-                                tal:omit-tag="python: not author"
-                                i18n:name="author">
-                              Bob Dobalina
                             </a>
-                          </span>
-                          </tal:name>
+                          </div>
 
-                          <tal:modified condition="python:item_type != 'Event'">
+                          <metal:block metal:define-macro="document_byline">
+                            <div class="mb-1">
+
+                              <tal:event condition="python:item_is_event">
+                                <tal:date tal:replace="structure python:view.formatted_date(obj)" />
+                                <span tal:condition="python:obj.location"
+                                      i18n:translate="label_event_byline_location"
+                                >
                             &mdash;
-                            <tal:mod i18n:translate="box_last_modified">last modified</tal:mod>
-                            <span tal:replace="python:view.toLocalizedTime(item_modified,long_format=1)">
+                                  <span class="location"
+                                        tal:content="python:obj.location"
+                                        i18n:name="location"
+                                  >Oslo</span>
+                                </span>
+                          &mdash;
+                              </tal:event>
+
+                              <tal:byline condition="python:view.show_about">
+                                <tal:name tal:define="
+                                            author python:view.pas_member.info(item_creator);
+                                            creator_short_form python:author.get('username');
+                                            creator_long_form string:?author=$${python:author.username};
+                                            creator_is_openid python:'/' in creator_short_form;
+                                            creator_id python:(creator_short_form, creator_long_form)[creator_is_openid];
+                                          "
+                                          tal:condition="python:item_creator"
+                                >
+                                  <span i18n:translate="label_by_author">
+                            by
+                                    <a tal:content="python: author.get('name_or_id')"
+                                       tal:omit-tag="python: not author"
+                                       tal:attributes="
+                                         href string:${view/navigation_root_url}/author/${item_creator};
+                                       "
+                                       i18n:name="author"
+                                    >
+                              Bob Dobalina
+                                    </a>
+                                  </span>
+                                </tal:name>
+
+                                <tal:modified condition="python:item_type != 'Event'">
+                            &mdash;
+                                  <tal:mod i18n:translate="box_last_modified">last modified</tal:mod>
+                                  <span tal:replace="python:view.toLocalizedTime(item_modified,long_format=1)">
                               August 16, 2001 at 23:35:59
-                            </span>
-                          </tal:modified>
+                                  </span>
+                                </tal:modified>
 
-                          <metal:description define-slot="description_slot">
-                            <tal:comment replace="nothing">
+                                <metal:description define-slot="description_slot">
+                                  <tal:comment replace="nothing">
                               Place custom listing info for custom types here
-                            </tal:comment>
-                          </metal:description>
+                                  </tal:comment>
+                                </metal:description>
 
-                        </tal:byline>
-                      </div>
-                      </metal:block>
+                              </tal:byline>
+                            </div>
+                          </metal:block>
 
-                      <p class="me-3" tal:condition="python:item_description" tal:content="python:item_description">
+                          <p class="me-3"
+                             tal:condition="python:item_description"
+                             tal:content="python:item_description"
+                          >
                         description
-                      </p>
-                  </div>
+                          </p>
+                        </div>
 
-                  <div class="col-3 text-end" tal:condition="python:item_has_image and thumb_scale_list">
-                    <a tal:attributes="href python:item_link;">
-                      <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class, loading='lazy')" />
-                    </a>
-                  </div>
-                </article>
+                        <div class="col-3 text-end"
+                             tal:condition="python:item_has_image and thumb_scale_list"
+                        >
+                          <a tal:attributes="
+                               href python:item_link;
+                             ">
+                            <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class, loading='lazy')" />
+                          </a>
+                        </div>
+                      </article>
 
-              </metal:block>
-            </tal:block>
-          </tal:repeat>
-        </div>
+                    </metal:block>
+                  </tal:block>
+                </tal:repeat>
+              </div>
 
-        <div metal:use-macro="context/batch_macros/macros/navigation" />
+              <div metal:use-macro="context/batch_macros/macros/navigation"></div>
 
-      </tal:listing>
+            </tal:listing>
 
-      <metal:empty metal:define-slot="no_items_in_listing">
-        <p class="discreet"
-            tal:condition="python: not batch"
-            tal:content="python: view.no_items_message">
+            <metal:empty metal:define-slot="no_items_in_listing">
+              <p class="discreet"
+                 tal:condition="python: not batch"
+                 tal:content="python: view.no_items_message"
+              >
           There are currently no items in this folder.
-        </p>
-      </metal:empty>
+              </p>
+            </metal:empty>
 
-    </tal:results>
-  </metal:listingmacro>
+          </tal:results>
+        </metal:listingmacro>
 
-</metal:block>
-</metal:content-core>
+      </metal:block>
+    </metal:content-core>
 
-</body>
+  </body>
 </html>
