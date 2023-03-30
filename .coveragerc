@@ -1,6 +1,0 @@
-[report]
-omit =
-    */test*
-
-include =
-    plone/*

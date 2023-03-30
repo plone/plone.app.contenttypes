@@ -42,6 +42,9 @@ profile = "plone"
 [tool.black]
 target-version = ["py38"]
 
+[tool.codespell]
+ignore-words-list = "discreet,oder,ist,crate"
+
 [tool.dependencychecker]
 Zope = [
   # Zope own provided namespaces
@@ -60,6 +63,3 @@ Zope = [
   'Products.CMFDynamicViewFTI', 'zope.deprecation',
 ]
 python-dateutil = ['dateutil']
-
-[tool.codespell]
-ignore-words-list = "discreet,oder,ist,crate"

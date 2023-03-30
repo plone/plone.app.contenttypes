@@ -2,7 +2,7 @@
 
 Library  Remote  ${PLONE_URL}/RobotRemote
 
-Variables  plone/app/contenttypes/tests/robot/variables.py
+Variables  variables.py
 
 *** Keywords ***
 
