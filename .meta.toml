@@ -2,4 +2,7 @@
 # https://github.com/plone/meta/tree/master/config/default
 [meta]
 template = "default"
-commit-id = "47959565"
+commit-id = "112d1c69"
+
+[codespell]
+additional-ignores = "discreet,oder,ist,crate"

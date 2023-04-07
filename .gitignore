@@ -21,6 +21,8 @@
 /.pydevproject
 /.mr.developer.cfg
 /src/*
+/robot_*
+/test_*
 *.mo
 docs/Makefile
 docs/make.bat

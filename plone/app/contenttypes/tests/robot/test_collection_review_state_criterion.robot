@@ -13,7 +13,7 @@
 Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/robotframework/saucelabs.robot
 Resource  plone/app/robotframework/selenium.robot
-Resource  plone/app/contenttypes/tests/robot/keywords.txt
+Resource  keywords.txt
 
 Test Setup  Run Keywords  Plone test setup
 Test Teardown  Run keywords  Plone test teardown
