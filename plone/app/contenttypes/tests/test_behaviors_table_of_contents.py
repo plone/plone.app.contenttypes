@@ -29,7 +29,9 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
         self.fti = fti
         alsoProvides(self.request, IPloneAppContenttypesLayer)
         self.portal.invokeFactory(
-            "tocdocument", id="tocdoc", title="Document with a table of contents",
+            "tocdocument",
+            id="tocdoc",
+            title="Document with a table of contents",
         )
         import transaction
 
