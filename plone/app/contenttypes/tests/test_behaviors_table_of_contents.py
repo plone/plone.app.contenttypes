@@ -25,17 +25,13 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
         fti = DexterityFTI("tocdocument")
         self.portal.portal_types._setObject("tocdocument", fti)
         fti.klass = "plone.dexterity.content.Item"
-        fti.behaviors = (
-            "plone.app.contenttypes.behaviors.tableofcontents." "ITableOfContents",
-        )
+        fti.behaviors = ("plone.tableofcontents", "plone.richtext")
         self.fti = fti
-        alsoProvides(self.portal.REQUEST, IPloneAppContenttypesLayer)
         alsoProvides(self.request, IPloneAppContenttypesLayer)
-        from plone.app.contenttypes.behaviors.tableofcontents import ITableOfContents
-
-        alsoProvides(self.request, ITableOfContents)
         self.portal.invokeFactory(
-            "tocdocument", id="tocdoc", title="Document with a table of contents"
+            "tocdocument",
+            id="tocdoc",
+            title="Document with a table of contents",
         )
         import transaction
 
@@ -65,4 +61,4 @@ class TableOfContentsBehaviorFunctionalTest(unittest.TestCase):
         ]
         # Submit form
         self.browser.getControl("Save").click()
-        self.assertTrue('<section id="document-toc"' in self.browser.contents)
+        self.assertTrue('id="document-toc"' in self.browser.contents)
