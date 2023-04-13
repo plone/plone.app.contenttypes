@@ -8,6 +8,30 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.2 (2023-04-14)
+------------------
+
+Bug fixes:
+
+
+- Fix test_behaviors_table_of_contents: ordering of attrtributes changed.
+  @jensens (fix-test_behaviors_table_of_contents)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (#47959565)
+
+
+Tests
+
+
+- Run the robot tests.
+  [maurits] (#69)
+
+
 3.0.1 (2023-01-26)
 ------------------
 
