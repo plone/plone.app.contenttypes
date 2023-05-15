@@ -365,3 +365,14 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         self.link.remoteUrl = "${navigation_root_url}"
         self.assertEqual(view.url(), "/plone")
         self.assertEqual(view.absolute_target_url(), "http://nohost/plone")
+
+    def test_resolve_uid_to_absolute_target(self):
+        view = getMultiAdapter((self.link, self.request), name="link_redirect_view")
+
+        self.portal.invokeFactory(
+            "Document", "doc1", title="A document", description="This is a document."
+        )
+        doc1 = self.portal["doc1"]
+        uid = IUUID(doc1)
+        self.link.remoteUrl = f"${{portal_url}}/resolveuid/{uid}"
+        self.assertEqual(view.absolute_target_url(), "http://nohost/doc1")

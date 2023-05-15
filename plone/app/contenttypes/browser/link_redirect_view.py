@@ -108,6 +108,13 @@ class LinkRedirectView(BrowserView):
             context_state = self.context.restrictedTraverse("@@plone_context_state")
             url = "/".join([context_state.canonical_object_url(), url])
         else:
+            if "resolveuid" in url:
+                uid = url.split("/")[-1]
+                obj = uuidToObject(uid)
+                if obj:
+                    url = "/".join(obj.getPhysicalPath()[2:])
+                    if not url.startswith("/"):
+                        url = "/" + url
             if not url.startswith(("http://", "https://")):
                 url = self.request["SERVER_URL"] + url
 
