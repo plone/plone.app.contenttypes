@@ -22,9 +22,7 @@ def set_browserlayer(request):
 
 
 class PloneAppContenttypes(PloneSandboxLayer):
-    defaultBases = (
-        PLONE_FIXTURE,
-    )
+    defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
         import plone.app.contenttypes
