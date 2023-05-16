@@ -1,6 +1,5 @@
 from plone.app.contenttypes.interfaces import IPloneAppContenttypesLayer
 from plone.app.contenttypes.tests.robot.variables import TEST_FOLDER_ID
-from plone.app.event.testing import PAEvent_FIXTURE
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -24,7 +23,6 @@ def set_browserlayer(request):
 
 class PloneAppContenttypes(PloneSandboxLayer):
     defaultBases = (
-        PAEvent_FIXTURE,
         PLONE_FIXTURE,
     )
 
@@ -32,9 +30,6 @@ class PloneAppContenttypes(PloneSandboxLayer):
         import plone.app.contenttypes
 
         self.loadZCML(package=plone.app.contenttypes)
-        import plone.app.event.dx
-
-        self.loadZCML(package=plone.app.event.dx)
 
     def setUpPloneSite(self, portal):
         portal.portal_workflow.setDefaultChain("simple_publication_workflow")
@@ -43,7 +38,7 @@ class PloneAppContenttypes(PloneSandboxLayer):
 class PloneAppContenttypesRobot(PloneAppContenttypes):
     """Same as the default but with a added folder 'robot-test-folder'."""
 
-    defaultBases = (PAEvent_FIXTURE, REMOTE_LIBRARY_BUNDLE_FIXTURE)
+    defaultBases = (REMOTE_LIBRARY_BUNDLE_FIXTURE,)
 
     def setUpPloneSite(self, portal):
         portal.acl_users.userFolderAddUser(
