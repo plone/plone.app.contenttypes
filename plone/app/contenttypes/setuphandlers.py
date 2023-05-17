@@ -76,7 +76,9 @@ def addContentToContainer(container, object, checkConstraints=True):
         if container_fti is not None and not container_fti.allowType(
             object.portal_type
         ):
-            raise ValueError(f"Disallowed subobject type: {object.portal_type}")
+            raise ValueError(
+                f"Disallowed subobject type: {object.portal_type}"
+            )
 
     chooser = INameChooser(container)
     if hasattr(object, "id") and chooser.checkName(object.id, object):
@@ -169,7 +171,9 @@ def create_frontpage(portal, target_language):
     if portal.text:
         # Do not overwrite existing content
         return
-    portal.title = _translate("front-title", target_language, "Welcome to Plone")
+    portal.title = _translate(
+        "front-title", target_language, "Welcome to Plone"
+    )
     portal.description = _translate(
         "front-description",
         target_language,
@@ -186,7 +190,9 @@ def create_frontpage(portal, target_language):
                 front_text = translated_text
     request = getattr(portal, "REQUEST", None)
     if front_text is None and request is not None:
-        view = queryMultiAdapter((portal, request), name="plone-frontpage-setup")
+        view = queryMultiAdapter(
+            (portal, request), name="plone-frontpage-setup"
+        )
         if view is not None:
             front_text = _bodyfinder(view.index()).strip()
     portal.text = RichTextValue(front_text, "text/html", "text/x-html-safe")
@@ -198,7 +204,9 @@ def create_news_topic(portal, target_language):
 
     if news_id not in portal.keys():
         title = _translate("news-title", target_language, "News")
-        description = _translate("news-description", target_language, "Site News")
+        description = _translate(
+            "news-description", target_language, "Site News"
+        )
         container = createContent(
             "Folder",
             id=news_id,
@@ -248,67 +256,14 @@ def create_news_topic(portal, target_language):
         _publish(aggregator)
 
 
-def create_events_topic(portal, target_language):
-    events_id = "events"
-
-    if events_id not in portal.keys():
-        title = _translate("events-title", target_language, "Events")
-        description = _translate("events-description", target_language, "Site Events")
-        container = createContent(
-            "Folder",
-            id=events_id,
-            title=title,
-            description=description,
-            language=target_language.replace("_", "-").lower(),
-        )
-        container = addContentToContainer(portal, container)
-        unrestricted_construct_instance(
-            "Collection",
-            container,
-            id="aggregator",
-            title=title,
-            description=description,
-        )
-        aggregator = container["aggregator"]
-
-        # Constrain types
-        allowed_types = [
-            "Event",
-        ]
-
-        _setup_constrains(container, allowed_types)
-
-        container.setOrdering("unordered")
-        container.setDefaultPage("aggregator")
-        _publish(container)
-
-        # Set the Collection criteria.
-        #: Sort on the Event start date
-        aggregator.sort_on = "start"
-        aggregator.sort_reversed = True
-        #: Query by Type and Review State
-        aggregator.query = [
-            {
-                "i": "portal_type",
-                "o": "plone.app.querystring.operation.selection.any",
-                "v": ["Event"],
-            },
-            {
-                "i": "review_state",
-                "o": "plone.app.querystring.operation.selection.any",
-                "v": ["published"],
-            },
-        ]
-        aggregator.setLayout("event_listing")
-        _publish(aggregator)
-
-
 def configure_members_folder(portal, target_language):
     members_id = "Members"
 
     if members_id not in portal.keys():
         title = _translate("members-title", target_language, "Users")
-        description = _translate("members-description", target_language, "Site Users")
+        description = _translate(
+            "members-description", target_language, "Site Users"
+        )
         container = createContent(
             "Folder",
             id=members_id,
@@ -340,7 +295,6 @@ def import_content(context):
     target_language, is_combined_language, locale = _get_locales_info(portal)
     create_frontpage(portal, target_language)
     create_news_topic(portal, target_language)
-    create_events_topic(portal, target_language)
     configure_members_folder(portal, target_language)
 
 
