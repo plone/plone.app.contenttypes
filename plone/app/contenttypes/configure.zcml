@@ -35,7 +35,10 @@
   <include package="plone.namedfile" />
   <include package="plone.app.contentmenu" />
   <include package="plone.app.dexterity" />
-  <include zcml:condition="installed plone.app.event" package="plone.app.event" />
+  <include
+      package="plone.app.event"
+      zcml:condition="installed plone.app.event"
+      />
   <include package="plone.app.linkintegrity" />
   <include package="plone.app.lockingbehavior" />
   <include package="plone.app.querystring" />
