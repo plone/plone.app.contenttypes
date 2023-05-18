@@ -5,6 +5,7 @@ from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
 from plone.base.interfaces import INonInstallable
 from plone.base.interfaces.constrains import ISelectableConstrainTypes
+from plone.base.utils import get_installer
 from plone.base.utils import unrestricted_construct_instance
 from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.utils import createContent
@@ -23,6 +24,15 @@ from zope.i18n.interfaces import ITranslationDomain
 from zope.i18n.locales import locales
 from zope.i18n.locales.provider import LoadLocaleError
 from zope.interface import implementer
+
+import pkg_resources
+
+
+try:
+    pkg_resources.get_distribution("plone.app.event")
+    HAS_EVENT = True
+except pkg_resources.DistributionNotFound:
+    HAS_EVENT = False
 
 
 @implementer(INonInstallable)
@@ -340,7 +350,10 @@ def import_content(context):
     target_language, is_combined_language, locale = _get_locales_info(portal)
     create_frontpage(portal, target_language)
     create_news_topic(portal, target_language)
-    create_events_topic(portal, target_language)
+
+    if HAS_EVENT:
+        create_events_topic(portal, target_language)
+
     configure_members_folder(portal, target_language)
 
 
@@ -349,3 +362,8 @@ def setup_various(context):
     target_language, is_combined_language, locale = _get_locales_info(portal)
     _setup_calendar(portal, locale)
     _setup_visible_ids(portal, target_language, locale)
+
+    # install explicitly the plone.app.event
+    if HAS_EVENT:
+        installer = get_installer(portal)
+        installer.install_product("plone.app.event")
