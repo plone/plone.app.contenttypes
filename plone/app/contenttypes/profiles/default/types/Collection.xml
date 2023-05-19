@@ -36,7 +36,6 @@
   >
     <element value="plone.namefromtitle" />
     <element value="plone.collection" />
-    <element value="plone.allowdiscussion" />
     <element value="plone.shortname" />
     <element value="plone.excludefromnavigation" />
     <element value="plone.dublincore" />
