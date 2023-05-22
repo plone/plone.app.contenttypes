@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.3 (2023-05-22)
+------------------
+
+Bug fixes:
+
+
+- extends the the calculation of url if resolveuid part of link in LinkRedirectView @1letter (#626)
+- Remove the unused dependency plone.app.event
+  [@folix-01] (#663)
+
+
 3.0.2 (2023-04-14)
 ------------------
 
