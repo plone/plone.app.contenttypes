@@ -61,6 +61,7 @@ setup(
         "plone.app.z3cform>=1.1.0",
         "zope.deprecation",
         "plone.base",
+        "Products.BTreeFolder2",
         "Products.GenericSetup",
         "Products.MimetypesRegistry",
         "Products.PortalTransforms",
