@@ -195,6 +195,9 @@ class FolderView(BrowserView):
         ]:
             value = self.toLocalizedTime(value, long_format=1)
 
+        if isinstance(value, (list, tuple)):
+            value = ", ".join([entry for entry in value])
+
         return {
             # 'title': _(fieldname, default=fieldname),
             "value": value
