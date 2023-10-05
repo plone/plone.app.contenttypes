@@ -63,8 +63,16 @@
               <span class="d-none"
                     i18n:translate="image_size_label"
               >File size</span>
-              <tal:mb condition="use_MB">${python:round(size/1024/1024, 1)} MB</tal:mb>
-              <tal:kb condition="not: use_MB">${python:round(size/1024, 1)} KB</tal:kb>
+              <tal:mb condition="use_MB"
+                      i18n:translate=""
+              >
+                <tal:size i18n:name="size">${python:round(size/1024/1024, 1)}</tal:size>
+                MB</tal:mb>
+              <tal:kb condition="not: use_MB"
+                      i18n:translate=""
+              >
+                <tal:size i18n:name="size">${python:round(size/1024, 1)}</tal:size>
+                KB</tal:kb>
             </div>
           </div>
 
