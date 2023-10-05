@@ -1,8 +1,10 @@
 # Generated from:
 # https://github.com/plone/meta/tree/master/config/default
+# See the inline comments on how to expand/tweak this configuration file
 [meta]
 template = "default"
-commit-id = "112d1c69"
+commit-id = "7723aeaf"
 
-[codespell]
-additional-ignores = "discreet,oder,ist,crate"
+[pyproject]
+codespell_ignores = "oder,ist,crate"
+dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CFMPlone',]"
