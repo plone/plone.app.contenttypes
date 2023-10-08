@@ -1,17 +1,12 @@
 *** Settings ***
 
-Resource  plone/app/robotframework/keywords.robot
-Resource  plone/app/robotframework/saucelabs.robot
-Resource  plone/app/robotframework/selenium.robot
+Resource  plone/app/robotframework/browser.robot
 Resource  keywords.txt
 
 Variables  variables.py
 
-
 Test Setup  Run Keywords  Setup Testcontent  Plone test setup
 Test Teardown  Run keywords  Plone test teardown
-
-*** Variables ***
 
 *** Test cases ***
 
@@ -101,7 +96,7 @@ Listing should list contained content in detail
   the content area should contain  this is a test document
   the content area should contain  Test News Item
   the content area should contain  this is a test news item
-  Page Should Contain Element  //img[@title="Test News Item"]  2
+  Get Element Count  //img[@title="Test News Item"]  ==  2
   the content area should contain  Test Event
   the content area should contain  this is a test event
   the content area should contain  Test Collection
@@ -111,29 +106,29 @@ Listing should list contained content in detail
   the content area should contain  Test File
   the content area should contain  file.pdf
   the content area should contain  Test Image
-  Page Should Contain Element  //img[@title="Test Image"]  3
+  Get Element Count  //img[@title="Test Image"]  ==  2
   the content area should contain  Test Album
   the content area should contain  Test Album Image 1
-  Page Should Contain Element  //img[@title="Test Album Image 1"]  2
+  Get Element Count  //img[@title="Test Album Image 1"]  ==  2
   the content area should contain  Test Album Image 2
-  Page Should Contain Element  //img[@title="Test Album Image 2"]  2
+  Get Element Count  //img[@title="Test Album Image 2"]  ==  2
   the content area should contain  Test Album Image 3
-  Page Should Contain Element  //img[@title="Test Album Image 3"]  2
+  Get Element Count  //img[@title="Test Album Image 3"]  ==  2
   the content area should contain  Test Sub Album
   the content area should contain  Test Sub Album Image 1
-  Page Should Contain Element  //img[@title="Test Sub Album Image 1"]  1
+  Get Element Count  //img[@title="Test Sub Album Image 1"]  ==  1
   the content area should contain  Test Sub Album Image 2
-  Page Should Contain Element  //img[@title="Test Sub Album Image 2"]  1
+  Get Element Count  //img[@title="Test Sub Album Image 2"]  ==  1
   the content area should contain  Test Sub Album Image 3
-  Page Should Contain Element  //img[@title="Test Sub Album Image 3"]  1
+  Get Element Count  //img[@title="Test Sub Album Image 3"]  ==  1
 
 Album should list contained images and albums
   the content area should contain  Test Album Image 1
-  Page Should Contain Element  //img[@title="Test Album Image 1"]  2
+  Get Element Count  //img[@title="Test Album Image 1"]  ==  1
   the content area should contain  Test Album Image 2
-  Page Should Contain Element  //img[@title="Test Album Image 2"]  2
+  Get Element Count  //img[@title="Test Album Image 2"]  ==  1
   the content area should contain  Test Album Image 3
-  Page Should Contain Element  //img[@title="Test Album Image 3"]  2
+  Get Element Count  //img[@title="Test Album Image 3"]  ==  1
   the content area should contain  Test Sub Album
 
 
@@ -159,7 +154,7 @@ Listing should list all content in detail
   the content area should contain  this is a test document
   the content area should contain  Test News Item
   the content area should contain  this is a test news item
-  Page Should Contain Element  //img[@title="Test News Item"]  2
+  Get Element Count  //img[@title="Test News Item"]  ==  2
   the content area should contain  Test Event
   the content area should contain  this is a test event
   the content area should contain  Test Collection
@@ -169,39 +164,39 @@ Listing should list all content in detail
   the content area should contain  Test File
   the content area should contain  file.pdf
   the content area should contain  Test Image
-  Page Should Contain Element  //img[@title="Test Image"]  3
+  Get Element Count  //img[@title="Test Image"]  ==  2
   the content area should contain  Test Album
   the content area should contain  Test Album Image 1
-  Page Should Contain Element  //img[@title="Test Album Image 1"]  2
+  Get Element Count  //img[@title="Test Album Image 1"]  ==  2
   the content area should contain  Test Album Image 2
-  Page Should Contain Element  //img[@title="Test Album Image 2"]  2
+  Get Element Count  //img[@title="Test Album Image 2"]  ==  2
   the content area should contain  Test Album Image 3
-  Page Should Contain Element  //img[@title="Test Album Image 3"]  2
+  Get Element Count  //img[@title="Test Album Image 3"]  ==  2
   the content area should contain  Test Sub Album
   the content area should contain  Test Sub Album Image 1
-  Page Should Contain Element  //img[@title="Test Sub Album Image 1"]  2
+  Get Element Count  //img[@title="Test Sub Album Image 1"]  ==  2
   the content area should contain  Test Sub Album Image 2
-  Page Should Contain Element  //img[@title="Test Sub Album Image 2"]  2
+  Get Element Count  //img[@title="Test Sub Album Image 2"]  ==  2
   the content area should contain  Test Sub Album Image 3
-  Page Should Contain Element  //img[@title="Test Sub Album Image 3"]  2
+  Get Element Count  //img[@title="Test Sub Album Image 3"]  ==  2
 
 Album should list all images and albums
   the content area should contain  Test Image
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Image"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test Image"]  ==  1
   the content area should contain  Test News Item
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test News Item"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test News Item"]  ==  1
   the content area should contain  Test Album Image 1
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Album Image 1"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test Album Image 1"]  ==  1
   the content area should contain  Test Album Image 2
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Album Image 2"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test Album Image 2"]  ==  1
   the content area should contain  Test Album Image 3
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Album Image 3"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test Album Image 3"]  ==  1
   the content area should contain  Test Sub Album Image 1
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 1"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 1"]  ==  1
   the content area should contain  Test Sub Album Image 2
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 2"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 2"]  ==  1
   the content area should contain  Test Sub Album Image 3
-  Page Should Contain Element  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 3"]  1
+  Get Element Count  //div[contains(@class, "card-image")]//img[@title="Test Sub Album Image 3"]  ==  1
   the content area should contain  Test Album
   the content area should contain  Test Sub Album
 
@@ -230,8 +225,6 @@ I go to
 
 I disable dropdown navigation
   Go to  ${PLONE_URL}/@@navigation-controlpanel
-  Input Text  name=form.widgets.navigation_depth  1
-  Set Focus To Element  css=#form-buttons-save
-  Wait Until Element Is Visible  css=#form-buttons-save
-  Click Button  Save
-  Wait until page contains  Changes saved
+  Fill Text  css=[name="form.widgets.navigation_depth"]  1
+  Click  "Save"
+  Get Text  body  contains  Changes saved
