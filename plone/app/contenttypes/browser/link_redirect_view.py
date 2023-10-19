@@ -1,3 +1,4 @@
+from plone import api
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from plone.app.uuid.utils import uuidToObject
 from plone.base.interfaces import ITypesSchema
@@ -116,10 +117,16 @@ class LinkRedirectView(BrowserView):
                 portal_state = getMultiAdapter(
                     (self.context, self.request), name="plone_portal_state"
                 )
+
+                portal = portal_state.portal()
                 portal_url = portal_state.portal_url()
 
+                path_pieces = tuple(
+                    set(portal.getPhysicalPath()) ^ set(obj.getPhysicalPath())
+                )
+
                 if obj:
-                    url = "/".join(obj.getPhysicalPath()[2:])
+                    url = "/".join(path_pieces)
                     if not url.startswith("/"):
                         url = f"{portal_url}/{url}"
             if not url.startswith(("http://", "https://")):
