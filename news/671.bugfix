@@ -1,0 +1,1 @@
+Fix link_redirect_view, respect vhm vs none-vhm url schemes @1letter
