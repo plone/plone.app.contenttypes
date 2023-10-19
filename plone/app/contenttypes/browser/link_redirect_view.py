@@ -1,4 +1,3 @@
-from plone import api
 from plone.app.contenttypes.utils import replace_link_variables_by_paths
 from plone.app.uuid.utils import uuidToObject
 from plone.base.interfaces import ITypesSchema
@@ -7,7 +6,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from urllib.parse import urlparse
-from zope.component import getMultiAdapter
 from zope.component import getUtility
 
 
