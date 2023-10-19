@@ -375,4 +375,10 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         doc1 = self.portal["doc1"]
         uid = IUUID(doc1)
         self.link.remoteUrl = f"${{portal_url}}/resolveuid/{uid}"
-        self.assertEqual(view.absolute_target_url(), "http://nohost/doc1")
+
+        portal_state = getMultiAdapter(
+            (self.link, self.request), name="plone_portal_state"
+        )
+        portal_url = portal_state.portal_url()
+
+        self.assertEqual(view.absolute_target_url(), f"{portal_url}/doc1")
