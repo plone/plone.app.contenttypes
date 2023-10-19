@@ -113,22 +113,7 @@ class LinkRedirectView(BrowserView):
             if "resolveuid" in url:
                 uid = url.split("/")[-1]
                 obj = uuidToObject(uid)
-
-                portal_state = getMultiAdapter(
-                    (self.context, self.request), name="plone_portal_state"
-                )
-
-                portal = portal_state.portal()
-                portal_url = portal_state.portal_url()
-
-                path_pieces = tuple(
-                    set(portal.getPhysicalPath()) ^ set(obj.getPhysicalPath())
-                )
-
-                if obj:
-                    url = "/".join(path_pieces)
-                    if not url.startswith("/"):
-                        url = f"{portal_url}/{url}"
+                url = obj.absolute_url()
             if not url.startswith(("http://", "https://")):
                 url = self.request["SERVER_URL"] + url
 
