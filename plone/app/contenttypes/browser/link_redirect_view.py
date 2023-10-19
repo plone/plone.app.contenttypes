@@ -6,6 +6,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from urllib.parse import urlparse
+from zope.component import getMultiAdapter
 from zope.component import getUtility
 
 
@@ -111,10 +112,16 @@ class LinkRedirectView(BrowserView):
             if "resolveuid" in url:
                 uid = url.split("/")[-1]
                 obj = uuidToObject(uid)
+
+                portal_state = getMultiAdapter(
+                    (self.context, self.request), name="plone_portal_state"
+                )
+                portal_url = portal_state.portal_url()
+
                 if obj:
                     url = "/".join(obj.getPhysicalPath()[2:])
                     if not url.startswith("/"):
-                        url = "/" + url
+                        url = f"{portal_url}/{url}"
             if not url.startswith(("http://", "https://")):
                 url = self.request["SERVER_URL"] + url
 
