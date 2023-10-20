@@ -25,19 +25,42 @@ NON_RESOLVABLE_URL_SCHEMES = NON_REDIRECTABLE_URL_SCHEMES + [
 ]
 
 
-def get_uid_from_path(url=None):
-    if not url:
-        return None
+def normalize_uid_from_path(url=None):
+    """
+    Args:
+        url (string): a path or orl
 
-    paths = url.split("/")
+    Returns:
+        tuple: tuple of (uid, fragment) a fragment is an anchor id e.g. #head1
+    """
     uid = None
-    if "resolveuid" in paths:
-        ri = paths.index("resolveuid")
+    fragment = None
+
+    if not url:
+        return uid, fragment
+
+    # resolve uid
+    paths = url.split("/")
+    paths_lower = [_item.lower() for _item in paths]
+
+    if "resolveuid" in paths_lower:
+        ri = paths_lower.index("resolveuid")
         if ri + 1 != len(paths):
             uid = paths[ri + 1]
             if uid == "":
                 uid = None
-    return uid
+
+    if not uid:
+        return uid, fragment
+
+    # resolve fragment
+    parts = urlparse(uid)
+
+    uid = parts.path
+
+    fragment = f"#{parts.fragment}" if parts.fragment else None
+
+    return uid, fragment
 
 
 class LinkRedirectView(BrowserView):
@@ -124,12 +147,15 @@ class LinkRedirectView(BrowserView):
             url = "/".join([context_state.canonical_object_url(), url])
         else:
             if "resolveuid" in url:
-                uid = get_uid_from_path(url)
+                uid, fragment = normalize_uid_from_path(url)
                 obj = uuidToObject(uid)
                 if obj is None:
                     # uid can't resolve, return the url
                     return url
+
                 url = obj.absolute_url()
+                if fragment is not None:
+                    url = f"{url}{fragment}"
 
             if not url.startswith(("http://", "https://")):
                 url = self.request["SERVER_URL"] + url
