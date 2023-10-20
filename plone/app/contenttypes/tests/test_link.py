@@ -1,5 +1,5 @@
 from datetime import datetime
-from plone.app.contenttypes.browser.link_redirect_view import get_uid_from_path
+from plone.app.contenttypes.browser.link_redirect_view import normalize_uid_from_path
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -231,66 +231,116 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self._assert_redirect(self.link.remoteUrl)
 
-    def test_get_uid_from_path(self):
+    def test_normalize_uid_from_path(self):
         url = None
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertIsNone(uid)
+        self.assertIsNone(fragment)
 
         url = "http://nohost"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertIsNone(uid)
+        self.assertIsNone(fragment)
 
         url = "http://nohost/test1"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertIsNone(uid)
+        self.assertIsNone(fragment)
 
         url = "http://nohost/test1/resolveuid"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertIsNone(uid)
+        self.assertIsNone(fragment)
 
         url = "http://nohost/test1/resolveuid/"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertIsNone(uid)
+        self.assertIsNone(fragment)
 
         url = "http://nohost/test1/resolveuid123/"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertIsNone(uid)
+        self.assertIsNone(fragment)
 
         url = "http://nohost/test1/resolveuid/123"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
+
+        url = "http://nohost/test1/resolveuid/123#my-id"
+        uid, fragment = normalize_uid_from_path(url)
+        self.assertEqual(uid, "123")
+        self.assertEqual(fragment, "#my-id")
 
         url = "http://nohost/test1/resolveuid/123/"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
+
+        url = "http://nohost/test1/resolveuid/123#my-id/"
+        uid, fragment = normalize_uid_from_path(url)
+        self.assertEqual(uid, "123")
+        self.assertEqual(fragment, "#my-id")
 
         url = "http://nohost/test1/resolveuid/123/test"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
 
         url = "resolveuid/123"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
+
+        url = "resolveuid/123#my-id"
+        uid, fragment = normalize_uid_from_path(url)
+        self.assertEqual(uid, "123")
+        self.assertEqual(fragment, "#my-id")
 
         url = "resolveuid/123/"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
+
+        url = "resolveuid/123#my-id/"
+        uid, fragment = normalize_uid_from_path(url)
+        self.assertEqual(uid, "123")
+        self.assertEqual(fragment, "#my-id")
 
         url = "resolveuid/123/abc"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
 
         url = "/resolveuid/123"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
+
+        url = "/resolveuid/123#my-id"
+        uid, fragment = normalize_uid_from_path(url)
+        self.assertEqual(uid, "123")
+        self.assertEqual(fragment, "#my-id")
 
         url = "/resolveuid/123/"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
+
+        url = "/resolveuid/123#my-id/"
+        uid, fragment = normalize_uid_from_path(url)
+        self.assertEqual(uid, "123")
+        self.assertEqual(fragment, "#my-id")
 
         url = "/resolveuid/123/abc"
-        uid = get_uid_from_path(url)
+        uid, fragment = normalize_uid_from_path(url)
         self.assertEqual(uid, "123")
+        self.assertIsNone(fragment)
+
+        url = "/resolveUid/123#my-id"
+        uid, fragment = normalize_uid_from_path(url)
+        self.assertEqual(uid, "123")
+        self.assertEqual(fragment, "#my-id")
 
     def _publish(self, obj):
         portal_workflow = getToolByName(self.portal, "portal_workflow")
@@ -436,14 +486,21 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         )
         doc1 = self.portal["doc1"]
         uid = IUUID(doc1)
-        self.link.remoteUrl = f"${{portal_url}}/resolveuid/{uid}"
 
         portal_state = getMultiAdapter(
             (self.link, self.request), name="plone_portal_state"
         )
         portal_url = portal_state.portal_url()
 
+        # check an internal link
+        self.link.remoteUrl = f"${{portal_url}}/resolveuid/{uid}"
         self.assertEqual(view.absolute_target_url(), f"{portal_url}/doc1")
+
+        # check an internal link with fragment
+        self.link.remoteUrl = f"${{portal_url}}/resolveuid/{uid}#autotoc-item-autotoc-1"
+        self.assertEqual(
+            view.absolute_target_url(), f"{portal_url}/doc1#autotoc-item-autotoc-1"
+        )
 
         # check not resolvable uid
         self.link.remoteUrl = "/resolveuid/abc123"
