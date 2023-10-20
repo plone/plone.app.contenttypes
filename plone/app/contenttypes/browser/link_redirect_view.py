@@ -25,6 +25,21 @@ NON_RESOLVABLE_URL_SCHEMES = NON_REDIRECTABLE_URL_SCHEMES + [
 ]
 
 
+def get_uid_from_path(url=None):
+    if not url:
+        return None
+
+    paths = url.split("/")
+    uid = None
+    if "resolveuid" in paths:
+        ri = paths.index("resolveuid")
+        if ri + 1 != len(paths):
+            uid = paths[ri + 1]
+            if uid == "":
+                uid = None
+    return uid
+
+
 class LinkRedirectView(BrowserView):
     index = ViewPageTemplateFile("templates/link.pt")
 
@@ -109,9 +124,13 @@ class LinkRedirectView(BrowserView):
             url = "/".join([context_state.canonical_object_url(), url])
         else:
             if "resolveuid" in url:
-                uid = url.split("/")[-1]
+                uid = get_uid_from_path(url)
                 obj = uuidToObject(uid)
+                if obj is None:
+                    # uid can't resolve, return the url
+                    return url
                 url = obj.absolute_url()
+
             if not url.startswith(("http://", "https://")):
                 url = self.request["SERVER_URL"] + url
 
