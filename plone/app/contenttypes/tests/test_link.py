@@ -1,4 +1,5 @@
 from datetime import datetime
+from plone.app.contenttypes.browser.link_redirect_view import get_uid_from_path
 from plone.app.contenttypes.interfaces import ILink
 from plone.app.contenttypes.testing import (  # noqa
     PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING,
@@ -230,6 +231,67 @@ class LinkViewIntegrationTest(unittest.TestCase):
         self.assertTrue(view())
         self._assert_redirect(self.link.remoteUrl)
 
+    def test_get_uid_from_path(self):
+        url = None
+        uid = get_uid_from_path(url)
+        self.assertIsNone(uid)
+
+        url = "http://nohost"
+        uid = get_uid_from_path(url)
+        self.assertIsNone(uid)
+
+        url = "http://nohost/test1"
+        uid = get_uid_from_path(url)
+        self.assertIsNone(uid)
+
+        url = "http://nohost/test1/resolveuid"
+        uid = get_uid_from_path(url)
+        self.assertIsNone(uid)
+
+        url = "http://nohost/test1/resolveuid/"
+        uid = get_uid_from_path(url)
+        self.assertIsNone(uid)
+
+        url = "http://nohost/test1/resolveuid123/"
+        uid = get_uid_from_path(url)
+        self.assertIsNone(uid)
+
+        url = "http://nohost/test1/resolveuid/123"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "http://nohost/test1/resolveuid/123/"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "http://nohost/test1/resolveuid/123/test"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "resolveuid/123"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "resolveuid/123/"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "resolveuid/123/abc"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "/resolveuid/123"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "/resolveuid/123/"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
+        url = "/resolveuid/123/abc"
+        uid = get_uid_from_path(url)
+        self.assertEqual(uid, "123")
+
     def _publish(self, obj):
         portal_workflow = getToolByName(self.portal, "portal_workflow")
         portal_workflow.doActionFor(obj, "publish")
@@ -382,3 +444,7 @@ class LinkWidgetIntegrationTest(unittest.TestCase):
         portal_url = portal_state.portal_url()
 
         self.assertEqual(view.absolute_target_url(), f"{portal_url}/doc1")
+
+        # check not resolvable uid
+        self.link.remoteUrl = "/resolveuid/abc123"
+        self.assertEqual(view.absolute_target_url(), "/resolveuid/abc123")
