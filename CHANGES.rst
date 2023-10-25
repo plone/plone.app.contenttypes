@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.5 (2023-10-25)
+------------------
+
+Bug fixes:
+
+
+- Fix link_redirect_view, respect vhm vs none-vhm url schemes @1letter (#671)
+
+
 3.0.4 (2023-10-07)
 ------------------
 
