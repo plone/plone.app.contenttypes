@@ -789,7 +789,7 @@ New features:
 
 Bug fixes:
 
-- Add translation namesspace and i18n:translate to the dexterity schema
+- Add translation namespace and i18n:translate to the dexterity schema
   definitions for the content types that have extra field defined on top of the
   behavior composition. Otherwise no translations can be picked up.
   [fredvd]
