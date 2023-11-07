@@ -97,7 +97,7 @@
 
   <!-- VIEWS FOR ANYTHING WITH THE COLLECTION BEHAVIOR.
        Note that these ignore other fields, but integrators should
-       create other themplates if they want that.  Or improve the
+       create other templates if they want that.  Or improve the
        query view widget.  -->
   <browser:pages
       for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"

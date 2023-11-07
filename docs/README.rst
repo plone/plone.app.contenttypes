@@ -122,7 +122,7 @@ You have several options:
       </schema>
     </model>
 
-You could alternatively override the peroperty ``model_file`` of the type-definition with a empty string and use the property ``schema`` to provide your custom python-schema.
+You could alternatively override the property ``model_file`` of the type-definition with a empty string and use the property ``schema`` to provide your custom python-schema.
 
 For more complex features you should always consider create custom behaviors and/or write your own content-types since that will most likely give you more flexibility and less problem when you want to upgrade to a newer version in the future.
 
