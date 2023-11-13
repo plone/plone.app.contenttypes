@@ -1,25 +1,13 @@
-# ============================================================================
-# Tests for the Collection Creator Criterion
-# ============================================================================
-#
-# $ bin/robot-server --reload-path src/plone.app.contenttypes plone.app.contenttypes.testing.PLONE_APP_CONTENTTYPES_ROBOT_TESTING
-#
-# $ bin/robot src/plone.app.contenttypes/plone/app/contenttypes/tests/robot/test_collection_creator_criterion.robot
-#
-# ============================================================================
+*** Settings ***
 
-*** Settings *****************************************************************
-
-Resource  plone/app/robotframework/keywords.robot
-Resource  plone/app/robotframework/saucelabs.robot
-Resource  plone/app/robotframework/selenium.robot
+Resource  plone/app/robotframework/browser.robot
+Resource  plone/app/robotframework/user.robot
 Resource  keywords.txt
 
 Library  Remote  ${PLONE_URL}/RobotRemote
 
 Test Setup  Run Keywords  Plone test setup
 Test Teardown  Run keywords  Plone test teardown
-
 
 *** Test cases ***************************************************************
 
@@ -49,11 +37,10 @@ a test user document
 
 I set the collection's creator criterion to the current logged in user
     Go to  ${PLONE_URL}/my-collection/edit
-    Wait until page contains  Edit Collection
+    Get Text  body  contains  Edit Collection
 
     I set the criteria index in row 1 to the option 'Creator'
     I set the criteria operator in row 1 to the option 'Current'
 
-    Sleep  1
-    Click Button  Save
-    Wait until page contains  Changes saved
+    Click  "Save"
+    Get Text  body  contains  Changes saved
