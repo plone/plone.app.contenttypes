@@ -35,7 +35,6 @@
             purge="false"
   >
     <element value="plone.namefromtitle" />
-    <element value="plone.allowdiscussion" />
     <element value="plone.excludefromnavigation" />
     <element value="plone.shortname" />
     <element value="plone.dublincore" />
