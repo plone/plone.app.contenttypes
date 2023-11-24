@@ -1,6 +1,6 @@
 from Acquisition import aq_base
 from logging import getLogger
-from plone.app.contenttypes.behaviors.richtext import IRichText
+from plone.app.contenttypes.behaviors.richtext import IRichTextBehavior
 from plone.app.contenttypes.interfaces import ICollection
 from plone.app.contenttypes.interfaces import IDocument
 from plone.app.contenttypes.interfaces import IFile
@@ -40,7 +40,7 @@ def _unicode_save_string_concat(*args):
 
 def SearchableText(obj):
     text = ""
-    richtext = IRichText(obj, None)
+    richtext = IRichTextBehavior(obj, None)
     if richtext:
         textvalue = richtext.text
         if IRichTextValue.providedBy(textvalue):
