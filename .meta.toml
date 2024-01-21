@@ -7,4 +7,4 @@ commit-id = "6e36bcc4"
 
 [pyproject]
 codespell_ignores = "oder,ist,crate"
-dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CFMPlone',]"
+dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CMFPlone',]"
