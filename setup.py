@@ -59,7 +59,6 @@ setup(
         "plone.app.lockingbehavior",
         "plone.behavior >= 1.3.0",
         "plone.app.z3cform>=1.1.0",
-        "zope.deprecation",
         "plone.base",
         "Products.BTreeFolder2",
         "Products.GenericSetup",
@@ -81,7 +80,7 @@ setup(
         "plone.supermodel",
         "plone.z3cform",
         "z3c.form",
-        "zope.contentprovider",
+        "Zope",
     ],
     extras_require={
         "test": [
@@ -91,7 +90,6 @@ setup(
             "plone.testing",
             "plone.browserlayer",
             "plone.uuid",
-            "zope.viewlet",
             "robotsuite",
         ],
     },
