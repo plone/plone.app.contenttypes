@@ -91,24 +91,24 @@ class EventFunctionalTest(unittest.TestCase):
     def test_add_event(self):
         self.browser.open(self.portal_url)
         self.browser.getLink("Event").click()
-        self.browser.getControl(
-            name="form.widgets.IDublinCore.title"
-        ).value = "My event"
-        self.browser.getControl(
-            name="form.widgets.IDublinCore.description"
-        ).value = "This is my event."
-        self.browser.getControl(
-            name="form.widgets.IRichTextBehavior.text"
-        ).value = "Lorem Ipsum"
-        self.browser.getControl(
-            name="form.widgets.IEventBasic.start"
-        ).value = "2013-01-01"
-        self.browser.getControl(
-            name="form.widgets.IEventBasic.end"
-        ).value = "2013-01-12"
-        self.browser.getControl(
-            name="form.widgets.IShortName.id"
-        ).value = "my-special-event"
+        self.browser.getControl(name="form.widgets.IDublinCore.title").value = (
+            "My event"
+        )
+        self.browser.getControl(name="form.widgets.IDublinCore.description").value = (
+            "This is my event."
+        )
+        self.browser.getControl(name="form.widgets.IRichTextBehavior.text").value = (
+            "Lorem Ipsum"
+        )
+        self.browser.getControl(name="form.widgets.IEventBasic.start").value = (
+            "2013-01-01"
+        )
+        self.browser.getControl(name="form.widgets.IEventBasic.end").value = (
+            "2013-01-12"
+        )
+        self.browser.getControl(name="form.widgets.IShortName.id").value = (
+            "my-special-event"
+        )
         self.browser.getControl("Save").click()
 
         self.assertTrue(self.browser.url.endswith("my-special-event/view"))
