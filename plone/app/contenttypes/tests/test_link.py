@@ -379,15 +379,15 @@ class LinkFunctionalTest(unittest.TestCase):
         self.browser.open(self.portal_url)
         self.browser.getLink("Link").click()
         self.browser.getControl(name="form.widgets.IDublinCore.title").value = "My link"
-        self.browser.getControl(
-            name="form.widgets.IDublinCore.description"
-        ).value = "This is my link."
-        self.browser.getControl(
-            name="form.widgets.IShortName.id"
-        ).value = "my-special-link"
-        self.browser.getControl(
-            name="form.widgets.remoteUrl.external"
-        ).value = "https://plone.org"
+        self.browser.getControl(name="form.widgets.IDublinCore.description").value = (
+            "This is my link."
+        )
+        self.browser.getControl(name="form.widgets.IShortName.id").value = (
+            "my-special-link"
+        )
+        self.browser.getControl(name="form.widgets.remoteUrl.external").value = (
+            "https://plone.org"
+        )
         self.browser.getControl("Save").click()
 
         self.assertTrue(self.browser.url.endswith("my-special-link/view"))
