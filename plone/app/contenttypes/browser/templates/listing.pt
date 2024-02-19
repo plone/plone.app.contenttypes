@@ -93,7 +93,7 @@
 
                               <tal:event condition="python:item_is_event">
                                 <tal:date tal:replace="structure python:view.formatted_date(obj)" />
-                                <span tal:condition="python:obj.location if hasattr(obj, 'location') else None"
+                                <span tal:condition="python:getattr(obj.aq_base, 'location', None)"
                                       i18n:translate="label_event_byline_location"
                                 >
                             &mdash;
