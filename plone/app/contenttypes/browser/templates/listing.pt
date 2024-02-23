@@ -89,7 +89,7 @@
                           </div>
 
                           <metal:block metal:define-macro="document_byline">
-                            <div class="mb-1">
+                            <div class="document-byline mb-1">
 
                               <tal:event condition="python:item_is_event">
                                 <tal:date tal:replace="structure python:view.formatted_date(obj)" />
@@ -115,7 +115,7 @@
                                           "
                                           tal:condition="python:item_creator"
                                 >
-                                  <span i18n:translate="label_by_author">
+                                  <span class="label-by-author" i18n:translate="label_by_author">
                             by
                                     <a tal:content="python: author.get('name_or_id')"
                                        tal:omit-tag="python: not author"
@@ -147,7 +147,7 @@
                             </div>
                           </metal:block>
 
-                          <p class="me-3"
+                          <p class="document-description me-3"
                              tal:condition="python:item_description"
                              tal:content="python:item_description"
                           >
@@ -155,7 +155,7 @@
                           </p>
                         </div>
 
-                        <div class="col-3 text-end"
+                        <div class="lead-image col-3 text-end"
                              tal:condition="python:item_has_image and thumb_scale_list"
                         >
                           <a tal:attributes="
