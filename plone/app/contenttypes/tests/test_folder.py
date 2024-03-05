@@ -1,3 +1,5 @@
+from datetime import datetime
+from datetime import timedelta
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.app.contenttypes.interfaces import IFolder
 from plone.app.contenttypes.testing import (  # noqa
@@ -232,3 +234,26 @@ class FolderViewFunctionalTest(unittest.TestCase):
         # And also in tabular view
         self.browser.open(self.folder_url + "/tabular_view")
         self.assertIn("doc_wout_title", self.browser.contents)
+
+    def test_event_wout_location(self):
+        # deactivate "plone.eventlocation" from Event behaviors
+        event_fti = self.portal.portal_types.get("Event")
+        if not event_fti:
+            return
+        event_behaviors = list(event_fti.behaviors)
+        event_behaviors.remove("plone.eventlocation")
+        event_fti.behaviors = tuple(event_behaviors)
+
+        self.folder.invokeFactory(
+            "Event",
+            id="event_wout_location",
+            title="Event without location",
+            start=datetime.now() + timedelta(days=1),
+        )
+
+        import transaction
+
+        transaction.commit()
+
+        self.browser.open(self.folder_url + "/listing_view")
+        self.assertIn("Event without location", self.browser.contents)
