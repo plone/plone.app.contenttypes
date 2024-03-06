@@ -456,7 +456,7 @@ Bug fixes:
 New features:
 
 
-- Support ILeadImage behavior when display collection album view.
+- Support ILeadImageBehavior when display collection album view.
   [rodfersou] (#524)
 - Add more log-messages during migration from AT to DX.
   [pbauer] (#526)
@@ -535,7 +535,7 @@ Bug fixes:
 
 Breaking changes:
 
-- ILeadImage and IRichText behaviors now have proper "Marker"-Interfaces.
+- ILeadImageBehavior and IRichTextBehavior behaviors now have proper "Marker"-Interfaces.
   As this was only possible by renaming the schema adapter to *Behavior* to
   not break with implementations inside the collective, the FTI-behavior-definition
   has changed:
