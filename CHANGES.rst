@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.6 (2024-03-15)
+------------------
+
+Bug fixes:
+
+
+- Fix folder listing template when `plone.eventlocation` behavior is disabled for Events.
+  [petschki] (#679)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (6e36bcc4)
+
+
 3.0.5 (2023-10-25)
 ------------------
 
