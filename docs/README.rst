@@ -79,7 +79,7 @@ You have several options:
     <?xml version="1.0"?>
     <object name="Folder" meta_type="Dexterity FTI">
      <property name="behaviors" purge="False">
-      <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
+      <element value="plone.leadimage"/>
      </property>
     </object>
 
@@ -91,7 +91,7 @@ You have several options:
     <object name="Folder" meta_type="Dexterity FTI">
      <property name="model_file">your.package.content:folder.xml</property>
      <property name="behaviors" purge="False">
-      <element value="plone.app.contenttypes.behaviors.leadimage.ILeadImage"/>
+      <element value="plone.leadimage"/>
      </property>
     </object>
 

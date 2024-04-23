@@ -1,0 +1,2 @@
+Fix ILeadImageBehavior and IRichTextBehavior interfaces were the name change was forgotten.
+[thet]
