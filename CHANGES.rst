@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.7 (2024-04-25)
+------------------
+
+Bug fixes:
+
+
+- Fix ILeadImageBehavior and IRichTextBehavior interfaces were the name change was forgotten.
+  [thet] (#681)
+
+
 3.0.6 (2024-03-15)
 ------------------
 
