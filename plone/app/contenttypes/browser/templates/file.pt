@@ -12,75 +12,88 @@
     <metal:content-core fill-slot="content-core">
       <metal:block define-macro="content-core"
                    tal:define="
-                     content_type python: context.file.contentType;
-                     filename python: context.file.filename;
-                     mimetype_icon python: 'mimetype-' + content_type;
-                     download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename);
+                     file python:context.file;
                    "
+                   tal:on-error="nothing"
       >
 
-        <section class="section section-main">
+        <tal:has_file condition="python:file">
+          <tal:block tal:define="
+                       content_type context/file/contentType;
+                       filename python: file.filename;
+                       mimetype_icon python: 'mimetype-' + content_type;
+                       download_url python: '{}/@@download/file/{}'.format(context.absolute_url(), filename);
+                     ">
+            <section class="section section-main">
 
-          <div tal:condition="python: not view.is_videotype() and not view.is_audiotype()">
-            <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
-          </div>
+              <div tal:condition="python: not view.is_videotype() and not view.is_audiotype()">
+                <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
+              </div>
 
-          <video class="w-100 mb-3"
-                 controls="controls"
-                 tal:condition="python: view.is_videotype()"
-          >
-            <source src="${python:download_url}"
-                    type="${python:content_type}"
-            />
-            <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
-            <div class="small text-muted"
-                 i18n:translate="embedded_video_not_supported"
-            >Sorry, your browser doesn't support embedded videos.</div>
-          </video>
+              <video class="w-100 mb-3"
+                     controls="controls"
+                     tal:condition="python: view.is_videotype()"
+              >
+                <source src="${python:download_url}"
+                        type="${python:content_type}"
+                />
+                <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
+                <div class="small text-muted"
+                     i18n:translate="embedded_video_not_supported"
+                >Sorry, your browser doesn't support embedded videos.</div>
+              </video>
 
-          <audio class="w-100 mb-3"
-                 controls="controls"
-                 tal:condition="python:view.is_audiotype()"
-          >
-            <source tal:attributes="
-                      src python: download_url;
-                      type python: content_type;
-                    " />
-            <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
-            <div class="small text-muted"
-                 i18n:translate="embedded_audio_not_supported"
-            >Sorry, your browser doesn't support embedded audio.</div>
-          </audio>
+              <audio class="w-100 mb-3"
+                     controls="controls"
+                     tal:condition="python:view.is_audiotype()"
+              >
+                <source tal:attributes="
+                          src python: download_url;
+                          type python: content_type;
+                        " />
+                <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-x4 mb-2')" />
+                <div class="small text-muted"
+                     i18n:translate="embedded_audio_not_supported"
+                >Sorry, your browser doesn't support embedded audio.</div>
+              </audio>
 
-          <div class="h5 mb-2">
-            <a href="${python:download_url}"
-               tal:content="python: filename"
-            >Filename</a>
-          </div>
+              <div class="h5 mb-2">
+                <a href="${python:download_url}"
+                   tal:content="python: filename"
+                >Filename</a>
+              </div>
 
-          <div class="metadata d-flex justify-content-center text-muted small">
-            <div class="px-2">
-              <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-inline', tag_alt=content_type)" />
-              <span tal:replace="python: content_type">image/jpeg</span>
-            </div>
-            <div class="px-2">
-              <tal:icon tal:replace="structure python:icons.tag('file-binary', tag_class='icon-inline', tag_alt='Size')" />
-              <span tal:define="
-                      size python: view.human_readable_size();
-                    "
-                    tal:content="python: size"
-              >1000 kB</span>
-            </div>
-          </div>
+              <div class="metadata d-flex justify-content-center text-muted small">
+                <div class="px-2">
+                  <tal:icon tal:replace="structure python:icons.tag(mimetype_icon, tag_class='icon-inline', tag_alt=content_type)" />
+                  <span tal:replace="python: content_type">image/jpeg</span>
+                </div>
+                <div class="px-2">
+                  <tal:icon tal:replace="structure python:icons.tag('file-binary', tag_class='icon-inline', tag_alt='Size')" />
+                  <span tal:define="
+                          size python: view.human_readable_size();
+                        "
+                        tal:content="python: size"
+                  >1000 kB</span>
+                </div>
+              </div>
 
-        </section>
+            </section>
 
-        <section class="section section-actions">
-          <a class="btn btn-primary download"
-             href="${python:download_url}"
-             i18n:translate=""
-          >Download</a>
-        </section>
+            <section class="section section-actions">
+              <a class="btn btn-primary download"
+                 href="${python:download_url}"
+                 i18n:translate=""
+              >Download</a>
+            </section>
+          </tal:block>
+        </tal:has_file>
+
+        <tal:has_file condition="python:not file">
+          <p i18n:translate="">
+            There is no file uploaded.
+          </p>
+        </tal:has_file>
 
       </metal:block>
     </metal:content-core>
