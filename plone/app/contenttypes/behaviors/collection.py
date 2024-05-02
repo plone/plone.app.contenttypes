@@ -1,5 +1,5 @@
 from plone.app.contenttypes import _
-from plone.app.z3cform.widget import QueryStringFieldWidget
+from plone.app.z3cform.widgets.querystring import QueryStringFieldWidget
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.base.interfaces.syndication import IFeed
