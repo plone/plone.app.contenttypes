@@ -2,7 +2,7 @@ from Acquisition import aq_base
 from plone.app.contenttypes import _
 from plone.app.dexterity.textindexer import searchable
 from plone.app.textfield import RichText as RichTextField
-from plone.app.z3cform.widget import RichTextFieldWidget
+from plone.app.z3cform.widgets.richtext import RichTextFieldWidget
 from plone.autoform import directives as form
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.autoform.view import WidgetsView
