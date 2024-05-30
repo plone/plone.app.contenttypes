@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.8 (2024-05-30)
+------------------
+
+Bug fixes:
+
+
+- Support using the file template on objects that have no file attributes. [ale-rt] (#688)
+- Fixed p.a.widgets `moved` DeprecationWarning [jensens] (#690)
+
+
 3.0.7 (2024-04-25)
 ------------------
 
