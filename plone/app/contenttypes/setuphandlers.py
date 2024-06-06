@@ -9,7 +9,6 @@ from plone.base.utils import get_installer
 from plone.base.utils import unrestricted_construct_instance
 from plone.dexterity.fti import IDexterityFTI
 from plone.dexterity.utils import createContent
-from plone.i18n.normalizer.interfaces import IURLNormalizer
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
 from plone.portlets.interfaces import IPortletManager
 from plone.registry.interfaces import IRegistry
@@ -129,25 +128,6 @@ def _setup_calendar(portal, locale):
             if first is not None:
                 first = first - 1
         portal_calendar.firstweekday = first
-
-
-def _setup_visible_ids(portal, target_language, locale):
-    portal_properties = getToolByName(portal, "portal_properties")
-    site_properties = portal_properties.site_properties
-
-    # See if we have a URL normalizer
-    normalizer = queryUtility(IURLNormalizer, name=target_language)
-    if normalizer is None:
-        normalizer = queryUtility(IURLNormalizer)
-
-    # If we get a script other than Latn we enable visible_ids
-    if locale.id.script is not None:
-        if locale.id.script.lower() != "latn":
-            site_properties.visible_ids = True
-
-    # If we have a normalizer it is safe to disable the visible ids
-    if normalizer is not None:
-        site_properties.visible_ids = False
 
 
 def _setup_constrains(container, allowed_types):
@@ -361,7 +341,6 @@ def setup_various(context):
     portal = getSite()
     target_language, is_combined_language, locale = _get_locales_info(portal)
     _setup_calendar(portal, locale)
-    _setup_visible_ids(portal, target_language, locale)
 
     # install explicitly the plone.app.event
     if HAS_EVENT:
