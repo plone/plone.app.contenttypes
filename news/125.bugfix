@@ -1,5 +1,0 @@
-No longer set ``portal_properties.site_properties.visible_ids`` on site creation.
-The ``portal_properties`` tools is deprecated, ``visible_ids`` was not set as real property, and usage of ``visible_ids`` was largely removed in Plone 5.0 already.
-You already can no longer set ``visible ids`` in the Editing control panel, nor in the member preferences.
-The only remaining use for ``visible_ids``, if set to true, was to show the page ids on the 'select default page' form.
-[maurits]
