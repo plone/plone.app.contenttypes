@@ -223,4 +223,36 @@
       name="plone.app.contenttypes.migration.changed_base_classes"
       />
 
+  <browser:page
+      name="tabular-cell-Title"
+      for="plone.app.contentlisting.interfaces.IContentListingObject"
+      class=".tabular.TitleCell"
+      permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+      />
+
+  <browser:page
+      name="tabular-cell-Creator"
+      for="plone.app.contentlisting.interfaces.IContentListingObject"
+      class=".tabular.CreatorCell"
+      permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+      />
+
+  <browser:page
+      name="tabular-cell-icon"
+      for="plone.app.contentlisting.interfaces.IContentListingObject"
+      class=".tabular.IconCell"
+      permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+      />
+
+  <browser:page
+      name="tabular-cell-image"
+      for="plone.app.contentlisting.interfaces.IContentListingObject"
+      class=".tabular.ImageCell"
+      permission="zope2.View"
+      layer="plone.app.contenttypes.interfaces.IPloneAppContenttypesLayer"
+      />
+
 </configure>
