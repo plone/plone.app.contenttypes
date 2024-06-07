@@ -71,7 +71,6 @@ setup(
         "plone.autoform",
         "plone.event",
         "plone.folder",
-        "plone.i18n",
         "plone.indexer",
         "plone.memoize",
         "plone.portlets",
