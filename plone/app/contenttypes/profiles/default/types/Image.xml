@@ -37,7 +37,6 @@
     <element value="plone.categorization" />
     <element value="plone.publication" />
     <element value="plone.ownership" />
-    <element value="plone.allowdiscussion" />
     <element value="plone.shortname" />
     <element value="plone.namefromfilename" />
     <element value="plone.excludefromnavigation" />

@@ -1,0 +1,2 @@
+Do not enable plone.allowdiscussion by default, it is a core add-on now.
+[@jensens]
