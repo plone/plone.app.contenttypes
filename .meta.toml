@@ -3,8 +3,11 @@
 # See the inline comments on how to expand/tweak this configuration file
 [meta]
 template = "default"
-commit-id = "6e36bcc4"
+commit-id = "a89af8f2"
 
 [pyproject]
 codespell_ignores = "oder,ist,crate"
 dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CMFPlone',]"
+
+[tox]
+constraints_file = "https://dist.plone.org/release/6.1-dev/constraints.txt"
