@@ -4,7 +4,7 @@ from setuptools import setup
 import os
 
 
-version = "3.0.9.dev0"
+version = "3.0.10.dev0"
 
 
 def read(*rnames):
@@ -71,7 +71,6 @@ setup(
         "plone.autoform",
         "plone.event",
         "plone.folder",
-        "plone.i18n",
         "plone.indexer",
         "plone.memoize",
         "plone.portlets",
