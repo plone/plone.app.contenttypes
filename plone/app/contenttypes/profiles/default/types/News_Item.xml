@@ -37,7 +37,6 @@
     <element value="plone.dublincore" />
     <element value="plone.richtext" />
     <element value="plone.namefromtitle" />
-    <element value="plone.allowdiscussion" />
     <element value="plone.shortname" />
     <element value="plone.excludefromnavigation" />
     <element value="plone.relateditems" />
