@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.0 (2024-09-03)
+------------------
+
+Breaking changes:
+
+
+- Do not enable plone.allowdiscussion by default, it is a core add-on now.
+  This is for Plone 6.1, so is a breaking change.
+  [@jensens] (#665)
+
+
 3.0.9 (2024-06-07)
 ------------------
 
