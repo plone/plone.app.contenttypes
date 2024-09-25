@@ -27,7 +27,8 @@
           <figure class="figure">
             <a tal:define="
                  scale context/@@images;
-                 img_tag python:scale.tag('image', scale='large', css_class='figure-img img-fluid');
+                 alt_text context/alt_text|nothing;
+                 img_tag python:scale.tag('image', scale='large', css_class='figure-img img-fluid', alt=alt_text);
                "
                tal:attributes="
                  href string:${context/@@plone_context_state/object_url}/image_view_fullscreen;

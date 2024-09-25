@@ -72,7 +72,16 @@ class ImageViewIntegrationTest(unittest.TestCase):
         image.title = "My Image"
         image.description = "This is my image."
         image.image = dummy_image()
+
+        self.portal.invokeFactory('Image', 'image-with-alt')
+        image_alt = self.portal['image-with-alt']
+        image_alt.title = 'My Image 2'
+        image_alt.description = 'This is my second image.'
+        image_alt.alt_text = 'An alt text'
+        image.image = dummy_image()
+
         self.image = image
+        self.image_alt = image_alt
         self.request.set("URL", image.absolute_url())
         self.request.set("ACTUAL_URL", image.absolute_url())
         alsoProvides(self.request, IPloneFormLayer)
@@ -84,6 +93,30 @@ class ImageViewIntegrationTest(unittest.TestCase):
         self.assertEqual(view.request.response.status, 200)
         self.assertTrue("My Image" in view())
         self.assertTrue("This is my image." in view())
+
+    def test_image_view_alt(self):
+        view = self.image_alt.restrictedTraverse('@@view')
+
+        self.assertTrue(view())
+        self.assertEqual(view.request.response.status, 200)
+        self.assertTrue('My Image 2' in view())
+        self.assertTrue('This is my second image.' in view())
+        self.assertTrue('An alt text' in view())
+
+    def test_image_alt_in_listing_view(self):
+        self.image_alt.image = dummy_image(u'image.svg')
+        view = self.portal.restrictedTraverse('@@listing_view')
+        self.assertTrue('An alt text' in view())
+
+    def test_image_alt_in_summary_view(self):
+        self.image_alt.image = dummy_image(u'image.svg')
+        view = self.portal.restrictedTraverse('@@summary_view')
+        self.assertTrue('An alt text' in view())
+
+    def test_image_alt_in_album_view(self):
+        self.image_alt.image = dummy_image(u'image.svg')
+        view = self.portal.restrictedTraverse('@@album_view')
+        self.assertTrue('An alt text' in view())
 
     # XXX: Not working. See ImageFunctionalTest test_image_view_fullscreen
     # Problem seems to be that the image is not properly uploaded.
@@ -103,6 +136,14 @@ class ImageViewIntegrationTest(unittest.TestCase):
         self.assertRegex(
             scale.tag("image", scale="large"),
             r'<img src="http://nohost/plone/image/@@images/[a-z0-9\-]*.svg" alt="My Image" title="My Image" height="[a-z0-9\-]*" width="[a-z0-9\-]*" />',  # noqa: E501
+        )
+
+    def test_svg_image_alt(self):
+        self.image_alt.image = dummy_image(u'image.svg')
+        scale = self.image_alt.restrictedTraverse('@@images')
+        self.assertRegex(
+            scale.scale('image', scale='large').tag(),
+            r'<img src="http://nohost/plone/image-with-alt/@@images/[a-z0-9--]*.svg" alt="An alt text" height="768" width="768" />'  # noqa: E501
         )
 
 

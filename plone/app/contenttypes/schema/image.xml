@@ -19,6 +19,19 @@
       <required>False</required>
       <title i18n:translate="">Description</title>
     </field>
+    <field name="alt_text"
+           type="zope.schema.TextLine">
+      <description i18n:translate="label_alt_text_help">
+        Briefly describe the meaning of the image for people using assistive technology like screen readers.
+        This will be used when the image is viewed by itself or in automated contexts like listings.
+        Do not duplicate the Title or Description fields, since those might also be read by screen readers.
+        Alt text should describe what a sighted user sees when looking at the image.
+        This might include text the image contains, or even a description of an abstract pattern.
+        In case your description already sufficiently describes your image leave this field blank.
+      </description>
+      <required>False</required>
+      <title i18n:translate="label_alt_text">Alt Text</title>
+    </field>
     <field marshal:primary="true"
            name="image"
            type="plone.namedfile.field.NamedBlobImage"
@@ -28,3 +41,4 @@
     </field>
   </schema>
 </model>
+
