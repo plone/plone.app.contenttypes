@@ -8,3 +8,9 @@ global-exclude *.pyc
 
 recursive-exclude news *
 exclude news
+
+include requirements.txt
+include constraints.txt
+include *.yaml
+include Makefile
+exclude *-mxdev.txt
