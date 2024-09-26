@@ -33,7 +33,7 @@ ifeq ($(PYTHON_VERSION_OK),0)
   $(error "Need python $(PYTHON_VERSION) >= $(PYTHON_VERSION_MIN)")
 endif
 
-all: build
+all: install
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
