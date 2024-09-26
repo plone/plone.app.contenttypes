@@ -46,6 +46,8 @@ local.cfg
 /venv/
 .installed.txt
 
+/test_*
+robot_*
 
 ##
 # Add extra configuration options in .meta.toml:
