@@ -95,7 +95,7 @@ class ImageViewIntegrationTest(unittest.TestCase):
         self.assertTrue("This is my image." in view())
 
     def test_image_view_alt(self):
-        view = self.image_alt.restrictedTraverse("@@view")
+        view = self.image_alt.restrictedTraverse("@@image_view")
         self.assertTrue(view())
         self.assertEqual(view.request.response.status, 200)
         self.assertTrue("My Image 2" in view())
