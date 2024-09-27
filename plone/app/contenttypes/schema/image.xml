@@ -28,7 +28,7 @@
         Do not duplicate the Title or Description fields, since those might also be read by screen readers.
         Alt text should describe what a sighted user sees when looking at the image.
         This might include text the image contains, or even a description of an abstract pattern.
-        In case your description already sufficiently describes your image leave this field blank.
+        In case your description already sufficiently describes your image, leave this field blank.
       </description>
       <required>False</required>
       <title i18n:translate="label_alt_text">Alt Text</title>
