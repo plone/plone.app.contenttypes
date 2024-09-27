@@ -20,7 +20,8 @@
       <title i18n:translate="">Description</title>
     </field>
     <field name="alt_text"
-           type="zope.schema.TextLine">
+           type="zope.schema.TextLine"
+    >
       <description i18n:translate="label_alt_text_help">
         Briefly describe the meaning of the image for people using assistive technology like screen readers.
         This will be used when the image is viewed by itself or in automated contexts like listings.
@@ -41,4 +42,3 @@
     </field>
   </schema>
 </model>
-

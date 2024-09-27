@@ -86,7 +86,9 @@
           >Download</a>
           <a class="btn btn-primary fullscreen"
              href="${context/@@plone_context_state/object_url}/image_view_fullscreen"
-          ><span i18n:translate="label_click_to_view_full_image">View full-size image</span></a>
+          >
+            <span i18n:translate="label_click_to_view_full_image">View full-size image</span>
+          </a>
         </section>
 
 
