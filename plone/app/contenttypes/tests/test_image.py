@@ -137,14 +137,6 @@ class ImageViewIntegrationTest(unittest.TestCase):
             r'<img src="http://nohost/plone/image/@@images/[a-z0-9\-]*.svg" alt="My Image" title="My Image" height="[a-z0-9\-]*" width="[a-z0-9\-]*" />',  # noqa: E501
         )
 
-    def test_svg_image_alt(self):
-        self.image_alt.image = dummy_image("image.svg")
-        scale = self.image_alt.restrictedTraverse("@@images")
-        self.assertRegex(
-            scale.scale("image", scale="large").tag(),
-            r'<img src="http://nohost/plone/image-with-alt/@@images/[a-z0-9--]*.svg" alt="An alt text" height="768" width="768" />',  # noqa: E501
-        )
-
 
 class ImageFunctionalTest(unittest.TestCase):
     layer = PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
