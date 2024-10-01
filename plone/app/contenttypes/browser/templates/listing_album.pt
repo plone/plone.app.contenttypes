@@ -48,7 +48,7 @@
                   <div class="card-image d-flex justify-content-center align-items-center"
                        style="height: 14rem;"
                        tal:define="
-                         scale python:image_scale.tag(image, 'image', scale='mini', loading='lazy');
+                         scale python:image_scale.tag(image, 'image', scale='mini', loading='lazy', alt=image.alt_text);
                        "
                        tal:condition="scale"
                   >
@@ -79,7 +79,7 @@
                   <div class="card-image d-flex justify-content-center align-items-center"
                        style="height: 14rem;"
                        tal:define="
-                         scale python:image_scale.tag(album, 'image', scale='mini', loading='lazy') if getattr(album, 'image', None) else None;
+                         scale python:image_scale.tag(album, 'image', scale='mini', loading='lazy', alt=image.alt_text) if getattr(album, 'image', None) else None;
                        "
                        tal:condition="scale"
                   >

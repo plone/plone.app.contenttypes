@@ -66,6 +66,7 @@
                                item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
                                item_is_event python:view.is_event(obj);
                                item_has_image python:item.getIcon;
+                               item_alt_text python:item.alt_text;
                                item_type_class python:('contenttype-' + view.normalizeString(item_type)) if showicons else '';
                              ">
                     <metal:block define-slot="entry">
@@ -161,7 +162,7 @@
                           <a tal:attributes="
                                href python:item_link;
                              ">
-                            <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class, loading='lazy')" />
+                            <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_list, css_class=img_class, loading='lazy', alt=item_alt_text)" />
                           </a>
                         </div>
                       </article>

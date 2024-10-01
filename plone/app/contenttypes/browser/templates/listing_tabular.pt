@@ -138,7 +138,7 @@
 
                           <td>
                             <a tal:condition="python:item_has_image and thumb_scale_table">
-                              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_table, css_class=img_class, loading='lazy')"
+                              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_table, css_class=img_class, loading='lazy', alt=item.alt_text)"
                                    tal:attributes="
                                      href python: item_link;
                                    "
