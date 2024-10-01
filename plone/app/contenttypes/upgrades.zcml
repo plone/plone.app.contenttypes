@@ -12,4 +12,12 @@
       handler=".upgrades.update_type_icons"
       />
 
+  <genericsetup:upgradeDepends
+      title="Add alt_text field"
+      profile="plone.app.contenttypes:default"
+      source="3001"
+      destination="3001"
+      import_steps="typeinfo"
+      />
+
 </configure>
