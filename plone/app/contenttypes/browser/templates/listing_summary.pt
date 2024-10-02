@@ -34,6 +34,8 @@
                          tal:attributes="
                            href item_link;
                            title item_type;
+                           item_has_image python:item.getIcon;
+                           item_alt_text python:getattr(item, 'alt_text', '') if item_has_image else '';
                          "
                       >
               Item Title
@@ -72,7 +74,7 @@
                     <a tal:attributes="
                          href item_link;
                        ">
-                      <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='image-responsive thumb-' + thumb_scale_summary, loading='lazy', alt=item.alt_text)" />
+                      <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_summary, css_class='image-responsive thumb-' + thumb_scale_summary, loading='lazy', alt=item_alt_text)" />
                     </a>
                   </div>
 
