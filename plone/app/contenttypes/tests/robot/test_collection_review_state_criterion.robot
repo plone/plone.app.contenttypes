@@ -1,7 +1,7 @@
 *** Settings ***
 
 Resource  plone/app/robotframework/browser.robot
-Resource  keywords.txt
+Resource  keywords.robot
 
 Variables  variables.py
 
@@ -21,7 +21,7 @@ Scenario: Test Review state Criterion
       And the collection should not contain  Published Document
 
 
-*** Keywords *****************************************************************
+*** Keywords ***
 
 a published document
     [Arguments]  ${title}

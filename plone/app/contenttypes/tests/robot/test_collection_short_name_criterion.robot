@@ -1,7 +1,7 @@
 *** Settings ***
 
 Resource  plone/app/robotframework/browser.robot
-Resource  keywords.txt
+Resource  keywords.robot
 
 Variables  variables.py
 
@@ -21,7 +21,7 @@ Test Short name (id) Criterion
       And the collection should not contain  Second Document
 
 
-*** Keywords *****************************************************************
+*** Keywords ***
 
 I set the collection short name (id) criterion to
     [Arguments]  ${criterion}

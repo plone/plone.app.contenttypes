@@ -1,7 +1,7 @@
 *** Settings ***
 
 Resource  plone/app/robotframework/browser.robot
-Resource  keywords.txt
+Resource  keywords.robot
 
 Variables  variables.py
 

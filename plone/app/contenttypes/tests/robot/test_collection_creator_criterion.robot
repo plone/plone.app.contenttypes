@@ -2,14 +2,14 @@
 
 Resource  plone/app/robotframework/browser.robot
 Resource  plone/app/robotframework/user.robot
-Resource  keywords.txt
+Resource  keywords.robot
 
 Library  Remote  ${PLONE_URL}/RobotRemote
 
 Test Setup  Run Keywords  Plone test setup
 Test Teardown  Run keywords  Plone test teardown
 
-*** Test cases ***************************************************************
+*** Test cases ***
 
 Scenario: Test Creator Criterions
     Given a site owner document  Site Owner Document
@@ -21,7 +21,7 @@ Scenario: Test Creator Criterions
       And the collection should contain  Site Owner Document
 
 
-*** Keywords *****************************************************************
+*** Keywords ***
 
 a site owner document
     [Arguments]  ${title}

@@ -1,7 +1,7 @@
 *** Settings ***
 
 Resource  plone/app/robotframework/browser.robot
-Resource  keywords.txt
+Resource  keywords.robot
 
 Variables  variables.py
 
@@ -20,7 +20,7 @@ Test Type Criterion
       And the collection should not contain  Test Document
 
 
-*** Keywords *****************************************************************
+*** Keywords ***
 
 I set the collection's type criterion to
     [Arguments]  ${criterion}
