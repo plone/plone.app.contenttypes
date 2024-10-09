@@ -1,25 +1,15 @@
-# ============================================================================
-# Tests for the Collection Short Name Criterion
-# ============================================================================
-#
-# $ bin/robot-server --reload-path src/plone.app.contenttypes plone.app.contenttypes.testing.PLONE_APP_CONTENTTYPES_ROBOT_TESTING
-#
-# $ bin/robot src/plone.app.contenttypes/plone/app/contenttypes/tests/robot/test_collection_short_name_criterion.robot
-#
-# ============================================================================
+*** Settings ***
 
-*** Settings *****************************************************************
+Resource  plone/app/robotframework/browser.robot
+Resource  keywords.robot
 
-Resource  plone/app/robotframework/keywords.robot
-Resource  plone/app/robotframework/saucelabs.robot
-Resource  plone/app/robotframework/selenium.robot
-Resource  keywords.txt
+Variables  variables.py
 
 Test Setup  Run Keywords  Plone test setup
 Test Teardown  Run keywords  Plone test teardown
 
 
-*** Test cases ***************************************************************
+*** Test cases ***
 
 Test Short name (id) Criterion
     Given I am logged in as site owner
@@ -31,17 +21,24 @@ Test Short name (id) Criterion
       And the collection should not contain  Second Document
 
 
-*** Keywords *****************************************************************
+*** Keywords ***
 
 I set the collection short name (id) criterion to
     [Arguments]  ${criterion}
     Go to  ${PLONE_URL}/my-collection/edit
-    Wait until page contains  Edit Collection
 
     I set the criteria index in row 1 to the option 'Short name'
-    I set the criteria operator in row 1 to the option 'Is'
-    I set the criteria value in row 1 to the text '${criterion}'
+    #I set the criteria operator in row 1 to the option 'Is'
 
-    Sleep  1
-    Click Button  Save
-    Wait until page contains  Changes saved
+    ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(1)
+    Click  css=${criteria_row} .querystring-criteria-operator .select2-choice
+    Fill Text  css=#select2-drop input  Is
+    Click  css=.select2-highlighted
+
+
+    I set the criteria value in row 1 to the text '${criterion}'
+    [Documentation]  Chrome needs some more time
+    Sleep  .1s
+
+    Click  "Save"
+    Get text  body  contains  Changes saved
