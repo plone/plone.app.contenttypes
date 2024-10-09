@@ -1,0 +1,7 @@
+default_context:
+    initial_user_name: 'admin'
+    initial_user_password: 'admin'
+
+    zcml_package_includes: ['plone.app.contenttypes']
+
+    db_storage: direct
