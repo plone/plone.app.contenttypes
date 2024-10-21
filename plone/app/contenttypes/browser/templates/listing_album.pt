@@ -48,9 +48,7 @@
                   <div class="card-image d-flex justify-content-center align-items-center"
                        style="height: 14rem;"
                        tal:define="
-                         item_has_image python:image.getIcon;
-                         item_alt_text python:getattr(image, 'alt_text', '') if item_has_image else '';
-                         scale python:image_scale.tag(image, 'image', scale='mini', loading='lazy', alt=item_alt_text);
+                         scale python:image_scale.tag(image, 'image', scale='mini', loading='lazy');
                        "
                        tal:condition="scale"
                   >
@@ -81,9 +79,7 @@
                   <div class="card-image d-flex justify-content-center align-items-center"
                        style="height: 14rem;"
                        tal:define="
-                         item_has_image python:album.getIcon;
-                         item_alt_text python:getattr(album, 'alt_text', '') if item_has_image else '';
-                         scale python:image_scale.tag(album, 'image', scale='mini', loading='lazy', alt=item_alt_text) if getattr(album, 'image', None) else None;
+                         scale python:image_scale.tag(album, 'image', scale='mini', loading='lazy') if getattr(album, 'image', None) else None;
                        "
                        tal:condition="scale"
                   >

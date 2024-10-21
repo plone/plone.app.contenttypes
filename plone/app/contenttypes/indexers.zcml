@@ -50,9 +50,5 @@
       factory=".indexers.mime_type"
       name="mime_type"
       />
-  <adapter
-      factory=".indexers.getAltTag"
-      name="alt_text"
-      />
 
 </configure>

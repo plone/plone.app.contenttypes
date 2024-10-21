@@ -79,7 +79,6 @@
                                    item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                                    item_creator python:item.Creator();
                                    item_has_image python:item.getIcon;
-                                   item_alt_text python:getattr(item, 'alt_text', '') if item_has_image else '';
                                    item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
                                    item_mime_type python:item.mime_type;
                                    item_mime_type_icon python: 'mimetype-' + item_mime_type;
@@ -139,7 +138,7 @@
 
                           <td>
                             <a tal:condition="python:item_has_image and thumb_scale_table">
-                              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_table, css_class=img_class, loading='lazy', alt=item_alt_text)"
+                              <img tal:replace="structure python:image_scale.tag(item, 'image', scale=thumb_scale_table, css_class=img_class, loading='lazy')"
                                    tal:attributes="
                                      href python: item_link;
                                    "
