@@ -19,6 +19,13 @@
       <required>False</required>
       <title i18n:translate="">Description</title>
     </field>
+    <field marshal:primary="true"
+           name="image"
+           type="plone.namedfile.field.NamedBlobImage"
+    >
+      <description />
+      <title i18n:translate="label_image">Image</title>
+    </field>
     <field name="alt_text"
            type="zope.schema.TextLine"
     >
@@ -32,13 +39,6 @@
       </description>
       <required>False</required>
       <title i18n:translate="label_alt_text">Alt Text</title>
-    </field>
-    <field marshal:primary="true"
-           name="image"
-           type="plone.namedfile.field.NamedBlobImage"
-    >
-      <description />
-      <title i18n:translate="label_image">Image</title>
     </field>
   </schema>
 </model>
