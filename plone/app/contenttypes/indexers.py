@@ -190,3 +190,8 @@ def getIcon(obj):
     if obj.aq_base.image:
         return True
     return False
+
+
+@indexer(IDexterityContent)
+def getAltTag(obj):
+    return obj.alt_text
