@@ -34,11 +34,10 @@ a event
 a file
   [Arguments]  ${title}
   Go to  ${PLONE_URL}/++add++File
-  Wait until page contains  Add File
-  Input text  name=form.widgets.title  ${title}
+  Fill text  name=form.widgets.title  ${title}
   Choose File  name=form.widgets.file  ${PATH_TO_TEST_FILES}/file.pdf
-  Wait For Then Click Element  css=#form-buttons-save
-  Wait until page contains  Item created
+  Click  css=#form-buttons-save
+  Get text  body  contains  Item created
 
 a folder
   [Arguments]  ${title}
@@ -48,11 +47,10 @@ a folder
 a image
   [Arguments]  ${title}
   Go to  ${PLONE_URL}/++add++Image
-  Wait until page contains  Add Image
-  Input text  name=form.widgets.title  ${title}
+  Fill text  name=form.widgets.title  ${title}
   Choose File  name=form.widgets.image  ${PATH_TO_TEST_FILES}/image.png
-  Wait For Then Click Element  css=#form-buttons-save
-  Wait until page contains  Item created  error=Image could not be created.
+  Click  css=#form-buttons-save
+  Get text  body  contains  Item created
 
 a link
   [Arguments]  ${title}
@@ -63,10 +61,9 @@ a link
 a news item
   [Arguments]  ${title}
   Go to  ${PLONE_URL}/++add++News Item
-  Wait until page contains  Add News Item
-  Input text  name=form.widgets.IDublinCore.title  ${title}
-  Wait For Then Click Element  css=#form-buttons-save
-  Wait until page contains  Item created
+  Fill text  css=[name="form.widgets.IDublinCore.title"]  ${title}
+  Click  css=#form-buttons-save
+  Get text  body  contains  Item created
 
 
 # ----------------------------------------------------------------------------
@@ -75,17 +72,15 @@ a news item
 
 the content area should contain
   [Arguments]  ${text}
-  Element Should Contain  id=content  ${text}
+  Get text  id=content  contains  ${text}
 
 the content area should not contain
   [Arguments]  ${text}
-  Element Should Not Contain  id=content  ${text}
+  Get Text  id=content  !=  ${text}
 
 the collection should contain
   [Arguments]  ${title}
-  Wait until page contains element  xpath=//*[@id='content-core']
-  Page should contain element  //*[@id='content-core']//article//a[contains(text(), '${title}')]  limit=1
-
+  Get Element  //*[@id='content-core']//article//a[contains(text(), '${title}')]
 
 the collection should not contain
   [Arguments]  ${title}
@@ -101,34 +96,22 @@ fill date field
   Click Element  xpath=//div[@data-fieldname="${fieldid}"]//div[contains(@class, 'picker__day')][contains(text(), "${day}")]
 
 I set the criteria ${type} in row ${number} to the option '${label}'
-  [Documentation]  A couple of times we shift the focus so the input sticks, and wait a bit,
-  ...              to make the test more stable.
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choice
-  Sleep  1.5
-  Set Focus To Element  css=body
-  Wait until element is visible  css=#select2-drop input
-  Input Text  css=#select2-drop input  ${label}
-  Sleep  1.5
-  Set Focus To Element  css=body
-  Wait until element is visible  css=#select2-drop .select2-match
-  Click Element  css=#select2-drop .select2-match
-  Sleep  1.5
-  Set Focus To Element  css=body
+  Click  css=${criteria_row} .querystring-criteria-${type} .select2-choice
+  Fill Text  css=#select2-drop input  ${label}
+  Click  xpath=//*[@id="select2-drop"]//*[@class="select2-match"]
 
 I set the criteria ${type} in row ${number} to the options '${label}'
-  ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Wait until page contains element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
-  Click Element  css=${criteria_row} .querystring-criteria-${type} .select2-choices
-  Wait until page contains element  css=.select2-input.select2-focused
-  Input text  css=.select2-input.select2-focused  ${label}\n
-# Click Element  xpath=//div[@class='select2-result-label']/descendant-or-self::*[contains(text(), '${label}')]
+    ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(1)
+    Click  css=${criteria_row} .querystring-criteria-value .select2-choices
+    Fill text  css=.select2-input.select2-focused  ${label}\n
+    Click  css=.select2-highlighted
+    Get text  css=${criteria_row} .select2-search-choice  contains  ${label}
+    [Documentation]  Chrome needs some more time
+    Sleep  .1s
 
 I set the criteria ${type} in row ${number} to the text '${label}'
   ${criteria_row} =  Convert to String  .querystring-criteria-wrapper:nth-child(${number})
-  Input text  css=${criteria_row} .querystring-criteria-value input  ${label}\t
-  [Documentation]  Shift the focus so the input sticks, and wait a bit
-  Sleep  1.5
-  Set Focus To Element  css=.querystring-sortreverse
-  Sleep  1.5
+  Fill text  css=${criteria_row} .querystring-criteria-value input  ${label}
+  Click  css=.autotoc-level-1.active
+  Sleep  1s
