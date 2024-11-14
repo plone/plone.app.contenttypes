@@ -111,7 +111,7 @@ class LinkRedirectView(BrowserView):
             obj = uuidToObject(uid)
             if obj:
                 title = obj.Title()
-                meta = "/" + obj.absolute_url_path()
+                meta = obj.absolute_url_path()
                 return {
                     "title": title,
                     "meta": meta,
