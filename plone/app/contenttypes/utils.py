@@ -48,7 +48,7 @@ def replace_link_variables_by_paths(context, url):
 
 
 def _replace_variable_by_path(url, variable, obj):
-    path = "/".join(obj.getPhysicalPath())
+    path = obj.absolute_url_path()
     return url.replace(variable, path)
 
 
