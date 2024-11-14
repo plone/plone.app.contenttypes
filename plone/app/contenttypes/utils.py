@@ -51,8 +51,8 @@ def _replace_variable_by_path(url, variable, obj):
     path = obj.absolute_url_path()
     # if path is '/' (didn't happen with getPhysicalPath), avoid
     # ${navigation_root_url}/sitemap -> //sitemap
-    if path == '/':
-        path = ''
+    if path == "/":
+        path = ""
     return url.replace(variable, path)
 
 
