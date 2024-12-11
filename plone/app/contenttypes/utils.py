@@ -1,3 +1,4 @@
+from Acquisition import aq_base
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.folder.interfaces import IOrdering
@@ -97,7 +98,7 @@ def migrate_base_class_to_new_class(
         parent = obj.__parent__
         parent._delOb(obj_id)
         obj.__class__ = new_class
-        parent._setOb(obj_id, obj)
+        parent._setOb(obj_id, aq_base(obj))
 
     is_container = isinstance(obj, BTreeFolder2Base)
 
