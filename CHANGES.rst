@@ -8,19 +8,38 @@ Changelog
 
 .. towncrier release notes start
 
-3.0.9 (2024-12-16)
-------------------
+3.0.10 (2024-12-16)
+-------------------
 
 Bug fixes:
 
 
 - [yurj] fix use of relative urls in replace_link_variables_by_paths and in the Link view (#712)
 
+- Revert changes from release 3.0.9.
+  They were done on the master branch and not on the 3.x branch, but got released anyway in June on PyPI,
+  although the tag never made it to GitHub, so this led to some confusion.
+  The change would probably be fine for Plone 6.0, but let's not do that now.
+  [maurits]
+
 
 Tests
 
 
 - port robot tests, use browser library [1letter] (#707)
+
+
+3.0.9 (2024-06-07)
+------------------
+
+Bug fixes:
+
+
+- No longer set ``portal_properties.site_properties.visible_ids`` on site creation.
+  The ``portal_properties`` tools is deprecated, ``visible_ids`` was not set as real property, and usage of ``visible_ids`` was largely removed in Plone 5.0 already.
+  You already can no longer set ``visible ids`` in the Editing control panel, nor in the member preferences.
+  The only remaining use for ``visible_ids``, if set to true, was to show the page ids on the 'select default page' form.
+  [maurits] (#125)
 
 
 3.0.8 (2024-06-29)
