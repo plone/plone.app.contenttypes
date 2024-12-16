@@ -8,6 +8,21 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.9 (2024-12-16)
+------------------
+
+Bug fixes:
+
+
+- [yurj] fix use of relative urls in replace_link_variables_by_paths and in the Link view (#712)
+
+
+Tests
+
+
+- port robot tests, use browser library [1letter] (#707)
+
+
 3.0.8 (2024-06-29)
 ------------------
 
