@@ -1,0 +1,8 @@
+<td class="text-nowrap">
+  <a tal:condition="view/author"
+     tal:content="view/author_name"
+     tal:attributes="
+       href string:${view/table_view/navigation_root_url}/author/${context/Creator};
+     "
+  >Jos Henken</a>
+</td>
