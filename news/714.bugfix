@@ -1,1 +1,0 @@
-Fix migrate_base_class_to_new_class util to remove Acquisition wrappers. @davisagli

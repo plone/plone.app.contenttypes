@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.3 (2024-12-18)
+------------------
+
+Bug fixes:
+
+
+- Fix migrate_base_class_to_new_class util to remove Acquisition wrappers. @davisagli (#714)
+
+
 4.0.2 (2024-11-25)
 ------------------
 
