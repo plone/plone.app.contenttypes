@@ -7,7 +7,6 @@ from plone.app.contenttypes.interfaces import ICollection
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FUNCTIONAL_TESTING
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_INTEGRATION_TESTING
 from plone.app.contenttypes.testing import set_browserlayer
-from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.testing import login
 from plone.app.testing import logout
 from plone.app.testing import setRoles
@@ -16,6 +15,7 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.textfield.value import RichTextValue
+from plone.base.interfaces.siteroot import INavigationRoot
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.testing.zope import Browser
 from transaction import commit

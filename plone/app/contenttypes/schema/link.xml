@@ -6,7 +6,7 @@
        i18n:domain="plone"
 >
   <schema>
-    <field form:widget="plone.app.z3cform.widget.LinkFieldWidget"
+    <field form:widget="plone.app.z3cform.widgets.link.LinkFieldWidget"
            name="remoteUrl"
            type="zope.schema.TextLine"
     >

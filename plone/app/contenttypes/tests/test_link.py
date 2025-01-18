@@ -14,7 +14,7 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
 from plone.app.z3cform.converters import LinkWidgetDataConverter
 from plone.app.z3cform.interfaces import IPloneFormLayer
-from plone.app.z3cform.widget import LinkWidget
+from plone.app.z3cform.widgets.link import LinkWidget
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.testing.zope import Browser
 from plone.uuid.interfaces import IUUID
