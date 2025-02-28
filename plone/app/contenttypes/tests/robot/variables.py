@@ -1,4 +1,4 @@
-from pkg_resources import resource_filename
+from importlib.resources import files
 
 
 TEST_FOLDER_ID = "robot-test-folder"
@@ -7,4 +7,4 @@ COLLECTION_TEST_QUERY = (
     '[{"i": "path", "o": "plone.app.querystring.operation.string.path", "v": "%s/%s"}]'
     % (PLONE_PATH, TEST_FOLDER_ID)
 )  # noqa
-PATH_TO_TEST_FILES = resource_filename("plone.app.contenttypes.tests", "")
+PATH_TO_TEST_FILES = str(files("plone.app.contenttypes") / "tests")
