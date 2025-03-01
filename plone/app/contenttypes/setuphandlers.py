@@ -1,6 +1,8 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_inner
+from importlib.metadata import distribution
+from importlib.metadata import PackageNotFoundError
 from plone.app.dexterity.behaviors import constrains
 from plone.app.textfield.value import RichTextValue
 from plone.base.interfaces import INonInstallable
@@ -24,13 +26,11 @@ from zope.i18n.locales import locales
 from zope.i18n.locales.provider import LoadLocaleError
 from zope.interface import implementer
 
-import pkg_resources
-
 
 try:
-    pkg_resources.get_distribution("plone.app.event")
+    distribution("plone.app.event")
     HAS_EVENT = True
-except pkg_resources.DistributionNotFound:
+except PackageNotFoundError:
     HAS_EVENT = False
 
 
