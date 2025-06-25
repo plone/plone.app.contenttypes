@@ -18,18 +18,18 @@ Click Edit
 
 a collection
   [Arguments]  ${title}
-  [Return]  ${uid}
   ${uid} =  Create content  type=Collection  title=${title}
+  RETURN  ${uid}
 
 a document
   [Arguments]  ${title}
-  [Return]  ${uid}
   ${uid} =  Create content  type=Document  title=${title}
+  RETURN  ${uid}
 
 a event
   [Arguments]  ${title}
-  [Return]  ${uid}
   ${uid} =  Create content  type=Event  title=${title}
+  RETURN  ${uid}
 
 a file
   [Arguments]  ${title}
@@ -41,8 +41,8 @@ a file
 
 a folder
   [Arguments]  ${title}
-  [Return]  ${uid}
   ${uid} =  Create content  type=Folder  title=${title}
+  RETURN  ${uid}
 
 a image
   [Arguments]  ${title}
@@ -54,8 +54,8 @@ a image
 
 a link
   [Arguments]  ${title}
-  [Return]  ${uid}
   ${uid} =  Create content  type=Link  title=${title}
+  RETURN  ${uid}
 
 
 a news item
