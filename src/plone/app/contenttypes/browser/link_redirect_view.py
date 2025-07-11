@@ -73,25 +73,28 @@ class LinkRedirectView(BrowserView):
                 return True
         return False
 
+    @property
+    def can_edit(self):
+        context = self.context
+        mtool = getToolByName(context, "portal_membership")
+        return mtool.checkPermission("Modify portal content", context)
+
     def __call__(self):
         """Redirect to the Link target URL, if and only if:
         - redirect_links property is enabled in
           configuration registry
         - the link is of a redirectable type (no mailto:, etc)
         - AND current user doesn't have permission to edit the Link"""
-        context = self.context
-        mtool = getToolByName(context, "portal_membership")
 
         registry = getUtility(IRegistry)
         settings = registry.forInterface(ITypesSchema, prefix="plone")
         redirect_links = settings.redirect_links
 
-        can_edit = mtool.checkPermission("Modify portal content", context)
         redirect_links = redirect_links and not self._url_uses_scheme(
             NON_REDIRECTABLE_URL_SCHEMES
         )
 
-        if redirect_links and not can_edit:
+        if redirect_links and not self.can_edit:
             return self.request.RESPONSE.redirect(self.absolute_target_url())
         return self.index()
 
