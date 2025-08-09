@@ -44,7 +44,6 @@ class IBaseClassMigratorForm(Interface):
         value_type=schema.Choice(
             vocabulary="plone.app.contenttypes.migration.changed_base_classes",
         ),
-        default=[],
         required=True,
     )
 
