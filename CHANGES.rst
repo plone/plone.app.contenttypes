@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.6 (2025-09-05)
+------------------
+
+Tests:
+
+
+- Fix deprecated [Return] keyword. @petschki
+
+
 4.0.5 (2025-03-07)
 ------------------
 
