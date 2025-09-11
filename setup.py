@@ -1,18 +1,14 @@
+from pathlib import Path
 from setuptools import find_packages
 from setuptools import setup
-
-import os
 
 
 version = "4.0.7.dev0"
 
-
-def read(*rnames):
-    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
-
-
-long_description = read("README.rst") + "\n\n" + read("CHANGES.rst")
-
+long_description = f"""
+{Path("README.rst").read_text()}\n
+{Path("CHANGES.rst").read_text()}\n
+"""
 
 setup(
     name="plone.app.contenttypes",
@@ -39,7 +35,8 @@ setup(
     author_email="plone-developers@lists.sourceforge.net",
     url="https://github.com/plone/plone.app.contenttypes",
     license="GPL",
-    packages=find_packages(),
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     namespace_packages=["plone", "plone.app"],
     include_package_data=True,
     zip_safe=False,
