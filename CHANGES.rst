@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.8 (2025-09-24)
+------------------
+
+Bug fixes:
+
+
+- Fix a problem, where the checkPermission call in the link.pt template failed.
+  [thet]
+
+
 4.0.7 (2025-09-11)
 ------------------
 
