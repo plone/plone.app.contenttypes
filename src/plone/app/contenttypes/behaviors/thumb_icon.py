@@ -60,7 +60,6 @@ class IThumbIconHandling(model.Schema):
 
     suppress_icons = schema.Bool(
         title=_("Suppress icons in list, table or summary view"),
-        description=_(""),
         required=False,
         default=False,
     )
