@@ -3,11 +3,11 @@
 # See the inline comments on how to expand/tweak this configuration file
 [meta]
 template = "default"
-commit-id = "2.0.1.dev0"
+commit-id = "2.2.0"
 
 [pyproject]
 codespell_ignores = "oder,ist,crate"
 dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CMFPlone',]"
 
 [tox]
-test_matrix = {"6.2" = ["3.13", "3.12"], "6.1" = ["3.13", "3.10"]}
+test_matrix = {"6.2" = ["*"]}
