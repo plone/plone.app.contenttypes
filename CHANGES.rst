@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.9 (2026-01-12)
+------------------
+
+Bug fixes:
+
+
+- Do not create empty msgids @erral
+
+
 4.0.8 (2025-09-24)
 ------------------
 
