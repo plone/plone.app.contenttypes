@@ -1,6 +1,5 @@
 from importlib.resources import files
 
-
 TEST_FOLDER_ID = "robot-test-folder"
 PLONE_PATH = "/plone"
 COLLECTION_TEST_QUERY = (

@@ -26,7 +26,6 @@ from zope.i18n.locales import locales
 from zope.i18n.locales.provider import LoadLocaleError
 from zope.interface import implementer
 
-
 try:
     distribution("plone.app.event")
     HAS_EVENT = True
