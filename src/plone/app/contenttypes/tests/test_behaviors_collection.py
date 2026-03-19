@@ -13,7 +13,6 @@ from zope.interface import alsoProvides
 import json
 import unittest
 
-
 query = [
     {
         "i": "Title",

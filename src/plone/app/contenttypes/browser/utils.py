@@ -7,7 +7,6 @@ from zope.component import getMultiAdapter
 from zope.interface import implementer
 from zope.interface import Interface
 
-
 PREFIX = "++resource++mimetype.icons/"
 
 
