@@ -307,6 +307,7 @@ def configure_members_folder(portal, target_language):
         )
         container = addContentToContainer(portal, container)
         container.setOrdering("unordered")
+        container.exclude_from_nav = True
         container.reindexObject()
 
         # set member search as default layout to Members Area
