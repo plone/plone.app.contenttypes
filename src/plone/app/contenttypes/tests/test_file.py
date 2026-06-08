@@ -164,6 +164,32 @@ class FileFunctionalTest(unittest.TestCase):
         content = self.portal[content_id]
         self.assertTrue(content.Title(), filename[:1024])
 
+    def test_long_title(self):
+        self.browser.open(self.portal_url)
+        self.browser.getLink("File").click()
+        widget = "form.widgets.description"
+        self.browser.getControl(name=widget).value = "L" * 10001
+        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        file_ctl = self.browser.getControl(name="form.widgets.file")
+        with io.FileIO(file_path, "rb") as f:
+            file_ctl.add_file(f, "image/png", "image.jpg")
+        self.browser.getControl("Save").click()
+        self.assertTrue("There were some errors." in self.browser.contents)
+        self.assertTrue("Value is too long" in self.browser.contents)
+
+    def test_long_description(self):
+        self.browser.open(self.portal_url)
+        self.browser.getLink("File").click()
+        widget = "form.widgets.title"
+        self.browser.getControl(name=widget).value = "L" * 1025
+        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        file_ctl = self.browser.getControl(name="form.widgets.file")
+        with io.FileIO(file_path, "rb") as f:
+            file_ctl.add_file(f, "image/png", "image.jpg")
+        self.browser.getControl("Save").click()
+        self.assertTrue("There were some errors." in self.browser.contents)
+        self.assertTrue("Value is too long" in self.browser.contents)
+
     def test_mime_icon_pdf_for_file_(self):
         self.browser.open(self.portal_url)
         self.browser.getLink("File").click()
