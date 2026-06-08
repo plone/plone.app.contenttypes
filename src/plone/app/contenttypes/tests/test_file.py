@@ -148,6 +148,22 @@ class FileFunctionalTest(unittest.TestCase):
         self.browser.getControl("Save").click()
         self.assertTrue(self.browser.url.endswith("my-special-file/view"))
 
+    def test_long_filename(self):
+        self.browser.open(self.portal_url)
+        self.browser.getLink("File").click()
+        file_path = os.path.join(os.path.dirname(__file__), "image.jpg")
+        file_ctl = self.browser.getControl(name="form.widgets.file")
+        filename = "i" * 2000 + ".png"
+        with io.FileIO(file_path, "rb") as f:
+            file_ctl.add_file(f, "image/png", filename)
+        self.browser.getControl("Save").click()
+        # Something, likely Zope, already restricts the id to 255 characters,
+        # although this does not count the ".png" suffix.
+        content_id = "i" * 255 + ".png"
+        self.assertTrue(self.browser.url.endswith(f"{content_id}/view"))
+        content = self.portal[content_id]
+        self.assertTrue(content.Title(), filename[:1024])
+
     def test_mime_icon_pdf_for_file_(self):
         self.browser.open(self.portal_url)
         self.browser.getLink("File").click()

@@ -1,0 +1,1 @@
+Restrict title to 1024 when setting it based on a filename.  [maurits]
