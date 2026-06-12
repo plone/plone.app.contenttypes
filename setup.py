@@ -39,7 +39,6 @@ setup(
     zip_safe=False,
     python_requires=">=3.10",
     install_requires=[
-        "setuptools",
         "plone.app.contentmenu",
         "plone.app.dexterity >= 2.0.7",  # has a fix for INameFromFilename
         "plone.app.linkintegrity",
