@@ -18,7 +18,6 @@ from zope.interface import implementer
 from zope.interface import provider
 from zope.schema.interfaces import IVocabularyFactory
 
-
 deprecated(
     "Import from plone.app.vocabularies.metadatafields instead (this compatibility layer will be removed in Plone 6)",
     MetaDataFieldsVocabulary="plone.app.vocabularies.metadatafields:MetaDataFieldsVocabulary",

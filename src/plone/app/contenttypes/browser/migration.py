@@ -18,7 +18,6 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
