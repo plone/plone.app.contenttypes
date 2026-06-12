@@ -5,6 +5,23 @@
 template = "default"
 commit-id = "2.9.1.dev0"
 
+[github]
+jobs = [
+   "qa",
+   "coverage",
+   "dependencies",
+   "release_ready",
+]
+
 [pyproject]
 codespell_ignores = "oder,ist,crate"
-dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CMFPlone',]"
+dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CMFPlone', 'setuptools']"
+
+[tox]
+test_matrix = { "6.0" = ["*"] }
+envlist_lines = """
+# Add envs to prevent python-check-versions to complain,
+# which would force us to set requires_python to 3.9+,
+# which I don't want to do in a bugfix release.
+    py38-plone60
+"""
