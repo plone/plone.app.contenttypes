@@ -10,4 +10,4 @@ codespell_ignores = "oder,ist,crate"
 dependencies_ignores = "['ZServer', 'plone.app.event', 'Products.CMFPlone',]"
 
 [tox]
-test_matrix = {"6.2" = ["*"]}
+test_matrix = {"6.2" = ["*"], "6.3" = ["*"]}
