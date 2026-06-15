@@ -3,7 +3,6 @@ from zope.component import queryUtility
 
 import logging
 
-
 logger = logging.getLogger(name="plone.app.contenttypes upgrade")
 
 

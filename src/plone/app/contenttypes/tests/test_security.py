@@ -14,7 +14,6 @@ import sys
 import transaction
 import unittest
 
-
 # List various possibly read methods.
 # Not all classes have all of them.
 # Some may be inherited.

@@ -11,7 +11,6 @@ from zope.component import getUtility
 
 import unittest
 
-
 query = [
     {
         "i": "Title",

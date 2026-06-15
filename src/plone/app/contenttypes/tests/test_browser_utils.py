@@ -5,7 +5,6 @@ from zope.component import getMultiAdapter
 
 import unittest
 
-
 # The default fallback is the icon for 'application/octet-stream':
 FALLBACK = "++resource++mimetype.icons/application.png"
 # Most or all icons should have this as prefix:
