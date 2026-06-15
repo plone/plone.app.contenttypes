@@ -19,7 +19,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.libtransforms.utils import MissingBinary
 from ZODB.POSException import ConflictError
 
-
 logger = getLogger(__name__)
 
 FALLBACK_CONTENTTYPE = "application/octet-stream"

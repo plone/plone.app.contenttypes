@@ -26,7 +26,6 @@ from zope.interface import alsoProvides
 import os.path
 import unittest
 
-
 query = [
     {
         "i": "Title",
