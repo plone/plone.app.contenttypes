@@ -1,0 +1,3 @@
+Set ``exclude_from_nav=True`` on the Members folder during site creation.
+Previously the Members folder was accidentally hidden from navigation because the ``exclude_from_nav`` index was not populated (due to a site-manager issue during deferred catalog queue processing).
+@jensens
