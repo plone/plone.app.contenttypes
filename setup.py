@@ -2,7 +2,7 @@ from pathlib import Path
 from setuptools import find_packages
 from setuptools import setup
 
-version = "4.0.10"
+version = "4.0.11.dev0"
 
 long_description = f"""
 {Path("README.rst").read_text()}\n
