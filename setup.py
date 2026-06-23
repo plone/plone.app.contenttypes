@@ -3,7 +3,7 @@ from setuptools import setup
 
 import os
 
-version = "3.0.12"
+version = "3.0.13.dev0"
 
 
 def read(*rnames):
