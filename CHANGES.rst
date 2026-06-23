@@ -8,6 +8,25 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.12 (2026-06-23)
+-------------------
+
+Bug fixes:
+
+
+- Restrict title to 1024 and description to 10000.
+  This is for images and files.  For others, a similar change is done in ``plone.app.dexterity``.
+  See `security advisory <https://github.com/plone/plone.app.contenttypes/security/advisories/GHSA-8pcw-h6w9-h46g>`_.
+  [maurits]
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs]
+
+
 3.0.11 (2025-03-26)
 -------------------
 
