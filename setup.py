@@ -57,7 +57,6 @@ setup(
         "Products.MimetypesRegistry",
         "Products.PortalTransforms",
         "Products.statusmessages",
-        "plone.app.layout",
         "plone.app.textfield",
         "plone.app.uuid",
         "plone.autoform",
