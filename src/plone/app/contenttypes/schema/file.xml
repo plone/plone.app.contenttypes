@@ -9,6 +9,7 @@
            type="zope.schema.TextLine"
     >
       <description />
+      <max_length>1024</max_length>
       <required>False</required>
       <title i18n:translate="">Title</title>
     </field>
@@ -16,6 +17,7 @@
            type="zope.schema.Text"
     >
       <description />
+      <max_length>10000</max_length>
       <required>False</required>
       <title i18n:translate="">Description</title>
     </field>
