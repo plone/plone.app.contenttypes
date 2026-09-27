@@ -8,7 +8,14 @@
 
   <include package="plone.app.contentmenu" />
 
+  <!-- The views below have been moved to
+       plone.app.layout.contenttypes (see
+       plone/app/layout/contenttypes/configure.zcml). They are kept here
+       commented out for reference; the Python classes remain importable
+       from this package via zope.deferredimport shims. -->
+
   <!-- VIEWS FOR PLONE SITE ROOT -->
+  <!--
   <browser:pages
       for="plone.base.interfaces.IPloneSiteRoot"
       class=".folder.FolderView"
@@ -45,9 +52,11 @@
         title="Album view"
         />
   </browser:pages>
+  -->
 
 
   <!-- VIEWS FOR FOLDERS -->
+  <!--
   <browser:pages
       for="plone.dexterity.interfaces.IDexterityContainer"
       class=".folder.FolderView"
@@ -84,9 +93,11 @@
         title="Album view"
         />
   </browser:pages>
+  -->
 
 
   <!-- VIEWS FOR COLLECTION ITEM -->
+  <!--
   <browser:page
       name="listing_view"
       for="plone.app.contenttypes.interfaces.ICollection"
@@ -94,11 +105,13 @@
       template="templates/listing.pt"
       permission="zope2.View"
       />
+  -->
 
   <!-- VIEWS FOR ANYTHING WITH THE COLLECTION BEHAVIOR.
        Note that these ignore other fields, but integrators should
        create other templates if they want that.  Or improve the
        query view widget.  -->
+  <!--
   <browser:pages
       for="plone.app.contenttypes.behaviors.collection.ISyndicatableCollection"
       class=".collection.CollectionView"
@@ -135,9 +148,11 @@
         title="Album view"
         />
   </browser:pages>
+  -->
 
 
   <!-- OTHER VIEWS -->
+  <!--
   <browser:page
       name="full_view_item"
       for="*"
@@ -222,5 +237,6 @@
       provides="zope.schema.interfaces.IVocabularyFactory"
       name="plone.app.contenttypes.migration.changed_base_classes"
       />
+  -->
 
 </configure>
