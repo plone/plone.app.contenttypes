@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.0a1 (2026-09-27)
+--------------------
+
+Breaking changes:
+
+
+- Move plone.app.contenttypes views to plone.app.layout
+  [frapell] (#3953)
+
+
+Internal:
+
+
+- Move package metadata from ``setup.py`` to ``pyproject.toml``.
+  [plone devs]
+
+
 5.0.1 (2026-06-23)
 ------------------
 
