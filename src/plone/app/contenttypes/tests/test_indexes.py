@@ -299,6 +299,40 @@ class CatalogIntegrationTest(unittest.TestCase):
             brains[0].getObjSize,
         )
 
+    def test_geticon_folder_with_image_child(self):
+        from plone.app.contenttypes.indexers import getIcon
+
+        # The folder has a child item with the id "image" (see setUp).
+        folder = self.portal.folder
+        self.assertFalse(getIcon.callable(folder))
+        folder.reindexObject()
+        brains = self.catalog.searchResults(
+            dict(path={"query": "/plone/folder", "depth": 0})
+        )
+        self.assertFalse(brains[0].getIcon)
+
+    def test_geticon_image(self):
+        from .test_image import dummy_image
+        from plone.app.contenttypes.indexers import getIcon
+
+        self.assertFalse(getIcon.callable(self.image))
+        self.image.image = dummy_image()
+        self.assertTrue(getIcon.callable(self.image))
+
+    def test_geticon_lead_image(self):
+        from .test_image import dummy_image
+        from plone.app.contenttypes.indexers import getIcon
+
+        self.assertFalse(getIcon.callable(self.news_item))
+        self.news_item.image = dummy_image()
+        self.assertTrue(getIcon.callable(self.news_item))
+
+    def test_geticon_without_image_field(self):
+        from plone.app.contenttypes.indexers import getIcon
+
+        with self.assertRaises(AttributeError):
+            getIcon.callable(self.document)
+
     def test_getobjsize_file(self):
         from plone.namedfile.file import NamedBlobFile
 
