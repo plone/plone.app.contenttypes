@@ -187,5 +187,4 @@ def getIcon(obj):
     when obj is an image or has a lead image
     or has an image field with name 'image': true else false
     """
-    img_field = getattr(obj.aq_base, "image", None)
-    return IImageValue.providedBy(img_field)
+    return IImageValue.providedBy(obj.aq_base.image)

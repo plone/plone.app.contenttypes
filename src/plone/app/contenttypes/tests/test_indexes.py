@@ -330,7 +330,8 @@ class CatalogIntegrationTest(unittest.TestCase):
     def test_geticon_without_image_field(self):
         from plone.app.contenttypes.indexers import getIcon
 
-        self.assertFalse(getIcon.callable(self.document))
+        with self.assertRaises(AttributeError):
+            getIcon.callable(self.document)
 
     def test_getobjsize_file(self):
         from plone.namedfile.file import NamedBlobFile
