@@ -1,0 +1,4 @@
+When indexing for ``getIcon``, check that the ``image`` attribute is an image value (``plone.namedfile.interfaces.IImage``).
+A folderish item with a child with the id ``image`` no longer gets ``getIcon`` set, which broke the navigation portlet and the tabular and album views.
+This completes the fix from Products.CMFPlone #3916, whose indexer this one overrides.
+[terapyon]

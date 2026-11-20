@@ -14,6 +14,7 @@ from plone.base.utils import human_readable_size
 from plone.base.utils import safe_text
 from plone.dexterity.interfaces import IDexterityContent
 from plone.indexer.decorator import indexer
+from plone.namedfile.interfaces import IImage as IImageValue
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from Products.CMFCore.utils import getToolByName
 from Products.PortalTransforms.libtransforms.utils import MissingBinary
@@ -186,6 +187,4 @@ def getIcon(obj):
     when obj is an image or has a lead image
     or has an image field with name 'image': true else false
     """
-    if obj.aq_base.image:
-        return True
-    return False
+    return IImageValue.providedBy(obj.aq_base.image)
